@@ -6,8 +6,8 @@ from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt, QFile, QCoreApplication
 from PySide2.QtUiTools import QUiLoader
 # 3. local
-from contact.mgr import ContactListManager, ContactListModel
-from contact.collection import ContactList
+from contact.mgr import ContactListManager, ContactListManagerModel
+from contact.collection import ContactList, ContactListModel
 
 indir = '/Volumes/Trash/Documents/AB'
 
@@ -26,10 +26,18 @@ if __name__ == "__main__":
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     app = QApplication(sys.argv)
     mw = load_ui()
-    cl_mgr = ContactListManager()
-    cl_mgr.add(ContactList('AB', indir))
-    cl_mgr.reload()
-    cl_model = ContactListModel(mgr=cl_mgr)
-    mw.contact_sources.setModel(cl_model)
+    # prepare data
+    # - AB list
+    cl = ContactList(indir)
+    cl.reload()
+    clm = ContactListManager()
+    clm.add('AB', cl)
+    # clm.reload()
+    clm_model = ContactListManagerModel(mgr=clm)
+    mw.contact_sources.setModel(clm_model)
+    # - AB
+    cl_model = ContactListModel(cl=cl)
+    mw.contact_list.setModel(cl_model)
+    # go
     mw.show()
     sys.exit(app.exec_())

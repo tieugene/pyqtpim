@@ -3,25 +3,28 @@ import os
 # 2. 3rd
 # import magic # not works
 import vobject
+from PySide2 import QtCore
 # 3. local
 from .entry import Contact
 
 # magic = magic.Magic()
 
 
-class ContactList(list):
-    name: str
+class ContactList(list[Contact]):
+    """Contact list
+    :todo: lazy/async [re]load
+    """
     path: str
 
-    def __init__(self, name: str, path: str = None):
-        self.name = name
+    def __init__(self, path: str = None):
         self.path = path
 
+    def size(self):
+        return len(self)
+
     def print(self):
-        print(f"==== {self.name} ====")
         for v in self:
             v.print()
-        print(f"==== /{self.name} ====")
 
     def load_f(self, fp: str):
         """Load entries from file
@@ -40,3 +43,30 @@ class ContactList(list):
                 if not entry.is_file():
                     continue
                 self.load_f(entry.path)
+
+
+class ContactListModel(QtCore.QAbstractTableModel):
+    cl: ContactList
+
+    def __init__(self, *args, cl=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.cl = cl or []
+
+    def data(self, index, role):
+        if role == QtCore.Qt.DisplayRole:
+            c = self.cl[index.row()]
+            col = index.column()
+            if col == 0:
+                return c.getFN()
+            elif col == 1:
+                return c.getFamily()
+            elif col == 2:
+                return c.getGiven()
+            else:
+                return ''
+
+    def rowCount(self, index):
+        return self.cl.size()
+
+    def columnCount(self, index):
+        return 3

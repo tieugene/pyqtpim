@@ -1,35 +1,46 @@
 """ContactListCollection"""
 
 # 2. PySide
-from PySide2 import Qt, QtCore
+from PySide2 import QtCore
 # 3. local
 from . import collection
 
 
-class ContactListManager(list[collection.ContactList]):
-    def add(self, collect):
-        self.append(collect)
+class ContactListManager(list[(str, collection.ContactList)]):
+
+    def size(self):
+        return len(self)
+
+    def add(self, name: str, collect: collection.ContactList):
+        self.append((name, collect))
 
     def print(self):
-        for c in self:
-            c.print()
+        for n, c in self:
+            if c.size():
+                print(f"==== {n} ====")
+                c.print()
+                print(f"==== /{n} ====")
+            else:
+                print(f"==== {n}/ ====")
+        else:
+            print("==== <empty> ====")
 
     def reload(self):
-        for c in self:
+        for _, c in self:
             c.reload()
 
 
-class ContactListModel(QtCore.QAbstractListModel):
+class ContactListManagerModel(QtCore.QAbstractListModel):
+    mgr: ContactListManager
 
-    def __init__(self, *args, mgr=None, **kwargs):
+    def __init__(self, *args, mgr: ContactListManager = None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.mgr = mgr or []
+        self.mgr = mgr or ContactListManager()
 
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
-            c = self.mgr[index.row()]
-            # Return the todo text only.
-            return c.name
+            n, c = self.mgr[index.row()]
+            return n
 
     def rowCount(self, index):
-        return len(self.mgr)
+        return self.mgr.size()
