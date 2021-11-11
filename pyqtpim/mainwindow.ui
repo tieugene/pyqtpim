@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>817</width>
-    <height>454</height>
+    <width>769</width>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,36 +24,38 @@
        <attribute name="title">
         <string>Contacts</string>
        </attribute>
-       <widget class="QListView" name="contact_sources">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>10</y>
-          <width>181</width>
-          <height>261</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QTableView" name="contact_list">
-        <property name="geometry">
-         <rect>
-          <x>190</x>
-          <y>10</y>
-          <width>256</width>
-          <height>261</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QWidget" name="contact_detail" native="true">
-        <property name="geometry">
-         <rect>
-          <x>460</x>
-          <y>20</y>
-          <width>131</width>
-          <height>241</height>
-         </rect>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QListView" name="contact_sources"/>
+          </item>
+          <item>
+           <widget class="QTableView" name="contact_list"/>
+          </item>
+          <item>
+           <widget class="QWidget" name="contact_detail" native="true">
+            <property name="minimumSize">
+             <size>
+              <width>131</width>
+              <height>0</height>
+             </size>
+            </property>
+            <widget class="QLineEdit" name="lineEdit">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>20</y>
+               <width>113</width>
+               <height>21</height>
+              </rect>
+             </property>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_tasks">
        <attribute name="title">
@@ -139,7 +141,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>817</width>
+     <width>769</width>
      <height>22</height>
     </rect>
    </property>

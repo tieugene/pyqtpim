@@ -6,8 +6,8 @@ from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt, QFile, QCoreApplication
 from PySide2.QtUiTools import QUiLoader
 # 3. local
-from contact.mgr import ContactListManager, ContactListManagerModel
-from contact.collection import ContactList, ContactListModel
+from contact.model import ContactListModel, ContactListManagerModel
+from contact.collection import ContactList, ContactListManager
 
 indir = '/Volumes/Trash/Documents/AB'
 

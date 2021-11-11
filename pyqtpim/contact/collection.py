@@ -1,9 +1,8 @@
-"""Contact list"""
+"""Contact collections """
 import os
 # 2. 3rd
 # import magic # not works
 import vobject
-from PySide2 import QtCore
 # 3. local
 from .entry import Contact
 
@@ -17,6 +16,7 @@ class ContactList(list[Contact]):
     path: str
 
     def __init__(self, path: str = None):
+        super().__init__()
         self.path = path
 
     def size(self):
@@ -45,28 +45,28 @@ class ContactList(list[Contact]):
                 self.load_f(entry.path)
 
 
-class ContactListModel(QtCore.QAbstractTableModel):
-    cl: ContactList
+class ContactListManager(list[(str, ContactList)]):
 
-    def __init__(self, *args, cl=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.cl = cl or []
+    def __init__(self):
+        super().__init__()
 
-    def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole:
-            c = self.cl[index.row()]
-            col = index.column()
-            if col == 0:
-                return c.getFN()
-            elif col == 1:
-                return c.getFamily()
-            elif col == 2:
-                return c.getGiven()
+    def size(self):
+        return len(self)
+
+    def add(self, name: str, collect: ContactList):
+        self.append((name, collect))
+
+    def print(self):
+        for n, c in self:
+            if c.size():
+                print(f"==== {n} ====")
+                c.print()
+                print(f"==== /{n} ====")
             else:
-                return ''
+                print(f"==== {n}/ ====")
+        else:
+            print("==== <empty> ====")
 
-    def rowCount(self, index):
-        return self.cl.size()
-
-    def columnCount(self, index):
-        return 3
+    def reload(self):
+        for _, c in self:
+            c.reload()

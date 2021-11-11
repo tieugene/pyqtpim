@@ -3,12 +3,11 @@ import os
 import vobject
 
 from contact.entry import Contact
-from contact.collection import ContactList
-from contact.mgr import ContactListManager
+from contact.collection import ContactList, ContactListManager
 
 indir = '/Volumes/Trash/Documents/AB'
 infile1 = os.path.join(indir, 'TI_Eugene.vcf')
-infile2 = os.path.join(indir, 'sbis.vcf')
+infile2 = os.path.join(indir, 'Selta.vcf')
 
 
 def test_clm():

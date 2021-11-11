@@ -35,15 +35,40 @@ class Contact:
         else:
             return ''
 
+    def getEmail(self):
+        """:todo: preferable or list"""
+        if email := self.data.contents.get('email'):
+            return ", ".join([v.value for v in email])
+        else:
+            return ''
+
+    def getTel(self):
+        """:todo: preferable or list"""
+        if tel := self.data.contents.get('tel'):
+            return ", ".join([v.value for v in tel])
+        else:
+            return ''
+
     def print(self):
+        def __fn():
+            print(f"FN: {self.data.fn.value}")
+        def __name():
+            if n := self.data.contents.get('n'):
+                print("N:", )
+                v = n[0].value
+                print(v.__dict__)
+                # print(v.family)
+        def __email():
+            if email := self.data.contents.get('email'):
+                print("Email:", )
+                v = email[0]
+                print(v.__dict__)
+                print(f"value: {v.value}")
+                if pref := v.params.get('PREF'):
+                    print(f"pref: {bool(pref[0])}")
+                print(", ".join([v.value for v in email]))
         print("==== VCARD ====")
         self.data.prettyPrint()
         print('----')
         pprint.pprint(self.data.__dict__)
         print('....')
-        print(f"FN: {self.data.fn.value}")
-        if n := self.data.contents.get('n'):
-            print("N:", )
-            n = n[0].value
-            print(n.__dict__)
-            print(n.family)
