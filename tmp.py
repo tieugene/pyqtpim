@@ -19,15 +19,13 @@ def test_clm():
 
 def test_cl():
     cl = ContactList(indir)
-    cl.reload()
+    cl.load()
     cl.print()
 
 
 def test_c():
     for infile in (infile1, infile2):
-        with open(infile, 'rt') as stream:
-            c = Contact(vobject.readOne(stream))
-            c.print()
+        Contact(infile).print()
 
 
 test_c()

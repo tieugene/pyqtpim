@@ -29,7 +29,7 @@ if __name__ == "__main__":
     # prepare data
     # - AB list
     cl = ContactList(indir)
-    cl.reload()
+    cl.load()
     clm = ContactListManager()
     clm.add('AB', cl)
     # clm.reload()

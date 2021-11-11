@@ -1,12 +1,10 @@
 """Contact collections """
+
+# 1. std
 import os
 # 2. 3rd
-# import magic # not works
-import vobject
 # 3. local
 from .entry import Contact
-
-# magic = magic.Magic()
 
 
 class ContactList(list[Contact]):
@@ -26,23 +24,14 @@ class ContactList(list[Contact]):
         for v in self:
             v.print()
 
-    def load_f(self, fp: str):
-        """Load entries from file
-        :param fp: file path
-        """
-        # print(magic.from_file(fp))
-        with open(fp, 'rt') as stream:
-            for v in vobject.readComponents(stream):
-                if v.name == 'VCARD':
-                    self.append(Contact(v))
-
-    def reload(self):
+    def load(self):
         """Load entries from dir"""
         with os.scandir(self.path) as itr:
             for entry in itr:
                 if not entry.is_file():
                     continue
-                self.load_f(entry.path)
+                # TODO: chk mimetype
+                self.append(Contact(entry.path))
 
 
 class ContactListManager(list[(str, ContactList)]):
@@ -69,4 +58,4 @@ class ContactListManager(list[(str, ContactList)]):
 
     def reload(self):
         for _, c in self:
-            c.reload()
+            c.load()

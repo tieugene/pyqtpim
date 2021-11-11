@@ -1,16 +1,28 @@
 # ToDo
 
+## RTFM
+
+`pyside2/examples`:
+
+- tutorial/t8.py
+- widgets:
+  - itemviews/addresbook/
+  - layouts/
+  - mainwindows/
+  - tutorials/addressbook/
+
 ## Contacts
 - [ ] all:
   - [ ] config
 - [ ] ui:
-  - [ ] stretch
+  - [ ] code-based
+  - [ ] stretch (tutorial/t8)
 - [ ] CLM:
   - [ ] View:
     - [ ] shrink v/h
   - [ ] Model:
     - [ ] Switch CL.Model on [de]select
-    - [ ] '<All>' virtual list
+    - [ ] '&lt;All&gt;' virtual list
 - [ ] CL:
   - [ ] View:
     - [ ] column names
