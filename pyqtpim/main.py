@@ -10,6 +10,7 @@ from contact.model import ContactListModel, ContactListManagerModel
 from contact.collection import ContactList, ContactListManager
 
 test_ABs = []  # [('AB', '/Volumes/Trash/Documents/AB'),]
+mw = None
 
 
 def handle_settings():
@@ -52,7 +53,17 @@ def load_ui():
     return retvalue
 
 
+def refresh_contact_details(idx):
+    data = idx.model().getBack(idx)
+    mw.contact_fn.setText(data.getFN())
+    mw.contact_family.setText(data.getFamily())
+    mw.contact_given.setText(data.getGiven())
+    mw.contact_email.setText(data.getEmail())
+    mw.contact_tel.setText(data.getTel())
+
+
 def main():
+    global mw
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     handle_settings()
     app = QApplication(sys.argv)
@@ -68,6 +79,8 @@ def main():
         clm.add(n, cl)
     clm_model = ContactListManagerModel(mgr=clm)
     mw.contact_sources.setModel(clm_model)
+    # connect
+    mw.contact_list.activated.connect(refresh_contact_details)
     # go
     mw.show()
     sys.exit(app.exec_())

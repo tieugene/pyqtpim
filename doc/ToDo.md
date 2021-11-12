@@ -8,6 +8,7 @@
   - [ ] stretch (tutorial/t8)
 - [ ] CLM:
   - [ ] Model:
+    - [ ] QStandardItemModel/QStringListModel
     - [ ] Switch CL.Model on [de]select
     - [ ] 'All' virtual list
   - [ ] View:
@@ -17,6 +18,7 @@
     - [ ] [Auto]Reload
     - [x] getByName()
     - [x] column names
+    - [ ] ?QStandardItemModel
   - [ ] View:
     - [ ] shrink v/h
     - [ ] Autoheight rows
@@ -30,7 +32,7 @@
     - [x] getByName()
     - [ ] mv load() back to CL (item+source)
   - […] Model(QAbstractItemModel):
-  - [ ] View:
+  - [ ] View(QAbstractItemView):
     - [ ] CRUD
 
 ## ToDo
@@ -39,14 +41,17 @@
 
 ## misc
 ### RTFM
+
+- [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/14xx RUB, -35%?
+
 #### pyside2/examples
-- tutorial/t8.py
+- tutorial/t8.py (UI)
 - widgets:
-  - gallery/
-  - itemviews/addresbook/
-  - layouts/
-  - mainwindows/
-  - tutorials/addressbook/
+  - mainwindows/ (UI, mainwindow)
+  - layouts/ (UI, layouts)
+  - gallery/ (UI, widgets)
+  - itemviews/addresbook/ (?)
+  - tutorials/addressbook/ (CRUD)
 
 #### qt-mobility
 - Requires qt4

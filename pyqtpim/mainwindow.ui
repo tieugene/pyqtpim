@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>769</width>
-    <height>430</height>
+    <width>617</width>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
               <height>0</height>
              </size>
             </property>
-            <widget class="QLineEdit" name="lineEdit">
+            <widget class="QLineEdit" name="contact_fn">
              <property name="geometry">
               <rect>
                <x>20</x>
@@ -49,6 +49,77 @@
                <width>113</width>
                <height>21</height>
               </rect>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="contact_family">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>50</y>
+               <width>113</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="contact_given">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>80</y>
+               <width>113</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="contact_email">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>110</y>
+               <width>113</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="contact_tel">
+             <property name="geometry">
+              <rect>
+               <x>20</x>
+               <y>140</y>
+               <width>113</width>
+               <height>21</height>
+              </rect>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>20</y>
+               <width>21</width>
+               <height>16</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+             <property name="buddy">
+              <cstring>contact_fn</cstring>
              </property>
             </widget>
            </widget>
@@ -141,7 +212,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>769</width>
+     <width>617</width>
      <height>22</height>
     </rect>
    </property>
