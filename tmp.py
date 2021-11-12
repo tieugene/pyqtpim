@@ -29,3 +29,5 @@ def test_c():
 
 
 test_c()
+test_cl()
+test_clm()

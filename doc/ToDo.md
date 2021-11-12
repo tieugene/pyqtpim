@@ -28,8 +28,8 @@
   - [ ] Data:
     - [x] Email, Tel
     - [x] getByName()
-    - [ ] mv load() back to CL
-  - [ ] Model(QAbstractItemModel):
+    - [ ] mv load() back to CL (item+source)
+  - […] Model(QAbstractItemModel):
   - [ ] View:
     - [ ] CRUD
 
@@ -42,6 +42,7 @@
 #### pyside2/examples
 - tutorial/t8.py
 - widgets:
+  - gallery/
   - itemviews/addresbook/
   - layouts/
   - mainwindows/
