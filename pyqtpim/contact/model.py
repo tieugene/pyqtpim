@@ -41,6 +41,10 @@ class ContactListModel(QtCore.QAbstractTableModel):
     def columnCount(self, index):
         return 5
 
+    def getBack(self, index):
+        """Get inner data"""
+        return self.cl[index.row()]
+
 
 class ContactListManagerModel(QtCore.QAbstractListModel):
     clm: ContactListManager
