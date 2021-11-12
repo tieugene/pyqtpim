@@ -1,6 +1,8 @@
 """PySide interface"""
 
 # 2. PySide
+import typing
+
 from PySide2 import QtCore
 # 3. local
 from .collection import ContactList, ContactListManager
@@ -21,6 +23,11 @@ class ContactListModel(QtCore.QAbstractTableModel):
     def __init__(self, *args, cl: ContactList = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.cl = cl or ContactList()
+
+    def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int) -> typing.Any:
+        if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
+            return FIELD_NAMES[section][0]
+        return super().headerData(section, orientation, role)
 
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:

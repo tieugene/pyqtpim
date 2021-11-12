@@ -1,23 +1,5 @@
 # ToDo
 
-## RTFM
-
-### pyside2/examples
-- tutorial/t8.py
-- widgets:
-  - itemviews/addresbook/
-  - layouts/
-  - mainwindows/
-  - tutorials/addressbook/
-
-### qt-mobility
-
-- Requires qt4
-- Powered by Nokia => R.I.P.
-- qt-mobility-pim:
-  - Contacts
-  - Organizer
-
 ## Contacts
 - [ ] all:
   - [x] config
@@ -27,15 +9,15 @@
 - [ ] CLM:
   - [ ] Model:
     - [ ] Switch CL.Model on [de]select
-    - [ ] '&lt;All&gt;' virtual list
+    - [ ] 'All' virtual list
   - [ ] View:
     - [ ] shrink v/h
 - [ ] CL:
   - [ ] Model:
     - [ ] [Auto]Reload
     - [x] getByName()
+    - [x] column names
   - [ ] View:
-    - [ ] column names
     - [ ] shrink v/h
     - [ ] Autoheight rows
     - [ ] Columns handle:
@@ -48,10 +30,26 @@
     - [x] getByName()
     - [ ] mv load() back to CL
   - [ ] Model(QAbstractItemModel):
-    - [ ] ...
   - [ ] View:
     - [ ] CRUD
 
 ## ToDo
 ## Calendar
 ## Journal
+
+## misc
+### RTFM
+#### pyside2/examples
+- tutorial/t8.py
+- widgets:
+  - itemviews/addresbook/
+  - layouts/
+  - mainwindows/
+  - tutorials/addressbook/
+
+#### qt-mobility
+- Requires qt4
+- Powered by Nokia => R.I.P.
+- qt-mobility-pim:
+  - Contacts
+  - Organizer
