@@ -4,7 +4,7 @@ from contact.collection import ABs
 settings: QSettings
 
 
-def handle_settings():
+def setup_settings():
     def __w(s: QSettings):
         s.beginGroup("contacts")
         s.beginWriteArray("sources")
