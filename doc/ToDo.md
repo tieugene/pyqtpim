@@ -1,8 +1,11 @@
 # ToDo
 
+## Hot:
+- [x] Contact details
+- [ ] Auto load CLM
+- [ ] Code-based UI
+
 ## Contacts
-- [ ] all:
-  - [x] config
 - [ ] UI:
   - [!] code-based
   - [ ] stretch (tutorial/t8)

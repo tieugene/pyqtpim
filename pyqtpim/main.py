@@ -3,44 +3,14 @@ from pathlib import Path
 import sys
 
 from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt, QFile, QCoreApplication, QSettings
+from PySide2.QtCore import Qt, QFile, QCoreApplication
 from PySide2.QtUiTools import QUiLoader
 # 3. local
+from settings import handle_settings
 from contact.model import ContactListModel, ContactListManagerModel
-from contact.collection import ContactList, ContactListManager
+from contact.collection import ABs, ContactList, ContactListManager
 
-test_ABs = []  # [('AB', '/Volumes/Trash/Documents/AB'),]
 mw = None
-
-
-def handle_settings():
-    def __w(s: QSettings):
-        s.beginGroup("contacts")
-        s.beginWriteArray("sources")
-        for i, v in enumerate(test_ABs):
-            s.setArrayIndex(i)
-            s.setValue("name", v[0])
-            s.setValue("path", v[1])
-        s.endArray()
-        s.endGroup()
-
-    def __r(s):
-        s.beginGroup("contacts")
-        size = s.beginReadArray("sources")
-        for i in range(size):
-            s.setArrayIndex(i)
-            name = s.value("name")
-            path = s.value("path")
-            test_ABs.append((name, path))
-        s.endArray()
-        s.endGroup()
-
-    QCoreApplication.setOrganizationName("TI_Eugene")
-    QCoreApplication.setOrganizationDomain("eap.su")
-    QCoreApplication.setApplicationName("PyQtPIM")
-    QSettings.setDefaultFormat(QSettings.IniFormat)
-    settings = QSettings()  # TODO: try QSettings.IniFormat
-    __r(settings)
 
 
 def load_ui():
@@ -70,7 +40,7 @@ def main():
     mw = load_ui()
     # prepare data
     clm = ContactListManager()
-    for n, p in test_ABs:
+    for n, p in ABs:
         # - AB list
         cl = ContactList(p)
         cl.load()
