@@ -4,7 +4,7 @@
 - [ ] all:
   - [x] config
 - [ ] UI:
-  - [ ] code-based
+  - [!] code-based
   - [ ] stretch (tutorial/t8)
 - [ ] CLM:
   - [ ] Model:
@@ -31,7 +31,7 @@
     - [x] Email, Tel
     - [x] getByName()
     - [ ] mv load() back to CL (item+source)
-  - […] Model(QAbstractItemModel):
+  - [ ] Model(QAbstractItemModel):
   - [ ] View(QAbstractItemView):
     - [ ] CRUD
 
