@@ -21,16 +21,19 @@
 ## Contacts
 - [ ] all:
   - [x] config
-- [ ] ui:
+- [ ] UI:
   - [ ] code-based
   - [ ] stretch (tutorial/t8)
 - [ ] CLM:
-  - [ ] View:
-    - [ ] shrink v/h
   - [ ] Model:
     - [ ] Switch CL.Model on [de]select
     - [ ] '&lt;All&gt;' virtual list
+  - [ ] View:
+    - [ ] shrink v/h
 - [ ] CL:
+  - [ ] Model:
+    - [ ] [Auto]Reload
+    - [x] getByName()
   - [ ] View:
     - [ ] column names
     - [ ] shrink v/h
@@ -39,13 +42,15 @@
        - [ ] sort by
        - [ ] select (show/hide)
        - [ ] move
-  - [ ] Model:
-    - [ ] Reload
+- [ ] C:
+  - [ ] Data:
     - [x] Email, Tel
-- [ ] Contact:
+    - [x] getByName()
+    - [ ] mv load() back to CL
+  - [ ] Model(QAbstractItemModel):
+    - [ ] ...
   - [ ] View:
     - [ ] CRUD
-  - [ ] Model
 
 ## ToDo
 ## Calendar

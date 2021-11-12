@@ -36,31 +36,39 @@ class Contact:
     def getFN(self) -> str:
         return self.data.fn.value
 
-    def getFamily(self):
+    def getFamily(self) -> str:
         if n := self.data.contents.get('n'):
             return n[0].value.family
-        else:
-            return ''
+        return ''
 
-    def getGiven(self):
+    def getGiven(self) -> str:
         if n := self.data.contents.get('n'):
             return n[0].value.given
-        else:
-            return ''
+        return ''
 
-    def getEmail(self):
+    def getEmail(self) -> str:
         """:todo: preferable or list"""
         if email := self.data.contents.get('email'):
             return ", ".join([v.value for v in email])
-        else:
-            return ''
+        return ''
 
-    def getTel(self):
+    def getTel(self) -> str:
         """:todo: preferable or list"""
         if tel := self.data.contents.get('tel'):
             return ", ".join([v.value for v in tel])
-        else:
-            return ''
+        return ''
+
+    def getByName(self, fld_name: str) -> str:
+        d = {
+            'fn': self.getFN,
+            'family': self.getFamily,
+            'given': self.getGiven,
+            'email': self.getEmail,
+            'tel': self.getTel
+        }
+        if fld := d.get(fld_name):
+            return fld()
+        return ''
 
     def print(self):
         def __fn():

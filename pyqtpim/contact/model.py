@@ -5,11 +5,20 @@ from PySide2 import QtCore
 # 3. local
 from .collection import ContactList, ContactListManager
 
+# const
+FIELD_NAMES = (
+    ("FN", 'fn'),
+    ("Last name", 'family'),
+    ("First name", 'given'),
+    ("Email", 'email'),
+    ("Tel.", 'tel')
+)
+
 
 class ContactListModel(QtCore.QAbstractTableModel):
     cl: ContactList
 
-    def __init__(self, *args, cl: ContactList=None, **kwargs):
+    def __init__(self, *args, cl: ContactList = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.cl = cl or ContactList()
 
@@ -17,18 +26,7 @@ class ContactListModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.DisplayRole:
             c = self.cl[index.row()]
             col = index.column()
-            if col == 0:
-                return c.getFN()
-            elif col == 1:
-                return c.getFamily()
-            elif col == 2:
-                return c.getGiven()
-            elif col == 3:
-                return c.getEmail()
-            elif col == 4:
-                return c.getTel()
-            else:
-                return ''
+            return c.getByName(FIELD_NAMES[col][1])
 
     def rowCount(self, index):
         return self.cl.size()
