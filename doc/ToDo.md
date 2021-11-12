@@ -2,8 +2,7 @@
 
 ## RTFM
 
-`pyside2/examples`:
-
+### pyside2/examples
 - tutorial/t8.py
 - widgets:
   - itemviews/addresbook/
@@ -11,9 +10,17 @@
   - mainwindows/
   - tutorials/addressbook/
 
+### qt-mobility
+
+- Requires qt4
+- Powered by Nokia => R.I.P.
+- qt-mobility-pim:
+  - Contacts
+  - Organizer
+
 ## Contacts
 - [ ] all:
-  - [ ] config
+  - [x] config
 - [ ] ui:
   - [ ] code-based
   - [ ] stretch (tutorial/t8)
@@ -41,3 +48,5 @@
   - [ ] Model
 
 ## ToDo
+## Calendar
+## Journal
