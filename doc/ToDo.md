@@ -1,39 +1,37 @@
 # ToDo
 
+## Hot:
+- [ ] Menu
+
 ## Contacts
-- [ ] all:
-  - [x] config
-- [ ] UI:
-  - [!] code-based
-  - [ ] stretch (tutorial/t8)
+- [ [ all:
+  - [ ] Menu
+- [ ] CLM:
+  - [ ] View: autoshrink v/h
+  - [ ] CUD
+- [ ] CL:
+  - [ ] View: autoshrink v/h
+- [ ] C:
+  - [ ] Data: mv load() back to CL (item+source)
+  - [ ] View: extend
+  - [ ] CRUD
+
+### Next:
 - [ ] CLM:
   - [ ] Model:
-    - [ ] QStandardItemModel/QStringListModel
-    - [ ] Switch CL.Model on [de]select
+    - [ ] QStandardItemModel/QStringListModel (?)
     - [ ] 'All' virtual list
-  - [ ] View:
-    - [ ] shrink v/h
 - [ ] CL:
-  - [ ] Model:
-    - [ ] [Auto]Reload
-    - [x] getByName()
-    - [x] column names
-    - [ ] ?QStandardItemModel
+  - [ ] Data: lazy (on demand/async) load
+  - [ ] Model: QStandardItemModel (?)
   - [ ] View:
-    - [ ] shrink v/h
-    - [ ] Autoheight rows
     - [ ] Columns handle:
        - [ ] sort by
-       - [ ] select (show/hide)
-       - [ ] move
+       - [ ] select (== show/hide)
+       - [ ] order
 - [ ] C:
-  - [ ] Data:
-    - [x] Email, Tel
-    - [x] getByName()
-    - [ ] mv load() back to CL (item+source)
-  - [ ] Model(QAbstractItemModel):
+  - [ ] Model: QAbstractItemModel
   - [ ] View(QAbstractItemView):
-    - [ ] CRUD
 
 ## ToDo
 ## Calendar
@@ -41,8 +39,7 @@
 
 ## misc
 ### RTFM
-
-- [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/14xx RUB, -35%?
+- [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?
 
 #### pyside2/examples
 - tutorial/t8.py (UI)
@@ -52,10 +49,3 @@
   - gallery/ (UI, widgets)
   - itemviews/addresbook/ (?)
   - tutorials/addressbook/ (CRUD)
-
-#### qt-mobility
-- Requires qt4
-- Powered by Nokia => R.I.P.
-- qt-mobility-pim:
-  - Contacts
-  - Organizer
