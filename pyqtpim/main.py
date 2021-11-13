@@ -11,17 +11,6 @@ from contact.model import ContactListModel, ContactListManagerModel
 from contact.collection import ABs, ContactList, ContactListManager
 from view import MainWindow
 
-mw = None
-
-
-def refresh_contact_details(idx):
-    data = idx.model().getBack(idx)
-    mw.contact_fn.setText(data.getFN())
-    mw.contact_family.setText(data.getFamily())
-    mw.contact_given.setText(data.getGiven())
-    mw.contact_email.setText(data.getEmail())
-    mw.contact_tel.setText(data.getTel())
-
 
 def setup_ui():
     loader = QUiLoader()
@@ -39,25 +28,20 @@ def setup_models(w):
         cl = ContactList(p)
         cl.load()
         cl_model = ContactListModel(cl=cl)
-        w.contact_list.setModel(cl_model)
+        w.contacts.list.setModel(cl_model)
         clm.add(n, cl)
     clm_model = ContactListManagerModel(mgr=clm)
-    w.contact_sources.setModel(clm_model)
-
-
-def setup_ss(w):
-    mw.contact_list.activated.connect(refresh_contact_details)
+    w.contacts.sources.setModel(clm_model)
 
 
 def main():
-    global mw
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     setup_settings()
     app = QApplication(sys.argv)
     # mw = setup_ui()   # lite
     mw = MainWindow()
     setup_models(mw)
-    setup_ss(mw)
+    # setup_ss(mw)
     mw.show()
     sys.exit(app.exec_())
 
