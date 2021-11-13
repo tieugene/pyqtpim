@@ -40,7 +40,7 @@ def main():
     app = QApplication(sys.argv)
     # mw = setup_ui()   # lite
     mw = MainWindow()
-    setup_models(mw)
+    # setup_models(mw)
     mw.show()
     sys.exit(app.exec_())
 

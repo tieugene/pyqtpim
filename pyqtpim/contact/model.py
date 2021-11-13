@@ -5,7 +5,7 @@ import typing
 
 from PySide2 import QtCore
 # 3. local
-from .collection import ContactList, ContactListManager
+from .collection import ABs, ContactList, ContactListManager
 
 # const
 FIELD_NAMES = (
@@ -20,9 +20,9 @@ FIELD_NAMES = (
 class ContactListModel(QtCore.QAbstractTableModel):
     cl: ContactList
 
-    def __init__(self, *args, cl: ContactList = None, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cl = cl or ContactList()
+        self.cl = ContactList()
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int) -> typing.Any:
         if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
@@ -49,9 +49,17 @@ class ContactListModel(QtCore.QAbstractTableModel):
 class ContactListManagerModel(QtCore.QAbstractListModel):
     clm: ContactListManager
 
-    def __init__(self, *args, mgr: ContactListManager = None, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.clm = mgr or ContactListManager()
+        self.clm = ContactListManager()
+        self.__init_data()
+
+    def __init_data(self):
+        """:todo: lazy load"""
+        for name, path in ABs:
+            cl = ContactList(path)
+            cl.load()
+            self.clm.add(name, cl)
 
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:

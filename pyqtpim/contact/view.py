@@ -1,11 +1,17 @@
-"""GUI representation of Contact things"""
+"""GUI representation of Contact things
+:todo: link sources>list>details as buddies or attributes
+"""
 
 from PySide2 import QtCore, QtWidgets
+# 3. local
+from .model import ContactListManagerModel, ContactListModel
 
 
 class ContactSources(QtWidgets.QListView):
     def __init__(self, parent):
         super().__init__(parent)
+        self.setSelectionMode(self.SingleSelection)
+        self.setModel(ContactListManagerModel())
 
 
 class ContactList(QtWidgets.QTableView):
@@ -17,6 +23,7 @@ class ContactList(QtWidgets.QTableView):
         # self.setSortingEnabled(True) # requires sorting itself
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().hide()
+        self.setModel(ContactListModel())
 
 
 class ContactDetails(QtWidgets.QGroupBox):
@@ -71,9 +78,12 @@ class ContactsWidget(QtWidgets.QWidget):
         super().__init__()
         self.createWidgets()
         self.list.activated.connect(self.refresh_details)
-        # model required
-        # self.selModel = self.list.selectionModel()
-        # self.selModel.selectionChanged.connect(self.selectionChanged)
+        # set model required
+        # refresh list
+        self.sources.selectionModel().selectionChanged.connect(self.refresh_list)
+        # self.sources.selectionModel().emitSelectionChanged()
+        # refresh details
+        self.list.selectionModel().selectionChanged.connect(self.refresh_details)
 
     def createWidgets(self):
         # order
@@ -93,6 +103,16 @@ class ContactsWidget(QtWidgets.QWidget):
         layout.addWidget(splitter)
         self.setLayout(layout)
 
-    def refresh_details(self, idx):
-        data = idx.model().getBack(idx)
-        self.details.refresh_data(data)
+    def refresh_list(self, selection: QtCore.QItemSelection):
+        if idx_list := selection.indexes():
+            i = idx_list[0].row()
+            cl = self.sources.model().clm[i][1]
+            self.list.model().beginResetModel()
+            self.list.model().cl = cl
+            self.list.model().endResetModel()
+            # print(cl)
+
+    def refresh_details(self, selection: QtCore.QItemSelection):
+        ...
+        # data = idx.model().getBack(idx)
+        # self.details.refresh_data(data)

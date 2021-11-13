@@ -1,6 +1,10 @@
 # ToDo
 
 ## Hot:
+- [ ] dispath models:
+  - [ ] CLM: 1 model
+  - [ ] CL: 1 model but replacable collection.ContactList
+  - [ ] collection.ContactList: load on demand
 - [ ] CL: Normal activate details
 - [ ] Auto load CLM
 - [ ] Menu
