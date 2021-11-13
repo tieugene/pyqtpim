@@ -13,26 +13,33 @@ class ContactList(QtWidgets.QTableView):
         super().__init__(parent)
 
 
-class ContactDetails(QtWidgets.QWidget):
+class ContactDetails(QtWidgets.QGroupBox):
+    fn: QtWidgets.QLineEdit
+    family: QtWidgets.QLineEdit
+    given: QtWidgets.QLineEdit
+    email: QtWidgets.QLineEdit
+    tel: QtWidgets.QLineEdit
+
     def __init__(self, parent):
         super().__init__(parent)
+        self.setTitle("Details")
         self.createWidgets()
 
     def createWidgets(self):
         # order
-        self.fn_label = QtWidgets.QLabel(self)
         self.fn = QtWidgets.QLineEdit(self)
         self.family = QtWidgets.QLineEdit(self)
         self.given = QtWidgets.QLineEdit(self)
         self.email = QtWidgets.QLineEdit(self)
         self.tel = QtWidgets.QLineEdit(self)
-        # sizes
-        self.setMinimumSize(QtCore.QSize(128, 100))
-        self.fn.setGeometry(QtCore.QRect(20, 20, 100, 20))
-        self.family.setGeometry(QtCore.QRect(20, 40, 100, 20))
-        self.given.setGeometry(QtCore.QRect(20, 60, 100, 20))
-        self.email.setGeometry(QtCore.QRect(20, 80, 100, 20))
-        self.tel.setGeometry(QtCore.QRect(20, 100, 100, 20))
+        # layout
+        layout = QtWidgets.QFormLayout()
+        layout.addRow(QtWidgets.QLabel("FN:"), self.fn)
+        layout.addRow(QtWidgets.QLabel("Family:"), self.family)
+        layout.addRow(QtWidgets.QLabel("Given:"), self.given)
+        layout.addRow(QtWidgets.QLabel("Email:"), self.email)
+        layout.addRow(QtWidgets.QLabel("Tel.:"), self.tel)
+        self.setLayout(layout)
         # attributes
         self.fn.setReadOnly(True)
         self.family.setReadOnly(True)
@@ -49,6 +56,10 @@ class ContactDetails(QtWidgets.QWidget):
 
 
 class ContactsWidget(QtWidgets.QWidget):
+    sources: ContactSources
+    list: ContactList
+    details: ContactDetails
+
     def __init__(self):
         super().__init__()
         self.createWidgets()
@@ -56,14 +67,21 @@ class ContactsWidget(QtWidgets.QWidget):
 
     def createWidgets(self):
         # order
-        self.sources = ContactSources(self)
-        self.list = ContactList(self)
-        self.details = ContactDetails(self)
+        splitter = QtWidgets.QSplitter(self)
+        self.sources = ContactSources(splitter)
+        self.list = ContactList(splitter)
+        self.details = ContactDetails(splitter)
         # layout
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self)
-        self.horizontalLayout.addWidget(self.sources)
-        self.horizontalLayout.addWidget(self.list)
-        self.horizontalLayout.addWidget(self.details)
+        splitter.addWidget(self.sources)
+        splitter.addWidget(self.list)
+        splitter.addWidget(self.details)
+        splitter.setOrientation(QtCore.Qt.Horizontal)
+        splitter.setStretchFactor(0, 0)
+        splitter.setStretchFactor(1, 1)
+        splitter.setStretchFactor(2, 0)
+        layout = QtWidgets.QHBoxLayout(self)
+        layout.addWidget(splitter)
+        self.setLayout(layout)
 
     def refresh_details(self, idx):
         data = idx.model().getBack(idx)

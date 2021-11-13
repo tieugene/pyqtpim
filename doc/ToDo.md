@@ -1,15 +1,10 @@
 # ToDo
 
 ## Hot:
-- [x] Contact details
 - [ ] Auto load CLM
-- [ ] Code-based UI:
-  - [ ] dispatch objects (mw > contact > detail)
+- [ ] Normal activate details
 
 ## Contacts
-- [ ] UI:
-  - [!] code-based
-  - [ ] stretch (tutorial/t8)
 - [ ] CLM:
   - [ ] Model:
     - [ ] QStandardItemModel/QStringListModel
@@ -17,6 +12,7 @@
     - [ ] 'All' virtual list
   - [ ] View:
     - [ ] shrink v/h
+  - [ ] CRUD
 - [ ] CL:
   - [ ] Model:
     - [ ] [Auto]Reload
@@ -37,7 +33,7 @@
     - [ ] mv load() back to CL (item+source)
   - [ ] Model(QAbstractItemModel):
   - [ ] View(QAbstractItemView):
-    - [ ] CRUD
+  - [ ] CRUD
 
 ## ToDo
 ## Calendar

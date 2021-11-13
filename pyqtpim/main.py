@@ -41,7 +41,6 @@ def main():
     # mw = setup_ui()   # lite
     mw = MainWindow()
     setup_models(mw)
-    # setup_ss(mw)
     mw.show()
     sys.exit(app.exec_())
 
