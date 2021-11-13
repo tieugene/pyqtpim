@@ -1,6 +1,51 @@
 """GUI representation of Contact things"""
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtWidgets
+
+
+class ContactSources(QtWidgets.QListView):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+
+class ContactList(QtWidgets.QTableView):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+
+class ContactDetails(QtWidgets.QWidget):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.createWidgets()
+
+    def createWidgets(self):
+        # order
+        self.fn_label = QtWidgets.QLabel(self)
+        self.fn = QtWidgets.QLineEdit(self)
+        self.family = QtWidgets.QLineEdit(self)
+        self.given = QtWidgets.QLineEdit(self)
+        self.email = QtWidgets.QLineEdit(self)
+        self.tel = QtWidgets.QLineEdit(self)
+        # sizes
+        self.setMinimumSize(QtCore.QSize(128, 100))
+        self.fn.setGeometry(QtCore.QRect(20, 20, 100, 20))
+        self.family.setGeometry(QtCore.QRect(20, 40, 100, 20))
+        self.given.setGeometry(QtCore.QRect(20, 60, 100, 20))
+        self.email.setGeometry(QtCore.QRect(20, 80, 100, 20))
+        self.tel.setGeometry(QtCore.QRect(20, 100, 100, 20))
+        # attributes
+        self.fn.setReadOnly(True)
+        self.family.setReadOnly(True)
+        self.given.setReadOnly(True)
+        self.email.setReadOnly(True)
+        self.tel.setReadOnly(True)
+
+    def refresh_data(self, data):
+        self.fn.setText(data.getFN())
+        self.family.setText(data.getFamily())
+        self.given.setText(data.getGiven())
+        self.email.setText(data.getEmail())
+        self.tel.setText(data.getTel())
 
 
 class ContactsWidget(QtWidgets.QWidget):
@@ -11,38 +56,15 @@ class ContactsWidget(QtWidgets.QWidget):
 
     def createWidgets(self):
         # order
-        self.sources = QtWidgets.QListView(self)
-        self.list = QtWidgets.QTableView(self)
-        self.details = QtWidgets.QWidget(self)
-        self.details_fn_label = QtWidgets.QLabel(self.details)
-        self.details_fn = QtWidgets.QLineEdit(self.details)
-        self.details_family = QtWidgets.QLineEdit(self.details)
-        self.details_given = QtWidgets.QLineEdit(self.details)
-        self.details_email = QtWidgets.QLineEdit(self.details)
-        self.details_tel = QtWidgets.QLineEdit(self.details)
+        self.sources = ContactSources(self)
+        self.list = ContactList(self)
+        self.details = ContactDetails(self)
         # layout
         self.horizontalLayout = QtWidgets.QHBoxLayout(self)
         self.horizontalLayout.addWidget(self.sources)
         self.horizontalLayout.addWidget(self.list)
         self.horizontalLayout.addWidget(self.details)
-        # sizes
-        self.details.setMinimumSize(QtCore.QSize(128, 100))
-        self.details_fn.setGeometry(QtCore.QRect(20, 20, 100, 20))
-        self.details_family.setGeometry(QtCore.QRect(20, 40, 100, 20))
-        self.details_given.setGeometry(QtCore.QRect(20, 60, 100, 20))
-        self.details_email.setGeometry(QtCore.QRect(20, 80, 100, 20))
-        self.details_tel.setGeometry(QtCore.QRect(20, 100, 100, 20))
-        # attributes
-        self.details_fn.setReadOnly(True)
-        self.details_family.setReadOnly(True)
-        self.details_given.setReadOnly(True)
-        self.details_email.setReadOnly(True)
-        self.details_tel.setReadOnly(True)
 
     def refresh_details(self, idx):
         data = idx.model().getBack(idx)
-        self.details_fn.setText(data.getFN())
-        self.details_family.setText(data.getFamily())
-        self.details_given.setText(data.getGiven())
-        self.details_email.setText(data.getEmail())
-        self.details_tel.setText(data.getTel())
+        self.details.refresh_data(data)
