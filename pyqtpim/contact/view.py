@@ -11,6 +11,12 @@ class ContactSources(QtWidgets.QListView):
 class ContactList(QtWidgets.QTableView):
     def __init__(self, parent):
         super().__init__(parent)
+        self.setSelectionBehavior(self.SelectRows)
+        self.setSelectionMode(self.SingleSelection)
+        # self.setEditTriggers(self.NoEditTriggers)
+        # self.setSortingEnabled(True) # requires sorting itself
+        self.horizontalHeader().setStretchLastSection(True)
+        self.verticalHeader().hide()
 
 
 class ContactDetails(QtWidgets.QGroupBox):
@@ -59,11 +65,15 @@ class ContactsWidget(QtWidgets.QWidget):
     sources: ContactSources
     list: ContactList
     details: ContactDetails
+    selectionChanged = QtCore.Signal(QtCore.QItemSelection)
 
     def __init__(self):
         super().__init__()
         self.createWidgets()
         self.list.activated.connect(self.refresh_details)
+        # model required
+        # self.selModel = self.list.selectionModel()
+        # self.selModel.selectionChanged.connect(self.selectionChanged)
 
     def createWidgets(self):
         # order

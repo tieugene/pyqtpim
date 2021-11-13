@@ -1,8 +1,9 @@
 # ToDo
 
 ## Hot:
+- [ ] CL: Normal activate details
 - [ ] Auto load CLM
-- [ ] Normal activate details
+- [ ] Menu
 
 ## Contacts
 - [ ] CLM:

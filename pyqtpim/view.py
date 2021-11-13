@@ -14,6 +14,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createToolBars()
         self.createStatusBar()
         self.createActions()
+        self.setWindowTitle("PyQtPIM")
 
     def createWidgets(self):
         # order
