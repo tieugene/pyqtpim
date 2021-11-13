@@ -9,6 +9,7 @@ from PySide2.QtUiTools import QUiLoader
 from settings import setup_settings
 from contact.model import ContactListModel, ContactListManagerModel
 from contact.collection import ABs, ContactList, ContactListManager
+from view import MainWindow
 
 mw = None
 
@@ -53,7 +54,8 @@ def main():
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     setup_settings()
     app = QApplication(sys.argv)
-    mw = setup_ui()
+    # mw = setup_ui()   # lite
+    mw = MainWindow()
     setup_models(mw)
     setup_ss(mw)
     mw.show()

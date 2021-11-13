@@ -3,7 +3,8 @@
 ## Hot:
 - [x] Contact details
 - [ ] Auto load CLM
-- [ ] Code-based UI
+- [ ] Code-based UI:
+  - [ ] dispatch objects (mw > contact > detail)
 
 ## Contacts
 - [ ] UI:
