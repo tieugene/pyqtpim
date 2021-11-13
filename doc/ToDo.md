@@ -1,26 +1,26 @@
 # ToDo
 
 ## Hot:
-- [ ] dispath models:
-  - [ ] CLM: 1 model
-  - [ ] CL: 1 model but replacable collection.ContactList
-  - [ ] collection.ContactList: load on demand
-- [ ] CL: Normal activate details
-- [ ] Auto load CLM
+- [x] dispath models:
+  - [x] CLM: 1 model
+  - [x] CL: 1 model but replacable collection.ContactList
+- [x] CL: Normal activate details
+- [x] Auto load CLM
 - [ ] Menu
+- [ ] collection.ContactList: load on demand/async
 
 ## Contacts
 - [ ] CLM:
   - [ ] Model:
     - [ ] QStandardItemModel/QStringListModel
-    - [ ] Switch CL.Model on [de]select
+    - [x] Switch CL.Model on [de]select
     - [ ] 'All' virtual list
   - [ ] View:
-    - [ ] shrink v/h
+    - [ ] autoshrink v/h
   - [ ] CRUD
 - [ ] CL:
   - [ ] Model:
-    - [ ] [Auto]Reload
+    - [x] [Auto]Reload
     - [x] getByName()
     - [x] column names
     - [ ] ?QStandardItemModel

@@ -105,14 +105,20 @@ class ContactsWidget(QtWidgets.QWidget):
 
     def refresh_list(self, selection: QtCore.QItemSelection):
         if idx_list := selection.indexes():
+            self.list.model().beginResetModel()
             i = idx_list[0].row()
             cl = self.sources.model().clm[i][1]
-            self.list.model().beginResetModel()
             self.list.model().cl = cl
             self.list.model().endResetModel()
             # print(cl)
+        else:
+            print("No list selected")
 
     def refresh_details(self, selection: QtCore.QItemSelection):
-        ...
-        # data = idx.model().getBack(idx)
-        # self.details.refresh_data(data)
+        if idx_list := selection.indexes():
+            # c = idx.model().getBack(idx)
+            i = idx_list[0].row()
+            c = self.list.model().cl[i]
+            self.details.refresh_data(c)
+        else:
+            print("No contact selected")
