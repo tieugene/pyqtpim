@@ -53,11 +53,17 @@ class MySettings:
 
     @staticmethod
     def ab_del(i: int):
+        del MySettings.AB[i]
         s = MySettings.settings
         s.beginGroup('contacts')
         s.beginWriteArray('sources')
+        while i < len(MySettings.AB):
+            s.setArrayIndex(i)
+            s.setValue('name', MySettings.AB[i][0])
+            s.setValue('path', MySettings.AB[i][1])
+            i += 1
         s.setArrayIndex(i)
         s.remove("")
         s.endArray()
+        s.setValue('sources' + '/size', i)  # hack, but...
         s.endGroup()
-        del MySettings.AB[i]
