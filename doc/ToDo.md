@@ -1,7 +1,8 @@
 # ToDo
 
 ## Hot:
-- [ ] CLM.Add
+- [ ] CLM.Add:
+  - [ ] chk
 - [ ] CL load on demand
 
 ## Contacts

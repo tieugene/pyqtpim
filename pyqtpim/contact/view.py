@@ -16,8 +16,8 @@ class ContactListManagerWidget(QtWidgets.QListView):
     def addEntry(self):
         """Add new source.
         :todo: chk:
-        - name: uniq
-        - dir: uniq, exists, isdir
+        - name: not empty, uniq
+        - dir: not empty, uniq, exists, isdir
         """
         dialog = ContactListManagerAddDialog()
         if dialog.exec_():
@@ -123,6 +123,7 @@ class ContactsWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def refresh_list(self, selection: QtCore.QItemSelection):
+        """Fully refresh CL widget on CLM selection changed"""
         if idx_list := selection.indexes():
             self.list.model().beginResetModel()
             i = idx_list[0].row()
@@ -134,6 +135,7 @@ class ContactsWidget(QtWidgets.QWidget):
             print("No list selected")
 
     def refresh_details(self, selection: QtCore.QItemSelection):
+        """Fully refresh details widget on CL selection changed"""
         if idx_list := selection.indexes():
             # c = idx.model().getBack(idx)
             i = idx_list[0].row()

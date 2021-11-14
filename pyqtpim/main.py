@@ -1,14 +1,9 @@
-import os
-from pathlib import Path
 import sys
 
 from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt, QFile, QCoreApplication
-from PySide2.QtUiTools import QUiLoader
+from PySide2.QtCore import Qt, QCoreApplication
 # 3. local
 from settings import setup_settings
-from contact.model import ContactListModel, ContactListManagerModel
-from contact.collection import ABs, ContactList, ContactListManager
 from view import MainWindow
 
 

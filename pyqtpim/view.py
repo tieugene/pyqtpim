@@ -6,6 +6,11 @@ from contact.view import ContactsWidget
 
 class MainWindow(QtWidgets.QMainWindow):
     contacts: ContactsWidget
+    actExit: QtWidgets.QAction
+    actAbout: QtWidgets.QAction
+    actAddContactSource: QtWidgets.QAction
+    actEditContactSource: QtWidgets.QAction
+    actDelContactSource: QtWidgets.QAction
 
     def __init__(self):
         super().__init__()
@@ -32,8 +37,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                          statusTip="Exit the application",
                                          triggered=self.close)
         self.actAbout = QtWidgets.QAction("&About", self,
-                statusTip="Show the application's About box",
-                triggered=self.about)
+                                          statusTip="Show the application's About box",
+                                          triggered=self.about)
         self.actAddContactSource = QtWidgets.QAction("&Add Contact Source", self,
                                                      shortcut="Ctrl+N",
                                                      statusTip="Add contact source",
@@ -48,19 +53,19 @@ class MainWindow(QtWidgets.QMainWindow):
                                                      triggered=self.contacts.sources.delEntry)
 
     def createMenus(self):
-        self.menuFile = self.menuBar().addMenu("&File")
-        self.menuFile.addAction(self.actExit)
-        self.menuEdit = self.menuBar().addMenu("&Edit")
-        self.menuEdit.addAction(self.actAddContactSource)
-        self.menuEdit.addAction(self.actEditContactSource)
-        self.menuEdit.addAction(self.actDelContactSource)
-        self.menuView = self.menuBar().addMenu("&View")
-        self.menuHelp = self.menuBar().addMenu("&Help")
-        self.menuHelp.addAction(self.actAbout)
+        menu_file = self.menuBar().addMenu("&File")
+        menu_file.addAction(self.actExit)
+        menu_edit = self.menuBar().addMenu("&Edit")
+        menu_edit.addAction(self.actAddContactSource)
+        menu_edit.addAction(self.actEditContactSource)
+        menu_edit.addAction(self.actDelContactSource)
+        # menuView = self.menuBar().addMenu("&View")
+        menu_help = self.menuBar().addMenu("&Help")
+        menu_help.addAction(self.actAbout)
 
     def createToolBars(self):
-        self.toolbarFile = self.addToolBar("File")
-        self.toolbarEdit = self.addToolBar("Edit")
+        self.addToolBar("File")
+        self.addToolBar("Edit")
 
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
@@ -68,4 +73,4 @@ class MainWindow(QtWidgets.QMainWindow):
     # actions
     def about(self):
         QtWidgets.QMessageBox.about(self, "About PyQtPIM",
-                "Python & Qt powered Personal Information Manager\n(Contacs, ToDos, Calendar, Events, Journal).")
+                                    "Python & Qt powered Personal Information Manager.")
