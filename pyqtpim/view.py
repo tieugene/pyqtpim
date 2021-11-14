@@ -27,18 +27,23 @@ class MainWindow(QtWidgets.QMainWindow):
         # attributes
 
     def createActions(self):
-        self.actExit = QtWidgets.QAction("E&xit", self, shortcut="Ctrl+Q",
-                                         statusTip="Exit the application", triggered=self.close)
+        self.actExit = QtWidgets.QAction("E&xit", self,
+                                         shortcut="Ctrl+Q",
+                                         statusTip="Exit the application",
+                                         triggered=self.close)
         self.actAbout = QtWidgets.QAction("&About", self,
                 statusTip="Show the application's About box",
                 triggered=self.about)
         self.actAddContactSource = QtWidgets.QAction("&Add Contact Source", self,
+                                                     shortcut="Ctrl+N",
                                                      statusTip="Add contact source",
                                                      triggered=self.contacts.sources.addEntry)
         self.actEditContactSource = QtWidgets.QAction("&Edit Contact Source", self,
+                                                      shortcut="Ctrl+E",
                                                       statusTip="Edit current contact source",
                                                       triggered=self.contacts.sources.editEntry)
         self.actDelContactSource = QtWidgets.QAction("&Del Contact Source", self,
+                                                     shortcut="Ctrl+D",
                                                      statusTip="Delete current contact source",
                                                      triggered=self.contacts.sources.delEntry)
 

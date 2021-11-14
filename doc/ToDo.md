@@ -1,20 +1,21 @@
 # ToDo
 
 ## Hot:
-- [ ] Menu
+- [ ] CLM.Add
+- [ ] CL load on demand
 
 ## Contacts
 - [ [ all:
   - [ ] Menu
 - [ ] CLM:
   - [ ] View: autoshrink v/h
-  - [ ] CUD
+  - [ ] C~~R~~UD, Rescan, Info
 - [ ] CL:
   - [ ] View: autoshrink v/h
+  - [ ] C~~R~~UD
 - [ ] C:
   - [ ] Data: mv load() back to CL (item+source)
   - [ ] View: extend
-  - [ ] CRUD
 
 ### Next:
 - [ ] CLM:
