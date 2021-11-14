@@ -6,6 +6,7 @@ import typing
 from PySide2 import QtCore
 # 3. local
 from .collection import ABs, ContactList, ContactListManager
+from settings import MySettings
 
 # const
 FIELD_NAMES = (

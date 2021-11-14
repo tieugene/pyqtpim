@@ -6,7 +6,7 @@ import os
 # 3. local
 from .entry import Contact
 
-ABs = []  # [('AB', '/Volumes/Trash/Documents/AB'),]
+ABs = []
 
 
 class ContactList(list[Contact]):
