@@ -1,9 +1,13 @@
 # ToDo
 
 ## Hot:
+- [ ] CLM.Edit
 - [ ] CLM.Del: del == shift to low
 - [ ] CLM.Del: handle delete last
 - [ ] CL load on demand
+
+## All
+- [ ] Settings
 
 ## Contacts
 - [ ] CLM:
@@ -21,7 +25,7 @@
 - [ ] CLM:
   - [ ] Model:
     - [ ] QStandardItemModel/QStringListModel (?)
-    - [ ] 'All' virtual list
+    - [ ] *All* virtual list
 - [ ] CL:
   - [ ] Data: lazy (on demand/async) load
   - [ ] Model: QStandardItemModel (?)

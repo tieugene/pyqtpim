@@ -36,10 +36,15 @@ class ContactListModel(QtCore.QAbstractTableModel):
             return c.getByName(FIELD_NAMES[col][1])
 
     def rowCount(self, index):
-        return self.cl.size()
+        return self.size
 
     def columnCount(self, index):
         return 5
+
+    # self
+    @property
+    def size(self):
+        return self.cl.size
 
     def getBack(self, index):
         """Get inner data"""
@@ -61,9 +66,13 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
             return name
 
     def rowCount(self, index):
-        return self.count
+        return self.size
 
     # self
+    @property
+    def size(self):
+        return self.clm.size
+
     def __init_data(self):
         """:todo: lazy load"""
         for name, path in ABs:
@@ -73,13 +82,13 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
 
     def add(self, name: str, path: str):
         """Add new ContactList"""
-        i = self.clm.size()
+        i = self.clm.size
         self.beginInsertRows(QtCore.QModelIndex(), i, i)
         cl = ContactList(path)
         cl.load()
         self.clm.add(name, cl)
         self.endInsertRows()
-        # save to settings
+        # update settings (TODO: to handmade QSettings successor)
         s = QtCore.QSettings()
         s.beginGroup("contacts")
         s.beginWriteArray("sources")
@@ -93,13 +102,10 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         """Delete record #i.
         FIXME: shift higher entries to low
         """
-        print(f"Deleting {i}")
-        # - del model row
-        # - del CL
         self.beginRemoveRows(QtCore.QModelIndex(), i, i)
         self.clm.rm_by_idx(i)
         self.endRemoveRows()
-        # - update settings
+        # - update settings (TODO: to handmade QSettings successor)
         s = QtCore.QSettings()
         s.beginGroup("contacts")
         s.beginWriteArray("sources")
@@ -119,7 +125,3 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         :return: True if found
         """
         return self.clm.findByPath(s)
-
-    @property
-    def count(self):
-        return self.clm.size()

@@ -17,6 +17,7 @@ class ContactList(list[Contact]):
         super().__init__()
         self.path = path
 
+    @property
     def size(self):
         return len(self)
 
@@ -40,7 +41,7 @@ class ContactListManager(list[(str, ContactList)]):
     def __init__(self):
         super().__init__()
 
-    # TODO: @property
+    @property
     def size(self):
         return len(self)
 
@@ -53,7 +54,7 @@ class ContactListManager(list[(str, ContactList)]):
         self.append((name, collect))
 
     def rm_by_idx(self, i: int) -> bool:
-        if 0 < i < self.size():
+        if 0 < i < self.size:
             self[i][1].clear()
             del self[i]
             return True
