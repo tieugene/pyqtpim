@@ -5,8 +5,8 @@
   - [ ] CRUD:
     - [x] C
     - [x] R
-    - [ ] U
-    - [ ] D
+    - [x] U
+    - [&hellip;] D
 - [ ] CL:
   - [ ] CRUD:
     - [ ] C

@@ -42,15 +42,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actAddContactSource = QtWidgets.QAction("&Add Contact Source", self,
                                                      shortcut="Ctrl+N",
                                                      statusTip="Add contact source",
-                                                     triggered=self.contacts.sources.addEntry)
+                                                     triggered=self.contacts.sources.itemAdd)
         self.actEditContactSource = QtWidgets.QAction("&Edit Contact Source", self,
                                                       shortcut="Ctrl+E",
                                                       statusTip="Edit current contact source",
-                                                      triggered=self.contacts.sources.editEntry)
+                                                      triggered=self.contacts.sources.itemEdit)
         self.actDelContactSource = QtWidgets.QAction("&Del Contact Source", self,
                                                      shortcut="Ctrl+D",
                                                      statusTip="Delete current contact source",
-                                                     triggered=self.contacts.sources.delEntry)
+                                                     triggered=self.contacts.sources.itemDel)
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")

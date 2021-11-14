@@ -76,17 +76,15 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
     def __init_data(self):
         """:todo: lazy load"""
         for name, path in ABs:
-            cl = ContactList(path)
-            cl.load()
-            self.clm.add(name, cl)
+            self.clm.itemAdd(name, path)
 
-    def add(self, name: str, path: str):
-        """Add new ContactList"""
-        i = self.clm.size
+    def itemAdd(self, name: str, path: str):
+        """Add new ContactList
+        :todo: implenet insertRow() -> bool
+        """
+        i = self.size
         self.beginInsertRows(QtCore.QModelIndex(), i, i)
-        cl = ContactList(path)
-        cl.load()
-        self.clm.add(name, cl)
+        self.clm.itemAdd(name, path)
         self.endInsertRows()
         # update settings (TODO: to handmade QSettings successor)
         s = QtCore.QSettings()
@@ -98,12 +96,29 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         s.endArray()
         s.endGroup()
 
-    def remove(self, i: int):
+    def itemUpdate(self, idx: QtCore.QModelIndex, name: str, path: str):
+        """Add new ContactList.
+        :todo: implement setData() -> bool
+        """
+        i = idx.row()
+        self.clm.itemUpdate(i, name, path)
+        # update settings (TODO: to handmade QSettings successor)
+        s = QtCore.QSettings()
+        s.beginGroup("contacts")
+        s.beginWriteArray("sources")
+        s.setArrayIndex(i)
+        s.setValue("name", name)
+        s.setValue("path", path)
+        s.endArray()
+        s.endGroup()
+
+    def itemDel(self, i: int):
         """Delete record #i.
-        FIXME: shift higher entries to low
+        :fixme: shift higher entries to low
+        :todo: implment removeRows() -> bool
         """
         self.beginRemoveRows(QtCore.QModelIndex(), i, i)
-        self.clm.rm_by_idx(i)
+        self.clm.itemDel(i)
         self.endRemoveRows()
         # - update settings (TODO: to handmade QSettings successor)
         s = QtCore.QSettings()
@@ -114,14 +129,14 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         s.endArray()
         s.endGroup()
 
-    def findByName(self, s: str) -> bool:
-        """Find existent CL by name
+    def findByName(self, s: str, i: int = None) -> bool:
+        """Find existent CL by name [excluding i-th entry]
         :return: True if found
         """
-        return self.clm.findByName(s)
+        return self.clm.findByName(s, i)
 
-    def findByPath(self, s: str) -> bool:
-        """Find existent CL by path
+    def findByPath(self, s: str, i: int = None) -> bool:
+        """Find existent CL by path [excluding i-th entry]
         :return: True if found
         """
-        return self.clm.findByPath(s)
+        return self.clm.findByPath(s, i)

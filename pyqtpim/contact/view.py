@@ -14,9 +14,9 @@ class ContactListManagerWidget(QtWidgets.QListView):
         self.setSelectionMode(self.SingleSelection)
         self.setModel(ContactListManagerModel())
 
-    def addEntry(self):
+    def itemAdd(self):
         """Add new CL."""
-        dialog = ContactListManagerAddDialog()
+        dialog = ContactListCUDialog()
         while dialog.exec_():
             name = dialog.name
             path = dialog.path
@@ -36,10 +36,39 @@ class ContactListManagerWidget(QtWidgets.QListView):
             self.model().add(name, path)    # update UI
             break
 
-    def editEntry(self):
-        ...
+    def itemEdit(self):
+        indexes = self.selectionModel().selectedRows()
+        if not indexes:
+            return
+        idx = indexes[0]
+        i = idx.row()
+        entry = self.model().clm[i]
+        old_name = entry[0]
+        old_path = entry[1].path
+        dialog = ContactListCUDialog(old_name, old_path)
+        while dialog.exec_():
+            name = dialog.name
+            path = dialog.path
+            # check values
+            # - changed
+            if name == old_name and path == old_path:  # nothing changed
+                break
+            # - name is uniq but not this
+            if self.model().findByName(name, i):
+                QtWidgets.QMessageBox.warning(self, "Traversal 'name'", f"CL with name '{name}' already registered as another AB")
+                continue
+            # - path is uniq but not this
+            if self.model().findByPath(path, i):
+                QtWidgets.QMessageBox.warning(self, "Traversal 'path'", f"CL with path '{name}' already registered as another AB")
+                continue
+            # - path exists and is dir
+            if not os.path.isdir(path):
+                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
+                continue
+            self.model().update(idx, name, path)    # update UI
+            break
 
-    def delEntry(self):
+    def itemDel(self):
         indexes = self.selectionModel().selectedRows()
         for index in indexes:
             i = index.row()
@@ -163,8 +192,8 @@ class ContactsWidget(QtWidgets.QWidget):
 # --- dialogs ----
 
 
-class ContactListManagerAddDialog(QtWidgets.QDialog):
-    """ A dialog to add a new address to the addressbook. """
+class ContactListCUDialog(QtWidgets.QDialog):
+    """ A dialog to add (Create) or edit (Update) Addressbook."""
     def __init__(self, name: str = None, path: str = None):
         super().__init__()
         name_label = QtWidgets.QLabel("Name")
@@ -195,7 +224,7 @@ class ContactListManagerAddDialog(QtWidgets.QDialog):
         button_box.rejected.connect(self.reject)
 
         if name:
-            self.pathText.setText(name)
+            self.nameText.setText(name)
         if path:
             self.pathText.setText(path)
 
