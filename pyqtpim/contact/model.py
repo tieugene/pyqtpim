@@ -87,15 +87,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         self.beginInsertRows(QtCore.QModelIndex(), i, i)
         self.clm.itemAdd(name, path)
         self.endInsertRows()
-        # update settings (TODO: to handmade QSettings successor)
-        s = QtCore.QSettings()
-        s.beginGroup("contacts")
-        s.beginWriteArray("sources")
-        s.setArrayIndex(i)
-        s.setValue("name", name)
-        s.setValue("path", path)
-        s.endArray()
-        s.endGroup()
+        MySettings.ab_append({"name": name, "path": path})
 
     def itemUpdate(self, idx: QtCore.QModelIndex, name: str, path: str):
         """Add new ContactList.
@@ -103,15 +95,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         """
         i = idx.row()
         self.clm.itemUpdate(i, name, path)
-        # update settings (TODO: to handmade QSettings successor)
-        s = QtCore.QSettings()
-        s.beginGroup("contacts")
-        s.beginWriteArray("sources")
-        s.setArrayIndex(i)
-        s.setValue("name", name)
-        s.setValue("path", path)
-        s.endArray()
-        s.endGroup()
+        MySettings.ab_update(i, {"name": name, "path": path})
 
     def itemDel(self, i: int):
         """Delete record #i.
@@ -121,14 +105,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         self.beginRemoveRows(QtCore.QModelIndex(), i, i)
         self.clm.itemDel(i)
         self.endRemoveRows()
-        # - update settings (TODO: to handmade QSettings successor)
-        s = QtCore.QSettings()
-        s.beginGroup("contacts")
-        s.beginWriteArray("sources")
-        s.setArrayIndex(i)
-        s.remove("")
-        s.endArray()
-        s.endGroup()
+        MySettings.ab_del(i)
 
     def findByName(self, s: str, i: int = None) -> bool:
         """Find existent CL by name [excluding i-th entry]

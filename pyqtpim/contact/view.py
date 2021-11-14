@@ -33,7 +33,7 @@ class ContactListManagerWidget(QtWidgets.QListView):
             if not os.path.isdir(path):
                 QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
                 continue
-            self.model().add(name, path)    # update UI
+            self.model().itemAdd(name, path)    # update UI
             break
 
     def itemEdit(self):
@@ -65,7 +65,7 @@ class ContactListManagerWidget(QtWidgets.QListView):
             if not os.path.isdir(path):
                 QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
                 continue
-            self.model().update(idx, name, path)    # update UI
+            self.model().itemUpdate(idx, name, path)    # update UI
             break
 
     def itemDel(self):
@@ -75,7 +75,7 @@ class ContactListManagerWidget(QtWidgets.QListView):
             name = self.model().clm[i][0]
             if QtWidgets.QMessageBox.question(self, "Deleting CL", f"Are you sure to delete '{name}'")\
                     == QtWidgets.QMessageBox.StandardButton.Yes:
-                self.model().remove(i)
+                self.model().itemDel(i)
 
 
 class ContactListWidget(QtWidgets.QTableView):

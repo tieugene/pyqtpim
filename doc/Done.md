@@ -1,5 +1,8 @@
 # Done
 
+## All
+- [x] MySettings
+
 ## Contacts
 - [ ] CLM:
   - [ ] CRUD:
@@ -7,6 +10,7 @@
     - [x] R
     - [x] U
     - [&hellip;] D
+    - [ ] Info
 - [ ] CL:
   - [ ] CRUD:
     - [ ] C
