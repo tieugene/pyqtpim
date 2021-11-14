@@ -8,7 +8,7 @@ from .model import ContactListManagerModel, ContactListModel
 from .collection import ContactList
 
 
-class ContactSourcesWidget(QtWidgets.QListView):
+class ContactListManagerWidget(QtWidgets.QListView):
     def __init__(self, parent):
         super().__init__(parent)
         self.setSelectionMode(self.SingleSelection)
@@ -20,15 +20,12 @@ class ContactSourcesWidget(QtWidgets.QListView):
         - name: uniq
         - dir: uniq, exists, isdir
         """
-        addDialog = ContactSourceAddDialog()
+        addDialog = ContactListManagerAddDialog()
         if addDialog.exec_():
             name = addDialog.name
             path = addDialog.path
             # TODO: chk
-            cl = ContactList(path)
-            cl.load()
-            self.model().clm.add(name, cl)
-            # TODO: refresh UI
+            self.model().add(name, path)
             # TODO: save to settings
 
     def editEntry(self):
@@ -93,7 +90,7 @@ class ContactDetailWidget(QtWidgets.QGroupBox):
 
 
 class ContactsWidget(QtWidgets.QWidget):
-    sources: ContactSourcesWidget
+    sources: ContactListManagerWidget
     list: ContactListWidget
     details: ContactDetailWidget
     selectionChanged = QtCore.Signal(QtCore.QItemSelection)
@@ -112,7 +109,7 @@ class ContactsWidget(QtWidgets.QWidget):
     def createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
-        self.sources = ContactSourcesWidget(splitter)
+        self.sources = ContactListManagerWidget(splitter)
         self.list = ContactListWidget(splitter)
         self.details = ContactDetailWidget(splitter)
         # layout
@@ -150,7 +147,7 @@ class ContactsWidget(QtWidgets.QWidget):
 # --- dialogs ----
 
 
-class ContactSourceAddDialog(QtWidgets.QDialog):
+class ContactListManagerAddDialog(QtWidgets.QDialog):
     """ A dialog to add a new address to the addressbook. """
     def __init__(self, parent=None):
         super().__init__(parent)

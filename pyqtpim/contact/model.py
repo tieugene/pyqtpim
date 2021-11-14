@@ -54,13 +54,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         self.clm = ContactListManager()
         self.__init_data()
 
-    def __init_data(self):
-        """:todo: lazy load"""
-        for name, path in ABs:
-            cl = ContactList(path)
-            cl.load()
-            self.clm.add(name, cl)
-
+    # inherited
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
             name, _ = self.clm[index.row()]
@@ -68,3 +62,20 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
 
     def rowCount(self, index):
         return self.clm.size()
+
+    # self
+    def __init_data(self):
+        """:todo: lazy load"""
+        for name, path in ABs:
+            cl = ContactList(path)
+            cl.load()
+            self.clm.add(name, cl)
+
+    def add(self, name: str, path: str):
+        """Add new ContactList"""
+        count = self.clm.size()
+        self.beginInsertRows(QtCore.QModelIndex(), count, count)
+        cl = ContactList(path)
+        cl.load()
+        self.clm.add(name, cl)
+        self.endInsertRows()
