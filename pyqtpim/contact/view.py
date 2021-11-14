@@ -40,7 +40,13 @@ class ContactListManagerWidget(QtWidgets.QListView):
         ...
 
     def delEntry(self):
-        ...
+        indexes = self.selectionModel().selectedRows()
+        for index in indexes:
+            i = index.row()
+            name = self.model().clm[i][0]
+            if QtWidgets.QMessageBox.question(self, "Deleting CL", f"Are you sure to delete '{name}'")\
+                    == QtWidgets.QMessageBox.StandardButton.Yes:
+                self.model().remove(i)
 
 
 class ContactListWidget(QtWidgets.QTableView):

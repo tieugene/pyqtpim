@@ -73,8 +73,8 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
 
     def add(self, name: str, path: str):
         """Add new ContactList"""
-        count = self.clm.size()
-        self.beginInsertRows(QtCore.QModelIndex(), count, count)
+        i = self.clm.size()
+        self.beginInsertRows(QtCore.QModelIndex(), i, i)
         cl = ContactList(path)
         cl.load()
         self.clm.add(name, cl)
@@ -83,9 +83,28 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         s = QtCore.QSettings()
         s.beginGroup("contacts")
         s.beginWriteArray("sources")
-        s.setArrayIndex(count)
+        s.setArrayIndex(i)
         s.setValue("name", name)
         s.setValue("path", path)
+        s.endArray()
+        s.endGroup()
+
+    def remove(self, i: int):
+        """Delete record #i.
+        FIXME: shift higher entries to low
+        """
+        print(f"Deleting {i}")
+        # - del model row
+        # - del CL
+        self.beginRemoveRows(QtCore.QModelIndex(), i, i)
+        self.clm.rm_by_idx(i)
+        self.endRemoveRows()
+        # - update settings
+        s = QtCore.QSettings()
+        s.beginGroup("contacts")
+        s.beginWriteArray("sources")
+        s.setArrayIndex(i)
+        s.remove("")
         s.endArray()
         s.endGroup()
 

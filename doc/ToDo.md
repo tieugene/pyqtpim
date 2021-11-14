@@ -1,13 +1,14 @@
 # ToDo
 
 ## Hot:
-- [ ] CLM.Del
+- [ ] CLM.Del: del == shift to low
+- [ ] CLM.Del: handle delete last
 - [ ] CL load on demand
 
 ## Contacts
 - [ ] CLM:
   - [ ] View: autoshrink v/h
-  - [ ] ~~CR~~UD, Rescan, Info
+  - [ ] ~~CR~~U*D*, Rescan, Info
 - [ ] CL:
   - [ ] Data: lazy load (on demand)
   - [ ] View: autoshrink v/h

@@ -40,6 +40,7 @@ class ContactListManager(list[(str, ContactList)]):
     def __init__(self):
         super().__init__()
 
+    # TODO: @property
     def size(self):
         return len(self)
 
@@ -47,8 +48,16 @@ class ContactListManager(list[(str, ContactList)]):
         """Add new ContactList
         :param name: Associated name of ContactList
         :param collect: ContactList to add
+        :todo: return something
         """
         self.append((name, collect))
+
+    def rm_by_idx(self, i: int) -> bool:
+        if 0 < i < self.size():
+            self[i][1].clear()
+            del self[i]
+            return True
+        return False
 
     def print(self):
         for n, c in self:
