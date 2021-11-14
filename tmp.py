@@ -1,7 +1,5 @@
 import os
 
-import vobject
-
 from contact.entry import Contact
 from contact.collection import ContactList, ContactListManager
 
