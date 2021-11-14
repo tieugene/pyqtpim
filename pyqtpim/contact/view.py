@@ -13,6 +13,14 @@ class ContactSources(QtWidgets.QListView):
         self.setSelectionMode(self.SingleSelection)
         self.setModel(ContactListManagerModel())
 
+    def addEntry(self):
+        ...
+
+    def editEntry(self):
+        ...
+
+    def delEntry(self):
+        ...
 
 class ContactList(QtWidgets.QTableView):
     def __init__(self, parent):
@@ -122,3 +130,7 @@ class ContactsWidget(QtWidgets.QWidget):
             self.details.refresh_data(c)
         else:
             print("No contact selected")
+
+
+class ContactSourceAdd(QtWidgets.QDialog):
+    ...
