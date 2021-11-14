@@ -14,13 +14,17 @@ class ContactSources(QtWidgets.QListView):
         self.setModel(ContactListManagerModel())
 
     def addEntry(self):
-        ...
+        addDialog = AddDialogWidget()
+        if addDialog.exec_():
+            name = addDialog.name
+            path = addDialog.path
 
     def editEntry(self):
         ...
 
     def delEntry(self):
         ...
+
 
 class ContactList(QtWidgets.QTableView):
     def __init__(self, parent):
@@ -134,3 +138,43 @@ class ContactsWidget(QtWidgets.QWidget):
 
 class ContactSourceAdd(QtWidgets.QDialog):
     ...
+
+# ---- dialogs ----
+
+
+class AddDialogWidget(QtWidgets.QDialog):
+    """ A dialog to add a new address to the addressbook. """
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        nameLabel = QtWidgets.QLabel("Name")
+        pathLabel = QtWidgets.QLabel("Path")
+        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+
+        self.nameText = QtWidgets.QLineEdit()
+        self.pathText = QtWidgets.QLineEdit()
+        # self.pathButton = QtWidgets.QButton()   # link QFileDialg.getExistingDirectory()
+
+        grid = QtWidgets.QGridLayout()
+        grid.setColumnStretch(1, 2)
+        grid.addWidget(nameLabel, 0, 0)
+        grid.addWidget(self.nameText, 0, 1)
+        grid.addWidget(pathLabel, 1, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        grid.addWidget(self.pathText, 1, 1, QtCore.Qt.AlignLeft)
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.addLayout(grid)
+        layout.addWidget(buttonBox)
+
+        self.setLayout(layout)
+
+        self.setWindowTitle("Add a Contact Source")
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+    @property
+    def name(self):
+        return self.nameText.text()
+
+    @property
+    def path(self):
+        return self.pathText.text()
