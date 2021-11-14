@@ -8,9 +8,10 @@ class MainWindow(QtWidgets.QMainWindow):
     contacts: ContactsWidget
     actExit: QtWidgets.QAction
     actAbout: QtWidgets.QAction
-    actAddContactSource: QtWidgets.QAction
-    actEditContactSource: QtWidgets.QAction
-    actDelContactSource: QtWidgets.QAction
+    actContactListAdd: QtWidgets.QAction
+    actContactListEdit: QtWidgets.QAction
+    actContactListDel: QtWidgets.QAction
+    actContactListInfo: QtWidgets.QAction
 
     def __init__(self):
         super().__init__()
@@ -39,26 +40,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actAbout = QtWidgets.QAction("&About", self,
                                           statusTip="Show the application's About box",
                                           triggered=self.about)
-        self.actAddContactSource = QtWidgets.QAction("&Add Contact Source", self,
-                                                     shortcut="Ctrl+N",
-                                                     statusTip="Add contact source",
-                                                     triggered=self.contacts.sources.itemAdd)
-        self.actEditContactSource = QtWidgets.QAction("&Edit Contact Source", self,
-                                                      shortcut="Ctrl+E",
-                                                      statusTip="Edit current contact source",
-                                                      triggered=self.contacts.sources.itemEdit)
-        self.actDelContactSource = QtWidgets.QAction("&Del Contact Source", self,
-                                                     shortcut="Ctrl+D",
-                                                     statusTip="Delete current contact source",
-                                                     triggered=self.contacts.sources.itemDel)
+        self.actContactListAdd = QtWidgets.QAction("AddressBook &New", self,
+                                                   shortcut="Ctrl+N",
+                                                   statusTip="Add new AddressBook",
+                                                   triggered=self.contacts.sources.itemAdd)
+        self.actContactListEdit = QtWidgets.QAction("AddressBook &Edit", self,
+                                                    shortcut="Ctrl+E",
+                                                    statusTip="Edit current AddressBook",
+                                                    triggered=self.contacts.sources.itemEdit)
+        self.actContactListDel = QtWidgets.QAction("AddressBook &Del", self,
+                                                   shortcut="Ctrl+D",
+                                                   statusTip="Delete current AddressBook",
+                                                   triggered=self.contacts.sources.itemDel)
+        self.actContactListInfo = QtWidgets.QAction("AddressBook &Info", self,
+                                                    shortcut="Ctrl+I",
+                                                    statusTip="Info about current AddressBook",
+                                                    triggered=self.contacts.sources.itemInfo)
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
         menu_file.addAction(self.actExit)
         menu_edit = self.menuBar().addMenu("&Edit")
-        menu_edit.addAction(self.actAddContactSource)
-        menu_edit.addAction(self.actEditContactSource)
-        menu_edit.addAction(self.actDelContactSource)
+        menu_edit.addAction(self.actContactListAdd)
+        menu_edit.addAction(self.actContactListEdit)
+        menu_edit.addAction(self.actContactListDel)
+        menu_edit.addAction(self.actContactListInfo)
         # menuView = self.menuBar().addMenu("&View")
         menu_help = self.menuBar().addMenu("&Help")
         menu_help.addAction(self.actAbout)

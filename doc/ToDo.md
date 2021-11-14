@@ -1,8 +1,11 @@
 # ToDo
 
 ## Now
+
 ### Job
-- [ ] CLM: Info
+
+### Fixes
+- [ ] CLM.Del: handle delete last
 
 ### Tuning
 - [ ] C: hide inner data
@@ -11,7 +14,6 @@
 - [ ] CL: load on demand
 - [ ] CL.update: name/path/both
 - [ ] CLM: tuple => object
-- [ ] CLM.Del: handle delete last
 
 ## Contacts
 - [ ] CLM:
@@ -46,10 +48,13 @@
   - [ ] View(QAbstractItemView):
 
 ## ToDo
+
 ## Calendar
+
 ## Journal
 
 ## misc
+
 ### RTFM
 - [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?
 

@@ -57,7 +57,7 @@ class ContactListManager(list[(str, ContactList)]):
         self.append((name, cl))
 
     def itemUpdate(self, i: int, name: str, path: str):
-        old_entry = self[i]
+        # old_entry = self[i]
         # TODO: process changing name/path/both
         cl = self[i][1]
         cl.clear()

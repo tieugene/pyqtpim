@@ -55,11 +55,11 @@ class ContactListManagerWidget(QtWidgets.QListView):
                 break
             # - name is uniq but not this
             if self.model().findByName(name, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'name'", f"CL with name '{name}' already registered as another AB")
+                QtWidgets.QMessageBox.warning(self, "Traversal 'name'", f"There is another CL with name '{name}'")
                 continue
             # - path is uniq but not this
             if self.model().findByPath(path, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'path'", f"CL with path '{name}' already registered as another AB")
+                QtWidgets.QMessageBox.warning(self, "Traversal 'path'", f"There is another CL with path '{name}'")
                 continue
             # - path exists and is dir
             if not os.path.isdir(path):
@@ -76,6 +76,18 @@ class ContactListManagerWidget(QtWidgets.QListView):
             if QtWidgets.QMessageBox.question(self, "Deleting CL", f"Are you sure to delete '{name}'")\
                     == QtWidgets.QMessageBox.StandardButton.Yes:
                 self.model().itemDel(i)
+
+    def itemInfo(self):
+        indexes = self.selectionModel().selectedRows()
+        if not indexes:
+            return
+        idx = indexes[0]
+        clm = self.model().clm[idx.row()]
+        QtWidgets.QMessageBox.information(self, "CL info",
+                                          f"Addressbook info:\n"
+                                          f"Name: {clm[0]}\n"
+                                          f"Path: {clm[1].path}\n"
+                                          f"Records: {clm[1].size}")
 
 
 class ContactListWidget(QtWidgets.QTableView):

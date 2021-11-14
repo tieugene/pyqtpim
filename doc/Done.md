@@ -10,7 +10,7 @@
     - [x] R
     - [x] U
     - [x] D (*shift settings*)
-    - [ ] Info
+    - [x] Info
 - [ ] CL:
   - [ ] CRUD:
     - [ ] C
