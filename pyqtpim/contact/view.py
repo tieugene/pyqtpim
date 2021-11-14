@@ -1,6 +1,7 @@
 """GUI representation of Contact things
 :todo: link sources>list>details as buddies or attributes
 """
+import os.path
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
@@ -14,17 +15,26 @@ class ContactListManagerWidget(QtWidgets.QListView):
         self.setModel(ContactListManagerModel())
 
     def addEntry(self):
-        """Add new source.
-        :todo: chk:
-        - name: not empty, uniq
-        - dir: not empty, uniq, exists, isdir
-        """
+        """Add new CL."""
         dialog = ContactListManagerAddDialog()
-        if dialog.exec_():
+        while dialog.exec_():
             name = dialog.name
             path = dialog.path
-            # TODO: chk
+            # check values
+            # - name is uniq
+            if self.model().findByName(name):
+                QtWidgets.QMessageBox.warning(self, "Duplicated 'name'", f"CL with name '{name}' already registered")
+                continue
+            # - path is uniq
+            if self.model().findByPath(path):
+                QtWidgets.QMessageBox.warning(self, "Duplicated 'path'", f"CL with path '{name}' already registered")
+                continue
+            # - path exists and is dir
+            if not os.path.isdir(path):
+                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
+                continue
             self.model().add(name, path)    # update UI
+            break
 
     def editEntry(self):
         ...
@@ -149,15 +159,14 @@ class ContactsWidget(QtWidgets.QWidget):
 
 class ContactListManagerAddDialog(QtWidgets.QDialog):
     """ A dialog to add a new address to the addressbook. """
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, name: str = None, path: str = None):
+        super().__init__()
         name_label = QtWidgets.QLabel("Name")
         path_label = QtWidgets.QLabel("Path")
         path_button = QtWidgets.QPushButton("...")
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         self.nameText = QtWidgets.QLineEdit()
         self.pathText = QtWidgets.QLineEdit()
-        # self.pathButton = QtWidgets.QButton()   # link QFileDialg.getExistingDirectory()
 
         grid = QtWidgets.QGridLayout()
         grid.setColumnStretch(0, 0)
@@ -176,13 +185,25 @@ class ContactListManagerAddDialog(QtWidgets.QDialog):
 
         self.setWindowTitle("Add a Contact Source")
         path_button.clicked.connect(self.browse_dir)
-        button_box.accepted.connect(self.accept)
+        button_box.accepted.connect(self.chk_values)
         button_box.rejected.connect(self.reject)
 
+        if name:
+            self.pathText.setText(name)
+        if path:
+            self.pathText.setText(path)
+
     def browse_dir(self):
+        # TODO: set starting path
         if directory := QtCore.QDir.toNativeSeparators(
                 QtWidgets.QFileDialog.getExistingDirectory(self, "Select dir", QtCore.QDir.currentPath())):
             self.pathText.setText(directory)
+
+    def chk_values(self):
+        if self.name and self.path:
+            self.accept()
+        else:
+            QtWidgets.QMessageBox.warning(self, "Empty values", "As 'name' as 'path' must not be empty")
 
     @property
     def name(self):

@@ -89,6 +89,18 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         s.endArray()
         s.endGroup()
 
+    def findByName(self, s: str) -> bool:
+        """Find existent CL by name
+        :return: True if found
+        """
+        return self.clm.findByName(s)
+
+    def findByPath(self, s: str) -> bool:
+        """Find existent CL by path
+        :return: True if found
+        """
+        return self.clm.findByPath(s)
+
     @property
     def count(self):
         return self.clm.size()

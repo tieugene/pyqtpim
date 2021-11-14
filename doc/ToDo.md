@@ -1,17 +1,15 @@
 # ToDo
 
 ## Hot:
-- [ ] CLM.Add:
-  - [ ] chk
+- [ ] CLM.Del
 - [ ] CL load on demand
 
 ## Contacts
-- [ [ all:
-  - [ ] Menu
 - [ ] CLM:
   - [ ] View: autoshrink v/h
-  - [ ] C~~R~~UD, Rescan, Info
+  - [ ] ~~CR~~UD, Rescan, Info
 - [ ] CL:
+  - [ ] Data: lazy load (on demand)
   - [ ] View: autoshrink v/h
   - [ ] C~~R~~UD
 - [ ] C:

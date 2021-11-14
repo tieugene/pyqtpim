@@ -64,3 +64,21 @@ class ContactListManager(list[(str, ContactList)]):
     def load(self):
         for _, c in self:
             c.load()
+
+    def findByName(self, s: str) -> bool:
+        """Find existent CL by name
+        :return: True if found
+        """
+        for v, _ in self:
+            if v == s:
+                return True
+        return False
+
+    def findByPath(self, s: str) -> bool:
+        """Find existent CL by name
+        :return: True if found
+        """
+        for _, v in self:
+            if v.path == s:
+                return True
+        return False
