@@ -5,7 +5,6 @@
 from PySide2 import QtCore, QtWidgets
 # 3. local
 from .model import ContactListManagerModel, ContactListModel
-from .collection import ContactList
 
 
 class ContactListManagerWidget(QtWidgets.QListView):
@@ -20,13 +19,12 @@ class ContactListManagerWidget(QtWidgets.QListView):
         - name: uniq
         - dir: uniq, exists, isdir
         """
-        addDialog = ContactListManagerAddDialog()
-        if addDialog.exec_():
-            name = addDialog.name
-            path = addDialog.path
+        dialog = ContactListManagerAddDialog()
+        if dialog.exec_():
+            name = dialog.name
+            path = dialog.path
             # TODO: chk
-            self.model().add(name, path)
-            # TODO: save to settings
+            self.model().add(name, path)    # update UI
 
     def editEntry(self):
         ...
@@ -151,10 +149,10 @@ class ContactListManagerAddDialog(QtWidgets.QDialog):
     """ A dialog to add a new address to the addressbook. """
     def __init__(self, parent=None):
         super().__init__(parent)
-        nameLabel = QtWidgets.QLabel("Name")
-        pathLabel = QtWidgets.QLabel("Path")
-        pathButton = QtWidgets.QPushButton("...")
-        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        name_label = QtWidgets.QLabel("Name")
+        path_label = QtWidgets.QLabel("Path")
+        path_button = QtWidgets.QPushButton("...")
+        button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         self.nameText = QtWidgets.QLineEdit()
         self.pathText = QtWidgets.QLineEdit()
         # self.pathButton = QtWidgets.QButton()   # link QFileDialg.getExistingDirectory()
@@ -163,21 +161,21 @@ class ContactListManagerAddDialog(QtWidgets.QDialog):
         grid.setColumnStretch(0, 0)
         grid.setColumnStretch(1, 1)
         grid.setColumnStretch(2, 0)
-        grid.addWidget(nameLabel, 0, 0)
+        grid.addWidget(name_label, 0, 0)
         grid.addWidget(self.nameText, 0, 1, 1, 2)
-        grid.addWidget(pathLabel, 1, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        grid.addWidget(path_label, 1, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         grid.addWidget(self.pathText, 1, 1)
-        grid.addWidget(pathButton, 1, 2)
+        grid.addWidget(path_button, 1, 2)
 
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(grid)
-        layout.addWidget(buttonBox)
+        layout.addWidget(button_box)
         self.setLayout(layout)
 
         self.setWindowTitle("Add a Contact Source")
-        pathButton.clicked.connect(self.browse_dir)
-        buttonBox.accepted.connect(self.accept)
-        buttonBox.rejected.connect(self.reject)
+        path_button.clicked.connect(self.browse_dir)
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
 
     def browse_dir(self):
         if directory := QtCore.QDir.toNativeSeparators(

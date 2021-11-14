@@ -61,7 +61,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
             return name
 
     def rowCount(self, index):
-        return self.clm.size()
+        return self.count
 
     # self
     def __init_data(self):
@@ -79,3 +79,16 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         cl.load()
         self.clm.add(name, cl)
         self.endInsertRows()
+        # save to settings
+        s = QtCore.QSettings()
+        s.beginGroup("contacts")
+        s.beginWriteArray("sources")
+        s.setArrayIndex(count)
+        s.setValue("name", name)
+        s.setValue("path", path)
+        s.endArray()
+        s.endGroup()
+
+    @property
+    def count(self):
+        return self.clm.size()
