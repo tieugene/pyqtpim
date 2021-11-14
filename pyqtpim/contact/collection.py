@@ -6,8 +6,6 @@ import os
 # 3. local
 from .entry import Contact
 
-ABs = []
-
 
 class ContactList(list[Contact]):
     """List of Contacts"""

@@ -1,10 +1,10 @@
 from PySide2.QtCore import QCoreApplication, QSettings
-from contact.collection import ABs
 
 
 class MySettings:
     """QSettings extender"""
     settings: QSettings
+    AB: list = []
 
     @staticmethod
     def setup():
@@ -16,7 +16,7 @@ class MySettings:
                 s.setArrayIndex(i)
                 name = s.value("name")
                 path = s.value("path")
-                ABs.append((name, path))
+                MySettings.AB.append((name, path))
             s.endArray()
             s.endGroup()
 

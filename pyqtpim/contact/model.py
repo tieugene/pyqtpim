@@ -5,7 +5,7 @@ import typing
 
 from PySide2 import QtCore
 # 3. local
-from .collection import ABs, ContactList, ContactListManager
+from .collection import ContactList, ContactListManager
 from settings import MySettings
 
 # const
@@ -76,7 +76,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
 
     def __init_data(self):
         """:todo: lazy load"""
-        for name, path in ABs:
+        for name, path in MySettings.AB:
             self.clm.itemAdd(name, path)
 
     def itemAdd(self, name: str, path: str):
