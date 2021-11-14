@@ -1,7 +1,5 @@
 import os
 
-import vobject
-
 from contact.entry import Contact
 from contact.collection import ContactList, ContactListManager
 
@@ -12,8 +10,8 @@ infile2 = os.path.join(indir, 'Selta.vcf')
 
 def test_clm():
     clm = ContactListManager()
-    clm.add('AB', ContactList(indir))
-    clm.reload()
+    clm.itemAdd('AB', indir)
+    # clm.reload()
     clm.print()
 
 

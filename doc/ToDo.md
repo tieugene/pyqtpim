@@ -1,28 +1,40 @@
 # ToDo
 
-## Hot:
-- [ ] Menu
+## Now
+### Job
+- [ ] CLM: Info
+
+### Tuning
+- [ ] C: hide inner data
+- [ ] CL: hide inner data
+- [ ] CLM: hide inner data
+- [ ] CL: load on demand
+- [ ] CL.update: name/path/both
+- [ ] CLM: tuple => object
+- [ ] CLM.Del: handle delete last
 
 ## Contacts
-- [ [ all:
-  - [ ] Menu
 - [ ] CLM:
-  - [ ] View: autoshrink v/h
-  - [ ] CUD
+  - [ ] View:
+    - [ ] autoshrink v/h
+    - [ ] path in statusbar
+  - [ ] ~~CRU~~*D*, Info (CL)
 - [ ] CL:
+  - [ ] Data: lazy load (on demand)
   - [ ] View: autoshrink v/h
+  - [ ] C~~R~~UD, Info (C)
 - [ ] C:
   - [ ] Data: mv load() back to CL (item+source)
   - [ ] View: extend
-  - [ ] CRUD
 
 ### Next:
 - [ ] CLM:
   - [ ] Model:
-    - [ ] QStandardItemModel/QStringListModel (?)
-    - [ ] 'All' virtual list
+    - [ ] QStandardItemModel/QStringListModel (checkboxes)
+    - [ ] *All* virtual list
+    - [ ] ?Rescan
 - [ ] CL:
-  - [ ] Data: lazy (on demand/async) load
+  - [ ] Data: lazy load (async)
   - [ ] Model: QStandardItemModel (?)
   - [ ] View:
     - [ ] Columns handle:

@@ -1,20 +1,84 @@
 """GUI representation of Contact things
 :todo: link sources>list>details as buddies or attributes
 """
+import os.path
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
 from .model import ContactListManagerModel, ContactListModel
 
 
-class ContactSources(QtWidgets.QListView):
+class ContactListManagerWidget(QtWidgets.QListView):
     def __init__(self, parent):
         super().__init__(parent)
         self.setSelectionMode(self.SingleSelection)
         self.setModel(ContactListManagerModel())
 
+    def itemAdd(self):
+        """Add new CL."""
+        dialog = ContactListCUDialog()
+        while dialog.exec_():
+            name = dialog.name
+            path = dialog.path
+            # check values
+            # - name is uniq
+            if self.model().findByName(name):
+                QtWidgets.QMessageBox.warning(self, "Duplicated 'name'", f"CL with name '{name}' already registered")
+                continue
+            # - path is uniq
+            if self.model().findByPath(path):
+                QtWidgets.QMessageBox.warning(self, "Duplicated 'path'", f"CL with path '{name}' already registered")
+                continue
+            # - path exists and is dir
+            if not os.path.isdir(path):
+                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
+                continue
+            self.model().itemAdd(name, path)    # update UI
+            break
 
-class ContactList(QtWidgets.QTableView):
+    def itemEdit(self):
+        indexes = self.selectionModel().selectedRows()
+        if not indexes:
+            return
+        idx = indexes[0]
+        i = idx.row()
+        entry = self.model().clm[i]
+        old_name = entry[0]
+        old_path = entry[1].path
+        dialog = ContactListCUDialog(old_name, old_path)
+        while dialog.exec_():
+            name = dialog.name
+            path = dialog.path
+            # check values
+            # - changed
+            if name == old_name and path == old_path:  # nothing changed
+                break
+            # - name is uniq but not this
+            if self.model().findByName(name, i):
+                QtWidgets.QMessageBox.warning(self, "Traversal 'name'", f"CL with name '{name}' already registered as another AB")
+                continue
+            # - path is uniq but not this
+            if self.model().findByPath(path, i):
+                QtWidgets.QMessageBox.warning(self, "Traversal 'path'", f"CL with path '{name}' already registered as another AB")
+                continue
+            # - path exists and is dir
+            if not os.path.isdir(path):
+                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
+                continue
+            self.model().itemUpdate(idx, name, path)    # update UI
+            break
+
+    def itemDel(self):
+        indexes = self.selectionModel().selectedRows()
+        for index in indexes:
+            i = index.row()
+            name = self.model().clm[i][0]
+            if QtWidgets.QMessageBox.question(self, "Deleting CL", f"Are you sure to delete '{name}'")\
+                    == QtWidgets.QMessageBox.StandardButton.Yes:
+                self.model().itemDel(i)
+
+
+class ContactListWidget(QtWidgets.QTableView):
     def __init__(self, parent):
         super().__init__(parent)
         self.setSelectionBehavior(self.SelectRows)
@@ -26,7 +90,7 @@ class ContactList(QtWidgets.QTableView):
         self.setModel(ContactListModel())
 
 
-class ContactDetails(QtWidgets.QGroupBox):
+class ContactDetailWidget(QtWidgets.QGroupBox):
     fn: QtWidgets.QLineEdit
     family: QtWidgets.QLineEdit
     given: QtWidgets.QLineEdit
@@ -69,9 +133,9 @@ class ContactDetails(QtWidgets.QGroupBox):
 
 
 class ContactsWidget(QtWidgets.QWidget):
-    sources: ContactSources
-    list: ContactList
-    details: ContactDetails
+    sources: ContactListManagerWidget
+    list: ContactListWidget
+    details: ContactDetailWidget
     selectionChanged = QtCore.Signal(QtCore.QItemSelection)
 
     def __init__(self):
@@ -88,9 +152,9 @@ class ContactsWidget(QtWidgets.QWidget):
     def createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
-        self.sources = ContactSources(splitter)
-        self.list = ContactList(splitter)
-        self.details = ContactDetails(splitter)
+        self.sources = ContactListManagerWidget(splitter)
+        self.list = ContactListWidget(splitter)
+        self.details = ContactDetailWidget(splitter)
         # layout
         splitter.addWidget(self.sources)
         splitter.addWidget(self.list)
@@ -104,6 +168,7 @@ class ContactsWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def refresh_list(self, selection: QtCore.QItemSelection):
+        """Fully refresh CL widget on CLM selection changed"""
         if idx_list := selection.indexes():
             self.list.model().beginResetModel()
             i = idx_list[0].row()
@@ -115,6 +180,7 @@ class ContactsWidget(QtWidgets.QWidget):
             print("No list selected")
 
     def refresh_details(self, selection: QtCore.QItemSelection):
+        """Fully refresh details widget on CL selection changed"""
         if idx_list := selection.indexes():
             # c = idx.model().getBack(idx)
             i = idx_list[0].row()
@@ -122,3 +188,62 @@ class ContactsWidget(QtWidgets.QWidget):
             self.details.refresh_data(c)
         else:
             print("No contact selected")
+
+# --- dialogs ----
+
+
+class ContactListCUDialog(QtWidgets.QDialog):
+    """ A dialog to add (Create) or edit (Update) Addressbook."""
+    def __init__(self, name: str = None, path: str = None):
+        super().__init__()
+        name_label = QtWidgets.QLabel("Name")
+        path_label = QtWidgets.QLabel("Path")
+        path_button = QtWidgets.QPushButton("...")
+        button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        self.nameText = QtWidgets.QLineEdit()
+        self.pathText = QtWidgets.QLineEdit()
+
+        grid = QtWidgets.QGridLayout()
+        grid.setColumnStretch(0, 0)
+        grid.setColumnStretch(1, 1)
+        grid.setColumnStretch(2, 0)
+        grid.addWidget(name_label, 0, 0)
+        grid.addWidget(self.nameText, 0, 1, 1, 2)
+        grid.addWidget(path_label, 1, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        grid.addWidget(self.pathText, 1, 1)
+        grid.addWidget(path_button, 1, 2)
+
+        layout = QtWidgets.QVBoxLayout()
+        layout.addLayout(grid)
+        layout.addWidget(button_box)
+        self.setLayout(layout)
+
+        self.setWindowTitle("Add a Contact Source")
+        path_button.clicked.connect(self.browse_dir)
+        button_box.accepted.connect(self.chk_values)
+        button_box.rejected.connect(self.reject)
+
+        if name:
+            self.nameText.setText(name)
+        if path:
+            self.pathText.setText(path)
+
+    def browse_dir(self):
+        # TODO: set starting path
+        if directory := QtCore.QDir.toNativeSeparators(
+                QtWidgets.QFileDialog.getExistingDirectory(self, "Select dir", QtCore.QDir.currentPath())):
+            self.pathText.setText(directory)
+
+    def chk_values(self):
+        if self.name and self.path:
+            self.accept()
+        else:
+            QtWidgets.QMessageBox.warning(self, "Empty values", "As 'name' as 'path' must not be empty")
+
+    @property
+    def name(self):
+        return self.nameText.text()
+
+    @property
+    def path(self):
+        return self.pathText.text()

@@ -1,4 +1,4 @@
-"""Contact collections """
+"""Contact collections."""
 
 # 1. std
 import os
@@ -6,19 +6,16 @@ import os
 # 3. local
 from .entry import Contact
 
-ABs = []  # [('AB', '/Volumes/Trash/Documents/AB'),]
-
 
 class ContactList(list[Contact]):
-    """Contact list
-    :todo: lazy/async [re]load
-    """
+    """List of Contacts"""
     path: str
 
     def __init__(self, path: str = None):
         super().__init__()
         self.path = path
 
+    @property
     def size(self):
         return len(self)
 
@@ -37,15 +34,43 @@ class ContactList(list[Contact]):
 
 
 class ContactListManager(list[(str, ContactList)]):
+    """List of Lists of Contacts.
+    :todo: use object instead of tuple
+    """
 
     def __init__(self):
         super().__init__()
 
+    @property
     def size(self):
         return len(self)
 
-    def add(self, name: str, collect: ContactList):
-        self.append((name, collect))
+    def itemAdd(self, name: str, path: str):
+        """Add new ContactList
+        :param name: Associated name of ContactList
+        :param path: Path to added ContactList
+        :todo: collect=>path
+        :todo: return something
+        """
+        cl = ContactList(path)
+        cl.load()
+        self.append((name, cl))
+
+    def itemUpdate(self, i: int, name: str, path: str):
+        old_entry = self[i]
+        # TODO: process changing name/path/both
+        cl = self[i][1]
+        cl.clear()
+        cl.path = path
+        cl.load()
+        self[i] = (name, cl)
+
+    def itemDel(self, i: int) -> bool:
+        if 0 < i < self.size:
+            self[i][1].clear()
+            del self[i]
+            return True
+        return False
 
     def print(self):
         for n, c in self:
@@ -58,6 +83,24 @@ class ContactListManager(list[(str, ContactList)]):
         else:
             print("==== <empty> ====")
 
-    def reload(self):
+    def load(self):
         for _, c in self:
             c.load()
+
+    def findByName(self, s: str, i: int) -> bool:
+        """Find existent CL by name [excluding i-th entry]
+        :return: True if found
+        """
+        for j, (v, _) in enumerate(self):
+            if v == s and j != i:
+                return True
+        return False
+
+    def findByPath(self, s: str, i: int) -> bool:
+        """Find existent CL by path [excluding i-th entry]
+        :return: True if found
+        """
+        for j, (_, v) in enumerate(self):
+            if v.path == s and j != i:
+                return True
+        return False
