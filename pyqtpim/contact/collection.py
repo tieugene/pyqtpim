@@ -10,9 +10,7 @@ ABs = []  # [('AB', '/Volumes/Trash/Documents/AB'),]
 
 
 class ContactList(list[Contact]):
-    """Contact list
-    :todo: lazy/async [re]load
-    """
+    """List of Contacts"""
     path: str
 
     def __init__(self, path: str = None):
@@ -37,6 +35,7 @@ class ContactList(list[Contact]):
 
 
 class ContactListManager(list[(str, ContactList)]):
+    """List of Lists of Contacts"""
 
     def __init__(self):
         super().__init__()
@@ -45,6 +44,10 @@ class ContactListManager(list[(str, ContactList)]):
         return len(self)
 
     def add(self, name: str, collect: ContactList):
+        """Add new ContactList
+        :param name: Associated name of ContactList
+        :param collect: ContactList to add
+        """
         self.append((name, collect))
 
     def print(self):
@@ -58,6 +61,6 @@ class ContactListManager(list[(str, ContactList)]):
         else:
             print("==== <empty> ====")
 
-    def reload(self):
+    def load(self):
         for _, c in self:
             c.load()
