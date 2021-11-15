@@ -47,9 +47,9 @@ class ContactListModel(QtCore.QAbstractTableModel):
     def size(self):
         return self.__data.size
 
-    def switch_data(self, new_cl: ContactList):
+    def switch_data(self, new_cl: ContactList = None):
         self.beginResetModel()
-        self.__data = new_cl
+        self.__data = new_cl or ContactList()
         self.endResetModel()
 
     def item(self, i: int):

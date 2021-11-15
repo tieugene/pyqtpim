@@ -3,9 +3,10 @@
 ## Now
 
 ### Job
+- [ ] C: C~~R~~UD
 
 ### Fixme
-- [ ] CLM.Del (~~selected~~): handle delete last
+- [x] CLM.Del (~~selected~~): handle delete last
 - [x] CL.switched (~~selected~~): clear details
 
 ### Tuning
@@ -15,16 +16,16 @@
   - [ ] View: autoshrink v/h
 - [ ] CL:
   - [ ] View: autoshrink v/h
-  - [ ] C~~R~~UD, Info (C)
 - [ ] C:
+  - [ ] C~~R~~UD, Info (C)
   - [ ] Data: mv load() back to CL (item+source)
   - [ ] View: extend
 
 ### Next:
 - [ ] CLM:
   - [ ] Model:
-    - [ ] QStandardItemModel/QStringListModel (checkboxes)
-    - [ ] *All* virtual list
+    - [ ] QStandardItemModel/QStringListModel
+    - [ ] *All* virtual list / checkboxes
     - [ ] ?Rescan
 - [ ] CL:
   - [ ] Data: async load

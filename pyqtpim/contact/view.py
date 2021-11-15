@@ -76,7 +76,7 @@ class ContactListWidget(QtWidgets.QTableView):
         self.activated.connect(self.refresh_details)
         self.selectionModel().selectionChanged.connect(self.refresh_details)
 
-    def refresh(self, data: ContactList):
+    def refresh(self, data: ContactList = None):
         self.model().switch_data(data)
         self.__details.refresh()
 
@@ -181,7 +181,8 @@ class ContactListManagerWidget(QtWidgets.QListView):
             cl = self.model().item(i)
             self.__list.refresh(cl)
         else:
-            print("No list selected")
+            # print("No list selected")
+            self.__list.refresh()
 
 
 class ContactsWidget(QtWidgets.QWidget):
