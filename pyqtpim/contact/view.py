@@ -76,6 +76,10 @@ class ContactListWidget(QtWidgets.QTableView):
         self.activated.connect(self.refresh_details)
         self.selectionModel().selectionChanged.connect(self.refresh_details)
 
+    def refresh(self, data: ContactList):
+        self.model().switch_data(data)
+        self.__details.refresh()
+
     def refresh_details(self, selection: QtCore.QItemSelection):
         """Fully refresh details widget on CL selection changed"""
         if idx_list := selection.indexes():
@@ -94,6 +98,8 @@ class ContactListManagerWidget(QtWidgets.QListView):
         self.__list = dependant
         self.setSelectionMode(self.SingleSelection)
         self.setModel(ContactListManagerModel())
+        # set model required
+        self.selectionModel().selectionChanged.connect(self.refresh_list)
 
     def itemAdd(self):
         """Add new CL."""
@@ -168,6 +174,15 @@ class ContactListManagerWidget(QtWidgets.QListView):
                                           f"Path: {cl.path}\n"
                                           f"Records: {cl.size}")
 
+    def refresh_list(self, selection: QtCore.QItemSelection):
+        """Fully refresh CL widget on CLM selection changed"""
+        if idx_list := selection.indexes():
+            i = idx_list[0].row()
+            cl = self.model().item(i)
+            self.__list.refresh(cl)
+        else:
+            print("No list selected")
+
 
 class ContactsWidget(QtWidgets.QWidget):
     sources: ContactListManagerWidget
@@ -178,8 +193,6 @@ class ContactsWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.createWidgets()
-        # set model required
-        self.sources.selectionModel().selectionChanged.connect(self.refresh_list)
 
     def createWidgets(self):
         # order
@@ -198,16 +211,6 @@ class ContactsWidget(QtWidgets.QWidget):
         layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(splitter)
         self.setLayout(layout)
-
-    def refresh_list(self, selection: QtCore.QItemSelection):
-        """Fully refresh CL widget on CLM selection changed"""
-        if idx_list := selection.indexes():
-            i = idx_list[0].row()
-            cl = self.sources.model().item(i)
-            self.list.model().switch_data(cl)
-            self.details.refresh()
-        else:
-            print("No list selected")
 
 # --- dialogs ----
 
