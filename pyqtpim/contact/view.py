@@ -10,9 +10,88 @@ from .entry import Contact
 from .collection import ContactList
 
 
-class ContactListManagerWidget(QtWidgets.QListView):
+class ContactDetailWidget(QtWidgets.QGroupBox):
+    fn: QtWidgets.QLineEdit
+    family: QtWidgets.QLineEdit
+    given: QtWidgets.QLineEdit
+    email: QtWidgets.QLineEdit
+    tel: QtWidgets.QLineEdit
+
     def __init__(self, parent):
         super().__init__(parent)
+        self.setTitle("Details")
+        self.createWidgets()
+
+    def createWidgets(self):
+        # order
+        self.fn = QtWidgets.QLineEdit(self)
+        self.family = QtWidgets.QLineEdit(self)
+        self.given = QtWidgets.QLineEdit(self)
+        self.email = QtWidgets.QLineEdit(self)
+        self.tel = QtWidgets.QLineEdit(self)
+        # layout
+        layout = QtWidgets.QFormLayout()
+        layout.addRow(QtWidgets.QLabel("FN:"), self.fn)
+        layout.addRow(QtWidgets.QLabel("Family:"), self.family)
+        layout.addRow(QtWidgets.QLabel("Given:"), self.given)
+        layout.addRow(QtWidgets.QLabel("Email:"), self.email)
+        layout.addRow(QtWidgets.QLabel("Tel.:"), self.tel)
+        self.setLayout(layout)
+        # attributes
+        self.fn.setReadOnly(True)
+        self.family.setReadOnly(True)
+        self.given.setReadOnly(True)
+        self.email.setReadOnly(True)
+        self.tel.setReadOnly(True)
+
+    def refresh(self, data: Contact = None):
+        if data:
+            self.fn.setText(data.FN)
+            self.family.setText(data.Family)
+            self.given.setText(data.Given)
+            self.email.setText(data.EmailList)
+            self.tel.setText(data.TelList)
+        else:
+            self.fn.clear()
+            self.family.clear()
+            self.given.clear()
+            self.email.clear()
+            self.tel.clear()
+
+
+class ContactListWidget(QtWidgets.QTableView):
+    __details: ContactDetailWidget
+
+    def __init__(self, parent, dependant: ContactDetailWidget):
+        super().__init__(parent)
+        self.__details = dependant
+        self.setSelectionBehavior(self.SelectRows)
+        self.setSelectionMode(self.SingleSelection)
+        # self.setEditTriggers(self.NoEditTriggers)
+        # self.setSortingEnabled(True) # requires sorting itself
+        self.horizontalHeader().setStretchLastSection(True)
+        self.verticalHeader().hide()
+        self.setModel(ContactListModel())
+        # signals
+        self.activated.connect(self.refresh_details)
+        self.selectionModel().selectionChanged.connect(self.refresh_details)
+
+    def refresh_details(self, selection: QtCore.QItemSelection):
+        """Fully refresh details widget on CL selection changed"""
+        if idx_list := selection.indexes():
+            i = idx_list[0].row()
+            c = self.model().item(i)
+            self.__details.refresh(c)
+        else:
+            print("No contact selected")
+
+
+class ContactListManagerWidget(QtWidgets.QListView):
+    __list: ContactListWidget
+
+    def __init__(self, parent, dependant: ContactListWidget):
+        super().__init__(parent)
+        self.__list = dependant
         self.setSelectionMode(self.SingleSelection)
         self.setModel(ContactListManagerModel())
 
@@ -90,67 +169,6 @@ class ContactListManagerWidget(QtWidgets.QListView):
                                           f"Records: {cl.size}")
 
 
-class ContactListWidget(QtWidgets.QTableView):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.setSelectionBehavior(self.SelectRows)
-        self.setSelectionMode(self.SingleSelection)
-        # self.setEditTriggers(self.NoEditTriggers)
-        # self.setSortingEnabled(True) # requires sorting itself
-        self.horizontalHeader().setStretchLastSection(True)
-        self.verticalHeader().hide()
-        self.setModel(ContactListModel())
-
-
-class ContactDetailWidget(QtWidgets.QGroupBox):
-    fn: QtWidgets.QLineEdit
-    family: QtWidgets.QLineEdit
-    given: QtWidgets.QLineEdit
-    email: QtWidgets.QLineEdit
-    tel: QtWidgets.QLineEdit
-
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.setTitle("Details")
-        self.createWidgets()
-
-    def createWidgets(self):
-        # order
-        self.fn = QtWidgets.QLineEdit(self)
-        self.family = QtWidgets.QLineEdit(self)
-        self.given = QtWidgets.QLineEdit(self)
-        self.email = QtWidgets.QLineEdit(self)
-        self.tel = QtWidgets.QLineEdit(self)
-        # layout
-        layout = QtWidgets.QFormLayout()
-        layout.addRow(QtWidgets.QLabel("FN:"), self.fn)
-        layout.addRow(QtWidgets.QLabel("Family:"), self.family)
-        layout.addRow(QtWidgets.QLabel("Given:"), self.given)
-        layout.addRow(QtWidgets.QLabel("Email:"), self.email)
-        layout.addRow(QtWidgets.QLabel("Tel.:"), self.tel)
-        self.setLayout(layout)
-        # attributes
-        self.fn.setReadOnly(True)
-        self.family.setReadOnly(True)
-        self.given.setReadOnly(True)
-        self.email.setReadOnly(True)
-        self.tel.setReadOnly(True)
-
-    def refresh(self, data: Contact = None):
-        if data:
-            self.fn.setText(data.FN)
-            self.family.setText(data.Family)
-            self.given.setText(data.Given)
-            self.email.setText(data.EmailList)
-            self.tel.setText(data.TelList)
-        else:
-            self.fn.clear()
-            self.family.clear()
-            self.given.clear()
-            self.email.clear()
-            self.tel.clear()
-
-
 class ContactsWidget(QtWidgets.QWidget):
     sources: ContactListManagerWidget
     list: ContactListWidget
@@ -160,17 +178,15 @@ class ContactsWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.createWidgets()
-        self.list.activated.connect(self.refresh_details)
         # set model required
         self.sources.selectionModel().selectionChanged.connect(self.refresh_list)
-        self.list.selectionModel().selectionChanged.connect(self.refresh_details)
 
     def createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
-        self.sources = ContactListManagerWidget(splitter)
-        self.list = ContactListWidget(splitter)
         self.details = ContactDetailWidget(splitter)
+        self.list = ContactListWidget(splitter, self.details)
+        self.sources = ContactListManagerWidget(splitter, self.list)
         # layout
         splitter.addWidget(self.sources)
         splitter.addWidget(self.list)
@@ -192,15 +208,6 @@ class ContactsWidget(QtWidgets.QWidget):
             self.details.refresh()
         else:
             print("No list selected")
-
-    def refresh_details(self, selection: QtCore.QItemSelection):
-        """Fully refresh details widget on CL selection changed"""
-        if idx_list := selection.indexes():
-            i = idx_list[0].row()
-            c = self.list.model().item(i)
-            self.details.refresh(c)
-        else:
-            print("No contact selected")
 
 # --- dialogs ----
 
