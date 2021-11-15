@@ -5,15 +5,15 @@
 
 ## Contacts
 - [ ] CLM:
-  - [ ] CRUD:
-    - [x] C
-    - [x] R
-    - [x] U
-    - [x] D (*shift settings*)
-    - [x] Info
+  - [x] CRUD, Info
+  - [x] Hidden inner data
 - [ ] CL:
   - [ ] CRUD:
     - [ ] C
     - [x] R
     - [ ] U
     - [ ] D
+  - [x] Load on demand
+  - [x] Hidden inner data
+- [ ] C:
+  - [x] Hidden inner data

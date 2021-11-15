@@ -6,100 +6,8 @@ import os.path
 from PySide2 import QtCore, QtWidgets
 # 3. local
 from .model import ContactListManagerModel, ContactListModel
-
-
-class ContactListManagerWidget(QtWidgets.QListView):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.setSelectionMode(self.SingleSelection)
-        self.setModel(ContactListManagerModel())
-
-    def itemAdd(self):
-        """Add new CL."""
-        dialog = ContactListCUDialog()
-        while dialog.exec_():
-            name = dialog.name
-            path = dialog.path
-            # check values
-            # - name is uniq
-            if self.model().findByName(name):
-                QtWidgets.QMessageBox.warning(self, "Duplicated 'name'", f"CL with name '{name}' already registered")
-                continue
-            # - path is uniq
-            if self.model().findByPath(path):
-                QtWidgets.QMessageBox.warning(self, "Duplicated 'path'", f"CL with path '{name}' already registered")
-                continue
-            # - path exists and is dir
-            if not os.path.isdir(path):
-                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
-                continue
-            self.model().itemAdd(name, path)    # update UI
-            break
-
-    def itemEdit(self):
-        indexes = self.selectionModel().selectedRows()
-        if not indexes:
-            return
-        idx = indexes[0]
-        i = idx.row()
-        entry = self.model().clm[i]
-        old_name = entry[0]
-        old_path = entry[1].path
-        dialog = ContactListCUDialog(old_name, old_path)
-        while dialog.exec_():
-            name = dialog.name
-            path = dialog.path
-            # check values
-            # - changed
-            if name == old_name and path == old_path:  # nothing changed
-                break
-            # - name is uniq but not this
-            if self.model().findByName(name, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'name'", f"There is another CL with name '{name}'")
-                continue
-            # - path is uniq but not this
-            if self.model().findByPath(path, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'path'", f"There is another CL with path '{name}'")
-                continue
-            # - path exists and is dir
-            if not os.path.isdir(path):
-                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
-                continue
-            self.model().itemUpdate(idx, name, path)    # update UI
-            break
-
-    def itemDel(self):
-        indexes = self.selectionModel().selectedRows()
-        for index in indexes:
-            i = index.row()
-            name = self.model().clm[i][0]
-            if QtWidgets.QMessageBox.question(self, "Deleting CL", f"Are you sure to delete '{name}'")\
-                    == QtWidgets.QMessageBox.StandardButton.Yes:
-                self.model().itemDel(i)
-
-    def itemInfo(self):
-        indexes = self.selectionModel().selectedRows()
-        if not indexes:
-            return
-        idx = indexes[0]
-        clm = self.model().clm[idx.row()]
-        QtWidgets.QMessageBox.information(self, "CL info",
-                                          f"Addressbook info:\n"
-                                          f"Name: {clm[0]}\n"
-                                          f"Path: {clm[1].path}\n"
-                                          f"Records: {clm[1].size}")
-
-
-class ContactListWidget(QtWidgets.QTableView):
-    def __init__(self, parent):
-        super().__init__(parent)
-        self.setSelectionBehavior(self.SelectRows)
-        self.setSelectionMode(self.SingleSelection)
-        # self.setEditTriggers(self.NoEditTriggers)
-        # self.setSortingEnabled(True) # requires sorting itself
-        self.horizontalHeader().setStretchLastSection(True)
-        self.verticalHeader().hide()
-        self.setModel(ContactListModel())
+from .entry import Contact
+from .collection import ContactList
 
 
 class ContactDetailWidget(QtWidgets.QGroupBox):
@@ -136,12 +44,145 @@ class ContactDetailWidget(QtWidgets.QGroupBox):
         self.email.setReadOnly(True)
         self.tel.setReadOnly(True)
 
-    def refresh_data(self, data):
-        self.fn.setText(data.getFN())
-        self.family.setText(data.getFamily())
-        self.given.setText(data.getGiven())
-        self.email.setText(data.getEmail())
-        self.tel.setText(data.getTel())
+    def refresh(self, data: Contact = None):
+        if data:
+            self.fn.setText(data.FN)
+            self.family.setText(data.Family)
+            self.given.setText(data.Given)
+            self.email.setText(data.EmailList)
+            self.tel.setText(data.TelList)
+        else:
+            self.fn.clear()
+            self.family.clear()
+            self.given.clear()
+            self.email.clear()
+            self.tel.clear()
+
+
+class ContactListWidget(QtWidgets.QTableView):
+    __details: ContactDetailWidget
+
+    def __init__(self, parent, dependant: ContactDetailWidget):
+        super().__init__(parent)
+        self.__details = dependant
+        self.setSelectionBehavior(self.SelectRows)
+        self.setSelectionMode(self.SingleSelection)
+        # self.setEditTriggers(self.NoEditTriggers)
+        # self.setSortingEnabled(True) # requires sorting itself
+        self.horizontalHeader().setStretchLastSection(True)
+        self.verticalHeader().hide()
+        self.setModel(ContactListModel())
+        # signals
+        self.activated.connect(self.refresh_details)
+        self.selectionModel().selectionChanged.connect(self.refresh_details)
+
+    def refresh(self, data: ContactList = None):
+        self.model().switch_data(data)
+        self.__details.refresh()
+
+    def refresh_details(self, selection: QtCore.QItemSelection):
+        """Fully refresh details widget on CL selection changed"""
+        if idx_list := selection.indexes():
+            i = idx_list[0].row()
+            c = self.model().item(i)
+            self.__details.refresh(c)
+        else:
+            print("No contact selected")
+
+
+class ContactListManagerWidget(QtWidgets.QListView):
+    __list: ContactListWidget
+
+    def __init__(self, parent, dependant: ContactListWidget):
+        super().__init__(parent)
+        self.__list = dependant
+        self.setSelectionMode(self.SingleSelection)
+        self.setModel(ContactListManagerModel())
+        # set model required
+        self.selectionModel().selectionChanged.connect(self.refresh_list)
+
+    def itemAdd(self):
+        """Add new CL."""
+        dialog = ContactListCUDialog()
+        while dialog.exec_():
+            name = dialog.name
+            path = dialog.path
+            # check values
+            # - name is uniq
+            if self.model().findByName(name):
+                QtWidgets.QMessageBox.warning(self, "Duplicated 'name'", f"CL with name '{name}' already registered")
+                continue
+            # - path is uniq
+            if self.model().findByPath(path):
+                QtWidgets.QMessageBox.warning(self, "Duplicated 'path'", f"CL with path '{path}' already registered")
+                continue
+            # - path exists and is dir
+            if not os.path.isdir(path):
+                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
+                continue
+            self.model().itemAdd(name, path)    # update UI
+            break
+
+    def itemEdit(self):
+        indexes = self.selectionModel().selectedRows()
+        if not indexes:
+            return
+        idx = indexes[0]
+        i = idx.row()
+        cl = self.model().item(i)
+        dialog = ContactListCUDialog(cl.name, cl.path)
+        while dialog.exec_():
+            name = dialog.name
+            path = dialog.path
+            # check values
+            # - changed
+            if name == cl.name and path == cl.path:  # nothing changed
+                break
+            # - name is uniq but not this
+            if self.model().findByName(name, i):
+                QtWidgets.QMessageBox.warning(self, "Traversal 'name'", f"There is another CL with name '{name}'")
+                continue
+            # - path is uniq but not this
+            if self.model().findByPath(path, i):
+                QtWidgets.QMessageBox.warning(self, "Traversal 'path'", f"There is another CL with path '{path}'")
+                continue
+            # - path exists and is dir
+            if not os.path.isdir(path):
+                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
+                continue
+            self.model().itemUpdate(idx, name, path)    # update UI
+            break
+
+    def itemDel(self):
+        indexes = self.selectionModel().selectedRows()
+        for index in indexes:
+            i = index.row()
+            name = self.model().item(i).name
+            if QtWidgets.QMessageBox.question(self, "Deleting CL", f"Are you sure to delete '{name}'")\
+                    == QtWidgets.QMessageBox.StandardButton.Yes:
+                self.model().itemDel(i)
+
+    def itemInfo(self):
+        indexes = self.selectionModel().selectedRows()
+        if not indexes:
+            return
+        idx = indexes[0]
+        cl = self.model().item(idx.row())
+        QtWidgets.QMessageBox.information(self, "CL info",
+                                          f"Addressbook info:\n"
+                                          f"Name: {cl.name}\n"
+                                          f"Path: {cl.path}\n"
+                                          f"Records: {cl.size}")
+
+    def refresh_list(self, selection: QtCore.QItemSelection):
+        """Fully refresh CL widget on CLM selection changed"""
+        if idx_list := selection.indexes():
+            i = idx_list[0].row()
+            cl = self.model().item(i)
+            self.__list.refresh(cl)
+        else:
+            # print("No list selected")
+            self.__list.refresh()
 
 
 class ContactsWidget(QtWidgets.QWidget):
@@ -153,20 +194,13 @@ class ContactsWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.createWidgets()
-        self.list.activated.connect(self.refresh_details)
-        # set model required
-        # refresh list
-        self.sources.selectionModel().selectionChanged.connect(self.refresh_list)
-        # self.sources.selectionModel().emitSelectionChanged()
-        # refresh details
-        self.list.selectionModel().selectionChanged.connect(self.refresh_details)
 
     def createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
-        self.sources = ContactListManagerWidget(splitter)
-        self.list = ContactListWidget(splitter)
         self.details = ContactDetailWidget(splitter)
+        self.list = ContactListWidget(splitter, self.details)
+        self.sources = ContactListManagerWidget(splitter, self.list)
         # layout
         splitter.addWidget(self.sources)
         splitter.addWidget(self.list)
@@ -178,28 +212,6 @@ class ContactsWidget(QtWidgets.QWidget):
         layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(splitter)
         self.setLayout(layout)
-
-    def refresh_list(self, selection: QtCore.QItemSelection):
-        """Fully refresh CL widget on CLM selection changed"""
-        if idx_list := selection.indexes():
-            self.list.model().beginResetModel()
-            i = idx_list[0].row()
-            cl = self.sources.model().clm[i][1]
-            self.list.model().cl = cl
-            self.list.model().endResetModel()
-            # print(cl)
-        else:
-            print("No list selected")
-
-    def refresh_details(self, selection: QtCore.QItemSelection):
-        """Fully refresh details widget on CL selection changed"""
-        if idx_list := selection.indexes():
-            # c = idx.model().getBack(idx)
-            i = idx_list[0].row()
-            c = self.list.model().cl[i]
-            self.details.refresh_data(c)
-        else:
-            print("No contact selected")
 
 # --- dialogs ----
 
