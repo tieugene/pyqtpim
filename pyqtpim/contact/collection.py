@@ -10,6 +10,9 @@ from .entry import Contact
 class ContactList(list[Contact]):
     """List of Contacts"""
     path: str
+    __name: str
+    __path: str
+    __ready: bool = False
 
     def __init__(self, path: str = None):
         super().__init__()
@@ -19,9 +22,9 @@ class ContactList(list[Contact]):
     def size(self):
         return len(self)
 
-    def print(self):
+    def _print(self):
         for v in self:
-            v.print()
+            v._print()
 
     def load(self):
         """Load entries from dir"""
@@ -61,7 +64,7 @@ class ContactListManager(list[(str, ContactList)]):
         # TODO: process changing name/path/both
         cl = self[i][1]
         cl.clear()
-        cl.path = path
+        cl.__path = path
         cl.load()
         self[i] = (name, cl)
 
@@ -72,11 +75,11 @@ class ContactListManager(list[(str, ContactList)]):
             return True
         return False
 
-    def print(self):
+    def _print(self):
         for n, c in self:
             if c.size():
                 print(f"==== {n} ====")
-                c.print()
+                c._print()
                 print(f"==== /{n} ====")
             else:
                 print(f"==== {n}/ ====")
@@ -101,6 +104,6 @@ class ContactListManager(list[(str, ContactList)]):
         :return: True if found
         """
         for j, (_, v) in enumerate(self):
-            if v.path == s and j != i:
+            if v.__path == s and j != i:
                 return True
         return False

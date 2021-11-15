@@ -44,7 +44,7 @@ class ContactListManagerWidget(QtWidgets.QListView):
         i = idx.row()
         entry = self.model().clm[i]
         old_name = entry[0]
-        old_path = entry[1].path
+        old_path = entry[1].__path
         dialog = ContactListCUDialog(old_name, old_path)
         while dialog.exec_():
             name = dialog.name
@@ -86,7 +86,7 @@ class ContactListManagerWidget(QtWidgets.QListView):
         QtWidgets.QMessageBox.information(self, "CL info",
                                           f"Addressbook info:\n"
                                           f"Name: {clm[0]}\n"
-                                          f"Path: {clm[1].path}\n"
+                                          f"Path: {clm[1].__path}\n"
                                           f"Records: {clm[1].size}")
 
 
@@ -137,11 +137,11 @@ class ContactDetailWidget(QtWidgets.QGroupBox):
         self.tel.setReadOnly(True)
 
     def refresh_data(self, data):
-        self.fn.setText(data.getFN())
-        self.family.setText(data.getFamily())
-        self.given.setText(data.getGiven())
-        self.email.setText(data.getEmail())
-        self.tel.setText(data.getTel())
+        self.fn.setText(data.FN)
+        self.family.setText(data.Family)
+        self.given.setText(data.Given)
+        self.email.setText(data.EmailList)
+        self.tel.setText(data.TelList)
 
 
 class ContactsWidget(QtWidgets.QWidget):

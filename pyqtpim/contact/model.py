@@ -34,7 +34,7 @@ class ContactListModel(QtCore.QAbstractTableModel):
         if role == QtCore.Qt.DisplayRole:
             c = self.cl[index.row()]
             col = index.column()
-            return c.getByName(FIELD_NAMES[col][1])
+            return c.getPropByName(FIELD_NAMES[col][1])
 
     def rowCount(self, index):
         return self.size

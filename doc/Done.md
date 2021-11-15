@@ -5,7 +5,7 @@
 
 ## Contacts
 - [ ] CLM:
-  - [ ] CRUD:
+  - [x] CRUD:
     - [x] C
     - [x] R
     - [x] U

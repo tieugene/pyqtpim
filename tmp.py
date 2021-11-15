@@ -12,20 +12,20 @@ def test_clm():
     clm = ContactListManager()
     clm.itemAdd('AB', indir)
     # clm.reload()
-    clm.print()
+    clm._print()
 
 
 def test_cl():
     cl = ContactList(indir)
     cl.load()
-    cl.print()
+    cl._print()
 
 
 def test_c():
     for infile in (infile1, infile2):
-        Contact(infile).print()
+        Contact(infile)._print()
 
 
 test_c()
-test_cl()
-test_clm()
+# test_cl()
+# test_clm()
