@@ -6,6 +6,8 @@ import os.path
 from PySide2 import QtCore, QtWidgets
 # 3. local
 from .model import ContactListManagerModel, ContactListModel
+from .entry import Contact
+from .collection import ContactList
 
 
 class ContactListManagerWidget(QtWidgets.QListView):
@@ -134,12 +136,19 @@ class ContactDetailWidget(QtWidgets.QGroupBox):
         self.email.setReadOnly(True)
         self.tel.setReadOnly(True)
 
-    def refresh_data(self, data):
-        self.fn.setText(data.FN)
-        self.family.setText(data.Family)
-        self.given.setText(data.Given)
-        self.email.setText(data.EmailList)
-        self.tel.setText(data.TelList)
+    def refresh(self, data: Contact = None):
+        if data:
+            self.fn.setText(data.FN)
+            self.family.setText(data.Family)
+            self.given.setText(data.Given)
+            self.email.setText(data.EmailList)
+            self.tel.setText(data.TelList)
+        else:
+            self.fn.clear()
+            self.family.clear()
+            self.given.clear()
+            self.email.clear()
+            self.tel.clear()
 
 
 class ContactsWidget(QtWidgets.QWidget):
@@ -153,10 +162,7 @@ class ContactsWidget(QtWidgets.QWidget):
         self.createWidgets()
         self.list.activated.connect(self.refresh_details)
         # set model required
-        # refresh list
         self.sources.selectionModel().selectionChanged.connect(self.refresh_list)
-        # self.sources.selectionModel().emitSelectionChanged()
-        # refresh details
         self.list.selectionModel().selectionChanged.connect(self.refresh_details)
 
     def createWidgets(self):
@@ -183,6 +189,7 @@ class ContactsWidget(QtWidgets.QWidget):
             i = idx_list[0].row()
             cl = self.sources.model().item(i)
             self.list.model().switch_data(cl)
+            self.details.refresh()
         else:
             print("No list selected")
 
@@ -191,7 +198,7 @@ class ContactsWidget(QtWidgets.QWidget):
         if idx_list := selection.indexes():
             i = idx_list[0].row()
             c = self.list.model().item(i)
-            self.details.refresh_data(c)
+            self.details.refresh(c)
         else:
             print("No contact selected")
 
