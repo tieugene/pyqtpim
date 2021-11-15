@@ -4,26 +4,16 @@
 
 ### Job
 
-### Fixes
-- [ ] CLM.Del: handle delete last
+### Fixme
+- [ ] CLM.Del (~~selected~~): handle delete last
+- [ ] CL.switched (~~selected~~): clear details
 
 ### Tuning
-- [x] CLM: name => CL
-- [x] CLM: tuple => object
-- [x] CLM: hide inner data
-- [x] CL: load on demand
-- [x] CL: hide inner data
-- [x] CL.update: name/path/both
-- [x] C: hide inner data
 
 ## Contacts
 - [ ] CLM:
-  - [ ] View:
-    - [ ] autoshrink v/h
-    - [ ] path in statusbar
-  - [x] CRUD, Info (CL)
+  - [ ] View: autoshrink v/h
 - [ ] CL:
-  - [x] Data: lazy load (on demand)
   - [ ] View: autoshrink v/h
   - [ ] C~~R~~UD, Info (C)
 - [ ] C:
@@ -37,7 +27,7 @@
     - [ ] *All* virtual list
     - [ ] ?Rescan
 - [ ] CL:
-  - [ ] Data: lazy load (async)
+  - [ ] Data: async load
   - [ ] Model: QStandardItemModel (?)
   - [ ] View:
     - [ ] Columns handle:

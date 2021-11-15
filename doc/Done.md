@@ -13,7 +13,7 @@
     - [x] R
     - [ ] U
     - [ ] D
-  - [ ] Load on demand
+  - [x] Load on demand
   - [x] Hidden inner data
 - [ ] C:
   - [x] Hidden inner data
