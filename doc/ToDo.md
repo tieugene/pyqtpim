@@ -6,7 +6,7 @@
 
 ### Fixme
 - [ ] CLM.Del (~~selected~~): handle delete last
-- [ ] CL.switched (~~selected~~): clear details
+- [x] CL.switched (~~selected~~): clear details
 
 ### Tuning
 
