@@ -8,12 +8,12 @@
 - [ ] CLM.Del: handle delete last
 
 ### Tuning
-- [ ] CLM: name => CL
-- [ ] CLM: tuple => object
-- [ ] CLM: hide inner data
-- [ ] CL: hide inner data
-- [ ] CL: load on demand
-- [ ] CL.update: name/path/both
+- [x] CLM: name => CL
+- [x] CLM: tuple => object
+- [x] CLM: hide inner data
+- [x] CL: load on demand
+- [x] CL: hide inner data
+- [x] CL.update: name/path/both
 - [x] C: hide inner data
 
 ## Contacts
@@ -21,9 +21,9 @@
   - [ ] View:
     - [ ] autoshrink v/h
     - [ ] path in statusbar
-  - [x] ~~CRU~~*D*, Info (CL)
+  - [x] CRUD, Info (CL)
 - [ ] CL:
-  - [ ] Data: lazy load (on demand)
+  - [x] Data: lazy load (on demand)
   - [ ] View: autoshrink v/h
   - [ ] C~~R~~UD, Info (C)
 - [ ] C:

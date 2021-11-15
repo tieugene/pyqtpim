@@ -7,39 +7,69 @@ import os
 from .entry import Contact
 
 
-class ContactList(list[Contact]):
+class ContactList(object):
     """List of Contacts"""
-    path: str
-    __name: str
     __path: str
-    __ready: bool = False
+    __name: str
+    __data: list[Contact]
+    __ready: bool
 
-    def __init__(self, path: str = None):
+    def __init__(self, name: str = None, path: str = None):
         super().__init__()
-        self.path = path
+        self.__name = name
+        self.__path = path
+        self.__data = []
+        self.__ready = False
+
+    def __load(self):
+        """Load entries from dir"""
+        if self.__path:
+            # print(f"{self.__name}: Loading from {self.__path}")
+            with os.scandir(self.__path) as itr:
+                for entry in itr:
+                    if not entry.is_file():
+                        continue
+                    # TODO: chk mimetype
+                    self.__data.append(Contact(entry.path))
+
+    def __chk_ready(self):
+        if not self.__ready:
+            self.__load()
+            self.__ready = True
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def path(self):
+        return self.__path
 
     @property
     def size(self):
-        return len(self)
+        self.__chk_ready()
+        return len(self.__data)
 
     def _print(self):
-        for v in self:
+        self.__chk_ready()
+        for v in self.__data:
             v._print()
 
-    def load(self):
-        """Load entries from dir"""
-        with os.scandir(self.path) as itr:
-            for entry in itr:
-                if not entry.is_file():
-                    continue
-                # TODO: chk mimetype
-                self.append(Contact(entry.path))
+    def item(self, i: int) -> Contact:
+        """Get list item"""
+        self.__chk_ready()
+        return self.__data[i]
+
+    def update(self, name: str, path: str):
+        self.__name = name
+        if path != self.__path:
+            self.__data.clear()
+            self.__path = path
+            self.__ready = False
 
 
-class ContactListManager(list[(str, ContactList)]):
-    """List of Lists of Contacts.
-    :todo: use object instead of tuple
-    """
+class ContactListManager(list[ContactList]):
+    """List of Lists of Contacts."""
 
     def __init__(self):
         super().__init__()
@@ -52,50 +82,30 @@ class ContactListManager(list[(str, ContactList)]):
         """Add new ContactList
         :param name: Associated name of ContactList
         :param path: Path to added ContactList
-        :todo: collect=>path
         :todo: return something
         """
-        cl = ContactList(path)
-        cl.load()
-        self.append((name, cl))
+        self.append(ContactList(name, path))
 
     def itemUpdate(self, i: int, name: str, path: str):
         # old_entry = self[i]
-        # TODO: process changing name/path/both
-        cl = self[i][1]
-        cl.clear()
-        cl.__path = path
-        cl.load()
-        self[i] = (name, cl)
+        self[i].update(name, path)
 
     def itemDel(self, i: int) -> bool:
         if 0 < i < self.size:
-            self[i][1].clear()
             del self[i]
             return True
         return False
 
     def _print(self):
-        for n, c in self:
-            if c.size():
-                print(f"==== {n} ====")
-                c._print()
-                print(f"==== /{n} ====")
-            else:
-                print(f"==== {n}/ ====")
-        else:
-            print("==== <empty> ====")
-
-    def load(self):
-        for _, c in self:
-            c.load()
+        for n, cl in self:
+            cl._print()
 
     def findByName(self, s: str, i: int) -> bool:
         """Find existent CL by name [excluding i-th entry]
         :return: True if found
         """
-        for j, (v, _) in enumerate(self):
-            if v == s and j != i:
+        for j, cl in enumerate(self):
+            if cl.name == s and j != i:
                 return True
         return False
 
@@ -103,7 +113,7 @@ class ContactListManager(list[(str, ContactList)]):
         """Find existent CL by path [excluding i-th entry]
         :return: True if found
         """
-        for j, (_, v) in enumerate(self):
-            if v.__path == s and j != i:
+        for j, cl in enumerate(self):
+            if cl.path == s and j != i:
                 return True
         return False

@@ -19,11 +19,11 @@ FIELD_NAMES = (
 
 
 class ContactListModel(QtCore.QAbstractTableModel):
-    cl: ContactList
+    __data: ContactList
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cl = ContactList()
+        self.__data = ContactList()
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int) -> typing.Any:
         if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
@@ -32,7 +32,7 @@ class ContactListModel(QtCore.QAbstractTableModel):
 
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
-            c = self.cl[index.row()]
+            c = self.__data.item(index.row())
             col = index.column()
             return c.getPropByName(FIELD_NAMES[col][1])
 
@@ -45,39 +45,45 @@ class ContactListModel(QtCore.QAbstractTableModel):
     # self
     @property
     def size(self):
-        return self.cl.size
+        return self.__data.size
 
-    def getBack(self, index):
-        """Get inner data"""
-        return self.cl[index.row()]
+    def switch_data(self, new_cl: ContactList):
+        self.beginResetModel()
+        self.__data = new_cl
+        self.endResetModel()
+
+    def item(self, i: int):
+        return self.__data.item(i)
 
 
 class ContactListManagerModel(QtCore.QAbstractListModel):
-    clm: ContactListManager
+    __data: ContactListManager
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.clm = ContactListManager()
+        self.__data = ContactListManager()
         self.__init_data()
 
     # inherited
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
-            name, _ = self.clm[index.row()]
-            return name
+            return self.__data[index.row()].name
 
     def rowCount(self, index):
         return self.size
 
     # self
-    @property
-    def size(self):
-        return self.clm.size
-
     def __init_data(self):
         """:todo: lazy load"""
         for name, path in MySettings.AB:
-            self.clm.itemAdd(name, path)
+            self.__data.itemAdd(name, path)
+
+    @property
+    def size(self):
+        return self.__data.size
+
+    def item(self, i: int) -> ContactList:
+        return self.__data[i]
 
     def itemAdd(self, name: str, path: str):
         """Add new ContactList
@@ -85,7 +91,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         """
         i = self.size
         self.beginInsertRows(QtCore.QModelIndex(), i, i)
-        self.clm.itemAdd(name, path)
+        self.__data.itemAdd(name, path)
         self.endInsertRows()
         MySettings.ab_append({"name": name, "path": path})
 
@@ -94,7 +100,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         :todo: implement setData() -> bool
         """
         i = idx.row()
-        self.clm.itemUpdate(i, name, path)
+        self.__data.itemUpdate(i, name, path)
         MySettings.ab_update(i, {"name": name, "path": path})
 
     def itemDel(self, i: int):
@@ -103,7 +109,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         :todo: implment removeRows() -> bool
         """
         self.beginRemoveRows(QtCore.QModelIndex(), i, i)
-        self.clm.itemDel(i)
+        self.__data.itemDel(i)
         self.endRemoveRows()
         MySettings.ab_del(i)
 
@@ -111,10 +117,10 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         """Find existent CL by name [excluding i-th entry]
         :return: True if found
         """
-        return self.clm.findByName(s, i)
+        return self.__data.findByName(s, i)
 
     def findByPath(self, s: str, i: int = None) -> bool:
         """Find existent CL by path [excluding i-th entry]
         :return: True if found
         """
-        return self.clm.findByPath(s, i)
+        return self.__data.findByPath(s, i)

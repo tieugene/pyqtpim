@@ -17,7 +17,7 @@ def test_clm():
 
 def test_cl():
     cl = ContactList(indir)
-    cl.load()
+    cl.__load()
     cl._print()
 
 
