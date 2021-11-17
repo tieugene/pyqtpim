@@ -26,12 +26,13 @@ class ContactListModel(QtCore.QAbstractTableModel):
         self.__data = ContactList()
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int) -> typing.Any:
+        """TODO: use setHeaderData() in __init__()"""
         if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
             return FIELD_NAMES[section][0]
         return super().headerData(section, orientation, role)
 
     def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole:
+        if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # EditRole for mapper
             c = self.__data.item(index.row())
             col = index.column()
             return c.getPropByName(FIELD_NAMES[col][1])
@@ -56,7 +57,7 @@ class ContactListModel(QtCore.QAbstractTableModel):
         return self.__data.item(i)
 
 
-class ContactListManagerModel(QtCore.QStringListModel):
+class ContactListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
     __data: ContactListManager
 
     def __init__(self, *args, **kwargs):

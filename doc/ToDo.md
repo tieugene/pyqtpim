@@ -3,28 +3,29 @@
 ## Now
 
 ### Job
-- [ ] C: QDataWidgetMapper()
+- [x] C: QDataWidgetMapper()
+- Reuse Mgr/List/Details (one from):
+  - Inherit
+  - Class Object
+  - Replace model of object
 
 ### Fixme
 
 ### Tuning
-- CLM.Model:
+- [ ] CLM.Model:
   - [ ] insertRows()
   - [ ] updateRows()
 - [ ] split `contact/*` by `part/layer.py`:
   - card/{data,view)
   - ab/{data,model,view)
   - mgr/{data,model,view)
-- Reuse Mgr/List/Details:
-  - Inherit
-  - Class Object
-  - Replace model of object
 
 ## Contacts
 - [ ] CLM.View:
   - [ ] autoshrink v/h
 - [ ] CL.View:
   - [ ] autoshrink v/h
+    *(self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)*
 - [ ] C:
   - [ ] Data: mv load() back to CL (item+source)
   - [ ] Model: QDataWidgetMapper()
@@ -42,8 +43,8 @@
   - [ ] Model: QStandardItemModel (?)
   - [ ] View:
     - [ ] Columns handle:
-       - [ ] sort by
        - [ ] select (== show/hide)
+       - [ ] sort by
        - [ ] order
 - [ ] C: &hellip;
 
