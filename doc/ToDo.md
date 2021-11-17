@@ -3,23 +3,32 @@
 ## Now
 
 ### Job
-- [ ] C: C~~R~~UD
+- [ ] C: QDataWidgetMapper()
 
 ### Fixme
-- [x] CLM.Del (~~selected~~): handle delete last
-- [x] CL.switched (~~selected~~): clear details
 
 ### Tuning
+- [ ] split `contact/*` by `part/layer.py`:
+  - card/{data,view)
+  - ab/{data,model,view)
+  - mgr/{data,model,view)
+- Reuse Mgr/List/Details:
+  - Inherit
+  - Class Object
+  - Replace model of object
 
 ## Contacts
-- [ ] CLM:
-  - [ ] View: autoshrink v/h
-- [ ] CL:
-  - [ ] View: autoshrink v/h
+- [ ] CLM.View:
+  - [ ] self.model().selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
+  - [ ] autoshrink v/h
+- [ ] CL.View:
+  - [ ] self.model().selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
+  - [ ] autoshrink v/h
 - [ ] C:
-  - [ ] C~~R~~UD, Info (C)
   - [ ] Data: mv load() back to CL (item+source)
+  - [ ] Model: QDataWidgetMapper()
   - [ ] View: extend
+  - [ ] C~~R~~UD, Info (*CardBook/radicale compatible*; not drop data exist)
 
 ### Next:
 - [ ] CLM:
@@ -35,11 +44,10 @@
        - [ ] sort by
        - [ ] select (== show/hide)
        - [ ] order
-- [ ] C:
-  - [ ] Model: QAbstractItemModel
-  - [ ] View(QAbstractItemView):
+- [ ] C: &hellip;
 
 ## ToDo
+(*Lightning/radicale compatible*)
 
 ## Calendar
 
@@ -58,3 +66,4 @@
   - gallery/ (UI, widgets)
   - itemviews/addresbook/ (?)
   - tutorials/addressbook/ (CRUD)
+- sql/books/ (list/Details)

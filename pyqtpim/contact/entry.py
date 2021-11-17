@@ -32,7 +32,7 @@ class Contact:
         if not self.__data:
             raise exc.ContactLoadError(f"File open error: {path}")
 
-    def _print(self):
+    def print(self):
         def __fn():
             print(f"FN: {self.__data.fn.value}")
 

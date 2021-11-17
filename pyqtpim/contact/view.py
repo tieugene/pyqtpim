@@ -59,7 +59,7 @@ class ContactDetailWidget(QtWidgets.QGroupBox):
             self.tel.clear()
 
 
-class ContactListWidget(QtWidgets.QTableView):
+class ContactListView(QtWidgets.QTableView):
     __details: ContactDetailWidget
 
     def __init__(self, parent, dependant: ContactDetailWidget):
@@ -90,10 +90,10 @@ class ContactListWidget(QtWidgets.QTableView):
             print("No contact selected")
 
 
-class ContactListManagerWidget(QtWidgets.QListView):
-    __list: ContactListWidget
+class ContactListManagerView(QtWidgets.QListView):
+    __list: ContactListView
 
-    def __init__(self, parent, dependant: ContactListWidget):
+    def __init__(self, parent, dependant: ContactListView):
         super().__init__(parent)
         self.__list = dependant
         self.setSelectionMode(self.SingleSelection)
@@ -186,10 +186,9 @@ class ContactListManagerWidget(QtWidgets.QListView):
 
 
 class ContactsWidget(QtWidgets.QWidget):
-    sources: ContactListManagerWidget
-    list: ContactListWidget
+    sources: ContactListManagerView
+    list: ContactListView
     details: ContactDetailWidget
-    selectionChanged = QtCore.Signal(QtCore.QItemSelection)
 
     def __init__(self):
         super().__init__()
@@ -199,8 +198,8 @@ class ContactsWidget(QtWidgets.QWidget):
         # order
         splitter = QtWidgets.QSplitter(self)
         self.details = ContactDetailWidget(splitter)
-        self.list = ContactListWidget(splitter, self.details)
-        self.sources = ContactListManagerWidget(splitter, self.list)
+        self.list = ContactListView(splitter, self.details)
+        self.sources = ContactListManagerView(splitter, self.list)
         # layout
         splitter.addWidget(self.sources)
         splitter.addWidget(self.list)
@@ -218,6 +217,9 @@ class ContactsWidget(QtWidgets.QWidget):
 
 class ContactListCUDialog(QtWidgets.QDialog):
     """ A dialog to add (Create) or edit (Update) Addressbook."""
+    nameText: QtWidgets.QLineEdit
+    pathText: QtWidgets.QLineEdit
+
     def __init__(self, name: str = None, path: str = None):
         super().__init__()
         name_label = QtWidgets.QLabel("Name")
@@ -271,3 +273,56 @@ class ContactListCUDialog(QtWidgets.QDialog):
     @property
     def path(self):
         return self.pathText.text()
+
+
+class ContactCUDialog(QtWidgets.QDialog):
+    # 1. General
+    kind: QtWidgets.QComboBox
+    # 2.  Identification
+    fn: QtWidgets.QLineEdit
+    n_pfx: QtWidgets.QLineEdit
+    n_last: QtWidgets.QLineEdit
+    n_first: QtWidgets.QLineEdit
+    n_middle: QtWidgets.QLineEdit
+    n_sfx: QtWidgets.QLineEdit
+    nickname: QtWidgets.QLineEdit
+    # photo: QtWidgets.Q
+    bday: QtWidgets.QDateEdit
+    dieday: QtWidgets.QDateEdit    # !new
+    dielocation: QtWidgets.QLineEdit
+    anniversary: QtWidgets.QDateEdit  # marriage (годовщина?)
+    sex: QtWidgets.QComboBox          # enum:5
+    # 3. Delivery Addressing            # TODO: (?prio:bool, type:h/w/+, subj
+    adr_pobox: QtWidgets.QLineEdit      # Post Office Box; should be empty
+    adr_ext: QtWidgets.QLineEdit        # Extended address (appartment, suite); should be empty
+    adr_street: QtWidgets.QLineEdit     # incl. build
+    adr_locality: QtWidgets.QLineEdit   # e.g. city
+    adr_region: QtWidgets.QLineEdit     # e.g. state, province
+    adr_code: QtWidgets.QLineEdit       # postal code
+    adr_country: QtWidgets.QComboBox
+    # 4. Communication
+    tel: list[QtWidgets.QLineEdit]      # TODO: (?prio:bool, ?type:enum, tel:str)
+    email: list[QtWidgets.QLineEdit]    # TODO: (?prio:bool, ?type:w/h/o), email:str)
+    impp: list[QtWidgets.QLineEdit]     # TODO: (?prio:bool, type:skype/jabber/gtalk/qq, account:str)
+    # lang: QtWidgets.QComboBox
+    # 5. Geographical
+    # tz
+    # geo
+    # 6. Organizational
+    title: QtWidgets.QLineEdit
+    role: QtWidgets.QLineEdit
+    # logo
+    org: QtWidgets.QLineEdit
+    member: str         # for KIND=group only
+    # related
+    # 7. Explanatory
+    categories: QtWidgets.QLineEdit     # csv
+    note: QtWidgets.QPlainTextEdit
+    # prodid
+    # rev
+    # sound
+    # uid
+    url: list[QtWidgets.QLineEdit]      # TODO: (?prio:bool, type:w/h/o, subj:str)
+    events: list[QtWidgets.QLineEdit]   # TODO: (?prio:bool, date:date, subj:str)
+    prefered_mail: str  # plaintext/html/unknown
+    pubkeys: list[QtWidgets.QLineEdit]  # TODO: add prio:bool; not works

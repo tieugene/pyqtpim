@@ -50,10 +50,10 @@ class ContactList(object):
         self.__chk_ready()
         return len(self.__data)
 
-    def _print(self):
+    def print(self):
         self.__chk_ready()
         for v in self.__data:
-            v._print()
+            v.print()
 
     def item(self, i: int) -> Contact:
         """Get list item"""
@@ -96,9 +96,9 @@ class ContactListManager(list[ContactList]):
             return True
         return False
 
-    def _print(self):
+    def print(self):
         for n, cl in self:
-            cl._print()
+            cl.print()
 
     def findByName(self, s: str, i: int) -> bool:
         """Find existent CL by name [excluding i-th entry]
