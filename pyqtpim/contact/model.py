@@ -73,9 +73,7 @@ class ContactListManagerModel(QtCore.QStringListModel):
         return self.size
 
     def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex):
-        """Delete record #i.
-        :todo: implment removeRows() -> bool
-        """
+        """Delete count records starting from i."""
         self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
         for row in range(row0, row0 + count):
             self.__data.itemDel(row)
@@ -85,7 +83,6 @@ class ContactListManagerModel(QtCore.QStringListModel):
 
     # self
     def __init_data(self):
-        """:todo: lazy load"""
         for name, path in MySettings.AB:
             self.__data.itemAdd(name, path)
 
@@ -98,7 +95,7 @@ class ContactListManagerModel(QtCore.QStringListModel):
 
     def itemAdd(self, name: str, path: str):
         """Add new ContactList
-        :todo: implenet insertRow() -> bool
+        :todo: implement insertRow() -> bool
         """
         i = self.size
         self.beginInsertRows(QtCore.QModelIndex(), i, i)

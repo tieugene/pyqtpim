@@ -91,7 +91,7 @@ class ContactListManager(list[ContactList]):
         self[i].update(name, path)
 
     def itemDel(self, i: int) -> bool:
-        if 0 < i < self.size:
+        if 0 <= i < self.size:
             del self[i]
             return True
         return False

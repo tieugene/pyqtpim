@@ -7,13 +7,8 @@
 - [ ] C: QDataWidgetMapper()
 
 ### Fixme
-- [ ] CLM.View: rm 1st oops:
-  - 1/3: mgr not changed, list changed
-  - 2/3: &check;
-  - 3/3: &check;
-  - 1/2: mgr not changed, list changed
-  - 2/2: &check;
-  - 1/1: mgr not changed, list cleared
+- [x] CLM.View: rm 1st oops:
+
 
 ### Tuning
 - CLM.Model:
