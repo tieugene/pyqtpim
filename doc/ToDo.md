@@ -3,10 +3,15 @@
 ## Now
 
 ### Job
-- Reuse Mgr/List/Details (one from):
-  - Inherit
-  - Class Object
-  - Replace model of object
+- Reuse:
+  - [ ] Who:
+    - [ ] Mgr
+    - [ ] List
+    - [x] Entry (Extensions)
+  - [ ] How:
+    - Extension
+    - ~~Class Object~~ *(too pythonic)*
+    - Replace model of object
 
 ### Fixme
 

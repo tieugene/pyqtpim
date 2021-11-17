@@ -7,31 +7,24 @@ Most interesting (see contents:dict):
 - tel:list(TEL) (card: ?)
 """
 
-import vobject
+from common.backend import Entry
 
 
-class Contact:
+class Contact(Entry):
     """Contact itself"""
-    __fname: str
-    __data: vobject.base.Component
-
-    def __init__(self, path: str, vcard: vobject.base.Component):
-        self.__data = vcard
-        self.__fname = path
-
     def print(self):
         def __fn():
-            print(f"FN: {self.__data.fn.value}")
+            print(f"FN: {self._data.fn.value}")
 
         def __name():
-            if n := self.__data.contents.get('n'):
+            if n := self._data.contents.get('n'):
                 print("N:", )
                 v = n[0].value
                 print(v.__dict__)
                 # print(v.family)
 
         def __email():
-            if email := self.__data.contents.get('email'):
+            if email := self._data.contents.get('email'):
                 print("Email:", )
                 v = email[0]
                 print(v.__dict__)
@@ -56,26 +49,26 @@ class Contact:
         return ''
 
     def getFN(self) -> str:
-        return self.__data.fn.value
+        return self._data.fn.value
 
     def getFamily(self) -> str:
-        if n := self.__data.contents.get('n'):
+        if n := self._data.contents.get('n'):
             return n[0].value.family
         return ''
 
     def getGiven(self) -> str:
-        if n := self.__data.contents.get('n'):
+        if n := self._data.contents.get('n'):
             return n[0].value.given
         return ''
 
     def getEmailList(self) -> str:
         """:todo: preferable or list"""
-        if email := self.__data.contents.get('email'):
+        if email := self._data.contents.get('email'):
             return ", ".join([v.value for v in email])
         return ''
 
     def getTelList(self) -> str:
         """:todo: preferable or list"""
-        if tel := self.__data.contents.get('tel'):
+        if tel := self._data.contents.get('tel'):
             return ", ".join([v.value for v in tel])
         return ''
