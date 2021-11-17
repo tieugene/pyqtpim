@@ -3,8 +3,6 @@
 ## Now
 
 ### Job
-- [x] CLM.View: self.selectionModel().selectionChanged => ...currentRowChanged
-- [x] CL.View: self.selectionModel().selectionChanged => ...currentRowChanged
 - [ ] C: QDataWidgetMapper()
 
 ### Fixme
@@ -24,10 +22,8 @@
 
 ## Contacts
 - [ ] CLM.View:
-  - [ ] self.selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
   - [ ] autoshrink v/h
 - [ ] CL.View:
-  - [ ] self.selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
   - [ ] autoshrink v/h
 - [ ] C:
   - [ ] Data: mv load() back to CL (item+source)
