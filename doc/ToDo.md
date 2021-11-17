@@ -3,7 +3,6 @@
 ## Now
 
 ### Job
-- [x] C: QDataWidgetMapper()
 - Reuse Mgr/List/Details (one from):
   - Inherit
   - Class Object
@@ -24,8 +23,7 @@
 - [ ] CLM.View:
   - [ ] autoshrink v/h
 - [ ] CL.View:
-  - [ ] autoshrink v/h
-    *(self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)*
+  - [ ] autoshrink v/h[^1]
 - [ ] C:
   - [ ] Data: mv load() back to CL (item+source)
   - [ ] Model: QDataWidgetMapper()
@@ -69,3 +67,5 @@
   - itemviews/addresbook/ (?)
   - tutorials/addressbook/ (CRUD)
 - sql/books/ (list/Details)
+
+[^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents

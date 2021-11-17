@@ -78,7 +78,7 @@ class ContactListManagerModel(QtCore.QStringListModel):  # or QAbstraactListMode
         self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
         for row in range(row0, row0 + count):
             self.__data.itemDel(row)
-            MySettings.ab_del(row)
+            MySettings.list_del('contacts', row)
         self.endRemoveRows()
         return True
 
@@ -102,7 +102,7 @@ class ContactListManagerModel(QtCore.QStringListModel):  # or QAbstraactListMode
         self.beginInsertRows(QtCore.QModelIndex(), i, i)
         self.__data.itemAdd(name, path)
         self.endInsertRows()
-        MySettings.ab_append({"name": name, "path": path})
+        MySettings.list_append('contacts', {"name": name, "path": path})
 
     def itemUpdate(self, idx: QtCore.QModelIndex, name: str, path: str):
         """Add new ContactList.
@@ -110,7 +110,7 @@ class ContactListManagerModel(QtCore.QStringListModel):  # or QAbstraactListMode
         """
         i = idx.row()
         self.__data.itemUpdate(i, name, path)
-        MySettings.ab_update(i, {"name": name, "path": path})
+        MySettings.list_update('contacts', i, {"name": name, "path": path})
 
     def findByName(self, s: str, i: int = None) -> bool:
         """Find existent CL by name [excluding i-th entry]

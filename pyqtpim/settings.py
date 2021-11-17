@@ -3,34 +3,37 @@ from PySide2.QtCore import QCoreApplication, QSettings
 
 class MySettings:
     """QSettings extender"""
-    settings: QSettings
+    __settings: QSettings
     AB: list[(str, str)] = []
 
     @staticmethod
     def setup():
-        def __ab_preload(s):
-            s.beginGroup('contacts')
-            size = s.beginReadArray('sources')
-            for i in range(size):
-                s.setArrayIndex(i)
-                name = s.value('name')
-                path = s.value('path')
-                MySettings.AB.append((name, path))
-            s.endArray()
-            s.endGroup()
         QCoreApplication.setOrganizationName("TI_Eugene")
         QCoreApplication.setOrganizationDomain("eap.su")
         QCoreApplication.setApplicationName("PyQtPIM")
         QSettings.setDefaultFormat(QSettings.IniFormat)
-        MySettings.settings = QSettings()
-        __ab_preload(MySettings.settings)
+        MySettings.__settings = QSettings()
+        MySettings.__list_preload('contacts')
 
     @staticmethod
-    def ab_append(data: dict):
+    def __list_preload(group: str):
+        s = MySettings.__settings
+        s.beginGroup(group)
+        size = s.beginReadArray('list')
+        for i in range(size):
+            s.setArrayIndex(i)
+            name = s.value('name')
+            path = s.value('path')
+            MySettings.AB.append((name, path))
+        s.endArray()
+        s.endGroup()
+
+    @staticmethod
+    def list_append(group: str, data: dict):
         """Append array in group"""
-        s = MySettings.settings
-        s.beginGroup('contacts')
-        s.beginWriteArray('sources')
+        s = MySettings.__settings
+        s.beginGroup(group)
+        s.beginWriteArray('list')
         s.setArrayIndex(len(MySettings.AB))
         for k, v in data.items():
             s.setValue(k, v)
@@ -39,10 +42,10 @@ class MySettings:
         MySettings.AB.append((data['name'], data['path']))
 
     @staticmethod
-    def ab_update(i: int, data: dict):
-        s = MySettings.settings
-        s.beginGroup('contacts')
-        s.beginWriteArray('sources')
+    def list_update(group: str, i: int, data: dict):
+        s = MySettings.__settings
+        s.beginGroup(group)
+        s.beginWriteArray('list')
         s.setArrayIndex(i)
         for k, v in data.items():
             s.setValue(k, v)
@@ -52,11 +55,11 @@ class MySettings:
         MySettings.AB[i] = (data['name'], data['path'])
 
     @staticmethod
-    def ab_del(i: int):
+    def list_del(group: str, i: int):
         del MySettings.AB[i]
-        s = MySettings.settings
-        s.beginGroup('contacts')
-        s.beginWriteArray('sources')
+        s = MySettings.__settings
+        s.beginGroup(group)
+        s.beginWriteArray('list')
         while i < len(MySettings.AB):
             s.setArrayIndex(i)
             s.setValue('name', MySettings.AB[i][0])
@@ -65,5 +68,5 @@ class MySettings:
         s.setArrayIndex(i)
         s.remove("")
         s.endArray()
-        s.setValue('sources' + '/size', i)  # hack, but...
+        s.setValue('list' + '/size', i)  # hack, but...
         s.endGroup()
