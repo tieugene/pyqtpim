@@ -56,7 +56,7 @@ class ContactListModel(QtCore.QAbstractTableModel):
         return self.__data.item(i)
 
 
-class ContactListManagerModel(QtCore.QAbstractListModel):
+class ContactListManagerModel(QtCore.QStringListModel):
     __data: ContactListManager
 
     def __init__(self, *args, **kwargs):
@@ -72,9 +72,17 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
     def rowCount(self, index):
         return self.size
 
+    def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex):
+        """Delete count records starting from i."""
+        self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
+        for row in range(row0, row0 + count):
+            self.__data.itemDel(row)
+            MySettings.ab_del(row)
+        self.endRemoveRows()
+        return True
+
     # self
     def __init_data(self):
-        """:todo: lazy load"""
         for name, path in MySettings.AB:
             self.__data.itemAdd(name, path)
 
@@ -87,7 +95,7 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
 
     def itemAdd(self, name: str, path: str):
         """Add new ContactList
-        :todo: implenet insertRow() -> bool
+        :todo: implement insertRow() -> bool
         """
         i = self.size
         self.beginInsertRows(QtCore.QModelIndex(), i, i)
@@ -102,16 +110,6 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
         i = idx.row()
         self.__data.itemUpdate(i, name, path)
         MySettings.ab_update(i, {"name": name, "path": path})
-
-    def itemDel(self, i: int):
-        """Delete record #i.
-        :fixme: shift higher entries to low
-        :todo: implment removeRows() -> bool
-        """
-        self.beginRemoveRows(QtCore.QModelIndex(), i, i)
-        self.__data.itemDel(i)
-        self.endRemoveRows()
-        MySettings.ab_del(i)
 
     def findByName(self, s: str, i: int = None) -> bool:
         """Find existent CL by name [excluding i-th entry]

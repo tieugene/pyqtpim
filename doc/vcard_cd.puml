@@ -5,29 +5,120 @@ abstract class AbstractList
 abstract AbstractCollection
 interface List
 interface Collection
-
-List <|-- AbstractList
-Collection <|-- AbstractCollection
-
-Collection <|- List
-AbstractCollection <|- AbstractList
-AbstractList <|-- ArrayList
-
 class ArrayList {
     Object[] elementData
     size()
 }
 
-enum TimeUnit {
-    DAYS
-    HOURS
-    MINUTES
+List <|-- AbstractList
+Collection <|-- AbstractCollection
+Collection <|- List
+AbstractCollection <|- AbstractList
+AbstractList <|-- ArrayList
+
+class VCARD { /' Properties '/
+    /' 1. General '/
+    SOURCE* : URI
+    KIND : KindType (?)
+    XML* : str
+    /' 2. Identification '/
+    FN+ : str /' pref, type ; CCITT.X520.1988 '/
+    N? : NameType /' CCITT.X520.1988 '/
+    NICKNAME* : csv /' pref, type '/
+    PHOTO* : URI|encoded /' pref, type '/
+    BDAY? : DATE
+    ANNIVERSARY? : DATE
+    GENDER? : SexGenderType
+    /' 3. Delivery Addressing '/
+    ADDR* : AddrType /' PREF, TYPE '/
+    /' 4. Communication '/
+    TEL* : str /' PREF, TYPE:TelType* ; RFC3966 RFC5322 '/
+    EMAIL* : str /' PREF, TYPE '/
+    IMPP* : URI /' PREF, TYPE:TelType* ; RFC4770 '/
+    LANG* : enum /' PREF, TYPE '/
+    /' 5. Geographical '/
+    TZ* : str /' ftp://elsie.nci.nih.gov/pub/ '/
+    GEO* : URI /' RFC5870 '/
+    /' 6. Organizational '/
+    TITLE* : str /' CCITT.X520.1988 '/
+    ROLE* : str /' CCITT.X520.1988 '/
+    LOGO* : URI
+    ORG* : OrgType /' CCITT.X520.1988 '/
+    MEMBER* : URI
+    RELATED* : URI
+    /' 7. Explanatory '/
+    CATEGORIES* : csv
+    NOTE* : str /' CCITT.X520.1988 '/
+    PRODID? : str
+    REV? : TIMESTAMP
+    SOUND* : URI
+    UID? : str /' RFC4122 '/
+    CLIENTPIDMAP* : somethingstrange
+    URL* : URI
+    VERSION : str
+    /' 8. Security '/
+    KEY* : URI|str
+    /' 9. Calendar '/
+    FBURL* : URI
+    CALADRURI* : URI
+    CALURI* : URI
 }
 
-class VCARD {
-    SOURCE:URI[*]
-    KIND:...[*1]
-    FN:
+enum KindType {
+    individual
+    group
+    org
+    <s>location</s>
 }
 
-@enduml
+class NameType { /' ";" separated of "," separated '/
+    Family : csv /' aka surname, last name '/
+    Given : csv /' aka name, firstname '/
+    Additional : csv /' aka midname '/
+    Pfx : csv
+    Sfx : csv
+}
+
+class SexGenderType { /' ";" separated '/
+    sex? : SexType
+    gender? : str
+}
+
+enum SexType {
+    M /' Male '/
+    F /' Female '
+    O /' Other '/
+    N /' none or not applicable'
+    U /' unknown '/
+}
+
+class AddrType { /' ";" separated of "," separated '/
+    POBox : str /' postal office box '/
+    Ext : str
+    Street : str
+    Locality : str
+    Region : str
+    Code : str /' postal code '/
+    Country : str
+}
+
+class TelType {
+    text : bool
+    voice : bool
+    fax : bool
+    cell : bool
+    video : bool
+    pager : bool
+    textphone : bool
+}
+
+enum RelatedType {
+    "contact" / "acquaintance" / "friend" / "met"
+                        / "co-worker" / "colleague" / "co-resident"
+                        / "neighbor" / "child" / "parent"
+                        / "sibling" / "spouse" / "kin" / "muse"
+                        / "crush" / "date" / "sweetheart" / "me"
+                        / "agent" / "emergency"
+}
+
+VCARD.KIND ..|> KindType

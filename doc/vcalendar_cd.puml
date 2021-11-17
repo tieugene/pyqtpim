@@ -1,0 +1,90 @@
+@startuml
+
+class VCALENDAR {
+	VERSION
+	PRODID
+	CALSCALE*
+	METHOD*
+}
+
+class VEVENT {
+	dtstamp
+	uid
+	dtstart (?)
+	class (?)
+	created (?)
+	description (?)
+	geo (?)
+	last-mod (?)
+	location (?)
+	organizer (?)
+	priority (?)
+	seq (?)
+	status (?)
+	summary (?)
+	transp (?)
+	url (?)
+	recurid (?)
+	rrule (* (? recommended))
+	dtend (*)
+	duration (*)
+	attach (*)
+	attendee (*)
+	categories (*)
+	comment (*)
+	contact (*)
+	exdate (*)
+	rstatus (*)
+	related (*)
+    resources (*)
+    rdate (*)
+}
+
+class VTODO {
+}
+
+class VJOURNAL {
+}
+
+enum PartStatEvent {
+	NEEDS-ACTION
+	ACCEPTED
+	DECLINED
+	TENTATIVE
+	DELEGATED
+}
+
+enum PartStatTodo {
+	NEEDS-ACTION
+	ACCEPTED
+	DECLINED
+	TENTATIVE
+	DELEGATED
+	COMPLETED
+	IN-PROCESS
+}
+
+enum PartStatJour {
+	NEEDS-ACTION
+	ACCEPTED
+	DECLINED
+}
+
+enum RelType {
+	PARENT
+	CHILD
+	SIBLING
+}
+
+enum PartRoleType {
+	CHAIR
+	REQ-PARTICIPANT
+	OPT-PARTICIPANT
+	NON-PARTICIPANT
+}
+
+VCALENDAR *-- VEVENT
+VCALENDAR *-- VTODO
+VCALENDAR *-- VJOURNAL
+
+@enduml
