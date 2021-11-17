@@ -13,9 +13,7 @@ from . import exc
 
 
 class Contact:
-    """Contact itself
-    :todo: @proprty
-    """
+    """Contact itself"""
     __path: str = None
     __data: vobject.base.Component = None
 

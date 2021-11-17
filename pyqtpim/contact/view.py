@@ -6,11 +6,11 @@ import os.path
 from PySide2 import QtCore, QtWidgets
 # 3. local
 from .model import ContactListManagerModel, ContactListModel
-from .entry import Contact
 from .collection import ContactList
 
 
 class ContactDetailWidget(QtWidgets.QGroupBox):
+    mapper: QtWidgets.QDataWidgetMapper
     fn: QtWidgets.QLineEdit
     family: QtWidgets.QLineEdit
     given: QtWidgets.QLineEdit
@@ -20,9 +20,10 @@ class ContactDetailWidget(QtWidgets.QGroupBox):
     def __init__(self, parent):
         super().__init__(parent)
         self.setTitle("Details")
-        self.createWidgets()
+        self.__createWidgets()
+        self.mapper = QtWidgets.QDataWidgetMapper(self)
 
-    def createWidgets(self):
+    def __createWidgets(self):
         # order
         self.fn = QtWidgets.QLineEdit(self)
         self.family = QtWidgets.QLineEdit(self)
@@ -44,22 +45,26 @@ class ContactDetailWidget(QtWidgets.QGroupBox):
         self.email.setReadOnly(True)
         self.tel.setReadOnly(True)
 
-    def refresh(self, data: Contact = None):
-        if data:
-            self.fn.setText(data.getFN())
-            self.family.setText(data.getFamily())
-            self.given.setText(data.getGiven())
-            self.email.setText(data.getEmailList())
-            self.tel.setText(data.getTelList())
-        else:
-            self.fn.clear()
-            self.family.clear()
-            self.given.clear()
-            self.email.clear()
-            self.tel.clear()
+    def setModel(self, model: QtCore.QStringListModel):
+        """Setup mapper"""
+        self.mapper.setModel(model)
+        self.mapper.addMapping(self.fn, 0)
+        self.mapper.addMapping(self.family, 1)
+        self.mapper.addMapping(self.given, 2)
+        self.mapper.addMapping(self.email, 3)
+        self.mapper.addMapping(self.tel, 4)
+
+    def clean(self):
+        # print("Details clean call")
+        self.fn.clear()
+        self.family.clear()
+        self.given.clear()
+        self.email.clear()
+        self.tel.clear()
 
 
 class ContactListView(QtWidgets.QTableView):
+    __model: ContactListModel
     __details: ContactDetailWidget
 
     def __init__(self, parent, dependant: ContactDetailWidget):
@@ -71,22 +76,17 @@ class ContactListView(QtWidgets.QTableView):
         # self.setSortingEnabled(True) # requires sorting itself
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().hide()
-        self.setModel(ContactListModel())
+        self.__model = ContactListModel()
+        self.setModel(self.__model)
+        self.__details.setModel(self.__model)
         # signals
-        self.activated.connect(self.rowChanged)
-        self.selectionModel().currentRowChanged.connect(self.rowChanged)
+        # # self.activated.connect(self.rowChanged)
+        self.selectionModel().currentRowChanged.connect(self.__details.mapper.setCurrentModelIndex)
 
     def refresh(self, data: ContactList = None):
+        # print("List refresh call")
         self.model().switch_data(data)
-        self.__details.refresh()
-
-    @QtCore.Slot()
-    def rowChanged(self, cur: QtCore.QModelIndex, _: QtCore.QModelIndex):
-        """Fully refresh details widget on CL selection changed"""
-        if cur.isValid():
-            self.__details.refresh(self.model().item(cur.row()))
-        # else:
-        #    print("No contact selected")
+        self.__details.clean()
 
 
 class ContactListManagerView(QtWidgets.QListView):
@@ -190,9 +190,9 @@ class ContactsWidget(QtWidgets.QWidget):
 
     def __init__(self):
         super().__init__()
-        self.createWidgets()
+        self.__createWidgets()
 
-    def createWidgets(self):
+    def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
         self.details = ContactDetailWidget(splitter)
