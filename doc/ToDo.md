@@ -3,17 +3,14 @@
 ## Now
 
 ### Job
-- [ ] CLM.View: self.selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
+- [x] CLM.View: self.selectionModel().selectionChanged => ...currentRowChanged
+- [ ] CL.View: self.selectionModel().selectionChanged => ...currentRowChanged
 - [ ] C: QDataWidgetMapper()
 
 ### Fixme
-- [x] CLM.View: rm 1st oops:
-
 
 ### Tuning
 - CLM.Model:
-  - [x] QStringListModel
-  - [x] removeRows()
   - [ ] insertRows()
   - [ ] updateRows()
 - [ ] split `contact/*` by `part/layer.py`:

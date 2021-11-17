@@ -99,7 +99,7 @@ class ContactListManagerView(QtWidgets.QListView):
         self.setSelectionMode(self.SingleSelection)
         self.setModel(ContactListManagerModel())
         # set model required
-        self.selectionModel().selectionChanged.connect(self.refresh_list)
+        self.selectionModel().currentRowChanged.connect(self.rowChanged)
 
     def itemAdd(self):
         """Add new CL."""
@@ -174,12 +174,11 @@ class ContactListManagerView(QtWidgets.QListView):
                                           f"Path: {cl.path}\n"
                                           f"Records: {cl.size}")
 
-    def refresh_list(self, selection: QtCore.QItemSelection):
+    @QtCore.Slot()
+    def rowChanged(self, cur: QtCore.QModelIndex, prev: QtCore.QModelIndex):
         """Fully refresh CL widget on CLM selection changed"""
-        if idx_list := selection.indexes():
-            i = idx_list[0].row()
-            cl = self.model().item(i)
-            self.__list.refresh(cl)
+        if cur.isValid():
+            self.__list.refresh(self.model().item(cur.row()))
         else:
             # print("No list selected")
             self.__list.refresh()
