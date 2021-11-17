@@ -3,8 +3,10 @@
 # 1. std
 import os
 # 2. 3rd
+import vobject
 # 3. local
 from .entry import Contact
+from . import exc
 
 
 class ContactList(object):
@@ -30,7 +32,14 @@ class ContactList(object):
                     if not entry.is_file():
                         continue
                     # TODO: chk mimetype
-                    self.__data.append(Contact(entry.path))
+                    with open(entry.path, 'rt') as stream:
+                        if vcard := vobject.readOne(stream):
+                            if vcard.name == 'VCARD':
+                                self.__data.append(Contact(entry.name, vcard))
+                            else:
+                                raise exc.ContactLoadError(f"It is not VCARD: {entry.name}")
+                        else:
+                            raise exc.ContactLoadError(f"Cannot load vobject: {entry.path}")
 
     def __chk_ready(self):
         if not self.__ready:

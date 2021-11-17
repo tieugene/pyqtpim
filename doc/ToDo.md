@@ -25,15 +25,15 @@
 - [ ] CL.View:
   - [ ] autoshrink v/h[^1]
 - [ ] C:
-  - [ ] Data: mv load() back to CL (item+source)
-  - [ ] Model: QDataWidgetMapper()
+  - [x] Data: mv load() back to CL (item+source)
+  - [x] Model: QDataWidgetMapper()
   - [ ] View: extend
   - [ ] C~~R~~UD, Info (*CardBook/radicale compatible*; not drop data exist)
 
 ### Next:
 - [ ] CLM:
   - [ ] Model:
-    - [ ] QStandardItemModel/QStringListModel
+    - [x] QStringListModel
     - [ ] *All* virtual list / checkboxes
     - [ ] ?Rescan
 - [ ] CL:

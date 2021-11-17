@@ -8,27 +8,16 @@ Most interesting (see contents:dict):
 """
 
 import vobject
-# 3. local
-from . import exc
 
 
 class Contact:
     """Contact itself"""
-    __path: str = None
-    __data: vobject.base.Component = None
+    __fname: str
+    __data: vobject.base.Component
 
-    def __init__(self, path: str):
-        with open(path, 'rt') as stream:
-            if vcard := vobject.readOne(stream):
-                if vcard.name == 'VCARD':
-                    self.__data = vcard
-                    self.__path = path
-                else:
-                    raise exc.ContactLoadError(f"It is not VCARD: {vcard.name}")
-            else:
-                raise exc.ContactLoadError(f"Cannot load vobject: {path}")
-        if not self.__data:
-            raise exc.ContactLoadError(f"File open error: {path}")
+    def __init__(self, path: str, vcard: vobject.base.Component):
+        self.__data = vcard
+        self.__fname = path
 
     def print(self):
         def __fn():
