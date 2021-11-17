@@ -56,59 +56,39 @@ class Contact:
         __name()
         __email()
 
-    @property
-    def FN(self) -> str:
-        return self.__get_fn()
+    def getPropByName(self, fld_name: str) -> str:
+        d = {
+            'fn': self.getFN,
+            'family': self.getFamily,
+            'given': self.getGiven,
+            'email': self.getEmailList,
+            'tel': self.getTelList
+        }
+        if fld := d.get(fld_name):
+            return fld()
+        return ''
 
-    def __get_fn(self) -> str:
+    def getFN(self) -> str:
         return self.__data.fn.value
 
-    @property
-    def Family(self) -> str:
-        return self.__get_family()
-
-    def __get_family(self) -> str:
+    def getFamily(self) -> str:
         if n := self.__data.contents.get('n'):
             return n[0].value.family
         return ''
 
-    @property
-    def Given(self) -> str:
-        return self.__get_given()
-
-    def __get_given(self) -> str:
+    def getGiven(self) -> str:
         if n := self.__data.contents.get('n'):
             return n[0].value.given
         return ''
 
-    @property
-    def EmailList(self) -> str:
-        return self.__get_email_list()
-
-    def __get_email_list(self) -> str:
+    def getEmailList(self) -> str:
         """:todo: preferable or list"""
         if email := self.__data.contents.get('email'):
             return ", ".join([v.value for v in email])
         return ''
 
-    @property
-    def TelList(self) -> str:
-        return self.__get_tel_list()
-
-    def __get_tel_list(self) -> str:
+    def getTelList(self) -> str:
         """:todo: preferable or list"""
         if tel := self.__data.contents.get('tel'):
             return ", ".join([v.value for v in tel])
-        return ''
-
-    def getPropByName(self, fld_name: str) -> str:
-        d = {
-            'fn': self.__get_fn,
-            'family': self.__get_family,
-            'given': self.__get_given,
-            'email': self.__get_email_list,
-            'tel': self.__get_tel_list
-        }
-        if fld := d.get(fld_name):
-            return fld()
         return ''

@@ -24,7 +24,7 @@
 - [ ] CLM.View:
   - [ ] autoshrink v/h
 - [ ] CL.View:
-  - [ ] autoshrink v/h
+  - [ ] autoshrink v/h (self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
 - [ ] C:
   - [ ] Data: mv load() back to CL (item+source)
   - [ ] Model: QDataWidgetMapper()

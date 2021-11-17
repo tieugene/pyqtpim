@@ -26,6 +26,7 @@ class ContactListModel(QtCore.QAbstractTableModel):
         self.__data = ContactList()
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int) -> typing.Any:
+        """TODO: use setHeaderData() in __init__()"""
         if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
             return FIELD_NAMES[section][0]
         return super().headerData(section, orientation, role)

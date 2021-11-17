@@ -46,11 +46,11 @@ class ContactDetailWidget(QtWidgets.QGroupBox):
 
     def refresh(self, data: Contact = None):
         if data:
-            self.fn.setText(data.FN)
-            self.family.setText(data.Family)
-            self.given.setText(data.Given)
-            self.email.setText(data.EmailList)
-            self.tel.setText(data.TelList)
+            self.fn.setText(data.getFN())
+            self.family.setText(data.getFamily())
+            self.given.setText(data.getGiven())
+            self.email.setText(data.getEmailList())
+            self.tel.setText(data.getTelList())
         else:
             self.fn.clear()
             self.family.clear()
@@ -175,7 +175,7 @@ class ContactListManagerView(QtWidgets.QListView):
 
     @QtCore.Slot()
     def rowChanged(self, cur: QtCore.QModelIndex, _: QtCore.QModelIndex):
-        """Fully refresh CL widget on CLM selection changed"""
+        """Fully refresh CL widget on CLM row changed"""
         if cur.isValid():
             self.__list.refresh(self.model().item(cur.row()))
         else:
