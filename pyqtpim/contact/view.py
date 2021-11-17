@@ -73,21 +73,20 @@ class ContactListView(QtWidgets.QTableView):
         self.verticalHeader().hide()
         self.setModel(ContactListModel())
         # signals
-        self.activated.connect(self.refresh_details)
-        self.selectionModel().selectionChanged.connect(self.refresh_details)
+        self.activated.connect(self.rowChanged)
+        self.selectionModel().currentRowChanged.connect(self.rowChanged)
 
     def refresh(self, data: ContactList = None):
         self.model().switch_data(data)
         self.__details.refresh()
 
-    def refresh_details(self, selection: QtCore.QItemSelection):
+    @QtCore.Slot()
+    def rowChanged(self, cur: QtCore.QModelIndex, _: QtCore.QModelIndex):
         """Fully refresh details widget on CL selection changed"""
-        if idx_list := selection.indexes():
-            i = idx_list[0].row()
-            c = self.model().item(i)
-            self.__details.refresh(c)
-        else:
-            print("No contact selected")
+        if cur.isValid():
+            self.__details.refresh(self.model().item(cur.row()))
+        # else:
+        #    print("No contact selected")
 
 
 class ContactListManagerView(QtWidgets.QListView):
@@ -175,7 +174,7 @@ class ContactListManagerView(QtWidgets.QListView):
                                           f"Records: {cl.size}")
 
     @QtCore.Slot()
-    def rowChanged(self, cur: QtCore.QModelIndex, prev: QtCore.QModelIndex):
+    def rowChanged(self, cur: QtCore.QModelIndex, _: QtCore.QModelIndex):
         """Fully refresh CL widget on CLM selection changed"""
         if cur.isValid():
             self.__list.refresh(self.model().item(cur.row()))

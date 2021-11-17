@@ -4,7 +4,7 @@
 
 ### Job
 - [x] CLM.View: self.selectionModel().selectionChanged => ...currentRowChanged
-- [ ] CL.View: self.selectionModel().selectionChanged => ...currentRowChanged
+- [x] CL.View: self.selectionModel().selectionChanged => ...currentRowChanged
 - [ ] C: QDataWidgetMapper()
 
 ### Fixme
