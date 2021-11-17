@@ -18,7 +18,7 @@
 ### Tuning
 - CLM.Model:
   - [x] QStringListModel
-  - [ ] removeRows()
+  - [x] removeRows()
   - [ ] insertRows()
   - [ ] updateRows()
 - [ ] split `contact/*` by `part/layer.py`:

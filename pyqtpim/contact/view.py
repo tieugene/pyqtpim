@@ -160,7 +160,7 @@ class ContactListManagerView(QtWidgets.QListView):
             name = self.model().item(i).name
             if QtWidgets.QMessageBox.question(self, "Deleting CL", f"Are you sure to delete '{name}'")\
                     == QtWidgets.QMessageBox.StandardButton.Yes:
-                self.model().itemDel(i)
+                self.model().removeRow(i)
 
     def itemInfo(self):
         indexes = self.selectionModel().selectedRows()

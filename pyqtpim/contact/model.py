@@ -72,6 +72,17 @@ class ContactListManagerModel(QtCore.QStringListModel):
     def rowCount(self, index):
         return self.size
 
+    def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex):
+        """Delete record #i.
+        :todo: implment removeRows() -> bool
+        """
+        self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
+        for row in range(row0, row0 + count):
+            self.__data.itemDel(row)
+            MySettings.ab_del(row)
+        self.endRemoveRows()
+        return True
+
     # self
     def __init_data(self):
         """:todo: lazy load"""
@@ -102,15 +113,6 @@ class ContactListManagerModel(QtCore.QStringListModel):
         i = idx.row()
         self.__data.itemUpdate(i, name, path)
         MySettings.ab_update(i, {"name": name, "path": path})
-
-    def itemDel(self, i: int):
-        """Delete record #i.
-        :todo: implment removeRows() -> bool
-        """
-        self.beginRemoveRows(QtCore.QModelIndex(), i, i)
-        self.__data.itemDel(i)
-        self.endRemoveRows()
-        MySettings.ab_del(i)
 
     def findByName(self, s: str, i: int = None) -> bool:
         """Find existent CL by name [excluding i-th entry]
