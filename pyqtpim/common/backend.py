@@ -1,5 +1,6 @@
 """Common vCard/iCal parents"""
 
+# 1. std
 import os
 # 2. 3rd
 import vobject
@@ -10,10 +11,16 @@ from . import exc
 class Entry(object):
     _fname: str
     _data: vobject.base.Component
+    _name2func: dict
 
     def __init__(self, path: str, vcard: vobject.base.Component):
         self._fname = path
         self._data = vcard
+
+    def getPropByName(self, fld_name: str) -> str:
+        if fld := self._name2func.get(fld_name):
+            return fld()
+        return ''
 
 
 class EntryList(object):

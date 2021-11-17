@@ -4,10 +4,10 @@
 
 ### Job
 - Reuse:
-  - [ ] Who:
-    - [ ] Mgr
-    - [ ] List
-    - [x] Entry (Extensions)
+  - [ ] Who (Mgr/List/Entry):
+    - [ ] View
+    - [x] Model (Extension)
+    - [x] Data (Extension)
   - [ ] How:
     - Extension
     - ~~Class Object~~ *(too pythonic)*

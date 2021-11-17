@@ -173,7 +173,6 @@ class ContactListManagerView(QtWidgets.QListView):
                                           f"Path: {cl.path}\n"
                                           f"Records: {cl.size}")
 
-    @QtCore.Slot()
     def rowChanged(self, cur: QtCore.QModelIndex, _: QtCore.QModelIndex):
         """Fully refresh CL widget on CLM row changed"""
         if cur.isValid():

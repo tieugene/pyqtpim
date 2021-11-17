@@ -3,7 +3,7 @@ import sys
 from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt, QCoreApplication
 # 3. local
-from settings import MySettings
+from common.settings import MySettings
 from view import MainWindow
 
 

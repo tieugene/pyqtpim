@@ -2,8 +2,48 @@
 # 2. PySide
 from PySide2 import QtCore
 # 3. local
-from settings import MySettings
+from common.settings import MySettings
 from common.backend import EntryList, EntryListManager
+
+
+class EntryListModel(QtCore.QAbstractTableModel):
+    _data: EntryList
+    _fld_names: tuple
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int):
+        """TODO: use setHeaderData() in __init__()"""
+        if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
+            return self._fld_names[section][0]
+        return super().headerData(section, orientation, role)
+
+    def data(self, index, role):
+        if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # EditRole for mapper
+            c = self._data.item(index.row())
+            col = index.column()
+            return c.getPropByName(self._fld_names[col][1])
+
+    def rowCount(self, index):
+        return self.size
+
+    # self
+    @property
+    def size(self):
+        return self._data.size
+
+    def _empty_el(self) -> EntryList:
+        print("Virtual EntryListModel._switch_itself")
+        return EntryList()
+
+    def switch_data(self, new_el: EntryList = None):
+        self.beginResetModel()
+        self._data = new_el or self._empty_el()
+        self.endResetModel()
+
+    def item(self, i: int):
+        return self._data.item(i)
 
 
 class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel

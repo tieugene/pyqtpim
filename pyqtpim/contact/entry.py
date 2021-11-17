@@ -6,12 +6,24 @@ Most interesting (see contents:dict):
 - email:list(EMAIL) (card: ?)
 - tel:list(TEL) (card: ?)
 """
-
+# 2. 3rd
+import vobject
+# 3. local
 from common.backend import Entry
 
 
 class Contact(Entry):
     """Contact itself"""
+    def __init__(self, path: str, vcard: vobject.base.Component):
+        super().__init__(path, vcard)
+        self._name2func = {
+            'fn': self.getFN,
+            'family': self.getFamily,
+            'given': self.getGiven,
+            'email': self.getEmailList,
+            'tel': self.getTelList
+        }
+
     def print(self):
         def __fn():
             print(f"FN: {self._data.fn.value}")
@@ -35,18 +47,6 @@ class Contact(Entry):
         __fn()
         __name()
         __email()
-
-    def getPropByName(self, fld_name: str) -> str:
-        d = {
-            'fn': self.getFN,
-            'family': self.getFamily,
-            'given': self.getGiven,
-            'email': self.getEmailList,
-            'tel': self.getTelList
-        }
-        if fld := d.get(fld_name):
-            return fld()
-        return ''
 
     def getFN(self) -> str:
         return self._data.fn.value
