@@ -56,7 +56,7 @@ class ContactListModel(QtCore.QAbstractTableModel):
         return self.__data.item(i)
 
 
-class ContactListManagerModel(QtCore.QAbstractListModel):
+class ContactListManagerModel(QtCore.QStringListModel):
     __data: ContactListManager
 
     def __init__(self, *args, **kwargs):
@@ -105,7 +105,6 @@ class ContactListManagerModel(QtCore.QAbstractListModel):
 
     def itemDel(self, i: int):
         """Delete record #i.
-        :fixme: shift higher entries to low
         :todo: implment removeRows() -> bool
         """
         self.beginRemoveRows(QtCore.QModelIndex(), i, i)

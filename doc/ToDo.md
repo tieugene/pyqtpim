@@ -3,11 +3,24 @@
 ## Now
 
 ### Job
+- [ ] CLM.View: self.selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
 - [ ] C: QDataWidgetMapper()
 
 ### Fixme
+- [ ] CLM.View: rm 1st oops:
+  - 1/3: mgr not changed, list changed
+  - 2/3: &check;
+  - 3/3: &check;
+  - 1/2: mgr not changed, list changed
+  - 2/2: &check;
+  - 1/1: mgr not changed, list cleared
 
 ### Tuning
+- CLM.Model:
+  - [x] QStringListModel
+  - [ ] removeRows()
+  - [ ] insertRows()
+  - [ ] updateRows()
 - [ ] split `contact/*` by `part/layer.py`:
   - card/{data,view)
   - ab/{data,model,view)
@@ -19,10 +32,10 @@
 
 ## Contacts
 - [ ] CLM.View:
-  - [ ] self.model().selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
+  - [ ] self.selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
   - [ ] autoshrink v/h
 - [ ] CL.View:
-  - [ ] self.model().selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
+  - [ ] self.selectionModel().selectionChanged => self.selectionModel().currentRowChanged()
   - [ ] autoshrink v/h
 - [ ] C:
   - [ ] Data: mv load() back to CL (item+source)
