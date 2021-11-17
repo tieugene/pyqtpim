@@ -4,7 +4,7 @@ from PySide2.QtCore import QCoreApplication, QSettings
 class MySettings:
     """QSettings extender"""
     __settings: QSettings
-    AB: list[(str, str)] = []
+    __cache: dict
 
     @staticmethod
     def setup():
@@ -13,6 +13,7 @@ class MySettings:
         QCoreApplication.setApplicationName("PyQtPIM")
         QSettings.setDefaultFormat(QSettings.IniFormat)
         MySettings.__settings = QSettings()
+        MySettings.__cache = {'contacts': []}
         MySettings.__list_preload('contacts')
 
     @staticmethod
@@ -24,9 +25,13 @@ class MySettings:
             s.setArrayIndex(i)
             name = s.value('name')
             path = s.value('path')
-            MySettings.AB.append((name, path))
+            MySettings.__cache[group].append((name, path))
         s.endArray()
         s.endGroup()
+
+    @staticmethod
+    def list_ls(group: str) -> list:
+        return MySettings.__cache[group]
 
     @staticmethod
     def list_append(group: str, data: dict):
@@ -34,12 +39,12 @@ class MySettings:
         s = MySettings.__settings
         s.beginGroup(group)
         s.beginWriteArray('list')
-        s.setArrayIndex(len(MySettings.AB))
+        s.setArrayIndex(len(MySettings.__cache[group]))
         for k, v in data.items():
             s.setValue(k, v)
         s.endArray()
         s.endGroup()
-        MySettings.AB.append((data['name'], data['path']))
+        MySettings.__cache[group].append((data['name'], data['path']))
 
     @staticmethod
     def list_update(group: str, i: int, data: dict):
@@ -49,21 +54,21 @@ class MySettings:
         s.setArrayIndex(i)
         for k, v in data.items():
             s.setValue(k, v)
-        s.setArrayIndex(len(MySettings.AB) - 1)
+        s.setArrayIndex(len(MySettings.__cache[group]) - 1)
         s.endArray()
         s.endGroup()
-        MySettings.AB[i] = (data['name'], data['path'])
+        MySettings.__cache[group][i] = (data['name'], data['path'])
 
     @staticmethod
     def list_del(group: str, i: int):
-        del MySettings.AB[i]
+        del MySettings.__cache[group][i]
         s = MySettings.__settings
         s.beginGroup(group)
         s.beginWriteArray('list')
-        while i < len(MySettings.AB):
+        while i < len(MySettings.__cache[group]):
             s.setArrayIndex(i)
-            s.setValue('name', MySettings.AB[i][0])
-            s.setValue('path', MySettings.AB[i][1])
+            s.setValue('name', MySettings.__cache[group][i][0])
+            s.setValue('path', MySettings.__cache[group][i][1])
             i += 1
         s.setArrayIndex(i)
         s.remove("")

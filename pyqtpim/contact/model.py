@@ -84,7 +84,7 @@ class ContactListManagerModel(QtCore.QStringListModel):  # or QAbstraactListMode
 
     # self
     def __init_data(self):
-        for name, path in MySettings.AB:
+        for name, path in MySettings.list_ls('contacts'):
             self.__data.itemAdd(name, path)
 
     @property
