@@ -5,10 +5,12 @@ from PySide2.QtCore import Qt, QCoreApplication
 # 3. local
 from common import MySettings
 from view import MainWindow
+from pyqtpim_rc import qInitResources
 
 
 def main():
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
+    qInitResources()
     MySettings.setup()
     app = QApplication(sys.argv)
     mw = MainWindow()

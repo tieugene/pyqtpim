@@ -13,7 +13,6 @@ class EntryListModel(QtCore.QAbstractTableModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        QtCore.QAbstractTableModel().columnCount()
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = QtCore.Qt.DisplayRole) -> Any:
         """TODO: use setHeaderData() in __init__()"""

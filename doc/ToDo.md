@@ -8,7 +8,7 @@
 
 ### Tuning
 - [x] `__init__.py`: all-in-one
-- [ ] views.py: add icons to actions
+- [ ] views.py: add icons to actions (exit=power-standby.svg, about=question-mark.svg, info=info.svg, new=plus.svg, edit=pencil.svg, del=trash.svg)
 - [ ] code check:
   - [ ] built-in:
     - [ ] 6 views.py
