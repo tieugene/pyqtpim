@@ -8,13 +8,15 @@ from todo import TodosWidget
 class MainWindow(QtWidgets.QMainWindow):
     contacts: ContactsWidget
     todo: TodosWidget
+    # misc
+    tabs: QtWidgets.QTabWidget
     # actions
     actExit: QtWidgets.QAction
     actAbout: QtWidgets.QAction
-    actContactListAdd: QtWidgets.QAction
-    actContactListEdit: QtWidgets.QAction
-    actContactListDel: QtWidgets.QAction
-    actContactListInfo: QtWidgets.QAction
+    actEntryListAdd: QtWidgets.QAction
+    actEntryListEdit: QtWidgets.QAction
+    actEntryListDel: QtWidgets.QAction
+    actEntryListInfo: QtWidgets.QAction
 
     def __init__(self):
         super().__init__()
@@ -27,16 +29,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def createWidgets(self):
         # order
-        tabs = QtWidgets.QTabWidget()
+        self.tabs = QtWidgets.QTabWidget()
         self.contacts = ContactsWidget()
         self.todo = TodosWidget()
-        tabs.addTab(self.contacts, "Contacts")
-        tabs.addTab(self.todo, "ToDo")
+        self.tabs.addTab(self.contacts, "Contacts")
+        self.tabs.addTab(self.todo, "ToDo")
         # that's all
-        self.setCentralWidget(tabs)
+        self.setCentralWidget(self.tabs)
         # attributes
 
-    def createActions(self):  # QtGui.QIcon(':/icons/power-standby.svg'),
+    def createActions(self):
         # noinspection PyArgumentList
         self.actExit = QtWidgets.QAction(QtGui.QIcon(':/icons/power-standby.svg'),
                                          "E&xit", self,
@@ -49,38 +51,38 @@ class MainWindow(QtWidgets.QMainWindow):
                                           statusTip="Show the application's About box",
                                           triggered=self.about)
         # noinspection PyArgumentList
-        self.actContactListAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
-                                                   "AddressBook &New", self,
-                                                   shortcut="Ctrl+N",
-                                                   statusTip="Add new AddressBook",
-                                                   triggered=self.contacts.sources.itemAdd)
+        self.actEntryListAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
+                                                 "&New List", self,
+                                                 shortcut="Ctrl+N",
+                                                 statusTip="Add new List",
+                                                 triggered=self.listAdd)
         # noinspection PyArgumentList
-        self.actContactListEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
-                                                    "AddressBook &Edit", self,
-                                                    shortcut="Ctrl+E",
-                                                    statusTip="Edit current AddressBook",
-                                                    triggered=self.contacts.sources.itemEdit)
+        self.actEntryListEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
+                                                  "&Edit List", self,
+                                                  shortcut="Ctrl+E",
+                                                  statusTip="Edit current List",
+                                                  triggered=self.listEdit)
         # noinspection PyArgumentList
-        self.actContactListDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
-                                                   "AddressBook &Del", self,
-                                                   shortcut="Ctrl+D",
-                                                   statusTip="Delete current AddressBook",
-                                                   triggered=self.contacts.sources.itemDel)
+        self.actEntryListDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
+                                                 "&Del List", self,
+                                                 shortcut="Ctrl+D",
+                                                 statusTip="Delete current List",
+                                                 triggered=self.listDel)
         # noinspection PyArgumentList
-        self.actContactListInfo = QtWidgets.QAction(QtGui.QIcon(':/icons/info.svg'),
-                                                    "AddressBook &Info", self,
-                                                    shortcut="Ctrl+I",
-                                                    statusTip="Info about current AddressBook",
-                                                    triggered=self.contacts.sources.itemInfo)
+        self.actEntryListInfo = QtWidgets.QAction(QtGui.QIcon(':/icons/info.svg'),
+                                                  "List &Info", self,
+                                                  shortcut="Ctrl+I",
+                                                  statusTip="Info about current List",
+                                                  triggered=self.listInfo)
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
         menu_file.addAction(self.actExit)
         menu_edit = self.menuBar().addMenu("&Edit")
-        menu_edit.addAction(self.actContactListAdd)
-        menu_edit.addAction(self.actContactListEdit)
-        menu_edit.addAction(self.actContactListDel)
-        menu_edit.addAction(self.actContactListInfo)
+        menu_edit.addAction(self.actEntryListAdd)
+        menu_edit.addAction(self.actEntryListEdit)
+        menu_edit.addAction(self.actEntryListDel)
+        menu_edit.addAction(self.actEntryListInfo)
         # menuView = self.menuBar().addMenu("&View")
         menu_help = self.menuBar().addMenu("&Help")
         menu_help.addAction(self.actAbout)
@@ -94,5 +96,16 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # actions
     def about(self):
-        QtWidgets.QMessageBox.about(self, "About PyQtPIM",
-                                    "Python & Qt powered Personal Information Manager.")
+        QtWidgets.QMessageBox.about(self, "About PyQtPIM", "PySide2 powered Personal Information Manager.")
+
+    def listAdd(self):
+        (self.contacts.sources.itemAdd, self.todo.sources.itemAdd)[self.tabs.currentIndex()]()
+
+    def listEdit(self):
+        (self.contacts.sources.itemEdit, self.todo.sources.itemEdit)[self.tabs.currentIndex()]()
+
+    def listDel(self):
+        (self.contacts.sources.itemDel, self.todo.sources.itemDel)[self.tabs.currentIndex()]()
+
+    def listInfo(self):
+        (self.contacts.sources.itemInfo, self.todo.sources.itemInfo)[self.tabs.currentIndex()]()

@@ -3,8 +3,9 @@
 ## 0. Now
 
 ### 0.1. Job
-- [x] todo
-- [ ] Switch ELM.CUD Contacts&hArr;ToDo
+- [x] Switch ELM.CUD Contacts&hArr;ToDo
+- [ ] EL: Show file
+- [ ] E: Show raw content
 - [ ] ToDo: extend
 
 ### 0.2. Fixme
@@ -19,7 +20,6 @@
 ## 1. Common
 
 ### 1.1. Next:
-- [ ] pylint
 - [ ] ELM:
   - [ ] Model:
      - [x] QStringListModel
@@ -29,38 +29,41 @@
   - [ ] Data: async load
   - [ ] Model: QStandardItemModel (?)
   - [ ] View:
-    - [ ] Columns handle:
+    - [ ] Columns:
        - [ ] on/off
        - [ ] sort by
        - [ ] order
-- [ ] E: &hellip;
+- [ ] Deployment:
+  - [ ] docstrings
+  - [ ] pylint
+  - [ ] tox.ini
+  - [ ] setup.py
+  - [ ] \*.spec
 
 ## 2. Contacts
 - [ ] C:
   - [ ] Extend
-  - [ ] C~~R~~UD, Info[^2]
+  - [ ] CRUD[^2]
 
-## 3. ToDo[^3]
-
-
-## 4. Calendar
-
-## 5. Journal
+## 3. ToDo
+- [ ] C:
+  - [ ] Extend
+  - [ ] CRUD[^3]
 
 ## x. misc
 
 ### x.1. RTFM
 - PySide2 Book[^4]
-
-### x.2. pyside2/examples
-- tutorial/t8.py (UI)
-- widgets:
-  - mainwindows/ (UI, mainwindow)
-  - layouts/ (UI, layouts)
-  - gallery/ (UI, widgets)
-  - itemviews/addresbook/ (?)
-  - tutorials/addressbook/ (CRUD)
-- sql/books/ (list/Details)
+- Radicale src
+- pyside2/examples:
+  - tutorial/t8.py (UI)
+  - widgets:
+    - mainwindows/ (UI, mainwindow)
+    - layouts/ (UI, layouts)
+    - gallery/ (UI, widgets)
+    - itemviews/addresbook/ (?)
+    - tutorials/addressbook/ (CRUD)
+  - sql/books/ (list/Details)
 
 [^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
 [^2]: CardBook/radicale compatible; not drop data exist
