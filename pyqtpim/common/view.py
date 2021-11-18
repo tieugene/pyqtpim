@@ -1,3 +1,4 @@
+import inspect
 import os.path
 from PySide2 import QtCore, QtWidgets
 from .data import EntryList
@@ -12,10 +13,10 @@ class EntryDetailWidget(QtWidgets.QGroupBox):
         self.mapper = QtWidgets.QDataWidgetMapper(self)
 
     def setModel(self, model: QtCore.QStringListModel):
-        print("Virtual EntryDetailWidget.setModel()")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def clean(self):
-        print("Virtual EntryDetailWidget.clean()")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
 
 class EntryListView(QtWidgets.QTableView):
@@ -38,7 +39,7 @@ class EntryListView(QtWidgets.QTableView):
         self.selectionModel().currentRowChanged.connect(self.__details.mapper.setCurrentModelIndex)
 
     def _empty_model(self) -> EntryListModel:
-        print("Virtual EntryListView._empty_model()")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
         return EntryListModel()
 
     def refresh(self, data: EntryList = None):
@@ -49,6 +50,7 @@ class EntryListView(QtWidgets.QTableView):
 
 class EntryListManagerView(QtWidgets.QListView):
     __list: EntryListView
+    _title: str
 
     def __init__(self, parent, dependant: EntryListView):
         super().__init__(parent)
@@ -64,18 +66,20 @@ class EntryListManagerView(QtWidgets.QListView):
 
     def itemAdd(self):
         """Add new CL."""
-        dialog = EntryListCUDialog()
+        dialog = EntryListCUDialog(self._title)
         while dialog.exec_():
             name = dialog.name
             path = dialog.path
             # check values
             # - name is uniq
             if self.model().findByName(name):
-                QtWidgets.QMessageBox.warning(self, "Duplicated 'name'", f"CL with name '{name}' already registered")
+                QtWidgets.QMessageBox.warning(self, "Duplicated 'name'",
+                                              f"{self._title} with name '{name}' already registered")
                 continue
             # - path is uniq
             if self.model().findByPath(path):
-                QtWidgets.QMessageBox.warning(self, "Duplicated 'path'", f"CL with path '{path}' already registered")
+                QtWidgets.QMessageBox.warning(self, "Duplicated 'path'",
+                                              f"{self._title} with path '{path}' already registered")
                 continue
             # - path exists and is dir
             if not os.path.isdir(path):
@@ -91,7 +95,7 @@ class EntryListManagerView(QtWidgets.QListView):
         idx = indexes[0]
         i = idx.row()
         cl = self.model().item(i)
-        dialog = EntryListCUDialog(cl.name, cl.path)
+        dialog = EntryListCUDialog(self._title, cl.name, cl.path)
         while dialog.exec_():
             name = dialog.name
             path = dialog.path
@@ -101,15 +105,18 @@ class EntryListManagerView(QtWidgets.QListView):
                 break
             # - name is uniq but not this
             if self.model().findByName(name, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'name'", f"There is another CL with name '{name}'")
+                QtWidgets.QMessageBox.warning(self, "Traversal 'name'",
+                                              f"There is another {self._title} with name '{name}'")
                 continue
             # - path is uniq but not this
             if self.model().findByPath(path, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'path'", f"There is another CL with path '{path}'")
+                QtWidgets.QMessageBox.warning(self, "Traversal 'path'",
+                                              f"There is another {self._title} with path '{path}'")
                 continue
             # - path exists and is dir
             if not os.path.isdir(path):
-                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
+                QtWidgets.QMessageBox.warning(self, "Wrong 'path'",
+                                              f"Path '{path}' is not dir or not exists")
                 continue
             self.model().itemUpdate(idx, name, path)    # update UI
             break
@@ -119,7 +126,8 @@ class EntryListManagerView(QtWidgets.QListView):
         for index in indexes:
             i = index.row()
             name = self.model().item(i).name
-            if QtWidgets.QMessageBox.question(self, "Deleting CL", f"Are you sure to delete '{name}'")\
+            if QtWidgets.QMessageBox.question(self, f"Deleting {self._title}",
+                                              f"Are you sure to delete '{name}'")\
                     == QtWidgets.QMessageBox.StandardButton.Yes:
                 self.model().removeRow(i)
 
@@ -129,14 +137,14 @@ class EntryListManagerView(QtWidgets.QListView):
             return
         idx = indexes[0]
         cl = self.model().item(idx.row())
-        QtWidgets.QMessageBox.information(self, "CL info",
+        QtWidgets.QMessageBox.information(self, f"{self._title} info",
                                           f"EntryList info:\n"
                                           f"Name: {cl.name}\n"
                                           f"Path: {cl.path}\n"
                                           f"Records: {cl.size}")
 
     def rowChanged(self, cur: QtCore.QModelIndex, _: QtCore.QModelIndex):
-        """Fully refresh CL widget on CLM row changed"""
+        """Fully refresh EL widget on ELM row changed"""
         if cur.isValid():
             self.__list.refresh(self.model().item(cur.row()))
         else:
@@ -145,11 +153,11 @@ class EntryListManagerView(QtWidgets.QListView):
 
 
 class EntryListCUDialog(QtWidgets.QDialog):
-    """ A dialog to add (Create) or edit (Update) Addressbook."""
+    """ A dialog to add (Create) or edit (Update) EL in ELM."""
     nameText: QtWidgets.QLineEdit
     pathText: QtWidgets.QLineEdit
 
-    def __init__(self, name: str = None, path: str = None):
+    def __init__(self, title: str, name: str = None, path: str = None):
         super().__init__()
         name_label = QtWidgets.QLabel("Name")
         path_label = QtWidgets.QLabel("Path")
@@ -176,7 +184,8 @@ class EntryListCUDialog(QtWidgets.QDialog):
         path_button.clicked.connect(self.browse_dir)
         button_box.accepted.connect(self.chk_values)
         button_box.rejected.connect(self.reject)
-        self.setWindowTitle("Add an EntryList")
+        act = "Edit" if name or path else "Add"
+        self.setWindowTitle(f"{act} a {title}")
 
         if name:
             self.nameText.setText(name)

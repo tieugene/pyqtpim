@@ -4,7 +4,7 @@
 # 2. PySide
 from PySide2 import QtCore
 # 3. local
-from common import EntryListModel, EntryListManagerModel
+from common import SetGroup, EntryListModel, EntryListManagerModel
 from .data import ContactList, ContactListManager
 
 
@@ -30,6 +30,6 @@ class ContactListModel(EntryListModel):
 class ContactListManagerModel(EntryListManagerModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._set_group = 'contacts'
+        self._set_group = SetGroup.Contacts
         self._data = ContactListManager()
         self._init_data()

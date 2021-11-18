@@ -1,5 +1,6 @@
 # 1. system
 from typing import Any
+import inspect
 # 2. PySide
 from PySide2 import QtCore
 # 3. local
@@ -35,7 +36,7 @@ class EntryListModel(QtCore.QAbstractTableModel):
         return self._data.size
 
     def _empty_item(self) -> EntryList:
-        print("Virtual EntryListModel._switch_itself")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
         return EntryList()
 
     def switch_data(self, new_el: EntryList = None):

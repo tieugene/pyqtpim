@@ -7,6 +7,8 @@ from .model import ContactListManagerModel, ContactListModel
 
 
 class ContactListManagerView(EntryListManagerView):
+    _title = 'Contact list'
+
     def _empty_model(self) -> ContactListManagerModel:
         return ContactListManagerModel()
 
