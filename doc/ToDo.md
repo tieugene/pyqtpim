@@ -3,37 +3,29 @@
 ## Now
 
 ### Job
-- Reuse:
-  - [ ] Who (Mgr/List/Entry):
-    - [ ] View
-    - [x] Model (Extension)
-    - [x] Data (Extension)
-  - [ ] How:
-    - Extension
-    - ~~Class Object~~ *(too pythonic)*
-    - Replace model of object
+- [x] Reuse (Mgr/List/Entry):
+  - [x] View (Extension)
+  - [x] Model (Extension)
+  - [x] Data (Extension)
 
 ### Fixme
 
 ### Tuning
-- [ ] CLM.Model:
+- [ ] __init__.py: all-in-one
+- [ ] cleanup:
+  - [ ] built-in
+  - [ ] flake8
+  - [ ] pylint
+- [ ] ELM.Model:
   - [ ] insertRows()
   - [ ] updateRows()
-- [ ] split `contact/*` by `part/layer.py`:
-  - card/{data,view)
-  - ab/{data,model,view)
-  - mgr/{data,model,view)
 
 ## Contacts
-- [ ] CLM.View:
-  - [ ] autoshrink v/h
-- [ ] CL.View:
-  - [ ] autoshrink v/h[^1]
+- [ ] CLM.View: autoshrink v/h
+- [ ] CL.View: autoshrink v/h[^1]
 - [ ] C:
-  - [x] Data: mv load() back to CL (item+source)
-  - [x] Model: QDataWidgetMapper()
   - [ ] View: extend
-  - [ ] C~~R~~UD, Info (*CardBook/radicale compatible*; not drop data exist)
+  - [ ] C~~R~~UD, Info[^2]
 
 ### Next:
 - [ ] CLM:
@@ -46,7 +38,7 @@
   - [ ] Model: QStandardItemModel (?)
   - [ ] View:
     - [ ] Columns handle:
-       - [ ] select (== show/hide)
+       - [ ] on/off
        - [ ] sort by
        - [ ] order
 - [ ] C: &hellip;
@@ -61,7 +53,7 @@
 ## misc
 
 ### RTFM
-- [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?
+- PySide2 Book[^3]
 
 #### pyside2/examples
 - tutorial/t8.py (UI)
@@ -74,3 +66,5 @@
 - sql/books/ (list/Details)
 
 [^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents
+[^2]: CardBook/radicale compatible; not drop data exist
+[^3]: [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?

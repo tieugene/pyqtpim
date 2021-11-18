@@ -22,7 +22,7 @@ class ContactListModel(EntryListModel):
     def columnCount(self, index):
         return 5
 
-    def _empty_el(self) -> ContactList:
+    def _empty_item(self) -> ContactList:
         return ContactList()
 
 

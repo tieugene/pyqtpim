@@ -33,13 +33,13 @@ class EntryListModel(QtCore.QAbstractTableModel):
     def size(self):
         return self._data.size
 
-    def _empty_el(self) -> EntryList:
+    def _empty_item(self) -> EntryList:
         print("Virtual EntryListModel._switch_itself")
         return EntryList()
 
     def switch_data(self, new_el: EntryList = None):
         self.beginResetModel()
-        self._data = new_el or self._empty_el()
+        self._data = new_el or self._empty_item()
         self.endResetModel()
 
     def item(self, i: int):
