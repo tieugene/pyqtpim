@@ -1,39 +1,31 @@
 import os
-import sys
-import inspect
 
-from contact import ContactList, ContactListManager
+from todo import Todo, TodoList, TodoListManager
 
-indir = '/Volumes/Trash/Documents/AB'
-infile1 = os.path.join(indir, 'TI_Eugene.vcf')
-infile2 = os.path.join(indir, 'Selta.vcf')
+indir = '_tmp/todo1'
+infile = (
+    os.path.join(indir, 'FFFFFFFF-FFFF-FFFF-FFFF-FFF413589559.ics'),
+    os.path.join(indir, 'FFFFFFFF-FFFF-FFFF-FFFF-FFF413589749.ics'),
+)
 
 
-def test_clm():
-    clm = ContactListManager()
+def test_elm():
+    clm = TodoListManager()
     clm.itemAdd('AB', indir)
     # clm.reload()
     clm.print()
 
 
-def test_cl():
-    cl = ContactList(indir)
+def test_el():
+    cl = TodoList(indir)
     cl.print()
 
 
-# def test_c():
-#    for infile in (infile1, infile2):
-#        Contact(infile).print()
+def test_e():
+    el = TodoList('Test', indir)
+    for i in range(el.size):    # el.size
+        e = el.item(i)
+        print(F"{i}: {e._fname}: {e._data.summary.value}")
 
 
-# test_c()
-# test_cl()
-# test_clm()
-
-class MyClass(object):
-    def myfunc(self):
-        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
-
-
-# dir(MyClass().myfunc)
-MyClass().myfunc()
+test_e()

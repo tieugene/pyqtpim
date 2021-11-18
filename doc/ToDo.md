@@ -1,32 +1,31 @@
 # ToDo
-- [ ] todo
 
-## Now
+## 0. Now
 
-### Job
+### 0.1. Job
+- [x] todo
+- [ ] Switch ELM.CUD Contacts&hArr;ToDo
+- [ ] ToDo: extend
 
-### Fixme
+### 0.2. Fixme
 
-### Tuning
+### 0.3. Tuning
 - [ ] ELM.Model:
   - [ ] insertRows()
   - [ ] updateRows()
+- [ ] ELM.View: autoshrink v/h
+- [ ] EL.View: autoshrink v/h[^1]
 
-## Contacts
-- [ ] CLM.View: autoshrink v/h
-- [ ] CL.View: autoshrink v/h[^1]
-- [ ] C:
-  - [ ] Extend
-  - [ ] C~~R~~UD, Info[^2]
+## 1. Common
 
-### Next:
+### 1.1. Next:
 - [ ] pylint
-- [ ] CLM:
+- [ ] ELM:
   - [ ] Model:
      - [x] QStringListModel
      - [ ] *All* virtual list / checkboxes
      - [ ] *Rescan*
-- [ ] CL:
+- [ ] EL:
   - [ ] Data: async load
   - [ ] Model: QStandardItemModel (?)
   - [ ] View:
@@ -34,21 +33,26 @@
        - [ ] on/off
        - [ ] sort by
        - [ ] order
-- [ ] C: &hellip;
+- [ ] E: &hellip;
 
-## ToDo
-(*Lightning/radicale compatible*)
+## 2. Contacts
+- [ ] C:
+  - [ ] Extend
+  - [ ] C~~R~~UD, Info[^2]
 
-## Calendar
+## 3. ToDo[^3]
 
-## Journal
 
-## misc
+## 4. Calendar
 
-### RTFM
-- PySide2 Book[^3]
+## 5. Journal
 
-#### pyside2/examples
+## x. misc
+
+### x.1. RTFM
+- PySide2 Book[^4]
+
+### x.2. pyside2/examples
 - tutorial/t8.py (UI)
 - widgets:
   - mainwindows/ (UI, mainwindow)
@@ -60,4 +64,5 @@
 
 [^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
 [^2]: CardBook/radicale compatible; not drop data exist
-[^3]: [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?
+[^3]: Lightning/radicale compatible; not drop data exist
+[^4]: [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?

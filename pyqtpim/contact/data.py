@@ -1,4 +1,4 @@
-"""Contact itself
+"""Contacts data provider
 
 Most interesting (see contents:dict):
 - fn:FN (card: 1): .fn.value

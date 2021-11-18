@@ -4,7 +4,7 @@ import inspect
 # 2. PySide
 from PySide2 import QtCore
 # 3. local
-from .settings import MySettings
+from .settings import MySettings, SetGroup
 from .data import Entry, EntryList, EntryListManager
 
 
@@ -49,7 +49,7 @@ class EntryListModel(QtCore.QAbstractTableModel):
 
 
 class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
-    _set_group: str
+    _set_group: SetGroup
     _data: EntryListManager
 
     def __init__(self, *args, **kwargs):

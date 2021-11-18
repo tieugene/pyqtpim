@@ -2,10 +2,13 @@
 
 from PySide2 import QtWidgets, QtGui
 from contact import ContactsWidget
+from todo import TodosWidget
 
 
 class MainWindow(QtWidgets.QMainWindow):
     contacts: ContactsWidget
+    todo: TodosWidget
+    # actions
     actExit: QtWidgets.QAction
     actAbout: QtWidgets.QAction
     actContactListAdd: QtWidgets.QAction
@@ -26,8 +29,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # order
         tabs = QtWidgets.QTabWidget()
         self.contacts = ContactsWidget()
+        self.todo = TodosWidget()
         tabs.addTab(self.contacts, "Contacts")
-        tabs.addTab(QtWidgets.QWidget(), "ToDo")
+        tabs.addTab(self.todo, "ToDo")
         # that's all
         self.setCentralWidget(tabs)
         # attributes
