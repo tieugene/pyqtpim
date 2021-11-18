@@ -3,47 +3,39 @@
 ## Now
 
 ### Job
-- [x] C: QDataWidgetMapper()
-- Reuse Mgr/List/Details (one from):
-  - Inherit
-  - Class Object
-  - Replace model of object
 
 ### Fixme
 
 ### Tuning
-- [ ] CLM.Model:
+- [x] `__init__.py`: all-in-one
+- [x] views.py: add icons to actions
+- [ ] code check:
+  - [x] built-in
+  - [x] flake8
+  - [ ] pylint
+- [ ] ELM.Model:
   - [ ] insertRows()
   - [ ] updateRows()
-- [ ] split `contact/*` by `part/layer.py`:
-  - card/{data,view)
-  - ab/{data,model,view)
-  - mgr/{data,model,view)
 
 ## Contacts
-- [ ] CLM.View:
-  - [ ] autoshrink v/h
-- [ ] CL.View:
-  - [ ] autoshrink v/h
-    *(self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)*
+- [ ] CLM.View: autoshrink v/h
+- [ ] CL.View: autoshrink v/h[^1]
 - [ ] C:
-  - [ ] Data: mv load() back to CL (item+source)
-  - [ ] Model: QDataWidgetMapper()
-  - [ ] View: extend
-  - [ ] C~~R~~UD, Info (*CardBook/radicale compatible*; not drop data exist)
+  - [ ] Extend
+  - [ ] C~~R~~UD, Info[^2]
 
 ### Next:
 - [ ] CLM:
   - [ ] Model:
-    - [ ] QStandardItemModel/QStringListModel
-    - [ ] *All* virtual list / checkboxes
-    - [ ] ?Rescan
+     - [x] QStringListModel
+     - [ ] *All* virtual list / checkboxes
+     - [ ] *Rescan*
 - [ ] CL:
   - [ ] Data: async load
   - [ ] Model: QStandardItemModel (?)
   - [ ] View:
     - [ ] Columns handle:
-       - [ ] select (== show/hide)
+       - [ ] on/off
        - [ ] sort by
        - [ ] order
 - [ ] C: &hellip;
@@ -58,7 +50,7 @@
 ## misc
 
 ### RTFM
-- [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?
+- PySide2 Book[^3]
 
 #### pyside2/examples
 - tutorial/t8.py (UI)
@@ -69,3 +61,7 @@
   - itemviews/addresbook/ (?)
   - tutorials/addressbook/ (CRUD)
 - sql/books/ (list/Details)
+
+[^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
+[^2]: CardBook/radicale compatible; not drop data exist
+[^3]: [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?

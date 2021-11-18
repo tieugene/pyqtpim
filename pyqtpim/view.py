@@ -1,7 +1,7 @@
 """Main GUI"""
 
-from PySide2 import QtWidgets
-from contact.view import ContactsWidget
+from PySide2 import QtWidgets, QtGui
+from contact import ContactsWidget
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -32,27 +32,39 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(tabs)
         # attributes
 
-    def createActions(self):
-        self.actExit = QtWidgets.QAction("E&xit", self,
+    def createActions(self):  # QtGui.QIcon(':/icons/power-standby.svg'),
+        # noinspection PyArgumentList
+        self.actExit = QtWidgets.QAction(QtGui.QIcon(':/icons/power-standby.svg'),
+                                         "E&xit", self,
                                          shortcut="Ctrl+Q",
                                          statusTip="Exit the application",
                                          triggered=self.close)
-        self.actAbout = QtWidgets.QAction("&About", self,
+        # noinspection PyArgumentList
+        self.actAbout = QtWidgets.QAction(QtGui.QIcon(':/icons/question-mark.svg'),
+                                          "&About", self,
                                           statusTip="Show the application's About box",
                                           triggered=self.about)
-        self.actContactListAdd = QtWidgets.QAction("AddressBook &New", self,
+        # noinspection PyArgumentList
+        self.actContactListAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
+                                                   "AddressBook &New", self,
                                                    shortcut="Ctrl+N",
                                                    statusTip="Add new AddressBook",
                                                    triggered=self.contacts.sources.itemAdd)
-        self.actContactListEdit = QtWidgets.QAction("AddressBook &Edit", self,
+        # noinspection PyArgumentList
+        self.actContactListEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
+                                                    "AddressBook &Edit", self,
                                                     shortcut="Ctrl+E",
                                                     statusTip="Edit current AddressBook",
                                                     triggered=self.contacts.sources.itemEdit)
-        self.actContactListDel = QtWidgets.QAction("AddressBook &Del", self,
+        # noinspection PyArgumentList
+        self.actContactListDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
+                                                   "AddressBook &Del", self,
                                                    shortcut="Ctrl+D",
                                                    statusTip="Delete current AddressBook",
                                                    triggered=self.contacts.sources.itemDel)
-        self.actContactListInfo = QtWidgets.QAction("AddressBook &Info", self,
+        # noinspection PyArgumentList
+        self.actContactListInfo = QtWidgets.QAction(QtGui.QIcon(':/icons/info.svg'),
+                                                    "AddressBook &Info", self,
                                                     shortcut="Ctrl+I",
                                                     statusTip="Info about current AddressBook",
                                                     triggered=self.contacts.sources.itemInfo)

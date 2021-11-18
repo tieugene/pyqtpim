@@ -1,25 +1,43 @@
-"""Contact collections."""
+"""Common vCard/iCal parents"""
 
 # 1. std
 import os
 # 2. 3rd
+import vobject
 # 3. local
-from .entry import Contact
+from . import exc
 
 
-class ContactList(object):
-    """List of Contacts"""
+class Entry(object):
+    _fname: str
+    _data: vobject.base.Component
+    _name2func: dict
+
+    def __init__(self, path: str, vcard: vobject.base.Component):
+        self._fname = path
+        self._data = vcard
+
+    def getPropByName(self, fld_name: str) -> str:
+        if fld := self._name2func.get(fld_name):
+            return fld()
+        return ''
+
+
+class EntryList(object):
+    """List of Entries"""
     __path: str
     __name: str
-    __data: list[Contact]
     __ready: bool
+    _data: list
 
     def __init__(self, name: str = None, path: str = None):
-        super().__init__()
         self.__name = name
         self.__path = path
-        self.__data = []
         self.__ready = False
+        self._data = []
+
+    def _load_one(self, fname: str, _: vobject.base.Component):
+        print("Virtual __load_data call")
 
     def __load(self):
         """Load entries from dir"""
@@ -29,8 +47,12 @@ class ContactList(object):
                 for entry in itr:
                     if not entry.is_file():
                         continue
-                    # TODO: chk mimetype
-                    self.__data.append(Contact(entry.path))
+                    with open(entry.path, 'rt') as stream:
+                        # TODO: chk mimetype
+                        if vcard := vobject.readOne(stream):
+                            self._load_one(entry.name, vcard)
+                        else:
+                            raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
 
     def __chk_ready(self):
         if not self.__ready:
@@ -48,28 +70,28 @@ class ContactList(object):
     @property
     def size(self):
         self.__chk_ready()
-        return len(self.__data)
+        return len(self._data)
 
     def print(self):
         self.__chk_ready()
-        for v in self.__data:
+        for v in self._data:
             v.print()
 
-    def item(self, i: int) -> Contact:
+    def item(self, i: int) -> Entry:
         """Get list item"""
         self.__chk_ready()
-        return self.__data[i]
+        return self._data[i]
 
     def update(self, name: str, path: str):
         self.__name = name
         if path != self.__path:
-            self.__data.clear()
+            self._data.clear()
             self.__path = path
             self.__ready = False
 
 
-class ContactListManager(list[ContactList]):
-    """List of Lists of Contacts."""
+class EntryListManager(list[EntryList]):
+    """List of Lists of Entries."""
 
     def __init__(self):
         super().__init__()
@@ -79,12 +101,12 @@ class ContactListManager(list[ContactList]):
         return len(self)
 
     def itemAdd(self, name: str, path: str):
-        """Add new ContactList
-        :param name: Associated name of ContactList
-        :param path: Path to added ContactList
+        """Add new EntryList
+        :param name: Associated name of EntryList
+        :param path: Path to added EntryList
         :todo: return something
         """
-        self.append(ContactList(name, path))
+        print("Virtual itemAdd call")
 
     def itemUpdate(self, i: int, name: str, path: str):
         # old_entry = self[i]
@@ -97,15 +119,15 @@ class ContactListManager(list[ContactList]):
         return False
 
     def print(self):
-        for n, cl in self:
-            cl.print()
+        for n, el in self:
+            el.print()
 
     def findByName(self, s: str, i: int) -> bool:
         """Find existent CL by name [excluding i-th entry]
         :return: True if found
         """
-        for j, cl in enumerate(self):
-            if cl.name == s and j != i:
+        for j, el in enumerate(self):
+            if el.name == s and j != i:
                 return True
         return False
 
@@ -113,7 +135,7 @@ class ContactListManager(list[ContactList]):
         """Find existent CL by path [excluding i-th entry]
         :return: True if found
         """
-        for j, cl in enumerate(self):
-            if cl.path == s and j != i:
+        for j, el in enumerate(self):
+            if el.path == s and j != i:
                 return True
         return False

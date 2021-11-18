@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>icons/info.svg</file>
+    <file>icons/pencil.svg</file>
+    <file>icons/plus.svg</file>
+    <file>icons/power-standby.svg</file>
+    <file>icons/question-mark.svg</file>
+    <file>icons/trash.svg</file>
+</qresource>
+</RCC>

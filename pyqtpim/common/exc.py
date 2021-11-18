@@ -1,12 +1,12 @@
 """Exceptions"""
 
 
-class ContactError(RuntimeError):
-    """Contact basic error"""
+class EntryError(RuntimeError):
+    """Entry basic error"""
     ...
 
 
-class ContactLoadError(ContactError):
+class EntryLoadError(EntryError):
     """COntact loading exceptions"""
     msg: str
 
