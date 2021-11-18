@@ -8,14 +8,10 @@
 
 ### Tuning
 - [x] `__init__.py`: all-in-one
-- [ ] views.py: add icons to actions (exit=power-standby.svg, about=question-mark.svg, info=info.svg, new=plus.svg, edit=pencil.svg, del=trash.svg)
+- [x] views.py: add icons to actions
 - [ ] code check:
-  - [ ] built-in:
-    - [ ] 6 views.py
-    - [x] 6 common/model.py
-    - [x] 2 common/views.py (unresolvable)
-    - [x] 1 contact/model.py
-  - [ ] flake8
+  - [x] built-in
+  - [x] flake8
   - [ ] pylint
 - [ ] ELM.Model:
   - [ ] insertRows()
