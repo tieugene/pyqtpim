@@ -47,7 +47,7 @@ class EntryListView(QtWidgets.QTableView):
         self.__details.clean()
 
 
-class EmptyListManagerView(QtWidgets.QListView):
+class EntryListManagerView(QtWidgets.QListView):
     __list: EntryListView
 
     def __init__(self, parent, dependant: EntryListView):

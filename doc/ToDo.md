@@ -7,8 +7,8 @@
 ### Fixme
 
 ### Tuning
-- [ ] `__init__.py`: all-in-one
-- [ ] cleanup:
+- [x] `__init__.py`: all-in-one
+- [ ] code check:
   - [ ] built-in
   - [ ] flake8
   - [ ] pylint

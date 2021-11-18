@@ -3,7 +3,7 @@
 # 1. system
 # 2. PySide
 # 3. local
-from common.model import EntryListModel, EntryListManagerModel
+from common import EntryListModel, EntryListManagerModel
 from .data import ContactList, ContactListManager
 
 

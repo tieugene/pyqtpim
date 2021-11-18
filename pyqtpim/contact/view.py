@@ -2,11 +2,11 @@
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common.view import EntryDetailWidget, EntryListView, EmptyListManagerView
+from common import EntryDetailWidget, EntryListView, EntryListManagerView
 from .model import ContactListManagerModel, ContactListModel
 
 
-class ContactListManagerView(EmptyListManagerView):
+class ContactListManagerView(EntryListManagerView):
     def _empty_model(self) -> ContactListManagerModel:
         return ContactListManagerModel()
 

@@ -9,8 +9,7 @@ Most interesting (see contents:dict):
 # 2. 3rd
 import vobject
 # 3. local
-from common.data import Entry, EntryList, EntryListManager
-from common import exc
+from common import exc, Entry, EntryList, EntryListManager
 
 
 class Contact(Entry):
