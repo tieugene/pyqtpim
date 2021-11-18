@@ -3,7 +3,7 @@
 from PySide2 import QtCore
 # 3. local
 from common.settings import MySettings
-from common.backend import EntryList, EntryListManager
+from common.data import EntryList, EntryListManager
 
 
 class EntryListModel(QtCore.QAbstractTableModel):

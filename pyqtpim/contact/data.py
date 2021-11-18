@@ -9,7 +9,8 @@ Most interesting (see contents:dict):
 # 2. 3rd
 import vobject
 # 3. local
-from common.backend import Entry
+from common.data import Entry, EntryList, EntryListManager
+from common import exc
 
 
 class Contact(Entry):
@@ -72,3 +73,16 @@ class Contact(Entry):
         if tel := self._data.contents.get('tel'):
             return ", ".join([v.value for v in tel])
         return ''
+
+
+class ContactList(EntryList):
+    def _load_one(self, fname: str, data: vobject.base.Component):
+        if data.name == 'VCARD':
+            self._data.append(Contact(fname, data))
+        else:
+            raise exc.EntryLoadError(f"It is not VCARD: {fname}")
+
+
+class ContactListManager(EntryListManager):
+    def itemAdd(self, name: str, path: str):
+        self.append(ContactList(name, path))

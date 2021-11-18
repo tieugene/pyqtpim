@@ -4,7 +4,7 @@
 # 2. PySide
 # 3. local
 from common.model import EntryListModel, EntryListManagerModel
-from .collection import ContactList, ContactListManager
+from .data import ContactList, ContactListManager
 
 
 class ContactListModel(EntryListModel):

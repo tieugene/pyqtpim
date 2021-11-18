@@ -1,6 +1,6 @@
 import os
 
-from contact.entry import Contact
+from contact.data import Contact
 from contact.collection import ContactList, ContactListManager
 
 indir = '/Volumes/Trash/Documents/AB'

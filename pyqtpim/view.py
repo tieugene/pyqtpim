@@ -1,7 +1,7 @@
 """Main GUI"""
 
 from PySide2 import QtWidgets
-from contact.view import ContactsWidget
+from contact import ContactsWidget
 
 
 class MainWindow(QtWidgets.QMainWindow):

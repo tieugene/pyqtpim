@@ -1,6 +1,6 @@
 import os.path
 from PySide2 import QtCore, QtWidgets
-from .backend import EntryList
+from .data import EntryList
 from .model import EntryListModel, EntryListManagerModel
 
 
