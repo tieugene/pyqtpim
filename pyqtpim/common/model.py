@@ -47,6 +47,10 @@ class EntryListModel(QtCore.QAbstractTableModel):
     def item(self, i: int) -> Entry:
         return self._data.item(i)
 
+    @property
+    def path(self):
+        return self._data.path
+
 
 class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
     _set_group: SetGroup

@@ -17,6 +17,8 @@ class MainWindow(QtWidgets.QMainWindow):
     actEntryListEdit: QtWidgets.QAction
     actEntryListDel: QtWidgets.QAction
     actEntryListInfo: QtWidgets.QAction
+    actEntryCat: QtWidgets.QAction
+    actEntryCode: QtWidgets.QAction
 
     def __init__(self):
         super().__init__()
@@ -74,6 +76,18 @@ class MainWindow(QtWidgets.QMainWindow):
                                                   shortcut="Ctrl+I",
                                                   statusTip="Info about current List",
                                                   triggered=self.listInfo)
+        # noinspection PyArgumentList
+        self.actEntryCat = QtWidgets.QAction(QtGui.QIcon(':/icons/eye.svg'),
+                                             "Entry &File", self,
+                                             shortcut="Ctrl+F",
+                                             statusTip="Entry file content",
+                                             triggered=self.entryCat)
+        # noinspection PyArgumentList
+        self.actEntryCode = QtWidgets.QAction(QtGui.QIcon(':/icons/code.svg'),
+                                              "Entry &View", self,
+                                              shortcut="Ctrl+V",
+                                              statusTip="Entry inner structure",
+                                              triggered=self.entryCode)
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
@@ -83,7 +97,9 @@ class MainWindow(QtWidgets.QMainWindow):
         menu_edit.addAction(self.actEntryListEdit)
         menu_edit.addAction(self.actEntryListDel)
         menu_edit.addAction(self.actEntryListInfo)
-        # menuView = self.menuBar().addMenu("&View")
+        menu_view = self.menuBar().addMenu("&View")
+        menu_view.addAction(self.actEntryCat)
+        menu_view.addAction(self.actEntryCode)
         menu_help = self.menuBar().addMenu("&Help")
         menu_help.addAction(self.actAbout)
 
@@ -109,3 +125,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def listInfo(self):
         (self.contacts.sources.itemInfo, self.todo.sources.itemInfo)[self.tabs.currentIndex()]()
+
+    def entryCat(self):
+        """Show file content"""
+        (self.contacts.list.itemCat(), self.todo.list.itemCat)[self.tabs.currentIndex()]()
+
+    def entryCode(self):
+        """Show entry structure"""
+        ...

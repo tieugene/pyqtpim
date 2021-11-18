@@ -4,7 +4,7 @@
 
 ### 0.1. Job
 - [x] Switch ELM.CUD Contacts&hArr;ToDo
-- [ ] EL: Show file
+- [x] EL: Show file
 - [ ] E: Show raw content
 - [ ] ToDo: extend
 
@@ -16,6 +16,7 @@
   - [ ] updateRows()
 - [ ] ELM.View: autoshrink v/h
 - [ ] EL.View: autoshrink v/h[^1]
+- [ ] Actions: Enable/Disable by context
 
 ## 1. Common
 
