@@ -1,9 +1,10 @@
 # 1. system
+from typing import Any
 # 2. PySide
 from PySide2 import QtCore
 # 3. local
 from .settings import MySettings
-from .data import EntryList, EntryListManager
+from .data import Entry, EntryList, EntryListManager
 
 
 class EntryListModel(QtCore.QAbstractTableModel):
@@ -12,25 +13,26 @@ class EntryListModel(QtCore.QAbstractTableModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        QtCore.QAbstractTableModel().columnCount()
 
-    def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int):
+    def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = QtCore.Qt.DisplayRole) -> Any:
         """TODO: use setHeaderData() in __init__()"""
         if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
             return self._fld_names[section][0]
         return super().headerData(section, orientation, role)
 
-    def data(self, index, role):
+    def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
         if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # EditRole for mapper
             c = self._data.item(index.row())
             col = index.column()
             return c.getPropByName(self._fld_names[col][1])
 
-    def rowCount(self, index):
+    def rowCount(self, index: QtCore.QModelIndex = None) -> int:
         return self.size
 
     # self
     @property
-    def size(self):
+    def size(self) -> int:
         return self._data.size
 
     def _empty_item(self) -> EntryList:
@@ -42,7 +44,7 @@ class EntryListModel(QtCore.QAbstractTableModel):
         self._data = new_el or self._empty_item()
         self.endResetModel()
 
-    def item(self, i: int):
+    def item(self, i: int) -> Entry:
         return self._data.item(i)
 
 
@@ -54,14 +56,14 @@ class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
         super().__init__(*args, **kwargs)
 
     # inherited
-    def data(self, index, role):
+    def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
         if role == QtCore.Qt.DisplayRole:
             return self._data[index.row()].name
 
-    def rowCount(self, index):
+    def rowCount(self, index: QtCore.QModelIndex = None) -> int:
         return self.size
 
-    def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex):
+    def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex = None) -> bool:
         """Delete count records starting from i."""
         self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
         for row in range(row0, row0 + count):
@@ -76,7 +78,7 @@ class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
             self._data.itemAdd(name, path)
 
     @property
-    def size(self):
+    def size(self) -> int:
         return self._data.size
 
     def item(self, i: int) -> EntryList:

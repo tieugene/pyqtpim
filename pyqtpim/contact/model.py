@@ -2,6 +2,7 @@
 
 # 1. system
 # 2. PySide
+from PySide2 import QtCore
 # 3. local
 from common import EntryListModel, EntryListManagerModel
 from .data import ContactList, ContactListManager
@@ -19,7 +20,7 @@ class ContactListModel(EntryListModel):
             ("Tel.", 'tel')
         )
 
-    def columnCount(self, index):
+    def columnCount(self, _: QtCore.QModelIndex = None) -> int:
         return 5
 
     def _empty_item(self) -> ContactList:
