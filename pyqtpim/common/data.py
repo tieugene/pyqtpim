@@ -1,6 +1,7 @@
 """Common vCard/iCal parents"""
 
 # 1. std
+import inspect
 import os
 # 2. 3rd
 import vobject
@@ -37,7 +38,7 @@ class EntryList(object):
         self._data = []
 
     def _load_one(self, fname: str, _: vobject.base.Component):
-        print("Virtual __load_data call")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def __load(self):
         """Load entries from dir"""
@@ -106,7 +107,7 @@ class EntryListManager(list[EntryList]):
         :param path: Path to added EntryList
         :todo: return something
         """
-        print("Virtual itemAdd call")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def itemUpdate(self, i: int, name: str, path: str):
         # old_entry = self[i]

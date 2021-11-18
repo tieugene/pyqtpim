@@ -1,3 +1,4 @@
+import inspect
 import os.path
 from PySide2 import QtCore, QtWidgets
 from .data import EntryList
@@ -12,10 +13,10 @@ class EntryDetailWidget(QtWidgets.QGroupBox):
         self.mapper = QtWidgets.QDataWidgetMapper(self)
 
     def setModel(self, model: QtCore.QStringListModel):
-        print("Virtual EntryDetailWidget.setModel()")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def clean(self):
-        print("Virtual EntryDetailWidget.clean()")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
 
 class EntryListView(QtWidgets.QTableView):
@@ -38,7 +39,7 @@ class EntryListView(QtWidgets.QTableView):
         self.selectionModel().currentRowChanged.connect(self.__details.mapper.setCurrentModelIndex)
 
     def _empty_model(self) -> EntryListModel:
-        print("Virtual EntryListView._empty_model()")
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
         return EntryListModel()
 
     def refresh(self, data: EntryList = None):

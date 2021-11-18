@@ -1,4 +1,6 @@
 import os
+import sys
+import inspect
 
 from contact import ContactList, ContactListManager
 
@@ -27,3 +29,11 @@ def test_cl():
 # test_c()
 # test_cl()
 # test_clm()
+
+class MyClass(object):
+    def myfunc(self):
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
+
+
+# dir(MyClass().myfunc)
+MyClass().myfunc()
