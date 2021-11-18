@@ -128,7 +128,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def entryCat(self):
         """Show file content"""
-        (self.contacts.list.itemCat(), self.todo.list.itemCat)[self.tabs.currentIndex()]()
+        (self.contacts.list.itemCat, self.todo.list.itemCat)[self.tabs.currentIndex()]()
 
     def entryCode(self):
         """Show entry structure"""

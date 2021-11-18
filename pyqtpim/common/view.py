@@ -56,6 +56,7 @@ class EntryListView(QtWidgets.QTableView):
             with open(path, 'rt') as infile:
                 msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "File content", path)
                 msg.setDetailedText(infile.read())
+                # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
                 msg.exec_()
 
 

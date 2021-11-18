@@ -26,3 +26,8 @@ RFC | Mean   | Re
 \*1 | 1 may  | ?
 1\* | 1+ must| +
 \*  | 1+ may | *
+
+## Export .ics examples
+- TBird - Task list - Export - \*.ics
+- split into <uid>ics
+

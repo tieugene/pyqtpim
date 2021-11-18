@@ -23,9 +23,17 @@ def test_el():
 
 def test_e():
     el = TodoList('Test', indir)
-    for i in range(el.size):    # el.size
+    for i in range(3):    # el.size
         e = el.item(i)
-        print(F"{i}: {e._fname}: {e._data.summary.value}")
-
+        inner = e._data
+        print(f"==== {i}: {e._fname}: ====")
+        for k, v in inner.contents.items():
+            if isinstance(v, list):
+                if len(v) == 1:
+                    print(f"<{k}>: {v[0].value}")  # or inner.<key> (like inner.summary.value
+                else:
+                    print(f"{k}: {v}")
+            else:
+                print(f"{k}: {v.value}")
 
 test_e()

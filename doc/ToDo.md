@@ -5,10 +5,11 @@
 ### 0.1. Job
 - [x] Switch ELM.CUD Contacts&hArr;ToDo
 - [x] EL: Show file
-- [ ] E: Show raw content
+- [ ] E: Show raw content (html dt/dd?) (*Note: handle multiline strings*)
 - [ ] ToDo: extend
 
 ### 0.2. Fixme
+- [ ] Expandable 'View File'
 
 ### 0.3. Tuning
 - [ ] ELM.Model:
@@ -34,6 +35,9 @@
        - [ ] on/off
        - [ ] sort by
        - [ ] order
+- [ ] E:
+  - [ ] description/notes format as markdown:
+    - X-ALT-DESC;FMTTYPE=text/html:
 - [ ] Deployment:
   - [ ] docstrings
   - [ ] pylint
