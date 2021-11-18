@@ -66,6 +66,6 @@
   - tutorials/addressbook/ (CRUD)
 - sql/books/ (list/Details)
 
-[^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents
+[^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
 [^2]: CardBook/radicale compatible; not drop data exist
 [^3]: [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?
