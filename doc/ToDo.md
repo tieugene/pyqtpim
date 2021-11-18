@@ -1,4 +1,5 @@
 # ToDo
+- [ ] todo
 
 ## Now
 
@@ -7,12 +8,6 @@
 ### Fixme
 
 ### Tuning
-- [x] `__init__.py`: all-in-one
-- [x] views.py: add icons to actions
-- [ ] code check:
-  - [x] built-in
-  - [x] flake8
-  - [ ] pylint
 - [ ] ELM.Model:
   - [ ] insertRows()
   - [ ] updateRows()
@@ -25,6 +20,7 @@
   - [ ] C~~R~~UD, Info[^2]
 
 ### Next:
+- [ ] pylint
 - [ ] CLM:
   - [ ] Model:
      - [x] QStringListModel
