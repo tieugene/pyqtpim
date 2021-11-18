@@ -3,15 +3,11 @@
 ## Now
 
 ### Job
-- [x] Reuse (Mgr/List/Entry):
-  - [x] View (Extension)
-  - [x] Model (Extension)
-  - [x] Data (Extension)
 
 ### Fixme
 
 ### Tuning
-- [ ] __init__.py: all-in-one
+- [ ] `__init__.py`: all-in-one
 - [ ] cleanup:
   - [ ] built-in
   - [ ] flake8
@@ -24,15 +20,15 @@
 - [ ] CLM.View: autoshrink v/h
 - [ ] CL.View: autoshrink v/h[^1]
 - [ ] C:
-  - [ ] View: extend
+  - [ ] Extend
   - [ ] C~~R~~UD, Info[^2]
 
 ### Next:
 - [ ] CLM:
   - [ ] Model:
-    - [x] QStringListModel
-    - [ ] *All* virtual list / checkboxes
-    - [ ] ?Rescan
+     - [x] QStringListModel
+     - [ ] *All* virtual list / checkboxes
+     - [ ] *Rescan*
 - [ ] CL:
   - [ ] Data: async load
   - [ ] Model: QStandardItemModel (?)
