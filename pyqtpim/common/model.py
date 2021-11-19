@@ -27,6 +27,9 @@ class EntryListModel(QtCore.QAbstractTableModel):
             col = index.column()
             return c.getPropByName(self._fld_names[col][1])
 
+    def columnCount(self, _: QtCore.QModelIndex = None) -> int:
+        return len(self._fld_names)
+
     def rowCount(self, index: QtCore.QModelIndex = None) -> int:
         return self.size
 

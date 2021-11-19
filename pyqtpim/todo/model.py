@@ -12,10 +12,10 @@ class TodoListModel(EntryListModel):
         self._data = TodoList()
         self._fld_names = (
             ("Summary", 'summary'),
+            ("Prio", 'priority'),
+            ("DTStart", 'dtstart'),
+            ("Due", 'due'),
         )
-
-    def columnCount(self, _: QtCore.QModelIndex = None) -> int:
-        return 1
 
     def _empty_item(self) -> TodoList:
         return TodoList()

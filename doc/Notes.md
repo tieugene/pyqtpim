@@ -82,8 +82,8 @@ Name       | Type     | Field
 1. Return type: str (*see below*)
 1. Exceptions:
   - not found the way to direct 'class' access
-  - 'categories' is allways list of str
-  - 'attach' can be as value as list
+  - 'categories' is allways [str] or [[str]]
+  - 'attach' can be as str as list
 
 ```python
 knownChildren = {
