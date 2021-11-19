@@ -76,6 +76,14 @@ Name       | Type     | Field
 Приватность| enum | CLASS
 
 ## vobject.icalendar.VTodo:
+1. VTODO parameter <parm> can be accassable:
+  - indirectly: obj.contents['parm'][0].value
+  - directly: obj.parm.value
+1. Return type: str (*see below*)
+1. Exceptions:
+  - not found the way to direct 'class' access
+  - 'categories' is allways list of str
+  - 'attach' can be as value as list
 
 ```python
 knownChildren = {

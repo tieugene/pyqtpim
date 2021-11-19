@@ -1,6 +1,6 @@
 import sys
 
-from todo import TodoList, TodoListManager
+from todo import Todo, TodoList, TodoListManager
 
 
 def test_elm():
@@ -30,19 +30,23 @@ def test_e():
     )
 
     def __print_one(k: str, v_list: list):
-        if k != 'description':
-            if len(v_list) == 1:
-                v = v_list[0].value
-                print(f"{k}: {v}")  # str; TODO: find .toNative()
-            else:
-                print(f"{k}: {v_list}")
+        if k == 'description':
+            return
+        if len(v_list) == 1:
+            v = v_list[0]
+            # if isinstance(v, list):   # impossible
+            print(f"{k}: {v.value}")    # str; TODO: find .toNative()
+        else:                           # multivalues (attach, categories)
+            v = [j.value for j in v_list]
+            print(f"{k}[]: {v}")
 
     def __print1(item):
         """All possible"""
         keys = list(item.contents.keys())
         keys.sort()
         for k in keys:  # v: list allways
-            __print_one(k, item.contents.get(k))
+            if k != 'valarm':
+                __print_one(k, item.contents.get(k))
 
     def __print2(item):
         """All wanted"""
@@ -94,12 +98,17 @@ def test_e():
         if 'x-moz-generation' in item.contents:
             print(f"x-moz-generation: {item.x_moz_generation.value}")
 
+    def __print4(entry: Todo):
+        """All using on-board method"""
+        for k, v in entry.getContent().items():
+            print(f"{k}: {v}")
+
     el = TodoList('Test', sys.argv[1])
     for i in range(el.size):  # el.size
         e = el.item(i)
-        inner = e._data
         print(f"==== {i}: {e._fname}: ====")
-        __print3(inner)
+        # __print1(e._data)
+        __print4(e)
         print()
     # TODO: print all keys found
 

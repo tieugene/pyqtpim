@@ -3,14 +3,13 @@
 ## 0. Now
 
 ### 0.1. Job
-- [x] Switch ELM.CUD Contacts&hArr;ToDo
-- [x] EL: Show file
-- [ ] E: Show raw content (html dt/dd?) (*Note: handle multiline strings*)
+- [ ] E: Show raw content (html dt/dd | markdown):
+  - Note #1: handle multiline strings (description)
+  - Note #2: handle multivalues (categories, attach)
 - [ ] ToDo: extend (columns(9))
-- [x] VTODO expected/optional attributes
 
 ### 0.2. Fixme
-- [ ] Expandable 'View File'
+- [ ] Expandable 'View File' messagebox
 
 ### 0.3. Tuning
 - [ ] ELM.Model:

@@ -1,9 +1,11 @@
 """vToDo data provider"""
 
 # 2. 3rd
+from _collections import OrderedDict
+
 import vobject
 # 3. local
-from common import exc, Entry, EntryList, EntryListManager
+from common import Entry, EntryList, EntryListManager
 
 
 class Todo(Entry):
@@ -15,6 +17,23 @@ class Todo(Entry):
 
     def getSummary(self) -> str:
         return self._data.summary.value
+
+    def getContent(self) -> OrderedDict:
+        """Return inner item content as structure"""
+        retvalue: OrderedDict = OrderedDict()
+        cnt = self._data.contents
+        keys = list(cnt.keys())
+        keys.sort()
+        for k in keys:  # v: list allways
+            if k == 'valarm':   # hack
+                continue
+            v_list = cnt[k]
+            if len(v_list) == 1:    # usual
+                v = v_list[0].value
+            else:                   # multivalues (attach, categories)
+                v = [i.value for i in v_list]
+            retvalue[k] = v
+        return retvalue
 
 
 class TodoList(EntryList):
