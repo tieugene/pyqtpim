@@ -122,7 +122,3 @@ knownChildren = {
     'VALARM':         (0, None, None)
 }
 ```
-
-### Datime examples:
-DTSTART;TZID=Europe/Moscow:20210405T090000
-COMPLETED:20210914T074957Z

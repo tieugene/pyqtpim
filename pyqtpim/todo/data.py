@@ -55,7 +55,7 @@ class Todo(Entry):
         if v := self.__getFldByName('percent-complete'):
             return int(v)
 
-    def getPriority(self) -> Optional[int]:     # TODO: special class
+    def getPriority(self) -> Optional[int]:
         if v := self.__getFldByName('priority'):
             return int(v)
 
