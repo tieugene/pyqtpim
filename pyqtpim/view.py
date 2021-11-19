@@ -6,8 +6,8 @@ from todo import TodosWidget
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    contacts: ContactsWidget
     todo: TodosWidget
+    contacts: ContactsWidget
     # misc
     tabs: QtWidgets.QTabWidget
     # actions
@@ -18,7 +18,7 @@ class MainWindow(QtWidgets.QMainWindow):
     actEntryListDel: QtWidgets.QAction
     actEntryListInfo: QtWidgets.QAction
     actEntryCat: QtWidgets.QAction
-    actEntryCode: QtWidgets.QAction
+    actEntryInside: QtWidgets.QAction
 
     def __init__(self):
         super().__init__()
@@ -32,10 +32,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def createWidgets(self):
         # order
         self.tabs = QtWidgets.QTabWidget()
-        self.contacts = ContactsWidget()
         self.todo = TodosWidget()
-        self.tabs.addTab(self.contacts, "Contacts")
         self.tabs.addTab(self.todo, "ToDo")
+        self.contacts = ContactsWidget()
+        self.tabs.addTab(self.contacts, "Contacts")
         # that's all
         self.setCentralWidget(self.tabs)
         # attributes
@@ -83,11 +83,11 @@ class MainWindow(QtWidgets.QMainWindow):
                                              statusTip="Entry file content",
                                              triggered=self.entryCat)
         # noinspection PyArgumentList
-        self.actEntryCode = QtWidgets.QAction(QtGui.QIcon(':/icons/code.svg'),
+        self.actEntryInside = QtWidgets.QAction(QtGui.QIcon(':/icons/code.svg'),
                                               "Entry &View", self,
-                                              shortcut="Ctrl+V",
-                                              statusTip="Entry inner structure",
-                                              triggered=self.entryCode)
+                                                shortcut="Ctrl+V",
+                                                statusTip="Entry inner structure",
+                                                triggered=self.entryInside)
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
@@ -99,7 +99,7 @@ class MainWindow(QtWidgets.QMainWindow):
         menu_edit.addAction(self.actEntryListInfo)
         menu_view = self.menuBar().addMenu("&View")
         menu_view.addAction(self.actEntryCat)
-        menu_view.addAction(self.actEntryCode)
+        menu_view.addAction(self.actEntryInside)
         menu_help = self.menuBar().addMenu("&Help")
         menu_help.addAction(self.actAbout)
 
@@ -115,21 +115,21 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.about(self, "About PyQtPIM", "PySide2 powered Personal Information Manager.")
 
     def listAdd(self):
-        (self.contacts.sources.itemAdd, self.todo.sources.itemAdd)[self.tabs.currentIndex()]()
+        (self.todo.sources.itemAdd, self.contacts.sources.itemAdd)[self.tabs.currentIndex()]()
 
     def listEdit(self):
-        (self.contacts.sources.itemEdit, self.todo.sources.itemEdit)[self.tabs.currentIndex()]()
+        (self.todo.sources.itemEdit, self.contacts.sources.itemEdit)[self.tabs.currentIndex()]()
 
     def listDel(self):
-        (self.contacts.sources.itemDel, self.todo.sources.itemDel)[self.tabs.currentIndex()]()
+        (self.todo.sources.itemDel, self.contacts.sources.itemDel)[self.tabs.currentIndex()]()
 
     def listInfo(self):
-        (self.contacts.sources.itemInfo, self.todo.sources.itemInfo)[self.tabs.currentIndex()]()
+        (self.todo.sources.itemInfo, self.contacts.sources.itemInfo)[self.tabs.currentIndex()]()
 
     def entryCat(self):
         """Show file content"""
-        (self.contacts.list.itemCat, self.todo.list.itemCat)[self.tabs.currentIndex()]()
+        (self.todo.list.itemCat, self.contacts.list.itemCat)[self.tabs.currentIndex()]()
 
-    def entryCode(self):
+    def entryInside(self):
         """Show entry structure"""
         ...

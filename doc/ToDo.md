@@ -3,24 +3,34 @@
 ## 0. Now
 
 ### 0.1. Job
-- [x] enums (class, status, transparency)
-- [ ] multivalues (categories)
-- [ ] Todo raw content
+- [ ] multivalues (categories, attach)
+- [ ] Raw content
 - [ ] handle datetime/date (dtstart, due)
+- [ ] Test (and/or):
+  - [ ] TBird w/ local dir
+  - [ ] sync w/ remote
+  - [ ] radicale@localhost
 
 ### 0.2. Fixme
 - [ ] View.Class.text == status text
 - [ ] Todo.Details: clear unused on change
+- [ ] Todo.Details.Percent: 99 max
 
 ### 0.3. Tuning
-- [ ] ELM.View: autoshrink v/h
-- [ ] EL.View: autoshrink v/h[^1]
+- [ ] ELM.View: auto-h/w
+- [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox
-- [ ] Actions: Enable/Disable by context
 
 ## 1. Common
+- [ ] EL:
+  - [ ] Data: sort
+  - [ ] View: Columns:
+     - [ ] on/off
+     - [ ] sort by
+     - [ ] order
 
 ### 1.1. Next:
+- [ ] Actions: Enable/Disable by context
 - [ ] ELM:
   - [ ] Model:
      - [ ] insertRows()
@@ -30,11 +40,6 @@
 - [ ] EL:
   - [ ] Data: async load
   - [ ] Model: QStandardItemModel (?)
-  - [ ] View:
-     - [ ] Columns:
-         - [ ] on/off
-         - [ ] sort by
-         - [ ] order
 - [ ] E:
   - [ ] description/notes format as markdown:
      - X-ALT-DESC;FMTTYPE=text/html:
@@ -46,18 +51,18 @@
   - [ ] setup.py
   - [ ] \*.spec
 
-## 2. Contacts
-- [ ] E:
-  - [ ] Extend
-  - [ ] CRUD[^2]
-
-## 3. ToDo
+## 2. ToDo
 - [ ] E:
   - [ ] View: Show raw content (html dt/dd | markdown):
      - Note #1: handle multiline strings (description)
      - Note #2: handle multivalues (categories, attach)
   - [ ] Extend
   - [ ] CRUD[^3]
+
+## 3. Contacts
+- [ ] E:
+  - [ ] Extend
+  - [ ] CRUD[^2]
 
 ## x. misc
 
