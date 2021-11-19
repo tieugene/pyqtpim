@@ -3,15 +3,12 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] E: Show raw content (html dt/dd | markdown):
-  - Note #1: handle multiline strings (description)
-  - Note #2: handle multivalues (categories, attach)
-- [x] ToDo: extend (columns(7))
 
 ### 0.2. Fixme
-- [ ] Todo.Data: datimes
-- [ ] Todo.List: empty datimes (complete, dtstart, due)
-- [ ] Todo.Details: datimes
+- [ ] Todo.Details: clear unused on change
+- [x] Todo.Data: datimes (vobject solves)
+- [x] Todo.List: empty datimes (complete, dtstart, due)
+- [x] Todo.Details: datimes
 
 ### 0.3. Tuning
 - [ ] Expandable 'View File' messagebox
@@ -29,7 +26,6 @@
   - [ ] Model:
      - [x] QStringListModel
      - [ ] *All* virtual list / checkboxes
-     - [ ] *Rescan*
 - [ ] EL:
   - [ ] Data: async load
   - [ ] Model: QStandardItemModel (?)
@@ -50,12 +46,15 @@
   - [ ] \*.spec
 
 ## 2. Contacts
-- [ ] C:
+- [ ] E:
   - [ ] Extend
   - [ ] CRUD[^2]
 
 ## 3. ToDo
-- [ ] C:
+- [ ] E:
+  - [ ] View: Show raw content (html dt/dd | markdown):
+    - Note #1: handle multiline strings (description)
+    - Note #2: handle multivalues (categories, attach)
   - [ ] Extend
   - [ ] CRUD[^3]
 

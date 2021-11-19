@@ -40,7 +40,7 @@ class Todo(Entry):
         return self.__getFldByName('categories')
 
     def getCompleted(self) -> Optional[datetime]:
-        return self.__getFldByName('completed')  # TODO: datetime
+        return self.__getFldByName('completed')
 
     def getDTStart(self) -> Optional[Union[date, datetime]]:
         return self.__getFldByName('dtstart')   # TODO: date[time]

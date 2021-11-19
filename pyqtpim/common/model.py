@@ -1,4 +1,5 @@
 # 1. system
+import datetime
 from typing import Any
 import inspect
 # 2. PySide
@@ -25,7 +26,12 @@ class EntryListModel(QtCore.QAbstractTableModel):
         if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # EditRole for mapper
             c = self._data.item(index.row())
             col = index.column()
-            return c.getPropByName(self._fld_names[col][1])
+            v = c.getPropByName(self._fld_names[col][1])
+            if isinstance(v, datetime.datetime):
+                v = QtCore.QDateTime(v)
+            elif isinstance(v, datetime.date):
+                v = QtCore.QDate(v)
+            return v
 
     def columnCount(self, _: QtCore.QModelIndex = None) -> int:
         return len(self._fld_names)
