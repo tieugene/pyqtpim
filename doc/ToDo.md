@@ -3,18 +3,19 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] enums (class, status, transparency)
+- [x] enums (class, status, transparency)
+- [ ] multivalues (categories)
 - [ ] Todo raw content
 - [ ] handle datetime/date (dtstart, due)
 
 ### 0.2. Fixme
+- [ ] View.Class.text == status text
 - [ ] Todo.Details: clear unused on change
 
 ### 0.3. Tuning
 - [ ] ELM.View: autoshrink v/h
 - [ ] EL.View: autoshrink v/h[^1]
 - [ ] Expandable 'View File' messagebox
-- [ ] ELM.Model:
 - [ ] Actions: Enable/Disable by context
 
 ## 1. Common

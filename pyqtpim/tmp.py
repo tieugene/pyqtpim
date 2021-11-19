@@ -102,7 +102,7 @@ def test_e():
 
     def __print4(entry: Todo):
         """All using on-board method"""
-        for k, v in entry.getContent().items():
+        for k, v in entry.RawContent().items():
             print(f"{k}: {v}")
 
     el = TodoList('Test', sys.argv[1])

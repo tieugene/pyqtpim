@@ -9,13 +9,31 @@ from typing import Optional, Union
 import vobject
 # 3. local
 from common import Entry, EntryList, EntryListManager
+from . import enums
 
 
 class Todo(Entry):
+    __MapClass = {
+        'PUBLIC': enums.EClass.Public,
+        'PRIVATE': enums.EClass.Private,
+        'CONFIDENTIAL': enums.EClass.Confidential
+    }
+    __MapStatus = {
+        'NEEDS-ACTION': enums.EStatus.NeedsAction,
+        'IN-PROCESS': enums.EStatus.InProcess,
+        'COMPLETED': enums.EStatus.Completed,
+        'CANCELLED': enums.EStatus.Cancelled
+    }
+    __MapTrans = {
+        'OPAQUE': enums.ETrans.Opaque,
+        'TRANSPARENT': enums.ETrans.Transparent
+    }
+
     def __init__(self, path: str, data: vobject.base.Component):
         super().__init__(path, data)
         self._name2func = {
             'categories': self.getCategories,
+            'class': self.getClass,
             'completed': self.getCompleted,
             'dtstart': self.getDTStart,
             'due': self.getDue,
@@ -23,7 +41,8 @@ class Todo(Entry):
             'percent': self.getPercent,
             'priority': self.getPriority,
             'status': self.getStatus,
-            'summary': self.getSummary
+            'summary': self.getSummary,
+            'transparency': self.getTrans
         }
 
     def __getFldByName(self, fld: str) -> Optional[Union[str, list]]:
@@ -35,9 +54,12 @@ class Todo(Entry):
             return v
 
     # for model
-
     def getCategories(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('categories')
+
+    def getClass(self) -> Optional[enums.EClass]:
+        if v := self.__getFldByName('class'):
+            return self.__MapClass.get(v)
 
     def getCompleted(self) -> Optional[datetime]:
         return self.__getFldByName('completed')
@@ -59,15 +81,19 @@ class Todo(Entry):
         if v := self.__getFldByName('priority'):
             return int(v)
 
-    def getStatus(self) -> Optional[str]:       # TODO: enum
-        return self.__getFldByName('status')
+    def getStatus(self) -> Optional[enums.EStatus]:
+        if v := self.__getFldByName('status'):
+            return self.__MapStatus.get(v)
 
     def getSummary(self) -> str:
         return self._data.summary.value
 
+    def getTrans(self) -> Optional[enums.ETrans]:
+        if v := self.__getFldByName('transparency'):
+            return self.__MapTrans.get(v)
     # /for model
 
-    def getContent(self) -> OrderedDict:
+    def RawContent(self) -> OrderedDict:
         """Return inner item content as structure"""
         retvalue: OrderedDict = OrderedDict()
         cnt = self._data.contents
