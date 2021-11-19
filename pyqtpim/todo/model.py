@@ -12,9 +12,12 @@ class TodoListModel(EntryListModel):
         self._data = TodoList()
         self._fld_names = (
             ("Summary", 'summary'),
-            ("Prio", 'priority'),
+            ("Completed", 'completed'),
             ("DTStart", 'dtstart'),
             ("Due", 'due'),
+            ("%", 'percent'),
+            ("Prio", 'priority'),
+            ("Status", 'status'),
         )
 
     def _empty_item(self) -> TodoList:

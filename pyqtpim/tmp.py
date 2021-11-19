@@ -37,9 +37,9 @@ def test_e():
             # if isinstance(v, list):   # impossible
             print(f"{k}: {v.value}")    # str; TODO: find .toNative()
         else:                           # multivalues (attach, categories)
+            # if k == 'categories':
+            #    v = [j.value[0] for j in v_list]
             v = [j.value for j in v_list]
-            if k == 'categories':
-                print(type(v[0]))
             print(f"{k}[]: {v}")
 
     def __print1(item):

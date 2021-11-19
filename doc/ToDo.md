@@ -6,12 +6,15 @@
 - [ ] E: Show raw content (html dt/dd | markdown):
   - Note #1: handle multiline strings (description)
   - Note #2: handle multivalues (categories, attach)
-- [ ] ToDo: extend (columns(9))
+- [x] ToDo: extend (columns(7))
 
 ### 0.2. Fixme
-- [ ] Expandable 'View File' messagebox
+- [ ] Todo.Data: datimes
+- [ ] Todo.List: empty datimes (complete, dtstart, due)
+- [ ] Todo.Details: datimes
 
 ### 0.3. Tuning
+- [ ] Expandable 'View File' messagebox
 - [ ] ELM.Model:
   - [ ] insertRows()
   - [ ] updateRows()

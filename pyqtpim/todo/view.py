@@ -20,6 +20,12 @@ class TodoListView(EntryListView):
 
 class TodoDetailWidget(EntryDetailWidget):
     summary: QtWidgets.QLineEdit
+    completed: QtWidgets.QDateTimeEdit
+    dtstart: QtWidgets.QDateTimeEdit
+    due: QtWidgets.QDateTimeEdit
+    percent: QtWidgets.QSpinBox
+    prio: QtWidgets.QSpinBox
+    status: QtWidgets.QLineEdit
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -29,21 +35,51 @@ class TodoDetailWidget(EntryDetailWidget):
     def __createWidgets(self):
         # order
         self.summary = QtWidgets.QLineEdit(self)
+        self.completed = QtWidgets.QDateTimeEdit(self)
+        self.dtstart = QtWidgets.QDateTimeEdit(self)
+        self.due = QtWidgets.QDateTimeEdit(self)
+        self.percent = QtWidgets.QSpinBox(self)
+        self.prio = QtWidgets.QSpinBox(self)
+        self.status = QtWidgets.QLineEdit(self)
         # layout
         layout = QtWidgets.QFormLayout()
         layout.addRow(QtWidgets.QLabel("Summary:"), self.summary)
+        layout.addRow(QtWidgets.QLabel("Complete:"), self.completed)
+        layout.addRow(QtWidgets.QLabel("DTStart:"), self.dtstart)
+        layout.addRow(QtWidgets.QLabel("Due:"), self.due)
+        layout.addRow(QtWidgets.QLabel("%:"), self.percent)
+        layout.addRow(QtWidgets.QLabel("Prio:"), self.prio)
+        layout.addRow(QtWidgets.QLabel("Status:"), self.status)
         self.setLayout(layout)
         # attributes
         self.summary.setReadOnly(True)
+        self.completed.setReadOnly(True)
+        self.dtstart.setReadOnly(True)
+        self.due.setReadOnly(True)
+        self.percent.setReadOnly(True)
+        self.prio.setReadOnly(True)
+        self.status.setReadOnly(True)
 
     def setModel(self, model: QtCore.QStringListModel):
         """Setup mapper"""
         self.mapper.setModel(model)
         self.mapper.addMapping(self.summary, 0)
+        self.mapper.addMapping(self.completed, 1)
+        self.mapper.addMapping(self.dtstart, 2)
+        self.mapper.addMapping(self.due, 3)
+        self.mapper.addMapping(self.percent, 4)
+        self.mapper.addMapping(self.prio, 5)
+        self.mapper.addMapping(self.status, 6)
 
     def clean(self):
         # print("Details clean call")
         self.summary.clear()
+        self.completed.clear()
+        self.dtstart.clear()
+        self.due.clear()
+        self.percent.clear()
+        self.prio.clear()
+        self.status.clear()
 
 
 class TodosWidget(QtWidgets.QWidget):

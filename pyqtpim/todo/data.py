@@ -43,7 +43,7 @@ class Todo(Entry):
         return self.__getFldByName('completed')  # TODO: datetime
 
     def getDTStart(self) -> Optional[Union[date, datetime]]:
-        return self.__getFldByName('dtstart')    # TODO: date[time]
+        return self.__getFldByName('dtstart')   # TODO: date[time]
 
     def getDue(self) -> Optional[Union[date, datetime]]:
         return self.__getFldByName('due')       # TODO: date[time]
@@ -59,9 +59,8 @@ class Todo(Entry):
         if v := self.__getFldByName('priority'):
             return int(v)
 
-    def getStatus(self) -> Optional[int]:       # TODO: enum
-        if v := self.__getFldByName('status'):
-            return int(v)
+    def getStatus(self) -> Optional[str]:       # TODO: enum
+        return self.__getFldByName('status')
 
     def getSummary(self) -> str:
         return self._data.summary.value
