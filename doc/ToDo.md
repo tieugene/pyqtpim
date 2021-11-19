@@ -6,7 +6,8 @@
 - [x] Switch ELM.CUD Contacts&hArr;ToDo
 - [x] EL: Show file
 - [ ] E: Show raw content (html dt/dd?) (*Note: handle multiline strings*)
-- [ ] ToDo: extend
+- [ ] ToDo: extend (columns(9))
+- [x] VTODO expected/optional attributes
 
 ### 0.2. Fixme
 - [ ] Expandable 'View File'
@@ -38,6 +39,7 @@
 - [ ] E:
   - [ ] description/notes format as markdown:
     - X-ALT-DESC;FMTTYPE=text/html:
+    - DESCRIPTION;ALTREP=text/html:
 - [ ] Deployment:
   - [ ] docstrings
   - [ ] pylint

@@ -2,6 +2,7 @@
 """
 Split monolythic .ics into separate files (one VTODO per file).
 Input: <infile.ics> <outdir>
+Output: uniq keys and UID
 """
 import os
 import sys
@@ -17,10 +18,12 @@ def split(i_f, o_d: str):
     3. get UID
     4. save with header and footer
     """
-    buffer = list()
-    in_vtodo = False
-    uid = None
-    header = list()
+    keys = dict()       # uniq keys
+    buffer = list()     # tmp VTODO buffer
+    keys_local = set()
+    in_vtodo = False    # flag that inside VTODO => need fill buffer
+    uid = None          # VTODO's UID
+    header = list()     # common header
     header.append(i_f.readline())
     header.append(i_f.readline())
     header.append(i_f.readline())
@@ -35,6 +38,10 @@ def split(i_f, o_d: str):
                 o_f.writelines(header)
                 o_f.writelines(buffer)
                 o_f.writelines(footer)
+                # cleanup
+                for k in keys_local:
+                    keys[k] = uid
+                keys_local.clear()
                 buffer.clear()
                 uid = None
                 in_vtodo = False
@@ -42,8 +49,13 @@ def split(i_f, o_d: str):
             buffer.append(line)
             if line.startswith('UID'):
                 uid = line[4:]
+            k = line.split(':', 1)[0]
+            if k not in keys and k not in keys_local:
+                keys_local.add(k)
         else:
             pass
+    for k, v in keys.items():
+        print(f"{k}\t{v}",)
 
 
 def main():
