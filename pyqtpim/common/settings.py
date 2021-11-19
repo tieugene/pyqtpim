@@ -25,6 +25,7 @@ class MySettings:
             SetGroup.ToDo: []
         }
         MySettings.__list_preload(SetGroup.Contacts)
+        MySettings.__list_preload(SetGroup.ToDo)
 
     @staticmethod
     def __list_preload(group: SetGroup):

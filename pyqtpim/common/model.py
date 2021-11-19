@@ -1,10 +1,11 @@
 # 1. system
+import datetime
 from typing import Any
 import inspect
 # 2. PySide
 from PySide2 import QtCore
 # 3. local
-from .settings import MySettings
+from .settings import MySettings, SetGroup
 from .data import Entry, EntryList, EntryListManager
 
 
@@ -25,7 +26,15 @@ class EntryListModel(QtCore.QAbstractTableModel):
         if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # EditRole for mapper
             c = self._data.item(index.row())
             col = index.column()
-            return c.getPropByName(self._fld_names[col][1])
+            v = c.getPropByName(self._fld_names[col][1])
+            if isinstance(v, datetime.datetime):
+                v = QtCore.QDateTime(v)
+            elif isinstance(v, datetime.date):
+                v = QtCore.QDate(v)
+            return v
+
+    def columnCount(self, _: QtCore.QModelIndex = None) -> int:
+        return len(self._fld_names)
 
     def rowCount(self, index: QtCore.QModelIndex = None) -> int:
         return self.size
@@ -47,9 +56,13 @@ class EntryListModel(QtCore.QAbstractTableModel):
     def item(self, i: int) -> Entry:
         return self._data.item(i)
 
+    @property
+    def path(self):
+        return self._data.path
+
 
 class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
-    _set_group: str
+    _set_group: SetGroup
     _data: EntryListManager
 
     def __init__(self, *args, **kwargs):

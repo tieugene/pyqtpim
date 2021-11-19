@@ -3,6 +3,7 @@
 # 1. std
 import inspect
 import os
+from typing import Any
 # 2. 3rd
 import vobject
 # 3. local
@@ -14,14 +15,17 @@ class Entry(object):
     _data: vobject.base.Component
     _name2func: dict
 
-    def __init__(self, path: str, vcard: vobject.base.Component):
-        self._fname = path
-        self._data = vcard
+    def __init__(self, fname: str, data: vobject.base.Component):
+        self._fname = fname
+        self._data = data
 
-    def getPropByName(self, fld_name: str) -> str:
+    @property
+    def fname(self) -> str:
+        return self._fname
+
+    def getPropByName(self, fld_name: str) -> Any:
         if fld := self._name2func.get(fld_name):
             return fld()
-        return ''
 
 
 class EntryList(object):

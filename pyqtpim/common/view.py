@@ -47,6 +47,18 @@ class EntryListView(QtWidgets.QTableView):
         self.model().switch_data(data)
         self.__details.clean()
 
+    def itemCat(self):
+        """Show file content"""
+        idx = self.selectionModel().currentIndex()
+        if idx.isValid():
+            i = idx.row()
+            path = os.path.join(self.model().path, self.model().item(i).fname)
+            with open(path, 'rt') as infile:
+                msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "File content", path)
+                msg.setDetailedText(infile.read())
+                # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+                msg.exec_()
+
 
 class EntryListManagerView(QtWidgets.QListView):
     __list: EntryListView

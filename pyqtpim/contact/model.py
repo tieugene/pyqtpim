@@ -20,9 +20,6 @@ class ContactListModel(EntryListModel):
             ("Tel.", 'tel')
         )
 
-    def columnCount(self, _: QtCore.QModelIndex = None) -> int:
-        return 5
-
     def _empty_item(self) -> ContactList:
         return ContactList()
 
