@@ -122,3 +122,9 @@ knownChildren = {
     'VALARM':         (0, None, None)
 }
 ```
+
+## Date, Time:
+- Datime local: 19980118T230000
+- Datime UTC: 19980119T070000Z
+- Datime TZ: TZID=Europe/Moscow:19980119T020000
+- Date: 19970714

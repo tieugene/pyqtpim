@@ -45,6 +45,19 @@ class Todo(Entry):
             'transparency': self.getTrans
         }
 
+    def RawContent(self) -> Optional[OrderedDict]:
+        """Return inner item content as structure"""
+        retvalue: OrderedDict = OrderedDict()
+        cnt = self._data.contents
+        keys = list(cnt.keys())
+        keys.sort()
+        for k in keys:  # v: list allways
+            if k == 'valarm':   # hack
+                continue
+            if v := self.__getFldByName(k):
+                retvalue[k] = v
+        return retvalue
+
     def __getFldByName(self, fld: str) -> Optional[Union[str, list]]:
         if v_list := self._data.contents.get(fld):
             if len(v_list) == 1:  # usual
@@ -92,19 +105,6 @@ class Todo(Entry):
         if v := self.__getFldByName('transparency'):
             return self.__MapTrans.get(v)
     # /for model
-
-    def RawContent(self) -> OrderedDict:
-        """Return inner item content as structure"""
-        retvalue: OrderedDict = OrderedDict()
-        cnt = self._data.contents
-        keys = list(cnt.keys())
-        keys.sort()
-        for k in keys:  # v: list allways
-            if k == 'valarm':   # hack
-                continue
-            if v := self.__getFldByName(k):
-                retvalue[k] = v
-        return retvalue
 
 
 class TodoList(EntryList):

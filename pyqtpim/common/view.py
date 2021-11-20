@@ -5,7 +5,7 @@ from .data import EntryList
 from .model import EntryListModel, EntryListManagerModel
 
 
-class EntryDetailWidget(QtWidgets.QGroupBox):
+class EntryView(QtWidgets.QGroupBox):
     mapper: QtWidgets.QDataWidgetMapper
 
     def __init__(self, parent):
@@ -20,9 +20,9 @@ class EntryDetailWidget(QtWidgets.QGroupBox):
 
 
 class EntryListView(QtWidgets.QTableView):
-    __details: EntryDetailWidget
+    __details: EntryView
 
-    def __init__(self, parent, dependant: EntryDetailWidget):
+    def __init__(self, parent, dependant: EntryView):
         super().__init__(parent)
         self.__details = dependant
         self.setSelectionBehavior(self.SelectRows)
@@ -59,6 +59,19 @@ class EntryListView(QtWidgets.QTableView):
                 # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
                 msg.exec_()
 
+    def itemInside(self):
+        """Show entry content"""
+        idx = self.selectionModel().currentIndex()
+        if idx.isValid():
+            i = idx.row()
+            raw = self.model().item(i).RawContent()
+            msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", raw['summary'])
+            txt = ""
+            for k, v in raw.items():
+                txt += f"{k}: {v}\n"
+            msg.setDetailedText(txt)
+            msg.exec_()
+
 
 class EntryListManagerView(QtWidgets.QListView):
     __list: EntryListView
@@ -78,7 +91,7 @@ class EntryListManagerView(QtWidgets.QListView):
 
     def itemAdd(self):
         """Add new CL."""
-        dialog = EntryListCUDialog(self._title)
+        dialog = EntryListForm(self._title)
         while dialog.exec_():
             name = dialog.name
             path = dialog.path
@@ -107,7 +120,7 @@ class EntryListManagerView(QtWidgets.QListView):
         idx = indexes[0]
         i = idx.row()
         cl = self.model().item(i)
-        dialog = EntryListCUDialog(self._title, cl.name, cl.path)
+        dialog = EntryListForm(self._title, cl.name, cl.path)
         while dialog.exec_():
             name = dialog.name
             path = dialog.path
@@ -164,7 +177,7 @@ class EntryListManagerView(QtWidgets.QListView):
             self.__list.refresh()
 
 
-class EntryListCUDialog(QtWidgets.QDialog):
+class EntryListForm(QtWidgets.QDialog):
     """ A dialog to add (Create) or edit (Update) EL in ELM."""
     nameText: QtWidgets.QLineEdit
     pathText: QtWidgets.QLineEdit

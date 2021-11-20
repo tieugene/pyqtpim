@@ -3,13 +3,14 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] multivalues (categories, attach)
-- [ ] Raw content
+- […] Raw content (plain/md/html/richtext)
+- [ ] multivalues (categories, attach, contact, comment)
 - [ ] handle datetime/date (dtstart, due)
 - [ ] Test (and/or):
   - [ ] TBird w/ local dir
   - [ ] sync w/ remote
   - [ ] radicale@localhost
+- [ ] ~~Find: TB Ligtning extension~~ (not found)
 
 ### 0.2. Fixme
 - [ ] View.Class.text == status text
@@ -57,7 +58,8 @@
      - Note #1: handle multiline strings (description)
      - Note #2: handle multivalues (categories, attach)
   - [ ] Extend
-  - [ ] CRUD[^3]
+  - [ ] CRUD[^3] (*Note: in-place Edit*)
+- [ ] EL: View: columnt delegates
 
 ## 3. Contacts
 - [ ] E:

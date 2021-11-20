@@ -2,7 +2,7 @@
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryDetailWidget, EntryListView, EntryListManagerView
+from common import EntryView, EntryListView, EntryListManagerView
 from .model import TodoListManagerModel, TodoListModel
 
 
@@ -18,7 +18,7 @@ class TodoListView(EntryListView):
         return TodoListModel()
 
 
-class TodoDetailWidget(EntryDetailWidget):
+class TodoView(EntryView):
     summary: QtWidgets.QLineEdit
     completed: QtWidgets.QDateTimeEdit
     dtstart: QtWidgets.QDateTimeEdit
@@ -97,7 +97,7 @@ class TodoDetailWidget(EntryDetailWidget):
 class TodosWidget(QtWidgets.QWidget):
     sources: TodoListManagerView
     list: TodoListView
-    details: TodoDetailWidget
+    details: TodoView
 
     def __init__(self):
         super().__init__()
@@ -106,7 +106,7 @@ class TodosWidget(QtWidgets.QWidget):
     def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
-        self.details = TodoDetailWidget(splitter)
+        self.details = TodoView(splitter)
         self.list = TodoListView(splitter, self.details)
         self.sources = TodoListManagerView(splitter, self.list)
         # layout
@@ -122,5 +122,5 @@ class TodosWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
 
-class TodoCUDialog(QtWidgets.QDialog):
+class TodoForm(QtWidgets.QDialog):
     ...
