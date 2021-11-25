@@ -1,5 +1,8 @@
 # Notes
 
+## misc
+- ListView ask model w/ DisplayRole; DetailsView - w/ EditRole
+
 ## vCard UML
 
 - Property params:
@@ -9,14 +12,12 @@
 
 ## Class/object relations
 
-En          | Ru          | Sign  | Mean | Example
-------------|-------------|-------|-----|---
-Extension   | Наследование | `<|--`| vs Generalization/Обобщение | `Man <|-- Employee`
-Composition | Композиция   | `*--` | == aggreg:include | list[]
-Aggregation | Агрегация    | `o--` | == assoc; :link | `container < item`
-Association | Ассоциация   | `<--` | 1:*
-Implementation | Реализация   | `<|..`| | `class < i/f|abstract`
-Dependence | Зависимость  | `<..` |
+- `<|--`: Extension (Наследование) aka Generalization (Обобщение) - e.g. `Man <|-- Employee`
+- `<-- `: Association (Ассоциация) - `1:*`
+- `o-- `: Aggregation (Агрегация) == assoc:link; e.g. `container < item`
+- `*-- `: Composition (Композиция) == aggreg:include; e.g. `list[]`
+- `<|..`: Implementation (Реализация) - e.g. `class < i/f|abstract`
+- `<.. `: Dependence (Зависимость) - weak link
 
 ## Cardinality:
 

@@ -60,16 +60,29 @@ class EntryListView(QtWidgets.QTableView):
                 msg.exec_()
 
     def itemInside(self):
-        """Show entry content"""
+        """Show entry content
+        :todo: style it
+        Simple:
+        msg.setText(raw['summary'])
+        for ...
+          txt += f"{k}: {v}\n"
+        msg.setDetailedText(txt)
+        """
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             i = idx.row()
             raw = self.model().item(i).RawContent()
-            msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", raw['summary'])
-            txt = ""
+            # icon, title, text
+            msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
+            # richtext
+            txt = "<html><body><table><tbody>"
             for k, v in raw.items():
-                txt += f"{k}: {v}\n"
-            msg.setDetailedText(txt)
+                if k == 'description':
+                    v = f"<pre>{v}</pre>"
+                txt += f"<tr><th>{k}:</th><td>{v}</td></tr>"
+            txt += "<tbody></table></body><html>"
+            msg.setText(txt)
+            msg.setTextFormat(QtCore.Qt.RichText)
             msg.exec_()
 
 

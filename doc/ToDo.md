@@ -3,8 +3,11 @@
 ## 0. Now
 
 ### 0.1. Job
-- […] Raw content (plain/md/html/richtext)
-- [ ] multivalues (categories, attach, contact, comment)
+- [ ] multivalues:
+  - categories: read=csv, edit=checklist
+  - attach: read=csv, edit=stringlist
+  - contact: csv/stringlist
+  - comment: csv/stringlist
 - [ ] handle datetime/date (dtstart, due)
 - [ ] Test (and/or):
   - [ ] TBird w/ local dir

@@ -2,6 +2,7 @@
 
 ## All
 - [x] MySettings
+- [x] Raw content (plain/md/html/richtext)
 
 ## Contacts
 - [ ] CLM:

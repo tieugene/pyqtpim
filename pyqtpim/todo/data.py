@@ -46,7 +46,8 @@ class Todo(Entry):
         }
 
     def RawContent(self) -> Optional[OrderedDict]:
-        """Return inner item content as structure"""
+        """Return inner item content as structure.
+        """
         retvalue: OrderedDict = OrderedDict()
         cnt = self._data.contents
         keys = list(cnt.keys())
@@ -59,6 +60,7 @@ class Todo(Entry):
         return retvalue
 
     def __getFldByName(self, fld: str) -> Optional[Union[str, list]]:
+        """Field value by it's name."""
         if v_list := self._data.contents.get(fld):
             if len(v_list) == 1:  # usual
                 v = v_list[0].value
@@ -68,6 +70,10 @@ class Todo(Entry):
 
     # for model
     def getCategories(self) -> Optional[Union[str, list[str]]]:
+        """Categories.
+        :return: Category or list of categories
+        :fixme: convert list[str] into str for values
+        """
         return self.__getFldByName('categories')
 
     def getClass(self) -> Optional[enums.EClass]:
