@@ -131,4 +131,5 @@ dmypy.json
 # local
 /.idea/
 /pyqtpim/pyqtpim.pyproject.user
-/_tmp/
+/_*/
+/*.sh

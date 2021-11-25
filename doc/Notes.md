@@ -129,3 +129,33 @@ knownChildren = {
 - Datime UTC: 19980119T070000Z
 - Datime TZ: TZID=Europe/Moscow:19980119T020000
 - Date: 19970714
+
+## Rsync
+### Remote:
+- `sudo dnf install rsync-daemon`
+- `/etc/rsyncd.conf`:
+
+  ```conf
+  log file = /var/log/rsyncd.log
+  uid = radicale
+  gid = radicale
+  use chroot = yes
+  read only = yes
+  # exclude = ".Radicale.*"
+
+  [dav]
+  path = /var/lib/radicale/collection-root/user
+
+  ```
+
+- `/etc/sysconfig/iptables`:
+
+  ```iptables
+  -A INPUT -s ... -p tcp -m state --state NEW -m tcp --dport 873 -j ACCEPT
+  ```
+
+### Local:
+
+```bash
+rsync -avz --del --exclude=".*" my.remote.host::dav .
+```

@@ -4,16 +4,11 @@
 
 ### 0.1. Job
 - [ ] multivalues:
-  - categories: read=csv, edit=checklist
+  - categories: read=csv, edit=~~checklist~~ multiline text
   - attach: read=csv, edit=stringlist
   - contact: csv/stringlist
   - comment: csv/stringlist
 - [ ] handle datetime/date (dtstart, due)
-- [ ] Test (and/or):
-  - [ ] TBird w/ local dir
-  - [ ] sync w/ remote
-  - [ ] radicale@localhost
-- [ ] ~~Find: TB Ligtning extension~~ (not found)
 
 ### 0.2. Fixme
 - [ ] View.Class.text == status text
@@ -34,6 +29,7 @@
      - [ ] order
 
 ### 1.1. Next:
+- [ ] [SyncML](https://pypi.org/project/pysyncml/)
 - [ ] Actions: Enable/Disable by context
 - [ ] ELM:
   - [ ] Model:
