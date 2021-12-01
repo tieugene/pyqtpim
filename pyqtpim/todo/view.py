@@ -40,6 +40,7 @@ class TodoView(EntryView):
         self.dtstart = QtWidgets.QDateTimeEdit(self)
         self.due = QtWidgets.QDateTimeEdit(self)
         self.percent = QtWidgets.QSpinBox(self)
+        self.percent.setMaximum(100)
         self.prio = QtWidgets.QSpinBox(self)
         self.status = QtWidgets.QLineEdit(self)
         self.trans = QtWidgets.QLineEdit(self)

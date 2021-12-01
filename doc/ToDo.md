@@ -13,7 +13,6 @@
 ### 0.2. Fixme
 - [ ] View.Class.text == status text
 - [ ] Todo.Details: clear unused on change
-- [ ] Todo.Details.Percent: 99 max
 
 ### 0.3. Tuning
 - [ ] ELM.View: auto-h/w
