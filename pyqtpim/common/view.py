@@ -13,7 +13,8 @@ class EntryView(QtWidgets.QGroupBox):
         self.mapper = QtWidgets.QDataWidgetMapper(self)
 
     def setModel(self, model: QtCore.QStringListModel):
-        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
+        self.mapper.setModel(model)
+        # print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def clean(self):
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")

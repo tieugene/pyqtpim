@@ -24,10 +24,6 @@ class Todo(Entry):
         'COMPLETED': enums.EStatus.Completed,
         'CANCELLED': enums.EStatus.Cancelled
     }
-    __MapTrans = {
-        'OPAQUE': enums.ETrans.Opaque,
-        'TRANSPARENT': enums.ETrans.Transparent
-    }
 
     def __init__(self, path: str, data: vobject.base.Component):
         super().__init__(path, data)
@@ -42,7 +38,6 @@ class Todo(Entry):
             'priority': self.getPriority,
             'status': self.getStatus,
             'summary': self.getSummary,
-            'transparency': self.getTrans
         }
 
     def RawContent(self) -> Optional[OrderedDict]:
@@ -71,10 +66,20 @@ class Todo(Entry):
     # for model
     def getCategories(self) -> Optional[Union[str, list[str]]]:
         """Categories.
-        :return: Category or list of categories
-        :fixme: convert list[str] into str for values
+        :return: Category:str or list of categories
+
+        Can be:
+        - None
+        - ['Cat1']
+        - [['Cat1'], ['Cat2'], ...]
         """
-        return self.__getFldByName('categories')
+        retvalue = self.__getFldByName('categories')
+        if retvalue:
+            if isinstance(retvalue[0], str):
+                retvalue = retvalue[0]
+            else:
+                retvalue = [s[0] for s in retvalue]
+        return retvalue
 
     def getClass(self) -> Optional[enums.EClass]:
         if v := self.__getFldByName('class'):
@@ -106,10 +111,6 @@ class Todo(Entry):
 
     def getSummary(self) -> str:
         return self._data.summary.value
-
-    def getTrans(self) -> Optional[enums.ETrans]:
-        if v := self.__getFldByName('transparency'):
-            return self.__MapTrans.get(v)
     # /for model
 
 

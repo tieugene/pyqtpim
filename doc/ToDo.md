@@ -3,16 +3,18 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] multivalues:
-  - categories: read=csv, edit=~~checklist~~ multiline text
-  - attach: read=csv, edit=stringlist
-  - contact: csv/stringlist
-  - comment: csv/stringlist
-- [ ] handle datetime/date (dtstart, due)
+- [ ] ListView: hide extra columns (like details)
+- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide)
+- [ ] multivalues: list: csv, details: multiline text, edit: ??? (multiline, checklist, stringlist)
+  - [ ] categories
+  - [ ] attach
+  - [ ] contact
+  - [ ] comment
+- [ ] handle datetime/date (dtstart, due; setDisplayedFormat()/setSelectedSection())
 
 ### 0.2. Fixme
 - [ ] View.Class.text == status text
-- [ ] Todo.Details: clear unused on change
+- [ ] Todo.Details: clear unused on change (None?)
 
 ### 0.3. Tuning
 - [ ] ELM.View: auto-h/w

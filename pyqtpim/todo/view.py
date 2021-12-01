@@ -20,12 +20,15 @@ class TodoListView(EntryListView):
 
 class TodoView(EntryView):
     summary: QtWidgets.QLineEdit
+    class_: QtWidgets.QLineEdit
     completed: QtWidgets.QDateTimeEdit
     dtstart: QtWidgets.QDateTimeEdit
     due: QtWidgets.QDateTimeEdit
     percent: QtWidgets.QSpinBox
     prio: QtWidgets.QSpinBox
     status: QtWidgets.QLineEdit
+    location: QtWidgets.QLineEdit
+    categories: QtWidgets.QPlainTextEdit
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -43,7 +46,8 @@ class TodoView(EntryView):
         self.percent.setMaximum(100)
         self.prio = QtWidgets.QSpinBox(self)
         self.status = QtWidgets.QLineEdit(self)
-        self.trans = QtWidgets.QLineEdit(self)
+        self.location = QtWidgets.QLineEdit(self)
+        self.categories = QtWidgets.QPlainTextEdit(self)
         # layout
         layout = QtWidgets.QFormLayout()
         layout.addRow(QtWidgets.QLabel("Summary:"), self.summary)
@@ -54,7 +58,8 @@ class TodoView(EntryView):
         layout.addRow(QtWidgets.QLabel("%:"), self.percent)
         layout.addRow(QtWidgets.QLabel("Prio:"), self.prio)
         layout.addRow(QtWidgets.QLabel("Status:"), self.status)
-        layout.addRow(QtWidgets.QLabel("Trans:"), self.trans)
+        layout.addRow(QtWidgets.QLabel("Location:"), self.location)
+        layout.addRow(QtWidgets.QLabel("Categories:"), self.categories)
         self.setLayout(layout)
         # attributes
         self.summary.setReadOnly(True)
@@ -65,13 +70,15 @@ class TodoView(EntryView):
         self.percent.setReadOnly(True)
         self.prio.setReadOnly(True)
         self.status.setReadOnly(True)
-        self.trans.setReadOnly(True)
+        self.location.setReadOnly(True)
+        self.categories.setReadOnly(True)
 
     def setModel(self, model: QtCore.QStringListModel):
         """Setup mapper
         :todo: indexOf
         """
-        self.mapper.setModel(model)
+        # self.mapper.setModel(model)
+        super().setModel(model)
         self.mapper.addMapping(self.summary, 0)
         self.mapper.addMapping(self.class_, 1)
         self.mapper.addMapping(self.completed, 2)
@@ -80,7 +87,8 @@ class TodoView(EntryView):
         self.mapper.addMapping(self.percent, 5)
         self.mapper.addMapping(self.prio, 6)
         self.mapper.addMapping(self.status, 7)
-        self.mapper.addMapping(self.trans, 8)
+        self.mapper.addMapping(self.location, 8)
+        self.mapper.addMapping(self.categories, 9)
 
     def clean(self):
         # print("Details clean call")
@@ -92,7 +100,8 @@ class TodoView(EntryView):
         self.percent.clear()
         self.prio.clear()
         self.status.clear()
-        self.trans.clear()
+        self.location.clear()
+        self.categories.clear()
 
 
 class TodosWidget(QtWidgets.QWidget):

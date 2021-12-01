@@ -10,6 +10,7 @@ from . import enums
 
 
 class TodoListModel(EntryListModel):
+    __types = set()  # temp types cache
     __DemapClass = {
         enums.EClass.Public: "Do something",
         enums.EClass.Private: "wait...",
@@ -20,10 +21,6 @@ class TodoListModel(EntryListModel):
         enums.EStatus.InProcess: "wait...",
         enums.EStatus.Completed: "OK",
         enums.EStatus.Cancelled: "WontFix",
-    }
-    __DemapTrans = {
-        enums.ETrans.Opaque: "Too busy",
-        enums.ETrans.Transparent: "Welcome"
     }
 
     def __init__(self, *args, **kwargs):
@@ -38,20 +35,46 @@ class TodoListModel(EntryListModel):
             ("%", 'percent'),
             ("Prio", 'priority'),
             ("Status", 'status'),
-            ("Trans", 'transparency'),
+            ("Loc", 'location'),
+            ("Cat", 'categories'),
         )
 
     def _empty_item(self) -> TodoList:
         return TodoList()
 
     def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
+        """
+
+        :param index:
+        :param role:
+        :return:
+
+        Types from uplink:
+        - NoneType
+        - int
+        - str
+        - PySide2.QtCore.QDate
+        - PySide2.QtCore.QDateTime
+        - EClass
+        - EStatus
+        """
+        def __chk_type(v: Any):
+            t = type(v)
+            if t not in self.__types:
+                self.__types.add(t)
+                print(t)
         v = super().data(index, role)
-        if isinstance(v, enums.EClass):     # FIXME: too dumb selection
+        # __chk_type(v)
+        # FIXME: too dumb selection
+        if isinstance(v, enums.EClass):
             v = self.__DemapClass[v]
         elif isinstance(v, enums.EStatus):
             v = self.__DemapStatus[v]
-        elif isinstance(v, enums.ETrans):
-            v = self.__DemapTrans[v]
+        elif isinstance(v, list):
+            if role == QtCore.Qt.DisplayRole:
+                v = ', '.join(v)
+            elif role == QtCore.Qt.EditRole:
+                v = '\n'.join(v)
         return v
 
 
