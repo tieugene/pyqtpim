@@ -8,6 +8,7 @@ from PySide2 import QtCore, QtWidgets
 from common import EntryView, EntryListView, EntryListManagerView
 from .model import TodoListManagerModel, TodoListModel
 from .data import Todo
+from .form import TodoForm
 from . import enums
 
 
@@ -27,7 +28,9 @@ class TodoListView(EntryListView):
         return TodoListModel()
 
     def itemAdd(self):
-        print("itemAdd")
+        f = TodoForm(self)
+        v = f.exec_()
+        print(v)
 
     def itemEdit(self):
         idx = self.selectionModel().currentIndex()
@@ -54,7 +57,7 @@ class TodoView(EntryView):
         self.__createWidgets()
 
     def __createWidgets(self):
-        # order
+        # widgets
         self.summary = QtWidgets.QLineEdit(self)
         self.details = QtWidgets.QTextEdit(self)
         # attributes

@@ -59,4 +59,4 @@ class EProp(IntEnum):
     Status = auto()         # ?
     Summary = auto()        # ?
     UID = auto()            # 1
-    URL = auto()            # ?[*]
+    URL = auto()            # ?

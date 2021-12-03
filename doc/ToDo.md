@@ -3,12 +3,13 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] C~~R~~UD
+- [ ] C~~R~~UD  
+      *Note: split logic & UI*
 - [ ] multivalues edit: multiline|checklist|stringlist:
-  - [ ] categories
   - [ ] attach
-  - [ ] contact
+  - [ ] categories
   - [ ] comment
+  - [ ] contact
 
 ### 0.2. Fixme
 - [ ] Todo.Details: clear unused on change (None?)
@@ -16,7 +17,7 @@
 ### 0.3. Tuning
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
-- [ ] Expandable 'View File' messagebox
+- [ ] Expandable 'View File' messagebox (see QDialog.setSizeGripEnabled())
 
 ## 1. Common
 - [ ] EL:
@@ -65,6 +66,12 @@
      - Note #2: handle multivalues (categories, attach)
   - [ ] CRUD[^2]
 - [ ] EL: View: columnt delegates
+
+### RTM
+- InstantAdd
+- enums:
+  - location
+  - category ('tags')
 
 ## 3. Contacts
 - [ ] E:
