@@ -1,12 +1,15 @@
 """GUI representation of ToDo things"""
+# 1. std
 import datetime
-
+from typing import Any
+# 2. PySide
 from PySide2 import QtCore, QtWidgets
 # 3. local
 from common import EntryView, EntryListView, EntryListManagerView
 from .model import TodoListManagerModel, TodoListModel
 from .data import Todo
 from . import enums
+
 
 class TodoListManagerView(EntryListManagerView):
     _title = 'ToDo list'
@@ -22,6 +25,23 @@ class TodoListView(EntryListView):
 
     def _empty_model(self) -> TodoListModel:
         return TodoListModel()
+
+    def itemAdd(self):
+        print("itemAdd")
+
+    def itemEdit(self):
+        idx = self.selectionModel().currentIndex()
+        if idx.isValid():
+            i = idx.row()
+            item: Todo = self.model().item(i)
+            print("Edit", item.getSummary())
+
+    def itemDel(self):
+        idx = self.selectionModel().currentIndex()
+        if idx.isValid():
+            i = idx.row()
+            item: Todo = self.model().item(i)
+            print("Del", item.getSummary())
 
 
 class TodoView(EntryView):
@@ -58,7 +78,7 @@ class TodoView(EntryView):
             enums.EStatus.Cancelled: "WontFix",
         }
 
-        def __mk_row(title: str, value: str):
+        def __mk_row(title: str, value: Any):
             if isinstance(value, list):
                 value = '<ul><li>' + '</li><li>'.join(value) + '</li></ul>'
             elif isinstance(value, datetime.datetime):
@@ -92,7 +112,7 @@ class TodoView(EntryView):
         """
         super().setModel(model)
         self.mapper.addMapping(self.summary, 0)
-        self.mapper.currentIndexChanged[int].connect(self.__idxChgd)
+        self.mapper.currentIndexChanged.connect(self.__idxChgd)
 
     def clean(self):
         self.summary.clear()
@@ -125,7 +145,3 @@ class TodosWidget(QtWidgets.QWidget):
         layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(splitter)
         self.setLayout(layout)
-
-
-class TodoForm(QtWidgets.QDialog):
-    ...
