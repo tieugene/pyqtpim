@@ -4,6 +4,7 @@
 import inspect
 import os
 from _collections import OrderedDict
+from enum import IntEnum
 from typing import Any, Optional
 # 2. 3rd
 import vobject
@@ -12,9 +13,9 @@ from . import exc
 
 
 class Entry(object):
-    _fname: str
-    _data: vobject.base.Component
-    _name2func: dict
+    _fname: str  # filename
+    _data: vobject.base.Component   # loaded vobject
+    _name2func: dict[IntEnum, Any]      # mapping model column name to getter
 
     def __init__(self, fname: str, data: vobject.base.Component):
         self._fname = fname
@@ -24,7 +25,7 @@ class Entry(object):
     def fname(self) -> str:
         return self._fname
 
-    def getPropByName(self, fld_name: str) -> Any:
+    def getPropByName(self, fld_name: IntEnum) -> Any:
         if fld := self._name2func.get(fld_name):
             return fld()
 

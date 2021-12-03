@@ -3,18 +3,22 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] ListView: hide extra columns (like details)
-- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide)
+- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
+  - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
+  - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
 - [ ] multivalues: list: csv, details: multiline text, edit: ??? (multiline, checklist, stringlist)
   - [ ] categories
   - [ ] attach
   - [ ] contact
   - [ ] comment
-- [ ] handle datetime/date (dtstart, due; setDisplayedFormat()/setSelectedSection())
+- map models and mappers using str
 
 ### 0.2. Fixme
 - [ ] View.Class.text == status text
-- [ ] Todo.Details: clear unused on change (None?)
+- [ ] Todo.Details: clear unused on change (None?): QDataWidgetMapper.currentIndexChanged()
+- [ ] handle datetime/date (dtstart, due):
+  - [ ] setDisplayedFormat()/setSelectedSection()/displayedSections()
+  - [ ] Split by QDateEdit + QTimeEdit (like Lightning)
 
 ### 0.3. Tuning
 - [ ] ELM.View: auto-h/w

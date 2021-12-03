@@ -27,16 +27,16 @@ class TodoListModel(EntryListModel):
         super().__init__(*args, **kwargs)
         self._data = TodoList()
         self._fld_names = (
-            ("Summary", 'summary'),
-            ("Class", 'class'),
-            ("Completed", 'completed'),
-            ("DTStart", 'dtstart'),
-            ("Due", 'due'),
-            ("%", 'percent'),
-            ("Prio", 'priority'),
-            ("Status", 'status'),
-            ("Loc", 'location'),
-            ("Cat", 'categories'),
+            ("Summary", enums.EProp.Summary),
+            ("Class", enums.EProp.Class),
+            ("Completed", enums.EProp.Completed),
+            ("DTStart", enums.EProp.DTStart),
+            ("Due", enums.EProp.Due),
+            ("%", enums.EProp.Percent),
+            ("Prio", enums.EProp.Priority),
+            ("Status", enums.EProp.Status),
+            ("Loc", enums.EProp.Location),
+            ("Cat", enums.EProp.Categories),
         )
 
     def _empty_item(self) -> TodoList:
@@ -58,23 +58,24 @@ class TodoListModel(EntryListModel):
         - EClass
         - EStatus
         """
-        def __chk_type(v: Any):
-            t = type(v)
+        def __chk_type(_v: Any):
+            t = type(_v)
             if t not in self.__types:
                 self.__types.add(t)
                 print(t)
         v = super().data(index, role)
         # __chk_type(v)
         # FIXME: too dumb selection
-        if isinstance(v, enums.EClass):
-            v = self.__DemapClass[v]
-        elif isinstance(v, enums.EStatus):
-            v = self.__DemapStatus[v]
-        elif isinstance(v, list):
-            if role == QtCore.Qt.DisplayRole:
-                v = ', '.join(v)
-            elif role == QtCore.Qt.EditRole:
-                v = '\n'.join(v)
+        if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # list/details
+            if isinstance(v, enums.EClass):
+                v = self.__DemapClass[v]
+            elif isinstance(v, enums.EStatus):
+                v = self.__DemapStatus[v]
+            elif isinstance(v, list):
+                if role == QtCore.Qt.DisplayRole:
+                    v = ', '.join(v)
+                else:
+                    v = '\n'.join(v)
         return v
 
 

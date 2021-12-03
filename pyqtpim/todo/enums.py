@@ -31,6 +31,7 @@ class EProp(IntEnum):
      (21..25 from 32 available)"""
     Attach = auto()
     Categories = auto()
+    Class = auto()
     Comment = auto()
     Completed = auto()
     Contact = auto()

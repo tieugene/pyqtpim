@@ -28,16 +28,16 @@ class Todo(Entry):
     def __init__(self, path: str, data: vobject.base.Component):
         super().__init__(path, data)
         self._name2func = {
-            'categories': self.getCategories,
-            'class': self.getClass,
-            'completed': self.getCompleted,
-            'dtstart': self.getDTStart,
-            'due': self.getDue,
-            'location': self.getLocation,
-            'percent': self.getPercent,
-            'priority': self.getPriority,
-            'status': self.getStatus,
-            'summary': self.getSummary,
+            enums.EProp.Categories: self.getCategories,
+            enums.EProp.Class: self.getClass,
+            enums.EProp.Completed: self.getCompleted,
+            enums.EProp.DTStart: self.getDTStart,
+            enums.EProp.Due: self.getDue,
+            enums.EProp.Location: self.getLocation,
+            enums.EProp.Percent: self.getPercent,
+            enums.EProp.Priority: self.getPriority,
+            enums.EProp.Status: self.getStatus,
+            enums.EProp.Summary: self.getSummary,
         }
 
     def RawContent(self) -> Optional[OrderedDict]:

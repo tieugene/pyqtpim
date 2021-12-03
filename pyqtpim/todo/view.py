@@ -14,8 +14,23 @@ class TodoListManagerView(EntryListManagerView):
 
 
 class TodoListView(EntryListView):
+    def __init__(self, parent, dependant: EntryView):
+        super().__init__(parent, dependant)
+        # self.setColumnHidden(1, True)
+
     def _empty_model(self) -> TodoListModel:
         return TodoListModel()
+
+
+class TodoDelegate(QtWidgets.QStyledItemDelegate):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def paint(self, painter, option, index):
+        print("Paint")
+        if index.column() == 4:
+            print(index.data())
+        super().paint(self, painter, option, index)
 
 
 class TodoView(EntryView):
@@ -89,6 +104,7 @@ class TodoView(EntryView):
         self.mapper.addMapping(self.status, 7)
         self.mapper.addMapping(self.location, 8)
         self.mapper.addMapping(self.categories, 9)
+        self.mapper.setItemDelegate(TodoDelegate(self.mapper))
 
     def clean(self):
         # print("Details clean call")

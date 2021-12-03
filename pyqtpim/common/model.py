@@ -1,5 +1,6 @@
 # 1. system
 import datetime
+from enum import IntEnum
 from typing import Any
 import inspect
 # 2. PySide
@@ -11,7 +12,7 @@ from .data import Entry, EntryList, EntryListManager
 
 class EntryListModel(QtCore.QAbstractTableModel):
     _data: EntryList
-    _fld_names: tuple
+    _fld_names: tuple[tuple[str, IntEnum]]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
