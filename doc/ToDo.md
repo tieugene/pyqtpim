@@ -3,6 +3,10 @@
 ## 0. Now
 
 ### 0.1. Job
+- [ ] Expand ToDo (fields):
+  - [ ] Data
+  - [ ] List
+  - [ ] Details
 - [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
   - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
   - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
@@ -34,7 +38,11 @@
      - [ ] order
 
 ### 1.1. Next:
-- [ ] [SyncML](https://pypi.org/project/pysyncml/)
+- [ ] Sync:
+  - [ ] [SyncML](https://pypi.org/project/pysyncml/)
+  - [ ] [CalDAV](https://pypi.org/project/caldav/)
+  - [ ] [pyCardDAV](https://pypi.org/project/pyCardDAV/)
+  - [ ] [](https://github.com/pimutils/vdirsyncer)
 - [ ] Actions: Enable/Disable by context
 - [ ] ELM:
   - [ ] Model:
@@ -73,6 +81,7 @@
 ## x. misc
 
 ### x.1. RTFM
+- [pimutils](https://github.com/pimutils)
 - PySide2 Book[^4]
 - Radicale src
 - pyside2/examples:

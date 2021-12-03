@@ -12,7 +12,7 @@ from .data import Entry, EntryList, EntryListManager
 
 class EntryListModel(QtCore.QAbstractTableModel):
     _data: EntryList
-    _fld_names: tuple[tuple[str, IntEnum]]
+    _fld_names: tuple[tuple[IntEnum, str]]  # FIXME:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -20,14 +20,14 @@ class EntryListModel(QtCore.QAbstractTableModel):
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = QtCore.Qt.DisplayRole) -> Any:
         """TODO: use setHeaderData() in __init__()"""
         if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
-            return self._fld_names[section][0]
+            return self._fld_names[section][1]
         return super().headerData(section, orientation, role)
 
     def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
         if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # EditRole for mapper
             c = self._data.item(index.row())
             col = index.column()
-            v = c.getPropByName(self._fld_names[col][1])
+            v = c.getPropByName(self._fld_names[col][0])
             if isinstance(v, datetime.datetime):
                 v = QtCore.QDateTime(v)
             elif isinstance(v, datetime.date):
