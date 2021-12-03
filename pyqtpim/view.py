@@ -132,4 +132,4 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def entryInside(self):
         """Show entry structure"""
-        ...
+        self.todo.list.itemInside()

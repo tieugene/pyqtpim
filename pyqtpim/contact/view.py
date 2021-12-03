@@ -2,7 +2,7 @@
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryDetailWidget, EntryListView, EntryListManagerView
+from common import EntryView, EntryListView, EntryListManagerView
 from .model import ContactListManagerModel, ContactListModel
 
 
@@ -18,7 +18,7 @@ class ContactListView(EntryListView):
         return ContactListModel()
 
 
-class ContactDetailWidget(EntryDetailWidget):
+class ContactView(EntryView):
     fn: QtWidgets.QLineEdit
     family: QtWidgets.QLineEdit
     given: QtWidgets.QLineEdit
@@ -73,7 +73,7 @@ class ContactDetailWidget(EntryDetailWidget):
 class ContactsWidget(QtWidgets.QWidget):
     sources: ContactListManagerView
     list: ContactListView
-    details: ContactDetailWidget
+    details: ContactView
 
     def __init__(self):
         super().__init__()
@@ -82,7 +82,7 @@ class ContactsWidget(QtWidgets.QWidget):
     def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
-        self.details = ContactDetailWidget(splitter)
+        self.details = ContactView(splitter)
         self.list = ContactListView(splitter, self.details)
         self.sources = ContactListManagerView(splitter, self.list)
         # layout

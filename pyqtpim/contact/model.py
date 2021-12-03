@@ -2,10 +2,10 @@
 
 # 1. system
 # 2. PySide
-from PySide2 import QtCore
 # 3. local
 from common import SetGroup, EntryListModel, EntryListManagerModel
 from .data import ContactList, ContactListManager
+from . import enums
 
 
 class ContactListModel(EntryListModel):
@@ -13,11 +13,11 @@ class ContactListModel(EntryListModel):
         super().__init__(*args, **kwargs)
         self._data = ContactList()
         self._fld_names = (
-            ("FN", 'fn'),
-            ("Last name", 'family'),
-            ("First name", 'given'),
-            ("Email", 'email'),
-            ("Tel.", 'tel')
+            (enums.EProp.FN, "FN"),
+            (enums.EProp.Family, "Last name"),
+            (enums.EProp.Name, "First name"),
+            (enums.EProp.Email, "Email"),
+            (enums.EProp.Phone, "Tel.")
         )
 
     def _empty_item(self) -> ContactList:

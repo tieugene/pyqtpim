@@ -1,7 +1,6 @@
 # 1. system
-# 2. PySide
 from typing import Any
-
+# 2. PySide
 from PySide2 import QtCore
 # 3. local
 from common import SetGroup, EntryListModel, EntryListManagerModel
@@ -10,6 +9,7 @@ from . import enums
 
 
 class TodoListModel(EntryListModel):
+    __types = set()  # temp types cache
     __DemapClass = {
         enums.EClass.Public: "Do something",
         enums.EClass.Private: "wait...",
@@ -21,37 +21,59 @@ class TodoListModel(EntryListModel):
         enums.EStatus.Completed: "OK",
         enums.EStatus.Cancelled: "WontFix",
     }
-    __DemapTrans = {
-        enums.ETrans.Opaque: "Too busy",
-        enums.ETrans.Transparent: "Welcome"
-    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._data = TodoList()
         self._fld_names = (
-            ("Summary", 'summary'),
-            ("Class", 'class'),
-            ("Completed", 'completed'),
-            ("DTStart", 'dtstart'),
-            ("Due", 'due'),
-            ("%", 'percent'),
-            ("Prio", 'priority'),
-            ("Status", 'status'),
-            ("Trans", 'transparency'),
+            (enums.EProp.Summary, "Summary"),
+            (enums.EProp.Categories, "Cat"),
+            (enums.EProp.Completed, "Completed"),
+            (enums.EProp.DTStart, "DTStart"),
+            (enums.EProp.Due, "Due"),
+            (enums.EProp.Location, "Loc"),
+            (enums.EProp.Percent, "%"),
+            (enums.EProp.Priority, "Prio"),
+            (enums.EProp.Status, "Status"),
         )
 
     def _empty_item(self) -> TodoList:
         return TodoList()
 
     def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
+        """
+
+        :param index:
+        :param role:
+        :return:
+
+        Types from uplink:
+        - NoneType
+        - int
+        - str
+        - PySide2.QtCore.QDate
+        - PySide2.QtCore.QDateTime
+        - EClass
+        - EStatus
+        """
+        def __chk_type(_v: Any):
+            t = type(_v)
+            if t not in self.__types:
+                self.__types.add(t)
+                print(t)
         v = super().data(index, role)
-        if isinstance(v, enums.EClass):     # FIXME: too dumb selection
-            v = self.__DemapClass[v]
-        elif isinstance(v, enums.EStatus):
-            v = self.__DemapStatus[v]
-        elif isinstance(v, enums.ETrans):
-            v = self.__DemapTrans[v]
+        # __chk_type(v)
+        # FIXME: too dumb selection
+        if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # list/details
+            if isinstance(v, enums.EClass):
+                v = self.__DemapClass[v]
+            elif isinstance(v, enums.EStatus):
+                v = self.__DemapStatus[v]
+            elif isinstance(v, list):
+                if role == QtCore.Qt.DisplayRole:
+                    v = ', '.join(v)
+                else:
+                    v = '\n'.join(v)
         return v
 
 

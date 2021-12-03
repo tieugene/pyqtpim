@@ -1,5 +1,8 @@
 # Notes
 
+## misc
+- ListView ask model w/ DisplayRole; DetailsView - w/ EditRole
+
 ## vCard UML
 
 - Property params:
@@ -9,14 +12,12 @@
 
 ## Class/object relations
 
-En          | Ru          | Sign  | Mean | Example
-------------|-------------|-------|-----|---
-Extension   | Наследование | `<|--`| vs Generalization/Обобщение | `Man <|-- Employee`
-Composition | Композиция   | `*--` | == aggreg:include | list[]
-Aggregation | Агрегация    | `o--` | == assoc; :link | `container < item`
-Association | Ассоциация   | `<--` | 1:*
-Implementation | Реализация   | `<|..`| | `class < i/f|abstract`
-Dependence | Зависимость  | `<..` |
+- `<|--`: Extension (Наследование) aka Generalization (Обобщение) - e.g. `Man <|-- Employee`
+- `<-- `: Association (Ассоциация) - `1:*`
+- `o-- `: Aggregation (Агрегация) == assoc:link; e.g. `container < item`
+- `*-- `: Composition (Композиция) == aggreg:include; e.g. `list[]`
+- `<|..`: Implementation (Реализация) - e.g. `class < i/f|abstract`
+- `<.. `: Dependence (Зависимость) - weak link
 
 ## Cardinality:
 
@@ -121,4 +122,40 @@ knownChildren = {
     'RRULE':          (0, None, None),
     'VALARM':         (0, None, None)
 }
+```
+
+## Date, Time:
+- Datime local: 19980118T230000
+- Datime UTC: 19980119T070000Z
+- Datime TZ: TZID=Europe/Moscow:19980119T020000
+- Date: 19970714
+
+## Rsync
+### Remote:
+- `sudo dnf install rsync-daemon`
+- `/etc/rsyncd.conf`:
+
+  ```conf
+  log file = /var/log/rsyncd.log
+  uid = radicale
+  gid = radicale
+  use chroot = yes
+  read only = yes
+  # exclude = ".Radicale.*"
+
+  [dav]
+  path = /var/lib/radicale/collection-root/user
+
+  ```
+
+- `/etc/sysconfig/iptables`:
+
+  ```iptables
+  -A INPUT -s ... -p tcp -m state --state NEW -m tcp --dport 873 -j ACCEPT
+  ```
+
+### Local:
+
+```bash
+rsync -avz --del --exclude=".*" my.remote.host::dav .
 ```

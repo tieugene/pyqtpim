@@ -3,18 +3,15 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] multivalues (categories, attach)
-- [ ] Raw content
-- [ ] handle datetime/date (dtstart, due)
-- [ ] Test (and/or):
-  - [ ] TBird w/ local dir
-  - [ ] sync w/ remote
-  - [ ] radicale@localhost
+- [ ] C~~R~~UD
+- [ ] multivalues edit: multiline|checklist|stringlist:
+  - [ ] categories
+  - [ ] attach
+  - [ ] contact
+  - [ ] comment
 
 ### 0.2. Fixme
-- [ ] View.Class.text == status text
-- [ ] Todo.Details: clear unused on change
-- [ ] Todo.Details.Percent: 99 max
+- [ ] Todo.Details: clear unused on change (None?)
 
 ### 0.3. Tuning
 - [ ] ELM.View: auto-h/w
@@ -30,6 +27,15 @@
      - [ ] order
 
 ### 1.1. Next:
+- map models and mappers using str
+- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
+  - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
+  - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
+- [ ] Sync:
+  - [ ] [SyncML](https://pypi.org/project/pysyncml/)
+  - [ ] [CalDAV](https://pypi.org/project/caldav/)
+  - [ ] [pyCardDAV](https://pypi.org/project/pyCardDAV/)
+  - [ ] [](https://github.com/pimutils/vdirsyncer)
 - [ ] Actions: Enable/Disable by context
 - [ ] ELM:
   - [ ] Model:
@@ -53,20 +59,22 @@
 
 ## 2. ToDo
 - [ ] E:
+  - […] Extend
   - [ ] View: Show raw content (html dt/dd | markdown):
      - Note #1: handle multiline strings (description)
      - Note #2: handle multivalues (categories, attach)
-  - [ ] Extend
-  - [ ] CRUD[^3]
+  - [ ] CRUD[^2]
+- [ ] EL: View: columnt delegates
 
 ## 3. Contacts
 - [ ] E:
   - [ ] Extend
-  - [ ] CRUD[^2]
+  - [ ] CRUD[^3]
 
 ## x. misc
 
 ### x.1. RTFM
+- [pimutils](https://github.com/pimutils)
 - PySide2 Book[^4]
 - Radicale src
 - pyside2/examples:
@@ -80,6 +88,6 @@
   - sql/books/ (list/Details)
 
 [^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
-[^2]: CardBook/radicale compatible; not drop data exist
-[^3]: Lightning/radicale compatible; not drop data exist
+[^2]: Lightning/radicale compatible; not drop data exist
+[^3]: CardBook/radicale compatible; not drop data exist
 [^4]: [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?

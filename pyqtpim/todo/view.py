@@ -1,10 +1,12 @@
 """GUI representation of ToDo things"""
+import datetime
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryDetailWidget, EntryListView, EntryListManagerView
+from common import EntryView, EntryListView, EntryListManagerView
 from .model import TodoListManagerModel, TodoListModel
-
+from .data import Todo
+from . import enums
 
 class TodoListManagerView(EntryListManagerView):
     _title = 'ToDo list'
@@ -14,18 +16,17 @@ class TodoListManagerView(EntryListManagerView):
 
 
 class TodoListView(EntryListView):
+    def __init__(self, parent, dependant: EntryView):
+        super().__init__(parent, dependant)
+        # self.setColumnHidden(1, True)
+
     def _empty_model(self) -> TodoListModel:
         return TodoListModel()
 
 
-class TodoDetailWidget(EntryDetailWidget):
+class TodoView(EntryView):
     summary: QtWidgets.QLineEdit
-    completed: QtWidgets.QDateTimeEdit
-    dtstart: QtWidgets.QDateTimeEdit
-    due: QtWidgets.QDateTimeEdit
-    percent: QtWidgets.QSpinBox
-    prio: QtWidgets.QSpinBox
-    status: QtWidgets.QLineEdit
+    details: QtWidgets.QTextEdit
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -35,69 +36,73 @@ class TodoDetailWidget(EntryDetailWidget):
     def __createWidgets(self):
         # order
         self.summary = QtWidgets.QLineEdit(self)
-        self.class_ = QtWidgets.QLineEdit(self)
-        self.completed = QtWidgets.QDateTimeEdit(self)
-        self.dtstart = QtWidgets.QDateTimeEdit(self)
-        self.due = QtWidgets.QDateTimeEdit(self)
-        self.percent = QtWidgets.QSpinBox(self)
-        self.prio = QtWidgets.QSpinBox(self)
-        self.status = QtWidgets.QLineEdit(self)
-        self.trans = QtWidgets.QLineEdit(self)
-        # layout
-        layout = QtWidgets.QFormLayout()
-        layout.addRow(QtWidgets.QLabel("Summary:"), self.summary)
-        layout.addRow(QtWidgets.QLabel("Class:"), self.class_)
-        layout.addRow(QtWidgets.QLabel("Complete:"), self.completed)
-        layout.addRow(QtWidgets.QLabel("DTStart:"), self.dtstart)
-        layout.addRow(QtWidgets.QLabel("Due:"), self.due)
-        layout.addRow(QtWidgets.QLabel("%:"), self.percent)
-        layout.addRow(QtWidgets.QLabel("Prio:"), self.prio)
-        layout.addRow(QtWidgets.QLabel("Status:"), self.status)
-        layout.addRow(QtWidgets.QLabel("Trans:"), self.trans)
-        self.setLayout(layout)
+        self.details = QtWidgets.QTextEdit(self)
         # attributes
         self.summary.setReadOnly(True)
-        self.class_.setReadOnly(True)
-        self.completed.setReadOnly(True)
-        self.dtstart.setReadOnly(True)
-        self.due.setReadOnly(True)
-        self.percent.setReadOnly(True)
-        self.prio.setReadOnly(True)
-        self.status.setReadOnly(True)
-        self.trans.setReadOnly(True)
+        self.details.setReadOnly(True)
+        # layout
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self.summary)
+        layout.addWidget(self.details)
+        self.setLayout(layout)
+
+    def __idxChgd(self, idx: int):
+        """Only for selection; not calling on deselection"""
+        self.__fill_details(self.mapper.model().item(idx))
+
+    def __fill_details(self, data: Todo = None):    # TODO: clear on None
+        __DemapStatus = {
+            enums.EStatus.NeedsAction: "Do something",
+            enums.EStatus.InProcess: "wait...",
+            enums.EStatus.Completed: "OK",
+            enums.EStatus.Cancelled: "WontFix",
+        }
+
+        def __mk_row(title: str, value: str):
+            if isinstance(value, list):
+                value = '<ul><li>' + '</li><li>'.join(value) + '</li></ul>'
+            elif isinstance(value, datetime.datetime):
+                value = value.strftime('%y.%m.%d %H:%M')
+            elif isinstance(value, datetime.date):
+                value = value.strftime('%y.%m.%d')
+            return f"<tr><th>{title}:</th><td>{value}</td></tr>"
+        text = '<table>'
+        if v := data.getCategories():
+            text += __mk_row("Categories", v)
+        if v := data.getCompleted():
+            text += __mk_row("Completed", v)
+        if v := data.getDTStart():
+            text += __mk_row("DTStart", v)
+        if v := data.getDue():
+            text += __mk_row("Due", v)
+        if v := data.getLocation():
+            text += __mk_row("Location", v)
+        if v := data.getPercent():
+            text += __mk_row("Percent", v)
+        if v := data.getPriority():
+            text += __mk_row("Priority", v)
+        if v := data.getStatus():
+            text += __mk_row("Status", __DemapStatus[v])
+        text += '</table>'
+        self.details.setText(text)
 
     def setModel(self, model: QtCore.QStringListModel):
         """Setup mapper
         :todo: indexOf
         """
-        self.mapper.setModel(model)
+        super().setModel(model)
         self.mapper.addMapping(self.summary, 0)
-        self.mapper.addMapping(self.class_, 1)
-        self.mapper.addMapping(self.completed, 2)
-        self.mapper.addMapping(self.dtstart, 3)
-        self.mapper.addMapping(self.due, 4)
-        self.mapper.addMapping(self.percent, 5)
-        self.mapper.addMapping(self.prio, 6)
-        self.mapper.addMapping(self.status, 7)
-        self.mapper.addMapping(self.trans, 8)
+        self.mapper.currentIndexChanged[int].connect(self.__idxChgd)
 
     def clean(self):
-        # print("Details clean call")
         self.summary.clear()
-        self.class_.clear()
-        self.completed.clear()
-        self.dtstart.clear()
-        self.due.clear()
-        self.percent.clear()
-        self.prio.clear()
-        self.status.clear()
-        self.trans.clear()
+        self.details.clear()
 
 
 class TodosWidget(QtWidgets.QWidget):
     sources: TodoListManagerView
     list: TodoListView
-    details: TodoDetailWidget
+    details: TodoView
 
     def __init__(self):
         super().__init__()
@@ -106,7 +111,7 @@ class TodosWidget(QtWidgets.QWidget):
     def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
-        self.details = TodoDetailWidget(splitter)
+        self.details = TodoView(splitter)
         self.list = TodoListView(splitter, self.details)
         self.sources = TodoListManagerView(splitter, self.list)
         # layout
@@ -122,5 +127,5 @@ class TodosWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
 
-class TodoCUDialog(QtWidgets.QDialog):
+class TodoForm(QtWidgets.QDialog):
     ...
