@@ -30,28 +30,33 @@ class EProp(IntEnum):
     """VTODO properties (usual).
      (21..25 from 32 available)"""
     Attach = auto()         # *
+    # Attendee              # *
     Categories = auto()     # *
     Class = auto()          # ?
     Comment = auto()        # *
     Completed = auto()      # ?
     Contact = auto()        # *
-    Created = auto()        # ...
+    Created = auto()        # ?
     Description = auto()    # ?
-    DTStamp = auto()        # 1?
+    DTStamp = auto()        # 1
     DTStart = auto()        # ?
     Due = auto()            # ?
-    # Duration
-    # ExDate
-    LastModified = auto()   # ..
+    # Duration              # ?
+    # ExDate                # *
+    # Geo                   # ?
+    LastModified = auto()   # ?
     Location = auto()       # ?
-    Percent = auto()        # ? PERCENT-COMPLETE
+    # Organizer             # ?
+    Percent = auto()        # ? ==  PERCENT-COMPLETE
     Priority = auto()       # ?
-    # RDate
-    # RECURRENCE-ID
-    RelatedTo = auto()      # ...
-    RRule = auto()
-    Sequence = auto()
-    Status = auto()
-    Summary = auto()
-    UID = auto()
-    URL = auto()
+    # RDate                 # *
+    # RECURRENCE-ID         # ?
+    RelatedTo = auto()      # *
+    # REQUEST-STATUS        # *
+    # Resources             # *
+    RRule = auto()          # ?
+    Sequence = auto()       # ?
+    Status = auto()         # ?
+    Summary = auto()        # ?
+    UID = auto()            # 1
+    URL = auto()            # ?[*]

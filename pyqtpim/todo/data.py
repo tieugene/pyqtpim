@@ -4,7 +4,7 @@
 # 1. std
 from _collections import OrderedDict
 from datetime import datetime, date
-from typing import Optional, Union
+from typing import Optional, Union, Any
 # 2. 3rd
 import vobject
 # 3. local
@@ -65,16 +65,19 @@ class Todo(Entry):
                 retvalue[k] = v
         return retvalue
 
-    def __getFldByName(self, fld: str) -> Optional[Union[str, list]]:
+    def __getFldByName(self, fld: str) -> Any:
         """Get field value by its name."""
         if v_list := self._data.contents.get(fld):
             if len(v_list) == 1:  # usual
-                v = v_list[0].value
+                v = v_list[0].value     # FIXME: something about 'behaviour'
             else:  # multivalues (attach, categories)
                 v = [i.value for i in v_list]
             return v
 
     # for model
+    def getAttach(self) -> Optional[Union[str, list[str]]]:
+        return self.__getFldByName('attach')
+
     def getCategories(self) -> Optional[Union[str, list[str]]]:
         """Categories.
         :return: Category:str or list of categories
@@ -96,22 +99,22 @@ class Todo(Entry):
         if v := self.__getFldByName('class'):
             return self.__MapClass.get(v)
 
-    def getComment(self) -> Optional[Union[str, list[str]]]:   # TODO:
+    def getComment(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('comment')
 
     def getCompleted(self) -> Optional[datetime]:
         return self.__getFldByName('completed')
 
-    def getContact(self) -> Optional[Union[str, list[str]]]:   # TODO:
+    def getContact(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('contact')
 
-    def getCreated(self) -> Optional[datetime]:   # TODO:
+    def getCreated(self) -> Optional[datetime]:
         return self.__getFldByName('created')
 
-    def getDescription(self) -> Optional[Union[str, list[str]]]:   # TODO:
+    def getDescription(self) -> Optional[str]:
         return self.__getFldByName('description')
 
-    def getDTStamp(self) -> Optional[datetime]:   # TODO:
+    def getDTStamp(self) -> datetime:
         return self.__getFldByName('dtstamp')
 
     def getDTStart(self) -> Optional[Union[date, datetime]]:
@@ -120,7 +123,7 @@ class Todo(Entry):
     def getDue(self) -> Optional[Union[date, datetime]]:
         return self.__getFldByName('due')
 
-    def getLastModified(self) -> Optional[datetime]:   # TODO:
+    def getLastModified(self) -> Optional[datetime]:
         return self.__getFldByName('last-modified')
 
     def getLocation(self) -> Optional[str]:
@@ -134,13 +137,13 @@ class Todo(Entry):
         if v := self.__getFldByName('priority'):
             return int(v)
 
-    def getRelatedTo(self) -> Optional[str]:   # TODO:
-        return self.__getFldByName('relatedto')
+    def getRelatedTo(self) -> Optional[Union[str, list[str]]]:
+        return self.__getFldByName('related-to')
 
-    def getRRule(self) -> Optional[str]:   # TODO:
+    def getRRule(self) -> Optional[str]:
         return self.__getFldByName('rrule')
 
-    def getSequence(self) -> int:   # TODO:
+    def getSequence(self) -> Optional[int]:
         if v := self.__getFldByName('sequence'):
             return int(v)
 
@@ -148,13 +151,13 @@ class Todo(Entry):
         if v := self.__getFldByName('status'):
             return self.__MapStatus.get(v)
 
-    def getSummary(self) -> str:
+    def getSummary(self) -> Optional[str]:
         return self._data.summary.value
 
-    def getUID(self) -> str:   # TODO:
+    def getUID(self) -> str:
         return self.__getFldByName('uid')
 
-    def getURL(self) -> str:   # TODO:
+    def getURL(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('url')
     # /for model
 

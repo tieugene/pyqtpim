@@ -22,17 +22,6 @@ class TodoListView(EntryListView):
         return TodoListModel()
 
 
-class TodoDelegate(QtWidgets.QStyledItemDelegate):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-    def paint(self, painter, option, index):
-        print("Paint")
-        if index.column() == 4:
-            print(index.data())
-        super().paint(self, painter, option, index)
-
-
 class TodoView(EntryView):
     summary: QtWidgets.QLineEdit
     class_: QtWidgets.QLineEdit
@@ -88,11 +77,16 @@ class TodoView(EntryView):
         self.location.setReadOnly(True)
         self.categories.setReadOnly(True)
 
+    @QtCore.Slot
+    def __idxChgd(self, idx: int):
+        """Only for selection; not calling on deselection"""
+        print("Idx chgd:", idx)
+        self.mapper.model().item(idx)
+
     def setModel(self, model: QtCore.QStringListModel):
         """Setup mapper
         :todo: indexOf
         """
-        # self.mapper.setModel(model)
         super().setModel(model)
         self.mapper.addMapping(self.summary, 0)
         self.mapper.addMapping(self.class_, 1)
@@ -104,7 +98,7 @@ class TodoView(EntryView):
         self.mapper.addMapping(self.status, 7)
         self.mapper.addMapping(self.location, 8)
         self.mapper.addMapping(self.categories, 9)
-        self.mapper.setItemDelegate(TodoDelegate(self.mapper))
+        self.mapper.currentIndexChanged[int].connect(self.__idxChgd)
 
     def clean(self):
         # print("Details clean call")

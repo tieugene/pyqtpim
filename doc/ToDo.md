@@ -5,18 +5,17 @@
 ### 0.1. Job
 - [ ] Details: RTF text
 - [ ] Expand ToDo (fields):
-  - […] Data
-  - [ ] List
   - [ ] Details
-- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
-  - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
-  - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
+  - [ ] List
 - [ ] multivalues: list: csv, details: multiline text, edit: ??? (multiline, checklist, stringlist)
   - [ ] categories
   - [ ] attach
   - [ ] contact
   - [ ] comment
 - map models and mappers using str
+- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
+  - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
+  - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
 
 ### 0.2. Fixme
 - [ ] View.Class.text == status text

@@ -21,7 +21,7 @@
   - [x] categories: list: csv, detail: multiline text
 - [x] Column: name:str => enum (ListModel._fld_names, data/Entry._name2func)
 - [x] ListView: hide extra columns (xListView.__init__(): .setColumnHidden(...))
-- [x] Expand data (fields)
+- [x] Data: expand (fields)
 
 ## Contacts
 - [ ] CLM:
