@@ -3,8 +3,9 @@
 ## 0. Now
 
 ### 0.1. Job
+- [ ] Details: RTF text
 - [ ] Expand ToDo (fields):
-  - [ ] Data
+  - […] Data
   - [ ] List
   - [ ] Details
 - [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):

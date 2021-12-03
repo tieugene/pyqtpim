@@ -29,26 +29,26 @@ class ETrans(IntEnum):
 class EProp(IntEnum):
     """VTODO properties (usual).
      (21..25 from 32 available)"""
-    Attach = auto()
-    Categories = auto()
-    Class = auto()
-    Comment = auto()
-    Completed = auto()
-    Contact = auto()
-    Created = auto()
-    Description = auto()
-    DTStamp = auto()
-    DTStart = auto()
-    Due = auto()
+    Attach = auto()         # *
+    Categories = auto()     # *
+    Class = auto()          # ?
+    Comment = auto()        # *
+    Completed = auto()      # ?
+    Contact = auto()        # *
+    Created = auto()        # ...
+    Description = auto()    # ?
+    DTStamp = auto()        # 1?
+    DTStart = auto()        # ?
+    Due = auto()            # ?
     # Duration
     # ExDate
-    LastModified = auto()
-    Location = auto()
-    Percent = auto()   # PERCENT-COMPLETE
-    Priority = auto()
+    LastModified = auto()   # ..
+    Location = auto()       # ?
+    Percent = auto()        # ? PERCENT-COMPLETE
+    Priority = auto()       # ?
     # RDate
     # RECURRENCE-ID
-    RelatedTo = auto()
+    RelatedTo = auto()      # ...
     RRule = auto()
     Sequence = auto()
     Status = auto()

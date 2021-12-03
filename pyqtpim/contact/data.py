@@ -10,6 +10,7 @@ Most interesting (see contents:dict):
 import vobject
 # 3. local
 from common import exc, Entry, EntryList, EntryListManager
+from . import enums
 
 
 class Contact(Entry):
@@ -17,11 +18,11 @@ class Contact(Entry):
     def __init__(self, path: str, vcard: vobject.base.Component):
         super().__init__(path, vcard)
         self._name2func = {
-            'fn': self.getFN,
-            'family': self.getFamily,
-            'given': self.getGiven,
-            'email': self.getEmailList,
-            'tel': self.getTelList
+            enums.EProp.FN: self.getFN,
+            enums.EProp.Family: self.getFamily,
+            enums.EProp.Name: self.getGiven,
+            enums.EProp.Email: self.getEmailList,
+            enums.EProp.Phone: self.getTelList
         }
 
     def print(self):

@@ -30,14 +30,25 @@ class Todo(Entry):
         self._name2func = {
             enums.EProp.Categories: self.getCategories,
             enums.EProp.Class: self.getClass,
+            enums.EProp.Comment: self.getComment,
             enums.EProp.Completed: self.getCompleted,
+            enums.EProp.Contact: self.getContact,
+            enums.EProp.Created: self.getCreated,
+            enums.EProp.Description: self.getDescription,
+            enums.EProp.DTStamp: self.getDTStamp,
             enums.EProp.DTStart: self.getDTStart,
             enums.EProp.Due: self.getDue,
+            enums.EProp.LastModified: self.getLastModified,
             enums.EProp.Location: self.getLocation,
             enums.EProp.Percent: self.getPercent,
             enums.EProp.Priority: self.getPriority,
+            enums.EProp.RelatedTo: self.getRelatedTo,
+            enums.EProp.RRule: self.getRRule,
+            enums.EProp.Sequence: self.getSequence,
             enums.EProp.Status: self.getStatus,
             enums.EProp.Summary: self.getSummary,
+            enums.EProp.UID: self.getUID,
+            enums.EProp.URL: self.getURL,
         }
 
     def RawContent(self) -> Optional[OrderedDict]:
@@ -55,7 +66,7 @@ class Todo(Entry):
         return retvalue
 
     def __getFldByName(self, fld: str) -> Optional[Union[str, list]]:
-        """Field value by it's name."""
+        """Get field value by its name."""
         if v_list := self._data.contents.get(fld):
             if len(v_list) == 1:  # usual
                 v = v_list[0].value
@@ -85,14 +96,32 @@ class Todo(Entry):
         if v := self.__getFldByName('class'):
             return self.__MapClass.get(v)
 
+    def getComment(self) -> Optional[Union[str, list[str]]]:   # TODO:
+        return self.__getFldByName('comment')
+
     def getCompleted(self) -> Optional[datetime]:
         return self.__getFldByName('completed')
 
+    def getContact(self) -> Optional[Union[str, list[str]]]:   # TODO:
+        return self.__getFldByName('contact')
+
+    def getCreated(self) -> Optional[datetime]:   # TODO:
+        return self.__getFldByName('created')
+
+    def getDescription(self) -> Optional[Union[str, list[str]]]:   # TODO:
+        return self.__getFldByName('description')
+
+    def getDTStamp(self) -> Optional[datetime]:   # TODO:
+        return self.__getFldByName('dtstamp')
+
     def getDTStart(self) -> Optional[Union[date, datetime]]:
-        return self.__getFldByName('dtstart')   # TODO: date[time]
+        return self.__getFldByName('dtstart')
 
     def getDue(self) -> Optional[Union[date, datetime]]:
-        return self.__getFldByName('due')       # TODO: date[time]
+        return self.__getFldByName('due')
+
+    def getLastModified(self) -> Optional[datetime]:   # TODO:
+        return self.__getFldByName('last-modified')
 
     def getLocation(self) -> Optional[str]:
         return self.__getFldByName('location')
@@ -105,12 +134,28 @@ class Todo(Entry):
         if v := self.__getFldByName('priority'):
             return int(v)
 
+    def getRelatedTo(self) -> Optional[str]:   # TODO:
+        return self.__getFldByName('relatedto')
+
+    def getRRule(self) -> Optional[str]:   # TODO:
+        return self.__getFldByName('rrule')
+
+    def getSequence(self) -> int:   # TODO:
+        if v := self.__getFldByName('sequence'):
+            return int(v)
+
     def getStatus(self) -> Optional[enums.EStatus]:
         if v := self.__getFldByName('status'):
             return self.__MapStatus.get(v)
 
     def getSummary(self) -> str:
         return self._data.summary.value
+
+    def getUID(self) -> str:   # TODO:
+        return self.__getFldByName('uid')
+
+    def getURL(self) -> str:   # TODO:
+        return self.__getFldByName('url')
     # /for model
 
 
