@@ -70,7 +70,7 @@ class Todo(Entry):
         if v_list := self._data.contents.get(fld):
             if len(v_list) == 1:  # usual
                 v = v_list[0].value     # FIXME: something about 'behaviour'
-            else:  # multivalues (attach, categories)
+            else:  # multivalues (attach, categories etc)
                 v = [i.value for i in v_list]
             return v
 

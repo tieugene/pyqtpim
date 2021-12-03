@@ -6,7 +6,6 @@
 - [ ] Details: RTF text
 - [ ] Expand ToDo (fields):
   - [ ] Details
-  - [ ] List
 - [ ] multivalues: list: csv, details: multiline text, edit: ??? (multiline, checklist, stringlist)
   - [ ] categories
   - [ ] attach

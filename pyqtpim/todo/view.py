@@ -24,15 +24,14 @@ class TodoListView(EntryListView):
 
 class TodoView(EntryView):
     summary: QtWidgets.QLineEdit
-    class_: QtWidgets.QLineEdit
+    categories: QtWidgets.QPlainTextEdit
     completed: QtWidgets.QDateTimeEdit
     dtstart: QtWidgets.QDateTimeEdit
     due: QtWidgets.QDateTimeEdit
+    location: QtWidgets.QLineEdit
     percent: QtWidgets.QSpinBox
     prio: QtWidgets.QSpinBox
     status: QtWidgets.QLineEdit
-    location: QtWidgets.QLineEdit
-    categories: QtWidgets.QPlainTextEdit
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -42,42 +41,39 @@ class TodoView(EntryView):
     def __createWidgets(self):
         # order
         self.summary = QtWidgets.QLineEdit(self)
-        self.class_ = QtWidgets.QLineEdit(self)
+        self.categories = QtWidgets.QPlainTextEdit(self)
         self.completed = QtWidgets.QDateTimeEdit(self)
         self.dtstart = QtWidgets.QDateTimeEdit(self)
         self.due = QtWidgets.QDateTimeEdit(self)
+        self.location = QtWidgets.QLineEdit(self)
         self.percent = QtWidgets.QSpinBox(self)
-        self.percent.setMaximum(100)
         self.prio = QtWidgets.QSpinBox(self)
         self.status = QtWidgets.QLineEdit(self)
-        self.location = QtWidgets.QLineEdit(self)
-        self.categories = QtWidgets.QPlainTextEdit(self)
         # layout
         layout = QtWidgets.QFormLayout()
         layout.addRow(QtWidgets.QLabel("Summary:"), self.summary)
-        layout.addRow(QtWidgets.QLabel("Class:"), self.class_)
+        layout.addRow(QtWidgets.QLabel("Categories:"), self.categories)
         layout.addRow(QtWidgets.QLabel("Complete:"), self.completed)
         layout.addRow(QtWidgets.QLabel("DTStart:"), self.dtstart)
         layout.addRow(QtWidgets.QLabel("Due:"), self.due)
+        layout.addRow(QtWidgets.QLabel("Location:"), self.location)
         layout.addRow(QtWidgets.QLabel("%:"), self.percent)
         layout.addRow(QtWidgets.QLabel("Prio:"), self.prio)
         layout.addRow(QtWidgets.QLabel("Status:"), self.status)
-        layout.addRow(QtWidgets.QLabel("Location:"), self.location)
-        layout.addRow(QtWidgets.QLabel("Categories:"), self.categories)
         self.setLayout(layout)
         # attributes
         self.summary.setReadOnly(True)
-        self.class_.setReadOnly(True)
+        self.categories.setReadOnly(True)
         self.completed.setReadOnly(True)
         self.dtstart.setReadOnly(True)
         self.due.setReadOnly(True)
+        self.location.setReadOnly(True)
         self.percent.setReadOnly(True)
         self.prio.setReadOnly(True)
         self.status.setReadOnly(True)
-        self.location.setReadOnly(True)
-        self.categories.setReadOnly(True)
+        # misc
+        self.percent.setMaximum(100)
 
-    @QtCore.Slot
     def __idxChgd(self, idx: int):
         """Only for selection; not calling on deselection"""
         print("Idx chgd:", idx)
@@ -89,29 +85,27 @@ class TodoView(EntryView):
         """
         super().setModel(model)
         self.mapper.addMapping(self.summary, 0)
-        self.mapper.addMapping(self.class_, 1)
+        self.mapper.addMapping(self.categories, 1)
         self.mapper.addMapping(self.completed, 2)
         self.mapper.addMapping(self.dtstart, 3)
         self.mapper.addMapping(self.due, 4)
-        self.mapper.addMapping(self.percent, 5)
-        self.mapper.addMapping(self.prio, 6)
-        self.mapper.addMapping(self.status, 7)
-        self.mapper.addMapping(self.location, 8)
-        self.mapper.addMapping(self.categories, 9)
+        self.mapper.addMapping(self.location, 5)
+        self.mapper.addMapping(self.percent, 6)
+        self.mapper.addMapping(self.prio, 7)
+        self.mapper.addMapping(self.status, 8)
         self.mapper.currentIndexChanged[int].connect(self.__idxChgd)
 
     def clean(self):
         # print("Details clean call")
         self.summary.clear()
-        self.class_.clear()
+        self.categories.clear()
         self.completed.clear()
         self.dtstart.clear()
         self.due.clear()
+        self.location.clear()
         self.percent.clear()
         self.prio.clear()
         self.status.clear()
-        self.location.clear()
-        self.categories.clear()
 
 
 class TodosWidget(QtWidgets.QWidget):

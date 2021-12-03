@@ -28,15 +28,14 @@ class TodoListModel(EntryListModel):
         self._data = TodoList()
         self._fld_names = (
             (enums.EProp.Summary, "Summary"),
-            (enums.EProp.Class, "Class"),
+            (enums.EProp.Categories, "Cat"),
             (enums.EProp.Completed, "Completed"),
             (enums.EProp.DTStart, "DTStart"),
             (enums.EProp.Due, "Due"),
+            (enums.EProp.Location, "Loc"),
             (enums.EProp.Percent, "%"),
             (enums.EProp.Priority, "Prio"),
             (enums.EProp.Status, "Status"),
-            (enums.EProp.Location, "Loc"),
-            (enums.EProp.Categories, "Cat"),
         )
 
     def _empty_item(self) -> TodoList:
