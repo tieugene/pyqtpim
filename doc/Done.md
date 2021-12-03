@@ -24,6 +24,10 @@
 - [x] Expand fields:
   - [x] Data
   - [x] List
+  - [x] Details
+- [x] Details: RTF text
+- [x] multivalues: list: csv, details: UL
+- [x] Details: handle datetime/date (dtstart, due):
 
 ## Contacts
 - [ ] CLM:

@@ -1,7 +1,6 @@
 # 1. system
-# 2. PySide
 from typing import Any
-
+# 2. PySide
 from PySide2 import QtCore
 # 3. local
 from common import SetGroup, EntryListModel, EntryListManagerModel
