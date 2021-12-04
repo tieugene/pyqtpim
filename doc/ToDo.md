@@ -69,9 +69,10 @@
 
 ### RTM
 - InstantAdd
-- enums:
+- Enums:
   - location
   - category ('tags')
+- Add properties on demand
 
 ## 3. Contacts
 - [ ] E:
