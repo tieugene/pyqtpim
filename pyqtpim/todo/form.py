@@ -1,6 +1,5 @@
 """Form to create/update VTODO item
 
-:todo: 2 x SlidedSpinBox
 :todo: Class (radio/slider)
 """
 # 1. std
@@ -104,8 +103,9 @@ class SlidedSpinBox(QtWidgets.QGroupBox):
         self.f_slider.setValue(v)
 
     def setData(self, data: int):
-        self.f_slider.setValue(data)
-        self.f_spinbox.setValue(data)
+        if data is not None:
+            self.f_slider.setValue(data)
+            self.f_spinbox.setValue(data)
 
     def getData(self) -> int:
         return self.f_spinbox.value()
@@ -120,13 +120,7 @@ class PrioBox(SlidedSpinBox):
 
     @staticmethod
     def __spin2slide(v: int):
-        if v == 0:
-            return 0
-        elif v < 5:
-            return 1
-        elif v == 5:
-            return 2
-        return 3
+        return (0, 1, 1, 1, 1, 2, 3, 3, 3, 3)[v]
 
     def _chg_slider(self, v: int):
         # print("slider")
@@ -142,11 +136,14 @@ class PrioBox(SlidedSpinBox):
                 self.f_spinbox.setValue(9)
 
     def _chg_spinbox(self, v: int):
-        self.f_slider.setValue(self.__spin2slide(v))
+        new_slide_v = self.__spin2slide(v)
+        if self.f_slider.value() != new_slide_v:
+            self.f_slider.setValue(new_slide_v)
 
     def setData(self, data: int):
-        self.f_slider.setValue(data)
-        self.f_spinbox.setValue(self.__spin2slide(data))
+        if data is not None:
+            self.f_slider.setValue(self.__spin2slide(data))
+            self.f_spinbox.setValue(data)
 
     def getData(self) -> int:
         return self.f_spinbox.value()

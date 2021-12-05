@@ -25,6 +25,7 @@
 
 ### 0.2. Fixme
 - [ ] Todo.Details: clear unused on change (None?)
+- [ ] 'Percent' > 'Progress'
 
 ### 0.3. Tuning
 - [ ] ELM.View: auto-h/w
