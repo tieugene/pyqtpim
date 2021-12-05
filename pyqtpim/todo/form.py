@@ -9,6 +9,7 @@ from typing import Optional, Union
 from PySide2 import QtWidgets, QtCore
 # 3. local
 from .data import Todo
+from . import enums
 
 
 class CheckableDateTimeEdit(QtWidgets.QGroupBox):
@@ -111,7 +112,7 @@ class SlidedSpinBox(QtWidgets.QGroupBox):
         return self.f_spinbox.value()
 
 
-class PrioBox(SlidedSpinBox):
+class PrioWidget(SlidedSpinBox):
     def __init__(self, parent=None):
         super().__init__(9, parent)
         self.f_slider.setMaximum(3)
@@ -165,10 +166,24 @@ class TodoForm(QtWidgets.QDialog):
     f_due: CheckableDateTimeEdit
     f_location: QtWidgets.QLineEdit
     f_percent: SlidedSpinBox   # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
-    f_priority: PrioBox
+    f_priority: PrioWidget
     f_status: QtWidgets.QComboBox
     f_summary: QtWidgets.QLineEdit
     f_url = QtWidgets.QLineEdit
+
+    __map_class2idx: dict[enums.EClass, int] = {
+        None: 0,
+        enums.EClass.Public: 1,
+        enums.EClass.Private: 2,
+        enums.EClass.Confidential: 3,
+    }
+    __map_status2idx: dict[enums.EStatus, int] = {
+        None: 0,
+        enums.EStatus.NeedsAction: 1,
+        enums.EStatus.InProcess: 2,
+        enums.EStatus.Completed: 3,
+        enums.EStatus.Cancelled: 4
+    }
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -178,9 +193,9 @@ class TodoForm(QtWidgets.QDialog):
 
     def __createWidgets(self):
         # = Widgets: =
-        self.f_list = QtWidgets.QComboBox(self)
-        self.f_list.addItem("List1")
-        self.f_list.addItem("List2")
+        # self.f_list = QtWidgets.QComboBox(self)
+        # self.f_list.addItem("List1")
+        # self.f_list.addItem("List2")
         # attach[]
         self.f_category = QtWidgets.QLineEdit(self)         # TODO: checkable combobox
         self.f_category.setClearButtonEnabled(True)
@@ -198,7 +213,7 @@ class TodoForm(QtWidgets.QDialog):
         self.f_location = QtWidgets.QLineEdit(self)
         self.f_location.setClearButtonEnabled(True)
         self.f_percent = SlidedSpinBox(100, self)
-        self.f_priority = PrioBox(self)
+        self.f_priority = PrioWidget(self)
         # relatedto
         # rrule
         self.f_status = QtWidgets.QComboBox(self)           # TODO: radio?
@@ -218,7 +233,7 @@ class TodoForm(QtWidgets.QDialog):
     def __setLayout(self):
         """Bests: Evolution, RTM"""
         layout = QtWidgets.QFormLayout(self)    # FIME: not h-stretchable
-        layout.addRow("List", self.f_list)
+        # layout.addRow("List", self.f_list)
         layout.addRow("Summary", self.f_summary)
         layout.addRow("Category", self.f_category)
         layout.addRow("Class", self.f_class)        # on demand
@@ -245,8 +260,7 @@ class TodoForm(QtWidgets.QDialog):
                 self.f_category.setText(', '.join(v))
             else:
                 self.f_category.setText(v)
-        if v := data.getClass():
-            ...
+        self.f_class.setCurrentIndex(self.__map_class2idx[data.getClass()])
         self.f_completed.setData(data.getCompleted())
         self.f_description.setPlainText(data.getDescription())
         self.f_dtstart.setData(data.getDTStart())
@@ -254,7 +268,6 @@ class TodoForm(QtWidgets.QDialog):
         self.f_location.setText(data.getLocation())
         self.f_percent.setData(data.getPercent())
         self.f_priority.setData(data.getPriority())
-        if v := data.getStatus():
-            ...
+        self.f_status.setCurrentIndex(self.__map_status2idx[data.getStatus()])
         self.f_summary.setText(data.getSummary())
         self.f_url.setText(data.getURL())

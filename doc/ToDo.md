@@ -4,30 +4,21 @@
 
 ### 0.1. Job
 - [ ] CU *(note: split logic & UI)*
-  - [x] fields
-  - [ ] load (U):
-    - [ ] List: from lists
-    - [x] Categories: CSV
-    - [x] QDate[Time]Edit: checked pairs
-    - [x] prio,progress: slider+spinbox
-    - [ ] class/status: w/ 'none'
   - [ ] save (CU)
   - [ ] interim logic
   - [ ] multivalues: multiline|checklist|stringlist:
-    - [ ] attach (url): QLineEdit[]
-    - [ ] categories: like RTM (editable combobox)
-    - [ ] comment: QLineEdit[]
-    - [ ] contact: like RTM
+     - [ ] attach (url): QLineEdit[]
+     - [ ] categories: like RTM (editable combobox)
+     - [ ] comment: QLineEdit[]
+     - [ ] contact: like RTM
 - [ ] D
-- [ ] combobox:
-  - [ ] 'x' to clear (.clearEditText())
-  - [ ] default=''
 
 ### 0.2. Fixme
 - [ ] Todo.Details: clear unused on change (None?)
-- [ ] 'Percent' > 'Progress'
+- [ ] TodoForm: list
 
 ### 0.3. Tuning
+- [ ] 'Percent' > 'Progress'
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox (see QDialog.setSizeGripEnabled())

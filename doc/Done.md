@@ -28,6 +28,13 @@
 - [x] Details: RTF text
 - [x] multivalues: list: csv, details: UL
 - [x] Details: handle datetime/date (dtstart, due):
+- [x] CU:
+  - [x] fields
+  - [x] load (U):
+     - [x] Categories: CSV
+     - [x] QDate[Time]Edit: checked pairs
+     - [x] prio,progress: slider+spinbox
+     - [x] class/status: w/ 'none'
 
 ## Contacts
 - [ ] CLM:
