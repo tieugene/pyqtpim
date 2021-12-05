@@ -13,18 +13,6 @@ from . import enums
 
 
 class Todo(Entry):
-    __MapClass = {
-        'PUBLIC': enums.EClass.Public,
-        'PRIVATE': enums.EClass.Private,
-        'CONFIDENTIAL': enums.EClass.Confidential
-    }
-    __MapStatus = {
-        'NEEDS-ACTION': enums.EStatus.NeedsAction,
-        'IN-PROCESS': enums.EStatus.InProcess,
-        'COMPLETED': enums.EStatus.Completed,
-        'CANCELLED': enums.EStatus.Cancelled
-    }
-
     def __init__(self, path: str, data: vobject.base.Component):
         super().__init__(path, data)
         self._name2func = {
@@ -97,7 +85,7 @@ class Todo(Entry):
 
     def getClass(self) -> Optional[enums.EClass]:
         if v := self.__getFldByName('class'):
-            return self.__MapClass.get(v)
+            return enums.Raw2Enum_Class.get(v)
 
     def getComment(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('comment')
@@ -134,6 +122,13 @@ class Todo(Entry):
             return int(v)
 
     def getPriority(self) -> Optional[int]:
+        """
+        0 - undefined
+        1..4=high, 5=mid, 6..9=low
+        or
+        1..3=A1..3, 4..5=B1..3, 6..9=C1..3
+        :return: 1[/3]/5/7/9
+        """
         if v := self.__getFldByName('priority'):
             return int(v)
 
@@ -149,7 +144,7 @@ class Todo(Entry):
 
     def getStatus(self) -> Optional[enums.EStatus]:
         if v := self.__getFldByName('status'):
-            return self.__MapStatus.get(v)
+            return enums.Raw2Enum_Status.get(v)
 
     def getSummary(self) -> Optional[str]:
         return self._data.summary.value
@@ -163,6 +158,7 @@ class Todo(Entry):
 
 
 class TodoList(EntryList):
+    """todo: collect categories/locations on load"""
     def _load_one(self, fname: str, data: vobject.base.Component):
         if data.name == 'VCALENDAR':
             if 'vtodo' in data.contents:

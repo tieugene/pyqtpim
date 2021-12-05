@@ -3,13 +3,24 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] C~~R~~UD  
-      *Note: split logic & UI*
-- [ ] multivalues edit: multiline|checklist|stringlist:
-  - [ ] attach
-  - [ ] categories
-  - [ ] comment
-  - [ ] contact
+- [ ] CU *(note: split logic & UI)*
+  - [x] fields
+  - [ ] load (U):
+    - [ ] List: from lists
+    - [x] Categories: CSV
+    - [ ] class/prio/status: w/ 'none'
+    - [ ] QDate[Time]Edit: empty on None
+  - [ ] save (CU)
+  - [ ] interim logic
+  - [ ] multivalues: multiline|checklist|stringlist:
+    - [ ] attach (url): QLineEdit[]
+    - [ ] categories: like RTM (editable combobox)
+    - [ ] comment: QLineEdit[]
+    - [ ] contact: like RTM
+- [ ] D
+- [ ] combobox:
+  - [ ] 'x' to clear (.clearEditText())
+  - [ ] default=''
 
 ### 0.2. Fixme
 - [ ] Todo.Details: clear unused on change (None?)
@@ -68,7 +79,7 @@
 - [ ] EL: View: columnt delegates
 
 ### RTM
-- InstantAdd
+- InstantAdd (+Inbox)
 - Enums:
   - location
   - category ('tags')

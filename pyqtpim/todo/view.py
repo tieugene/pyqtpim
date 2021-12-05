@@ -28,16 +28,18 @@ class TodoListView(EntryListView):
         return TodoListModel()
 
     def itemAdd(self):
-        f = TodoForm(self)
-        v = f.exec_()
-        print(v)
+        f = TodoForm(self)  # TODO: cache creation
+        f.exec_()
 
     def itemEdit(self):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             i = idx.row()
             item: Todo = self.model().item(i)
-            print("Edit", item.getSummary())
+            f = TodoForm(self)  # TODO: cache creation
+            f.load(item)
+            f.exec_()
+            # print("Edit", item.getSummary())
 
     def itemDel(self):
         idx = self.selectionModel().currentIndex()

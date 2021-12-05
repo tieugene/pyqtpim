@@ -2,30 +2,6 @@ from enum import IntEnum, unique, auto
 
 
 @unique
-class EClass(IntEnum):
-    """CLASS property values"""
-    Public = auto()
-    Private = auto()
-    Confidential = auto()
-
-
-@unique
-class EStatus(IntEnum):
-    """STATUS property values"""
-    NeedsAction = auto()
-    InProcess = auto()
-    Completed = auto()
-    Cancelled = auto()
-
-
-@unique
-class ETrans(IntEnum):
-    """TRANSPARENT property values"""
-    Opaque = auto()
-    Transparent = auto()
-
-
-@unique
 class EProp(IntEnum):
     """VTODO properties (usual).
      (21..25 from 32 available)"""
@@ -60,3 +36,34 @@ class EProp(IntEnum):
     Summary = auto()        # ?
     UID = auto()            # 1
     URL = auto()            # ?
+
+@unique
+class EClass(IntEnum):
+    """CLASS property values"""
+    Public = auto()
+    Private = auto()
+    Confidential = auto()
+
+
+Raw2Enum_Class: dict[str, EClass] = {
+    'PUBLIC': EClass.Public,
+    'PRIVATE': EClass.Private,
+    'CONFIDENTIAL': EClass.Confidential
+}
+
+
+@unique
+class EStatus(IntEnum):
+    """STATUS property values"""
+    NeedsAction = auto()
+    InProcess = auto()
+    Completed = auto()
+    Cancelled = auto()
+
+
+Raw2Enum_Status: dict[str, EStatus] = {
+    'NEEDS-ACTION': EStatus.NeedsAction,
+    'IN-PROCESS': EStatus.InProcess,
+    'COMPLETED': EStatus.Completed,
+    'CANCELLED': EStatus.Cancelled
+}
