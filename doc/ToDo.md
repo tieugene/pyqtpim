@@ -7,7 +7,7 @@
   - [ ] save():
      - [ ] U:
        - [x] cmp
-       - [ ] store
+       - […] store
        - [ ] save
      - [ ] C
   - [ ] interim logic

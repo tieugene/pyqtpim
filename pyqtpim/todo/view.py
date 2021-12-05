@@ -237,6 +237,7 @@ def form2obj(src: TodoForm, dst: Todo) -> bool:
     v_new = src.f_url.text() or None
     v_old = dst.getURL()
     if v_old != v_new:
-        changed = True
         __prn_chg("URL", v_old, v_new)
+        dst.setURL(v_new)
+        changed = True
     return changed

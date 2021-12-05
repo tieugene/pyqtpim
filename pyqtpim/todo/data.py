@@ -62,7 +62,7 @@ class Todo(Entry):
                 v = [i.value for i in v_list]
             return v
 
-    # for model
+    # getters
     def getAttach(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('attach')
 
@@ -159,7 +159,20 @@ class Todo(Entry):
 
     def getURL(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('url')
-    # /for model
+
+    # setters
+    def setURL(self, data: Optional[str]):
+        if data is None:
+            if 'url' in self._data.contents:
+                print("Del URL")
+                del self._data.contents['url']
+        else:
+            if 'url' in self._data.contents:
+                print("Set URL")
+                self._data.url.value = data
+            else:
+                print("Add URL")
+                self._data.add('url').value = data
 
 
 class TodoList(EntryList):
