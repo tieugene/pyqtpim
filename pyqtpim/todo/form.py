@@ -1,10 +1,7 @@
-"""Form to create/update VTODO item
-
-:todo: Class (radio/slider)
-"""
+"""Form to create/update VTODO item"""
 # 1. std
 import datetime
-from typing import Optional, Union
+from typing import Optional, Union, Any
 # 2. PySide
 from PySide2 import QtWidgets, QtCore
 # 3. local
@@ -12,7 +9,7 @@ from .data import Todo
 from . import enums
 
 
-class CheckableDateTimeEdit(QtWidgets.QGroupBox):
+class CheckableDateTimeEdit(QtWidgets.QWidget):
     is_enabled: QtWidgets.QCheckBox
     is_timed: QtWidgets.QCheckBox
     f_date: QtWidgets.QDateEdit
@@ -20,6 +17,8 @@ class CheckableDateTimeEdit(QtWidgets.QGroupBox):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setContentsMargins(0, 0, 0, 0)
+        # self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.is_enabled = QtWidgets.QCheckBox()
         self.is_timed = QtWidgets.QCheckBox()
         self.f_date = QtWidgets.QDateEdit()
@@ -72,17 +71,18 @@ class CheckableDateTimeEdit(QtWidgets.QGroupBox):
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
             if self.is_timed.isChecked():
-                return datetime.datetime.combine(self.f_date.date(), self.f_time.time())
+                return datetime.datetime.combine(self.f_date.date().toPython(), self.f_time.time().toPython())
             else:
-                return self.f_date.date()
+                return self.f_date.date().toPython()
 
 
-class SlidedSpinBox(QtWidgets.QGroupBox):
+class SlidedSpinBox(QtWidgets.QWidget):
     f_slider: QtWidgets.QSlider
     f_spinbox: QtWidgets.QSpinBox
 
     def __init__(self, v_max: int, parent=None):
         super().__init__(parent)
+        self.setContentsMargins(0, 0, 0, 0)
         self.f_slider = QtWidgets.QSlider()
         self.f_slider.setOrientation(QtCore.Qt.Horizontal)
         self.f_slider.setMaximum(v_max)
@@ -150,16 +150,69 @@ class PrioWidget(SlidedSpinBox):
         return self.f_spinbox.value()
 
 
+class SpecialCombo(QtWidgets.QComboBox):
+    _data2idx: dict[Any, int]
+    _idx2data: tuple
+
+    def __init__(self, items: tuple, parent=None):
+        super().__init__(parent)
+        self.addItems(items)
+
+    def setData(self, data):
+        self.setCurrentIndex(self._data2idx[data])
+
+    def getData(self) -> Any:
+        return self._idx2data[self.currentIndex()]
+
+
+class ClassCombo(SpecialCombo):
+    _data2idx: dict[enums.EClass, int] = {
+        None: 0,
+        enums.EClass.Public: 1,
+        enums.EClass.Private: 2,
+        enums.EClass.Confidential: 3,
+    }
+    _idx2data = (
+        None,
+        enums.EClass.Public,
+        enums.EClass.Private,
+        enums.EClass.Confidential,
+    )
+
+    def __init__(self, parent=None):
+        super().__init__(('', "Public", "Private", "Confidential"), parent)
+
+
+class StatusCombo(SpecialCombo):
+    _data2idx: dict[enums.EStatus, int] = {
+        None: 0,
+        enums.EStatus.NeedsAction: 1,
+        enums.EStatus.InProcess: 2,
+        enums.EStatus.Completed: 3,
+        enums.EStatus.Cancelled: 4
+    }
+    _idx2data = (
+        None,
+        enums.EStatus.NeedsAction,
+        enums.EStatus.InProcess,
+        enums.EStatus.Completed,
+        enums.EStatus.Cancelled
+    )
+
+    def __init__(self, parent=None):
+        super().__init__(('', "Needs Action", "In Progress", "Completed", "Cancelled"), parent)
+
+
 class TodoForm(QtWidgets.QDialog):
     """
     Create/Update form for VTODO
     :todo: popup/pulldown info: created, dtstamp, modified, sequence, uid
     :todo: select optional fields to show: class, ...
-    :todo: set default values: priority, ..
+    :todo: set default values: priority, ...
     """
     f_list: QtWidgets.QComboBox
     f_category: QtWidgets.QLineEdit
-    f_class: QtWidgets.QComboBox
+    f_class: ClassCombo
     f_completed: CheckableDateTimeEdit
     f_description: QtWidgets.QPlainTextEdit
     f_dtstart: CheckableDateTimeEdit
@@ -167,23 +220,9 @@ class TodoForm(QtWidgets.QDialog):
     f_location: QtWidgets.QLineEdit
     f_percent: SlidedSpinBox   # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
     f_priority: PrioWidget
-    f_status: QtWidgets.QComboBox
+    f_status: StatusCombo
     f_summary: QtWidgets.QLineEdit
     f_url = QtWidgets.QLineEdit
-
-    __map_class2idx: dict[enums.EClass, int] = {
-        None: 0,
-        enums.EClass.Public: 1,
-        enums.EClass.Private: 2,
-        enums.EClass.Confidential: 3,
-    }
-    __map_status2idx: dict[enums.EStatus, int] = {
-        None: 0,
-        enums.EStatus.NeedsAction: 1,
-        enums.EStatus.InProcess: 2,
-        enums.EStatus.Completed: 3,
-        enums.EStatus.Cancelled: 4
-    }
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -199,11 +238,7 @@ class TodoForm(QtWidgets.QDialog):
         # attach[]
         self.f_category = QtWidgets.QLineEdit(self)         # TODO: checkable combobox
         self.f_category.setClearButtonEnabled(True)
-        self.f_class = QtWidgets.QComboBox(self)            # TODO: radio/slider?
-        self.f_class.addItem('')
-        self.f_class.addItem("Public")
-        self.f_class.addItem("Private")
-        self.f_class.addItem("Confidential")
+        self.f_class = ClassCombo(self)                     # TODO: radio/slider?
         # comment[]
         self.f_completed = CheckableDateTimeEdit(self)
         # contact[]
@@ -216,12 +251,7 @@ class TodoForm(QtWidgets.QDialog):
         self.f_priority = PrioWidget(self)
         # relatedto
         # rrule
-        self.f_status = QtWidgets.QComboBox(self)           # TODO: radio?
-        self.f_status.addItem('')               # _
-        self.f_status.addItem("Needs Action")   # ?
-        self.f_status.addItem("In Progress")    # ...
-        self.f_status.addItem("Completed")      # v
-        self.f_status.addItem("Cancelled")      # x
+        self.f_status = StatusCombo(self)                   # TODO: radio?
         self.f_summary = QtWidgets.QLineEdit(self)
         self.f_url = QtWidgets.QLineEdit(self)
         self.f_url.setClearButtonEnabled(True)
@@ -250,8 +280,6 @@ class TodoForm(QtWidgets.QDialog):
         layout.addRow(self.button_box)
         self.setLayout(layout)
 
-    # TODO: clear()
-
     def load(self, data: Todo):
         """Preload form with VTODO"""
         # self.f_list
@@ -260,7 +288,7 @@ class TodoForm(QtWidgets.QDialog):
                 self.f_category.setText(', '.join(v))
             else:
                 self.f_category.setText(v)
-        self.f_class.setCurrentIndex(self.__map_class2idx[data.getClass()])
+        self.f_class.setData(data.getClass())
         self.f_completed.setData(data.getCompleted())
         self.f_description.setPlainText(data.getDescription())
         self.f_dtstart.setData(data.getDTStart())
@@ -268,6 +296,6 @@ class TodoForm(QtWidgets.QDialog):
         self.f_location.setText(data.getLocation())
         self.f_percent.setData(data.getPercent())
         self.f_priority.setData(data.getPriority())
-        self.f_status.setCurrentIndex(self.__map_status2idx[data.getStatus()])
+        self.f_status.setData(data.getStatus())
         self.f_summary.setText(data.getSummary())
         self.f_url.setText(data.getURL())

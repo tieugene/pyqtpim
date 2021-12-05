@@ -4,7 +4,12 @@
 
 ### 0.1. Job
 - [ ] CU *(note: split logic & UI)*
-  - [ ] save (CU)
+  - [ ] save():
+     - [ ] U:
+       - [x] cmp
+       - [ ] store
+       - [ ] save
+     - [ ] C
   - [ ] interim logic
   - [ ] multivalues: multiline|checklist|stringlist:
      - [ ] attach (url): QLineEdit[]
@@ -12,10 +17,16 @@
      - [ ] comment: QLineEdit[]
      - [ ] contact: like RTM
 - [ ] D
+- [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
-- [ ] Todo.Details: clear unused on change (None?)
-- [ ] TodoForm: list
+- [ ] TodoForm.CheckedDateTimeEdit[]: TZ
+- [ ] Todo.Details:
+  - [ ] extend (fields)
+  - [ ] print `None`s
+- [ ] TodoForm:
+  - [ ] f_list
+  - [ ] Date[Time]s: TZ
 
 ### 0.3. Tuning
 - [ ] 'Percent' > 'Progress'

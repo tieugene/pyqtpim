@@ -81,6 +81,7 @@ class Todo(Entry):
                 retvalue = retvalue[0]
             else:
                 retvalue = [s[0] for s in retvalue]
+                retvalue.sort()
         return retvalue
 
     def getClass(self) -> Optional[enums.EClass]:
@@ -123,11 +124,10 @@ class Todo(Entry):
 
     def getPriority(self) -> Optional[int]:
         """
-        0 - undefined
-        1[..4]=high, 5=mid, [6..]9=low
-        or
-        1..3=A1..3, 4..5=B1..3, 6..9=C1..3
-        :return: 1[/3]/5[/7]/9 (164):
+        0=undef, 1[..4]=high, 5=mid, [6..]9=low
+        :return: 1[/3]/5[/7]/9
+
+        cases: (164):
         - 1=18
         - 3=6
         - 5=58
