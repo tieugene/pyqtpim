@@ -9,6 +9,7 @@
     - [ ] List: from lists
     - [x] Categories: CSV
     - [x] QDate[Time]Edit: checked pairs
+    - [x] prio,progress: slider+spinbox
     - [ ] class/status: w/ 'none'
   - [ ] save (CU)
   - [ ] interim logic

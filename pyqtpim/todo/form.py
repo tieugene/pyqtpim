@@ -112,7 +112,6 @@ class SlidedSpinBox(QtWidgets.QGroupBox):
 
 
 class PrioBox(SlidedSpinBox):
-    """Fixme: loopback signals (spinbox jumps 5>1, 5>9)"""
     def __init__(self, parent=None):
         super().__init__(9, parent)
         self.f_slider.setMaximum(3)
@@ -131,7 +130,16 @@ class PrioBox(SlidedSpinBox):
 
     def _chg_slider(self, v: int):
         # print("slider")
-        self.f_spinbox.setValue((0, 1, 5, 9)[v])
+        if v == 0:
+            self.f_spinbox.setValue(0)
+        elif v == 1:
+            if not (0 < self.f_spinbox.value() < 5):
+                self.f_spinbox.setValue(1)
+        elif v == 2:
+            self.f_spinbox.setValue(5)
+        elif v == 3:
+            if not (5 < self.f_spinbox.value() < 9):
+                self.f_spinbox.setValue(9)
 
     def _chg_spinbox(self, v: int):
         self.f_slider.setValue(self.__spin2slide(v))
