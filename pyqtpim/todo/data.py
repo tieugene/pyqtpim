@@ -124,10 +124,15 @@ class Todo(Entry):
     def getPriority(self) -> Optional[int]:
         """
         0 - undefined
-        1..4=high, 5=mid, 6..9=low
+        1[..4]=high, 5=mid, [6..]9=low
         or
         1..3=A1..3, 4..5=B1..3, 6..9=C1..3
-        :return: 1[/3]/5/7/9
+        :return: 1[/3]/5[/7]/9 (164):
+        - 1=18
+        - 3=6
+        - 5=58
+        - 7=6
+        - 9=76
         """
         if v := self.__getFldByName('priority'):
             return int(v)
