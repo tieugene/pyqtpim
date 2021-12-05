@@ -85,8 +85,6 @@ class SlidedSpinBox(QtWidgets.QGroupBox):
         super().__init__(parent)
         self.f_slider = QtWidgets.QSlider()
         self.f_slider.setOrientation(QtCore.Qt.Horizontal)
-        # self.f_slider.setTickPosition(QtWidgets.QSlider.TickPosition.TicksAbove)
-        # self.f_slider.setTickInterval(4)
         self.f_slider.setMaximum(v_max)
         self.f_spinbox = QtWidgets.QSpinBox()
         self.f_spinbox.setMaximum(v_max)
@@ -113,6 +111,39 @@ class SlidedSpinBox(QtWidgets.QGroupBox):
         return self.f_spinbox.value()
 
 
+class PrioBox(SlidedSpinBox):
+    """Fixme: loopback signals (spinbox jumps 5>1, 5>9)"""
+    def __init__(self, parent=None):
+        super().__init__(9, parent)
+        self.f_slider.setMaximum(3)
+        self.f_slider.setTickPosition(QtWidgets.QSlider.TickPosition.TicksAbove)
+        self.f_slider.setTickInterval(1)
+
+    @staticmethod
+    def __spin2slide(v: int):
+        if v == 0:
+            return 0
+        elif v < 5:
+            return 1
+        elif v == 5:
+            return 2
+        return 3
+
+    def _chg_slider(self, v: int):
+        # print("slider")
+        self.f_spinbox.setValue((0, 1, 5, 9)[v])
+
+    def _chg_spinbox(self, v: int):
+        self.f_slider.setValue(self.__spin2slide(v))
+
+    def setData(self, data: int):
+        self.f_slider.setValue(data)
+        self.f_spinbox.setValue(self.__spin2slide(data))
+
+    def getData(self) -> int:
+        return self.f_spinbox.value()
+
+
 class TodoForm(QtWidgets.QDialog):
     """
     Create/Update form for VTODO
@@ -129,7 +160,7 @@ class TodoForm(QtWidgets.QDialog):
     f_due: CheckableDateTimeEdit
     f_location: QtWidgets.QLineEdit
     f_percent: SlidedSpinBox   # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
-    f_priority: QtWidgets.QSlider
+    f_priority: PrioBox
     f_status: QtWidgets.QComboBox
     f_summary: QtWidgets.QLineEdit
     f_url = QtWidgets.QLineEdit
@@ -162,11 +193,7 @@ class TodoForm(QtWidgets.QDialog):
         self.f_location = QtWidgets.QLineEdit(self)
         self.f_location.setClearButtonEnabled(True)
         self.f_percent = SlidedSpinBox(100, self)
-        self.f_priority = QtWidgets.QSlider(self)           # TODO: +QSpinBox
-        self.f_priority.setMaximum(9)
-        self.f_priority.setOrientation(QtCore.Qt.Horizontal)
-        self.f_priority.setTickPosition(QtWidgets.QSlider.TickPosition.TicksAbove)
-        self.f_priority.setTickInterval(4)
+        self.f_priority = PrioBox(self)
         # relatedto
         # rrule
         self.f_status = QtWidgets.QComboBox(self)           # TODO: radio?
@@ -221,8 +248,7 @@ class TodoForm(QtWidgets.QDialog):
         self.f_due.setData(data.getDue())
         self.f_location.setText(data.getLocation())
         self.f_percent.setData(data.getPercent())
-        if v := data.getPriority():
-            self.f_priority.setValue(v)
+        self.f_priority.setData(data.getPriority())
         if v := data.getStatus():
             ...
         self.f_summary.setText(data.getSummary())
