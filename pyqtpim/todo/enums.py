@@ -37,6 +37,7 @@ class EProp(IntEnum):
     UID = auto()            # 1
     URL = auto()            # ?
 
+
 @unique
 class EClass(IntEnum):
     """CLASS property values"""

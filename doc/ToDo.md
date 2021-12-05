@@ -8,8 +8,8 @@
   - [ ] load (U):
     - [ ] List: from lists
     - [x] Categories: CSV
+    - [x] QDate[Time]Edit: checked pairs
     - [ ] class/prio/status: w/ 'none'
-    - [ ] QDate[Time]Edit: empty on None
   - [ ] save (CU)
   - [ ] interim logic
   - [ ] multivalues: multiline|checklist|stringlist:
@@ -93,6 +93,13 @@
 ## x. misc
 
 ### x.1. RTFM
+- Samples:
+  - Mozilla Lightning
+  - Apple Reminder
+  - [Rainlendar2](http://www.rainlendar.net/) (&euro;5..10)
+  - [Evolution](https://wiki.gnome.org/Apps/Evolution)
+  - [OpenTasks](https://opentasks.app)
+  - [RTM](https://www.rememberthemilk.com) ($40/y)
 - [pimutils](https://github.com/pimutils)
 - PySide2 Book[^4]
 - Radicale src
