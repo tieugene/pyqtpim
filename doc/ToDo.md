@@ -20,6 +20,7 @@
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
+- [ ] Something wrong with cats
 - [ ] Todo.Details:
   - [ ] extend (fields)
   - [ ] print `None`s

@@ -57,10 +57,25 @@ class Todo(Entry):
         """Get field value by its name."""
         if v_list := self._data.vtodo.contents.get(fld):
             if len(v_list) == 1:  # usual
-                v = v_list[0].value     # FIXME: something about 'behaviour'
+                v = v_list[0].value
             else:  # multivalues (attach, categories etc)
                 v = [i.value for i in v_list]
             return v
+
+    def __setAFldByName(self, fld: str, data: Optional[Union[int, str, date, datetime]]):
+        """Create/update standalone [optional] field"""
+        if data is None:
+            if fld in self._data.vtodo.contents:
+                print("Del", fld)
+                del self._data.vtodo.contents[fld]
+        else:
+            if fld in self._data.vtodo.contents:
+                print("Set", fld)
+                # self._data.vtodo.<fld>>.value
+                self._data.vtodo.contents[fld][0].value = data
+            else:
+                print("Add", fld)
+                self._data.vtodo.add(fld).value = data
 
     # getters
     def getAttach(self) -> Optional[Union[str, list[str]]]:
@@ -152,7 +167,8 @@ class Todo(Entry):
             return enums.Raw2Enum_Status.get(v)
 
     def getSummary(self) -> Optional[str]:
-        return self._data.vtodo.summary.value
+        # return self._data.vtodo.summary.value
+        return self.__getFldByName('summary')
 
     def getUID(self) -> str:
         return self.__getFldByName('uid')
@@ -161,19 +177,35 @@ class Todo(Entry):
         return self.__getFldByName('url')
 
     # setters
+    # - cat
+    # - class
+    def setCompleted(self, data: Optional[Union[date, datetime]]):
+        self.__setAFldByName('completed', data)
+
+    def setDescription(self, data: Optional[str]):
+        self.__setAFldByName('description', data)
+
+    def setDTStart(self, data: Optional[Union[date, datetime]]):
+        self.__setAFldByName('dtstart', data)
+
+    def setDue(self, data: Optional[Union[date, datetime]]):
+        self.__setAFldByName('due', data)
+
+    def setLocation(self, data: Optional[str]):
+        self.__setAFldByName('location', data)
+
+    def setPercent(self, data: Optional[int]):
+        self.__setAFldByName('percent-complete', data)
+
+    def setPriority(self, data: Optional[int]):
+        self.__setAFldByName('priority', data)
+
+    # - status
+    def setSummary(self, data: Optional[str]):
+        self.__setAFldByName('summary', data)
+
     def setURL(self, data: Optional[str]):
-        if data is None:
-            if 'url' in self._data.vtodo.contents:
-                print("Del URL")
-                del self._data.vtodo.contents['url']
-        else:
-            if 'url' in self._data.vtodo.contents:
-                print("Set URL")
-                # self._data.vtodo.url.value
-                self._data.vtodo.contents['url'][0].value = data
-            else:
-                print("Add URL")
-                self._data.vtodo.add('url').value = data
+        self.__setAFldByName('url', data)
 
     # misc
     def serialize(self) -> str:

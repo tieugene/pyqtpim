@@ -74,8 +74,11 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
             if self.is_timed.isChecked():
-                return datetime.datetime.combine(self.f_date.date().toPython(), self.f_time.time().toPython(),
-                                                 tzinfo=self.t_tz)
+                return datetime.datetime.combine(
+                    self.f_date.date().toPython(),
+                    self.f_time.time().toPython(),
+                    tzinfo=self.t_tz
+                )
             else:
                 return self.f_date.date().toPython()
 

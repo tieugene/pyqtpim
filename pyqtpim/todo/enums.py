@@ -1,3 +1,5 @@
+"""Misc VTODO utility enums and mappings.
+:todo: add vobjects field names"""
 from enum import IntEnum, unique, auto
 
 
@@ -12,15 +14,15 @@ class EProp(IntEnum):
     Comment = auto()        # *
     Completed = auto()      # ?
     Contact = auto()        # *
-    Created = auto()        # ?
+    Created = auto()        # ? auto
     Description = auto()    # ?
-    DTStamp = auto()        # 1
+    DTStamp = auto()        # 1 auto
     DTStart = auto()        # ?
     Due = auto()            # ?
     # Duration              # ?
     # ExDate                # *
     # Geo                   # ?
-    LastModified = auto()   # ?
+    LastModified = auto()   # ? auto
     Location = auto()       # ?
     # Organizer             # ?
     Percent = auto()        # ? ==  PERCENT-COMPLETE
@@ -31,10 +33,10 @@ class EProp(IntEnum):
     # REQUEST-STATUS        # *
     # Resources             # *
     RRule = auto()          # ?
-    Sequence = auto()       # ?
+    Sequence = auto()       # ? auto
     Status = auto()         # ?
     Summary = auto()        # ?
-    UID = auto()            # 1
+    UID = auto()            # 1 auto
     URL = auto()            # ?
 
 
