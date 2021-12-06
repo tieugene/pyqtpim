@@ -43,7 +43,7 @@ class Todo(Entry):
         """Return inner item content as structure.
         """
         retvalue: OrderedDict = OrderedDict()
-        cnt = self._data.contents
+        cnt = self._data.vtodo.contents
         keys = list(cnt.keys())
         keys.sort()
         for k in keys:  # v: list allways
@@ -55,7 +55,7 @@ class Todo(Entry):
 
     def __getFldByName(self, fld: str) -> Any:
         """Get field value by its name."""
-        if v_list := self._data.contents.get(fld):
+        if v_list := self._data.vtodo.contents.get(fld):
             if len(v_list) == 1:  # usual
                 v = v_list[0].value     # FIXME: something about 'behaviour'
             else:  # multivalues (attach, categories etc)
@@ -152,7 +152,7 @@ class Todo(Entry):
             return enums.Raw2Enum_Status.get(v)
 
     def getSummary(self) -> Optional[str]:
-        return self._data.summary.value
+        return self._data.vtodo.summary.value
 
     def getUID(self) -> str:
         return self.__getFldByName('uid')
@@ -163,16 +163,17 @@ class Todo(Entry):
     # setters
     def setURL(self, data: Optional[str]):
         if data is None:
-            if 'url' in self._data.contents:
+            if 'url' in self._data.vtodo.contents:
                 print("Del URL")
-                del self._data.contents['url']
+                del self._data.vtodo.contents['url']
         else:
-            if 'url' in self._data.contents:
+            if 'url' in self._data.vtodo.contents:
                 print("Set URL")
-                self._data.url.value = data
+                # self._data.vtodo.url.value
+                self._data.vtodo.contents['url'][0].value = data
             else:
                 print("Add URL")
-                self._data.add('url').value = data
+                self._data.vtodo.add('url').value = data
 
     # misc
     def serialize(self) -> str:
@@ -182,9 +183,8 @@ class Todo(Entry):
 class TodoList(EntryList):
     """todo: collect categories/locations on load"""
     def _load_one(self, fname: str, data: vobject.base.Component):
-        if data.name == 'VCALENDAR':
-            if 'vtodo' in data.contents:
-                self._data.append(Todo(fname, data.vtodo))
+        if data.name == 'VCALENDAR' and 'vtodo' in data.contents:
+            self._data.append(Todo(fname, data))
 
 
 class TodoListManager(EntryListManager):

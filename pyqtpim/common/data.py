@@ -14,7 +14,7 @@ from . import exc
 
 class Entry(object):
     _fname: str  # filename
-    _data: vobject.base.Component   # loaded vobject
+    _data: vobject.base.Component       # loaded vobject
     _name2func: dict[IntEnum, Any]      # mapping model column name to getter
 
     def __init__(self, fname: str, data: vobject.base.Component):

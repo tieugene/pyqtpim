@@ -8,7 +8,7 @@
      - [ ] U:
        - [x] cmp
        - […] store
-       - [ ] save (RTFM radicale, vobject tests)
+       - [ ] save
      - [ ] C
   - [ ] interim logic
   - [ ] multivalues: multiline|checklist|stringlist:
