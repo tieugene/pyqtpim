@@ -40,6 +40,12 @@ class EntryListModel(QtCore.QAbstractTableModel):
     def rowCount(self, index: QtCore.QModelIndex = None) -> int:
         return self.size
 
+    def removeRows(self, row: int, count: int, parent: QtCore.QModelIndex = None) -> bool:
+        self.beginRemoveRows(parent, row, row+count-1)
+        self._data.remove(row, count)
+        self.endRemoveRows()
+        return True
+
     # self
     @property
     def size(self) -> int:

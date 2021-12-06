@@ -3,16 +3,14 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] CUD
-  - [ ] D
-  - [ ] C
+- [ ] C[reate] (+uid, +dstamp, +created)
 - [ ] sync
-- [ ] interim logic
-- [ ] multivalues: multiline|checklist|stringlist:
+- [ ] TodoForm: interim logic
+- [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
   - [ ] attach (url): QLineEdit[]
-  - [ ] categories: like RTM (editable combobox)
+  - [ ] categories: special combobox (like RTM, Evolution)
   - [ ] comment: QLineEdit[]
-  - [ ] contact: like RTM
+  - [ ] contact: QLineEdit[]
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
@@ -21,7 +19,7 @@
 - [ ] 'Percent' > 'Progress'
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
-- [ ] Expandable 'View File' messagebox (see QDialog.setSizeGripEnabled())
+- [ ] Expandable 'View File' messagebox (~~QDialog.setSizeGripEnabled()~~)
 
 ## 1. Common
 - [ ] EL:
@@ -32,15 +30,15 @@
      - [ ] order
 
 ### 1.1. Next:
-- map models and mappers using str
+- [ ] map models and mappers using str
 - [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
   - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
   - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
 - [ ] Sync:
-  - [ ] [SyncML](https://pypi.org/project/pysyncml/)
+  - [ ] [vdirsyncer](https://github.com/pimutils/vdirsyncer)
   - [ ] [CalDAV](https://pypi.org/project/caldav/)
   - [ ] [pyCardDAV](https://pypi.org/project/pyCardDAV/)
-  - [ ] [](https://github.com/pimutils/vdirsyncer)
+  - [ ] [~~SyncML~~](https://pypi.org/project/pysyncml/)
 - [ ] Actions: Enable/Disable by context
 - [ ] ELM:
   - [ ] Model:
@@ -65,12 +63,9 @@
 ## 2. ToDo
 - [ ] E:
   - […] Extend
-  - [ ] View: Show raw content (html dt/dd | markdown):
-     - Note #1: handle multiline strings (description)
-     - Note #2: handle multivalues (categories, attach)
-  - [ ] CRUD[^2]
+  - […] CRUD[^2]
   - [ ] edit timezone
-- [ ] EL: View: columnt delegates
+- [ ] EL: View: column delegates
 - [ ] TodoForm: f_list
 
 ### RTM

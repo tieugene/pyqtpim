@@ -28,7 +28,7 @@
 - [x] Details: RTF text
 - [x] multivalues: list: csv, details: UL
 - [x] Details: handle datetime/date (dtstart, due):
-- [x] CU:
+- [x] CUD:
   - [x] fields
   - [x] load (U):
      - [x] Categories: CSV
@@ -38,6 +38,7 @@
   - [x] cmp
   - [x] store
   - [x] save (+sequence, +lastmodified)
+  - [x] D[el]
 - [x] TodoForm.CheckedDateTimeEdit[]: TZ (datetime only)
 - [x] Todo.Details: extended (12 fields)
 - [x] Todo.Details: print `None`s

@@ -45,9 +45,7 @@ class TodoListView(EntryListView):
     def itemDel(self):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
-            i = idx.row()
-            item: Todo = self.model().item(i)
-            print("Del", item.getSummary())
+            self.model().removeRow(idx.row())
 
 
 class TodoView(EntryView):

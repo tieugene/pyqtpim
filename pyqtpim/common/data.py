@@ -35,8 +35,12 @@ class Entry(object):
         return OrderedDict()
 
     def save(self):
+        """Save in-memory Vobject into in place of original file"""
         with open(self._fpath, "wt") as f:
             self._data.serialize(f)
+
+    def self_del(self):
+        os.remove(self._fpath)
 
     def serialize(self) -> str:
         return self._data.serialize()
@@ -47,7 +51,7 @@ class EntryList(object):
     __path: str
     __name: str
     __ready: bool
-    _data: list
+    _data: list[Entry]
 
     def __init__(self, name: str = None, path: str = None):
         self.__name = name
@@ -107,6 +111,12 @@ class EntryList(object):
             self._data.clear()
             self.__path = path
             self.__ready = False
+
+    def remove(self, start: int, count: int):
+        """Delete 'count' entries starting from 'start'"""
+        for i in range(start, start+count):
+            self._data[i].self_del()
+        del self._data[start:start+count]
 
 
 class EntryListManager(list[EntryList]):
