@@ -84,6 +84,7 @@ class EntryListView(QtWidgets.QTableView):
             txt += "<tbody></table></body><html>"
             msg.setText(txt)
             msg.setTextFormat(QtCore.Qt.RichText)
+            # msg.setSizeGripEnabled(True)  # not works
             msg.exec_()
 
 

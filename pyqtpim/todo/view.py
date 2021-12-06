@@ -79,15 +79,10 @@ class TodoView(EntryView):
         self.__fill_details(self.mapper.model().item(idx))
 
     def __fill_details(self, data: Todo = None):    # TODO: clear on None
-        __DemapStatus = {
-            enums.EStatus.NeedsAction: "Do something",
-            enums.EStatus.InProcess: "wait...",
-            enums.EStatus.Completed: "OK",
-            enums.EStatus.Cancelled: "WontFix",
-        }
-
         def __mk_row(title: str, value: Any):
-            if isinstance(value, list):
+            if value is None:
+                value = ''
+            elif isinstance(value, list):
                 value = '<ul><li>' + '</li><li>'.join(value) + '</li></ul>'
             elif isinstance(value, datetime.datetime):
                 value = value.strftime('%y.%m.%d %H:%M')
@@ -95,22 +90,20 @@ class TodoView(EntryView):
                 value = value.strftime('%y.%m.%d')
             return f"<tr><th>{title}:</th><td>{value}</td></tr>"
         text = '<table>'
-        if v := data.getCategories():
-            text += __mk_row("Categories", v)
-        if v := data.getCompleted():
-            text += __mk_row("Completed", v)
-        if v := data.getDTStart():
-            text += __mk_row("DTStart", v)
-        if v := data.getDue():
-            text += __mk_row("Due", v)
-        if v := data.getLocation():
-            text += __mk_row("Location", v)
-        if v := data.getPercent():
-            text += __mk_row("Percent", v)
-        if v := data.getPriority():
-            text += __mk_row("Priority", v)
-        if v := data.getStatus():
-            text += __mk_row("Status", __DemapStatus[v])
+        text += __mk_row("Categories", data.getCategories())
+        text += __mk_row("Class", enums.Enum2Raw_Class.get(data.getClass()))
+        text += __mk_row("Completed", data.getCompleted())
+        text += __mk_row("DTStart", data.getDTStart())
+        text += __mk_row("Due", data.getDue())
+        text += __mk_row("Location", data.getLocation())
+        text += __mk_row("Percent", data.getPercent())
+        text += __mk_row("Priority", data.getPriority())
+        text += __mk_row("Priority", data.getPriority())
+        text += __mk_row("Status", enums.Enum2Raw_Status.get(data.getStatus()))
+        text += __mk_row("URL", data.getURL())
+        if desc := data.getDescription():
+            desc = '<br/>'.join(desc.splitlines())
+        text += __mk_row("Description", desc)
         text += '</table>'
         self.details.setText(text)
 

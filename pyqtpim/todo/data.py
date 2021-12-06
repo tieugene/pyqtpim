@@ -176,7 +176,7 @@ class Todo(Entry):
     def getURL(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('url')
 
-    # setters
+    # setters (TODO: chg to 'tryupdate')
     # - cat
     def setClass(self, data: Optional[enums.EClass]):
         self.__setAFldByName('class', enums.Enum2Raw_Class.get(data))

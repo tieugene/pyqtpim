@@ -6,7 +6,6 @@
 - [ ] CU *(note: split logic & UI)*
   - [ ] save():
      - [ ] U:
-       - [x] cmp
        - […] store
        - […] save
      - [ ] C
@@ -16,17 +15,12 @@
      - [ ] categories: like RTM (editable combobox)
      - [ ] comment: QLineEdit[]
      - [ ] contact: like RTM
-- [ ] D
+- [ ] D[elete]
+- [ ] sync
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
 - [ ] Something wrong with cats
-- [ ] Todo.Details:
-  - [ ] extend (fields)
-  - [ ] print `None`s
-- [ ] TodoForm:
-  - [ ] f_list
-  - [ ] Date[Time]s: TZ
 
 ### 0.3. Tuning
 - [ ] 'Percent' > 'Progress'
@@ -82,6 +76,7 @@
   - [ ] CRUD[^2]
   - [ ] edit timezone
 - [ ] EL: View: columnt delegates
+- [ ] TodoForm: f_list
 
 ### RTM
 - InstantAdd (+Inbox)
