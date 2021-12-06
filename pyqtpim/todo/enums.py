@@ -54,6 +54,12 @@ Raw2Enum_Class: dict[str, EClass] = {
     'CONFIDENTIAL': EClass.Confidential
 }
 
+Enum2Raw_Class: dict[EClass, str] = {
+    EClass.Public: 'PUBLIC',
+    EClass.Private: 'PRIVATE',
+    EClass.Confidential: 'CONFIDENTIAL',
+}
+
 
 @unique
 class EStatus(IntEnum):
@@ -69,4 +75,11 @@ Raw2Enum_Status: dict[str, EStatus] = {
     'IN-PROCESS': EStatus.InProcess,
     'COMPLETED': EStatus.Completed,
     'CANCELLED': EStatus.Cancelled
+}
+
+Enum2Raw_Status: dict[EStatus, str] = {
+    EStatus.NeedsAction: 'NEEDS-ACTION',
+    EStatus.InProcess: 'IN-PROCESS',
+    EStatus.Completed: 'COMPLETED',
+    EStatus.Cancelled: 'CANCELLED'
 }

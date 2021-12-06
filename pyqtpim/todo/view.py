@@ -178,77 +178,58 @@ def form2obj(src: TodoForm, dst: Todo) -> bool:
         # changed = True
     # - class (combo)
     v_new = src.f_class.getData()
-    v_old = dst.getClass()
-    if v_old != v_new:
-        __prn_chg("Class", v_old, v_new)
-        # changed = True
+    if dst.getClass() != v_new:
+        dst.setClass(v_new)
+        changed = True
     # - completed
     v_new = src.f_completed.getData()
-    v_old = dst.getCompleted()
-    if v_old != v_new:
-        __prn_chg("Completed", v_old, v_new)
+    if dst.getCompleted() != v_new:
         dst.setCompleted(v_new)
         changed = True
     # - description
     v_new = src.f_description.toPlainText() or None
-    v_old = dst.getDescription()
-    if v_old != v_new:
-        __prn_chg("Desc", v_old, v_new)
+    if dst.getDescription() != v_new:
         dst.setDescription(v_new)
         changed = True
     # - dtstart
     v_new = src.f_dtstart.getData()
-    v_old = dst.getDTStart()
-    if v_old != v_new:
-        __prn_chg("DTStart", v_old, v_new)
+    if dst.getDTStart() != v_new:
         dst.setDTStart(v_new)
         changed = True
     # - due
     v_new = src.f_due.getData()
-    v_old = dst.getDue()
-    if v_old != v_new:
-        __prn_chg("Due", v_old, v_new)
+    if dst.getDue() != v_new:
         dst.setDue(v_new)
         changed = True
     # - location
     v_new = src.f_location.text() or None
-    v_old = dst.getLocation()
-    if v_old != v_new:
-        __prn_chg("Loc", v_old, v_new)
+    if dst.getLocation() != v_new:
         dst.setLocation(v_new)
         changed = True
     # - percent
     v_new = src.f_percent.getData()
     v_old = dst.getPercent()
     if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
-        __prn_chg("%", v_old, v_new)
         dst.setPercent(v_new)
         changed = True
     # - priority
     v_new = src.f_priority.getData()
-    v_old = dst.getPriority()
-    if v_old != v_new:
-        __prn_chg("Prio", v_old, v_new)
+    if dst.getPriority() != v_new:
         dst.setPriority(v_new)
         changed = True
     # - status (combo)
     v_new = src.f_status.getData()
-    v_old = dst.getStatus()
-    if v_old != v_new:
-        __prn_chg("Status", v_old, v_new)
-        # changed = True
+    if dst.getStatus() != v_new:
+        dst.setStatus(v_new)
+        changed = True
     # - summary
     v_new = src.f_summary.text() or None
-    v_old = dst.getSummary()
-    if v_old != v_new:
-        __prn_chg("Summary", v_old, v_new)
+    if dst.getSummary() != v_new:
         dst.setSummary(v_new)
         changed = True
     # - url
     v_new = src.f_url.text() or None
-    v_old = dst.getURL()
-    if v_old != v_new:
-        __prn_chg("URL", v_old, v_new)
+    if dst.getURL() != v_new:
         dst.setURL(v_new)
         changed = True
     return changed

@@ -66,15 +66,15 @@ class Todo(Entry):
         """Create/update standalone [optional] field"""
         if data is None:
             if fld in self._data.vtodo.contents:
-                print("Del", fld)
+                print("Del", fld, self._data.vtodo.contents[fld][0])
                 del self._data.vtodo.contents[fld]
         else:
             if fld in self._data.vtodo.contents:
-                print("Set", fld)
+                print("Set", fld, ':', self._data.vtodo.contents[fld][0].value, '=>', data)
                 # self._data.vtodo.<fld>>.value
                 self._data.vtodo.contents[fld][0].value = data
             else:
-                print("Add", fld)
+                print("Add", fld, data)
                 self._data.vtodo.add(fld).value = data
 
     # getters
@@ -178,7 +178,9 @@ class Todo(Entry):
 
     # setters
     # - cat
-    # - class
+    def setClass(self, data: Optional[enums.EClass]):
+        self.__setAFldByName('class', enums.Enum2Raw_Class.get(data))
+
     def setCompleted(self, data: Optional[Union[date, datetime]]):
         self.__setAFldByName('completed', data)
 
@@ -200,7 +202,9 @@ class Todo(Entry):
     def setPriority(self, data: Optional[int]):
         self.__setAFldByName('priority', data)
 
-    # - status
+    def setStatus(self, data: Optional[enums.EStatus]):
+        self.__setAFldByName('status', enums.Enum2Raw_Status.get(data))
+
     def setSummary(self, data: Optional[str]):
         self.__setAFldByName('summary', data)
 
