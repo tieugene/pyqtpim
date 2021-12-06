@@ -7,6 +7,9 @@
   - but VTODO only; parent not available
   - => Todo(icalendar.vtodo) => Todo(icalendar)
 - tz: can be for datetime and time
+- Categories:
+  - TB: csv in one property
+  - Evolution: one cat per property
 
 ## vCard UML
 

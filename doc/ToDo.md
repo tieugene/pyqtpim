@@ -5,9 +5,8 @@
 ### 0.1. Job
 - [ ] CU *(note: split logic & UI)*
   - [ ] save():
-     - [ ] U:
-       - […] store
-       - […] save
+     - […] U:
+       - [ ] save
      - [ ] C
   - [ ] interim logic
   - [ ] multivalues: multiline|checklist|stringlist:
@@ -20,7 +19,6 @@
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
-- [ ] Something wrong with cats
 
 ### 0.3. Tuning
 - [ ] 'Percent' > 'Progress'

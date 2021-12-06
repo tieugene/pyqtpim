@@ -36,9 +36,11 @@
      - [x] prio,progress: slider+spinbox
      - [x] class/status: w/ 'none'
   - [x] cmp
+  - [x] store
 - [x] TodoForm.CheckedDateTimeEdit[]: TZ (datetime only)
 - [x] Todo.Details: extended (12 fields)
 - [x] Todo.Details: print `None`s
+- [x] Something wrong with cats
 
 ## Contacts
 - [ ] CLM:

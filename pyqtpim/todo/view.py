@@ -161,14 +161,12 @@ def form2obj(src: TodoForm, dst: Todo) -> bool:
     if v_new := src.f_category.text():
         v_new = [s.strip() for s in v_new.split(',')]
         v_new.sort()
-        if len(v_new) == 1:
-            v_new = v_new[0]
     else:
         v_new = None
     v_old = dst.getCategories()
     if v_old != v_new:  # compare 0/1/2+ x 0/1/2+
-        __prn_chg("Categories", v_old, v_new)
-        # changed = True
+        dst.setCategories(v_new)
+        changed = True
     # - class (combo)
     v_new = src.f_class.getData()
     if dst.getClass() != v_new:
@@ -207,7 +205,8 @@ def form2obj(src: TodoForm, dst: Todo) -> bool:
         changed = True
     # - priority
     v_new = src.f_priority.getData()
-    if dst.getPriority() != v_new:
+    v_old = dst.getPriority()
+    if v_old != v_new and not (v_new == 0 and v_old is None):
         dst.setPriority(v_new)
         changed = True
     # - status (combo)

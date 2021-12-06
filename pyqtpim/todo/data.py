@@ -58,24 +58,30 @@ class Todo(Entry):
         if v_list := self._data.vtodo.contents.get(fld):
             if len(v_list) == 1:  # usual
                 v = v_list[0].value
-            else:  # multivalues (attach, categories etc)
+            else:  # multivalues (unwrap; attach, categories etc)
                 v = [i.value for i in v_list]
             return v
 
-    def __setAFldByName(self, fld: str, data: Optional[Union[int, str, date, datetime]]):
+    def __setFldByName(self, fld: str, data: Optional[Union[int, str, date, datetime, list]]):
         """Create/update standalone [optional] field"""
-        if data is None:
+        if isinstance(data, list):
             if fld in self._data.vtodo.contents:
-                print("Del", fld, self._data.vtodo.contents[fld][0])
                 del self._data.vtodo.contents[fld]
+            for v in data:
+                self._data.vtodo.add(fld).value = [v]   # one cat per property recommended
         else:
-            if fld in self._data.vtodo.contents:
-                print("Set", fld, ':', self._data.vtodo.contents[fld][0].value, '=>', data)
-                # self._data.vtodo.<fld>>.value
-                self._data.vtodo.contents[fld][0].value = data
+            if data is None:
+                if fld in self._data.vtodo.contents:
+                    print("Del", fld, self._data.vtodo.contents[fld][0])
+                    del self._data.vtodo.contents[fld]
             else:
-                print("Add", fld, data)
-                self._data.vtodo.add(fld).value = data
+                if fld in self._data.vtodo.contents:
+                    print("Set", fld, ':', self._data.vtodo.contents[fld][0].value, '=>', data)
+                    # self._data.vtodo.<fld>>.value
+                    self._data.vtodo.contents[fld][0].value = data
+                else:
+                    print("Add", fld, data)
+                    self._data.vtodo.add(fld).value = data
 
     # getters
     def getAttach(self) -> Optional[Union[str, list[str]]]:
@@ -83,20 +89,17 @@ class Todo(Entry):
 
     def getCategories(self) -> Optional[Union[str, list[str]]]:
         """Categories.
-        :return: Category:str or list of categories
-
+        :return: list of str
         Can be:
         - None
         - ['Cat1']
-        - [['Cat1'], ['Cat2'], ...]
+        - ['Cat1', 'Cat2', ...] (TB, not advised)
+        - [['Cat1'], ['Cat2'], ...] (Evolution)
         """
         retvalue = self.__getFldByName('categories')
         if retvalue:
-            if isinstance(retvalue[0], str):
-                retvalue = retvalue[0]
-            else:
+            if isinstance(retvalue[0], list):   # additional unwrap
                 retvalue = [s[0] for s in retvalue]
-                retvalue.sort()
         return retvalue
 
     def getClass(self) -> Optional[enums.EClass]:
@@ -178,38 +181,42 @@ class Todo(Entry):
 
     # setters (TODO: chg to 'tryupdate')
     # - cat
+    def setCategories(self, data: Optional[list[str]]):
+        print("setCategories:", data)
+        self.__setFldByName('categories', data)
+
     def setClass(self, data: Optional[enums.EClass]):
-        self.__setAFldByName('class', enums.Enum2Raw_Class.get(data))
+        self.__setFldByName('class', enums.Enum2Raw_Class.get(data))
 
     def setCompleted(self, data: Optional[Union[date, datetime]]):
-        self.__setAFldByName('completed', data)
+        self.__setFldByName('completed', data)
 
     def setDescription(self, data: Optional[str]):
-        self.__setAFldByName('description', data)
+        self.__setFldByName('description', data)
 
     def setDTStart(self, data: Optional[Union[date, datetime]]):
-        self.__setAFldByName('dtstart', data)
+        self.__setFldByName('dtstart', data)
 
     def setDue(self, data: Optional[Union[date, datetime]]):
-        self.__setAFldByName('due', data)
+        self.__setFldByName('due', data)
 
     def setLocation(self, data: Optional[str]):
-        self.__setAFldByName('location', data)
+        self.__setFldByName('location', data)
 
     def setPercent(self, data: Optional[int]):
-        self.__setAFldByName('percent-complete', data)
+        self.__setFldByName('percent-complete', data)
 
     def setPriority(self, data: Optional[int]):
-        self.__setAFldByName('priority', data)
+        self.__setFldByName('priority', data)
 
     def setStatus(self, data: Optional[enums.EStatus]):
-        self.__setAFldByName('status', enums.Enum2Raw_Status.get(data))
+        self.__setFldByName('status', enums.Enum2Raw_Status.get(data))
 
     def setSummary(self, data: Optional[str]):
-        self.__setAFldByName('summary', data)
+        self.__setFldByName('summary', data)
 
     def setURL(self, data: Optional[str]):
-        self.__setAFldByName('url', data)
+        self.__setFldByName('url', data)
 
     # misc
     def serialize(self) -> str:
