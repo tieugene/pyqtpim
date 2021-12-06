@@ -174,6 +174,10 @@ class Todo(Entry):
                 print("Add URL")
                 self._data.add('url').value = data
 
+    # misc
+    def serialize(self) -> str:
+        return self._data.serialize()
+
 
 class TodoList(EntryList):
     """todo: collect categories/locations on load"""

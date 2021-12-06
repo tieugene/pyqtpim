@@ -56,6 +56,7 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
         self.f_time.setEnabled(bool(state))
 
     def setData(self, data: Optional[Union[datetime.date, datetime.datetime]] = None):
+        """TODO: chk tz"""
         if data:
             self.is_enabled.setChecked(True)
             self.f_date.setEnabled(True)
@@ -69,6 +70,7 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
                 self.f_date.setDate(data)
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
+        """FIXME: add tz"""
         if self.is_enabled.isChecked():
             if self.is_timed.isChecked():
                 return datetime.datetime.combine(self.f_date.date().toPython(), self.f_time.time().toPython())

@@ -2,6 +2,10 @@
 
 ## misc
 - ListView ask model w/ DisplayRole; DetailsView - w/ EditRole
+- Update VTODO:
+  - componet.serialize() works fine - does not touch any exc. changed
+  - but VTODO only; parent not available
+  - => Todo(icalendar.vtodo) => Todo(icalendar)
 
 ## vCard UML
 

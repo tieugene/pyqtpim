@@ -8,7 +8,7 @@
      - [ ] U:
        - [x] cmp
        - […] store
-       - [ ] save
+       - [ ] save (RTFM radicale, vobject tests)
      - [ ] C
   - [ ] interim logic
   - [ ] multivalues: multiline|checklist|stringlist:
@@ -97,6 +97,7 @@
 ## x. misc
 
 ### x.1. RTFM
+- Try: [ics-py](https://github.com/ics-py/ics-py)
 - Samples:
   - Mozilla Lightning
   - Apple Reminder

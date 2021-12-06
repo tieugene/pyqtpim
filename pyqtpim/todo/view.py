@@ -40,7 +40,8 @@ class TodoListView(EntryListView):
             f.load(item)
             if f.exec_():
                 if form2obj(f, item):
-                    print("Wanna be saved")
+                    print("Wanna be saved:")
+                    print(item.serialize())
             # print("Edit", item.getSummary())
 
     def itemDel(self):
