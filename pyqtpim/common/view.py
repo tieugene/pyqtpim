@@ -53,7 +53,7 @@ class EntryListView(QtWidgets.QTableView):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             i = idx.row()
-            path = os.path.join(self.model().path, self.model().item(i).fname)
+            path = self.model().item(i).fpath
             with open(path, 'rt') as infile:
                 msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "File content", path)
                 msg.setDetailedText(infile.read())

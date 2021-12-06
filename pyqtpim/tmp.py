@@ -108,7 +108,7 @@ def test_e():
     el = TodoList('Test', sys.argv[1])
     for i in range(208, 210):  # el.size
         e = el.item(i)
-        print(f"==== {i}: {e._fname}: ====")
+        print(f"==== {i}: {e._fpath}: ====")
         __print1(e._data)
         # __print4(e)
         print()

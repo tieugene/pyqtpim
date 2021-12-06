@@ -225,9 +225,9 @@ class Todo(Entry):
 
 class TodoList(EntryList):
     """todo: collect categories/locations on load"""
-    def _load_one(self, fname: str, data: vobject.base.Component):
+    def _load_one(self, fpath: str, data: vobject.base.Component):
         if data.name == 'VCALENDAR' and 'vtodo' in data.contents:
-            self._data.append(Todo(fname, data))
+            self._data.append(Todo(fpath, data))
 
 
 class TodoListManager(EntryListManager):

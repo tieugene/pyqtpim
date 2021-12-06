@@ -76,11 +76,11 @@ class Contact(Entry):
 
 
 class ContactList(EntryList):
-    def _load_one(self, fname: str, data: vobject.base.Component):
+    def _load_one(self, fpath: str, data: vobject.base.Component):
         if data.name == 'VCARD':
-            self._data.append(Contact(fname, data))
+            self._data.append(Contact(fpath, data))
         else:
-            raise exc.EntryLoadError(f"It is not VCARD: {fname}")
+            raise exc.EntryLoadError(f"It is not VCARD: {fpath}")
 
 
 class ContactListManager(EntryListManager):

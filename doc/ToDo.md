@@ -3,19 +3,18 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] CU *(note: split logic & UI)*
-  - [ ] save():
-     - […] U:
-       - [ ] save
-     - [ ] C
-  - [ ] interim logic
-  - [ ] multivalues: multiline|checklist|stringlist:
-     - [ ] attach (url): QLineEdit[]
-     - [ ] categories: like RTM (editable combobox)
-     - [ ] comment: QLineEdit[]
-     - [ ] contact: like RTM
-- [ ] D[elete]
+- [ ] CUD *(note: split logic & UI)*
+  - […] U:
+     - [ ] save (+sequence, +lastmodified)
+  - [ ] D
+  - [ ] C
 - [ ] sync
+- [ ] interim logic
+- [ ] multivalues: multiline|checklist|stringlist:
+  - [ ] attach (url): QLineEdit[]
+  - [ ] categories: like RTM (editable combobox)
+  - [ ] comment: QLineEdit[]
+  - [ ] contact: like RTM
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme

@@ -13,17 +13,17 @@ from . import exc
 
 
 class Entry(object):
-    _fname: str  # filename
-    _data: vobject.base.Component       # loaded vobject
-    _name2func: dict[IntEnum, Any]      # mapping model column name to getter
+    _fpath: str                     # filepath
+    _data: vobject.base.Component   # loaded vobject
+    _name2func: dict[IntEnum, Any]  # mapping model column name to getter
 
     def __init__(self, fname: str, data: vobject.base.Component):
-        self._fname = fname
+        self._fpath = fname
         self._data = data
 
     @property
-    def fname(self) -> str:
-        return self._fname
+    def fpath(self) -> str:
+        return self._fpath
 
     def getPropByName(self, fld_name: IntEnum) -> Any:
         if fld := self._name2func.get(fld_name):
@@ -48,7 +48,7 @@ class EntryList(object):
         self.__ready = False
         self._data = []
 
-    def _load_one(self, fname: str, _: vobject.base.Component):
+    def _load_one(self, fpath: str, _: vobject.base.Component):
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def __load(self):
@@ -62,7 +62,7 @@ class EntryList(object):
                     with open(entry.path, 'rt') as stream:
                         # TODO: chk mimetype
                         if vcard := vobject.readOne(stream):
-                            self._load_one(entry.name, vcard)
+                            self._load_one(entry.path, vcard)
                         else:
                             raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
 
