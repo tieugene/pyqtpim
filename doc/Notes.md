@@ -6,6 +6,7 @@
   - componet.serialize() works fine - does not touch any exc. changed
   - but VTODO only; parent not available
   - => Todo(icalendar.vtodo) => Todo(icalendar)
+- tz: can be for datetime and time
 
 ## vCard UML
 

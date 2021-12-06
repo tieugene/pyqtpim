@@ -35,6 +35,7 @@
      - [x] QDate[Time]Edit: checked pairs
      - [x] prio,progress: slider+spinbox
      - [x] class/status: w/ 'none'
+- [x] TodoForm.CheckedDateTimeEdit[]: TZ (datetime only)
 
 ## Contacts
 - [ ] CLM:

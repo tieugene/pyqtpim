@@ -8,7 +8,7 @@
      - [ ] U:
        - [x] cmp
        - […] store
-       - [ ] save
+       - […] save
      - [ ] C
   - [ ] interim logic
   - [ ] multivalues: multiline|checklist|stringlist:
@@ -20,7 +20,6 @@
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
-- [ ] TodoForm.CheckedDateTimeEdit[]: TZ
 - [ ] Todo.Details:
   - [ ] extend (fields)
   - [ ] print `None`s
@@ -80,6 +79,7 @@
      - Note #1: handle multiline strings (description)
      - Note #2: handle multivalues (categories, attach)
   - [ ] CRUD[^2]
+  - [ ] edit timezone
 - [ ] EL: View: columnt delegates
 
 ### RTM

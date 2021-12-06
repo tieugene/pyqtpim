@@ -14,6 +14,7 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
     is_timed: QtWidgets.QCheckBox
     f_date: QtWidgets.QDateEdit
     f_time: QtWidgets.QTimeEdit
+    t_tz: datetime.tzinfo   # TODO: handle tz
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -24,6 +25,7 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
         self.f_date = QtWidgets.QDateEdit()
         self.f_date.setCalendarPopup(True)
         self.f_time = QtWidgets.QTimeEdit()
+        self.t_tz = None
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_date)
@@ -56,7 +58,6 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
         self.f_time.setEnabled(bool(state))
 
     def setData(self, data: Optional[Union[datetime.date, datetime.datetime]] = None):
-        """TODO: chk tz"""
         if data:
             self.is_enabled.setChecked(True)
             self.f_date.setEnabled(True)
@@ -66,14 +67,15 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
                 self.is_timed.setChecked(True)
                 self.f_time.setEnabled(True)
                 self.f_time.setTime(data.time())
-            else:
+                self.t_tz = data.tzinfo
+            else:  # date
                 self.f_date.setDate(data)
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
-        """FIXME: add tz"""
         if self.is_enabled.isChecked():
             if self.is_timed.isChecked():
-                return datetime.datetime.combine(self.f_date.date().toPython(), self.f_time.time().toPython())
+                return datetime.datetime.combine(self.f_date.date().toPython(), self.f_time.time().toPython(),
+                                                 tzinfo=self.t_tz)
             else:
                 return self.f_date.date().toPython()
 
