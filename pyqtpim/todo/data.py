@@ -3,7 +3,7 @@
 """
 # 1. std
 from _collections import OrderedDict
-from datetime import datetime, date
+import datetime
 from typing import Optional, Union, Any
 # 2. 3rd
 import vobject
@@ -13,8 +13,8 @@ from . import enums
 
 
 class Todo(Entry):
-    def __init__(self, path: str, data: vobject.base.Component):
-        super().__init__(path, data)
+    def __init__(self, fpath: str, data: vobject.base.Component):
+        super().__init__(fpath, data)
         self._name2func = {
             enums.EProp.Categories: self.getCategories,
             enums.EProp.Class: self.getClass,
@@ -39,6 +39,13 @@ class Todo(Entry):
             enums.EProp.URL: self.getURL,
         }
 
+    def save(self):
+        if (seq := self.getSequence()) is None:
+            seq = 0
+        self.setSequence(seq + 1)
+        self.setLastModified(datetime.datetime.now(tz=vobject.icalendar.utc))   # .now(datetime.timezone.utc)
+        super().save()
+
     def RawContent(self) -> Optional[OrderedDict]:
         """Return inner item content as structure.
         """
@@ -62,7 +69,7 @@ class Todo(Entry):
                 v = [i.value for i in v_list]
             return v
 
-    def __setFldByName(self, fld: str, data: Optional[Union[int, str, date, datetime, list]]):
+    def __setFldByName(self, fld: str, data: Optional[Union[int, str, datetime.date, datetime.datetime, list]]):
         """Create/update standalone [optional] field"""
         if isinstance(data, list):
             if fld in self._data.vtodo.contents:
@@ -72,15 +79,15 @@ class Todo(Entry):
         else:
             if data is None:
                 if fld in self._data.vtodo.contents:
-                    print("Del", fld, self._data.vtodo.contents[fld][0])
+                    # print("Del", fld, self._data.vtodo.contents[fld][0])
                     del self._data.vtodo.contents[fld]
             else:
                 if fld in self._data.vtodo.contents:
-                    print("Set", fld, ':', self._data.vtodo.contents[fld][0].value, '=>', data)
+                    # print("Set", fld, ':', self._data.vtodo.contents[fld][0].value, '=>', data)
                     # self._data.vtodo.<fld>>.value
                     self._data.vtodo.contents[fld][0].value = data
                 else:
-                    print("Add", fld, data)
+                    # print("Add", fld, data)
                     self._data.vtodo.add(fld).value = data
 
     # getters
@@ -109,28 +116,28 @@ class Todo(Entry):
     def getComment(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('comment')
 
-    def getCompleted(self) -> Optional[datetime]:
+    def getCompleted(self) -> Optional[datetime.datetime]:
         return self.__getFldByName('completed')
 
     def getContact(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('contact')
 
-    def getCreated(self) -> Optional[datetime]:
+    def getCreated(self) -> Optional[datetime.datetime]:
         return self.__getFldByName('created')
 
     def getDescription(self) -> Optional[str]:
         return self.__getFldByName('description')
 
-    def getDTStamp(self) -> datetime:
+    def getDTStamp(self) -> datetime.datetime:
         return self.__getFldByName('dtstamp')
 
-    def getDTStart(self) -> Optional[Union[date, datetime]]:
+    def getDTStart(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         return self.__getFldByName('dtstart')
 
-    def getDue(self) -> Optional[Union[date, datetime]]:
+    def getDue(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         return self.__getFldByName('due')
 
-    def getLastModified(self) -> Optional[datetime]:
+    def getLastModified(self) -> Optional[datetime.datetime]:
         return self.__getFldByName('last-modified')
 
     def getLocation(self) -> Optional[str]:
@@ -180,25 +187,27 @@ class Todo(Entry):
         return self.__getFldByName('url')
 
     # setters (TODO: chg to 'tryupdate')
-    # - cat
     def setCategories(self, data: Optional[list[str]]):
-        print("setCategories:", data)
+        # print("setCategories:", data)
         self.__setFldByName('categories', data)
 
     def setClass(self, data: Optional[enums.EClass]):
         self.__setFldByName('class', enums.Enum2Raw_Class.get(data))
 
-    def setCompleted(self, data: Optional[Union[date, datetime]]):
+    def setCompleted(self, data: Optional[Union[datetime.date, datetime.datetime]]):
         self.__setFldByName('completed', data)
 
     def setDescription(self, data: Optional[str]):
         self.__setFldByName('description', data)
 
-    def setDTStart(self, data: Optional[Union[date, datetime]]):
+    def setDTStart(self, data: Optional[Union[datetime.date, datetime.datetime]]):
         self.__setFldByName('dtstart', data)
 
-    def setDue(self, data: Optional[Union[date, datetime]]):
+    def setDue(self, data: Optional[Union[datetime.date, datetime.datetime]]):
         self.__setFldByName('due', data)
+
+    def setLastModified(self, data: datetime.datetime):
+        self.__setFldByName('last-modified', data)
 
     def setLocation(self, data: Optional[str]):
         self.__setFldByName('location', data)
@@ -209,6 +218,9 @@ class Todo(Entry):
     def setPriority(self, data: Optional[int]):
         self.__setFldByName('priority', data)
 
+    def setSequence(self, data: int):
+        self.__setFldByName('sequence', data)
+
     def setStatus(self, data: Optional[enums.EStatus]):
         self.__setFldByName('status', enums.Enum2Raw_Status.get(data))
 
@@ -217,10 +229,6 @@ class Todo(Entry):
 
     def setURL(self, data: Optional[str]):
         self.__setFldByName('url', data)
-
-    # misc
-    def serialize(self) -> str:
-        return self._data.serialize()
 
 
 class TodoList(EntryList):

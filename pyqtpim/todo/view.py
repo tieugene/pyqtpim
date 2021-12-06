@@ -40,9 +40,7 @@ class TodoListView(EntryListView):
             f.load(item)
             if f.exec_():
                 if form2obj(f, item):
-                    print("Wanna be saved:")
-                    print(item.serialize())
-            # print("Edit", item.getSummary())
+                    item.save()
 
     def itemDel(self):
         idx = self.selectionModel().currentIndex()
@@ -154,8 +152,6 @@ def form2obj(src: TodoForm, dst: Todo) -> bool:
 
     :todo: unify
     """
-    def __prn_chg(title: str, old: Any, new: Any):
-        print(title, " chg:", old, "=>", new)
     changed = False
     # - cat
     if v_new := src.f_category.text():

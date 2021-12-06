@@ -3,9 +3,7 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] CUD *(note: split logic & UI)*
-  - […] U:
-     - [ ] save (+sequence, +lastmodified)
+- [ ] CUD
   - [ ] D
   - [ ] C
 - [ ] sync

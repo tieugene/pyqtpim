@@ -37,10 +37,12 @@
      - [x] class/status: w/ 'none'
   - [x] cmp
   - [x] store
+  - [x] save (+sequence, +lastmodified)
 - [x] TodoForm.CheckedDateTimeEdit[]: TZ (datetime only)
 - [x] Todo.Details: extended (12 fields)
 - [x] Todo.Details: print `None`s
 - [x] Something wrong with cats
+- [x] LastModified: add 'Z'
 
 ## Contacts
 - [ ] CLM:

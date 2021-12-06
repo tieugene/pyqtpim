@@ -34,6 +34,13 @@ class Entry(object):
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
         return OrderedDict()
 
+    def save(self):
+        with open(self._fpath, "wt") as f:
+            self._data.serialize(f)
+
+    def serialize(self) -> str:
+        return self._data.serialize()
+
 
 class EntryList(object):
     """List of Entries"""
