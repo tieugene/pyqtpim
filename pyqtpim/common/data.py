@@ -1,8 +1,10 @@
 """Common vCard/iCal parents"""
 
 # 1. std
+import datetime
 import inspect
 import os
+import uuid
 from _collections import OrderedDict
 from enum import IntEnum
 from typing import Any, Optional
@@ -17,7 +19,17 @@ class Entry(object):
     _data: vobject.base.Component   # loaded vobject
     _name2func: dict[IntEnum, Any]  # mapping model column name to getter
 
-    def __init__(self, fname: str, data: vobject.base.Component):
+    def __init__(self, fname: str, data: vobject.base.Component = None):
+        if data is None:
+            uid = uuid.uuid4()
+            stamp = datetime.datetime.now(tz=vobject.icalendar.utc)
+            data = vobject.iCalendar()
+            data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
+            data.add('vtodo')
+            data.vtodo.add('uid').value = str(uid)
+            data.vtodo.add('dtstamp').value = stamp
+            data.vtodo.add('created').value = stamp
+            fname = os.path.join(fname, str(uid) + '.ics')
         self._fpath = fname
         self._data = data
 

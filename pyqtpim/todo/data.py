@@ -13,7 +13,7 @@ from . import enums
 
 
 class Todo(Entry):
-    def __init__(self, fpath: str, data: vobject.base.Component):
+    def __init__(self, fpath: str, data: vobject.base.Component = None):
         super().__init__(fpath, data)
         self._name2func = {
             enums.EProp.Categories: self.getCategories,
@@ -40,10 +40,7 @@ class Todo(Entry):
         }
 
     def save(self):
-        if (seq := self.getSequence()) is None:
-            seq = 0
-        self.setSequence(seq + 1)
-        self.setLastModified(datetime.datetime.now(tz=vobject.icalendar.utc))   # .now(datetime.timezone.utc)
+        self.updateStamps()
         super().save()
 
     def RawContent(self) -> Optional[OrderedDict]:
@@ -206,9 +203,6 @@ class Todo(Entry):
     def setDue(self, data: Optional[Union[datetime.date, datetime.datetime]]):
         self.__setFldByName('due', data)
 
-    def setLastModified(self, data: datetime.datetime):
-        self.__setFldByName('last-modified', data)
-
     def setLocation(self, data: Optional[str]):
         self.__setFldByName('location', data)
 
@@ -218,9 +212,6 @@ class Todo(Entry):
     def setPriority(self, data: Optional[int]):
         self.__setFldByName('priority', data)
 
-    def setSequence(self, data: int):
-        self.__setFldByName('sequence', data)
-
     def setStatus(self, data: Optional[enums.EStatus]):
         self.__setFldByName('status', enums.Enum2Raw_Status.get(data))
 
@@ -229,6 +220,12 @@ class Todo(Entry):
 
     def setURL(self, data: Optional[str]):
         self.__setFldByName('url', data)
+
+    # specials
+    def updateStamps(self):
+        seq = 0 if (seq := self.getSequence()) is None else seq + 1
+        self.__setFldByName('sequence', str(seq))
+        self.__setFldByName('last-modified', datetime.datetime.now(tz=vobject.icalendar.utc))
 
 
 class TodoList(EntryList):

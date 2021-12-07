@@ -28,8 +28,12 @@ class TodoListView(EntryListView):
         return TodoListModel()
 
     def itemAdd(self):
+        item = Todo(self.model()._data.path)
         f = TodoForm(self)  # TODO: cache creation
-        f.exec_()
+        f.load(item)
+        if f.exec_():
+            if form2obj(f, item):
+                item.save()
 
     def itemEdit(self):
         idx = self.selectionModel().currentIndex()
