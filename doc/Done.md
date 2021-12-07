@@ -39,6 +39,7 @@
   - [x] store
   - [x] save (+sequence, +lastmodified)
   - [x] D[el]
+  - [x] C[reate]
 - [x] TodoForm.CheckedDateTimeEdit[]: TZ (datetime only)
 - [x] Todo.Details: extended (12 fields)
 - [x] Todo.Details: print `None`s

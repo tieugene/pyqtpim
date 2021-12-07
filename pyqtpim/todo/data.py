@@ -234,6 +234,9 @@ class TodoList(EntryList):
         if data.name == 'VCALENDAR' and 'vtodo' in data.contents:
             self._data.append(Todo(fpath, data))
 
+    def _mkItem(self):
+        return Todo(self.path)
+
 
 class TodoListManager(EntryListManager):
     def itemAdd(self, name: str, path: str):

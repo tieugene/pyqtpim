@@ -235,6 +235,7 @@ class TodoForm(QtWidgets.QDialog):
         super().__init__(parent)
         self.__createWidgets()
         self.__setLayout()
+        self.f_summary.setFocus()
         self.setWindowTitle("Entry")
 
     def __createWidgets(self):

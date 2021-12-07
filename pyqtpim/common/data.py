@@ -41,6 +41,12 @@ class Entry(object):
         if fld := self._name2func.get(fld_name):
             return fld()
 
+    def load_raw(self) -> Optional[str]:
+        """Load entry as raw text"""
+        if os.path.isfile(self._fpath):
+            with open(self._fpath, 'rt') as infile:
+                return infile.read()
+
     def RawContent(self) -> Optional[OrderedDict]:
         """Get entry inside as structure"""
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
@@ -52,7 +58,8 @@ class Entry(object):
             self._data.serialize(f)
 
     def self_del(self):
-        os.remove(self._fpath)
+        if os.path.isfile(self._fpath):
+            os.remove(self._fpath)
 
     def serialize(self) -> str:
         return self._data.serialize()
@@ -72,6 +79,10 @@ class EntryList(object):
         self._data = []
 
     def _load_one(self, fpath: str, _: vobject.base.Component):
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
+
+    def _mkItem(self) -> Entry:
+        """Create new empty item"""
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def __load(self):
@@ -123,6 +134,11 @@ class EntryList(object):
             self._data.clear()
             self.__path = path
             self.__ready = False
+
+    def insert(self, start: int, count: int):
+        """Handle: 0+: insert(), rowCount+: append()"""
+        for _ in range(count):
+            self._data.insert(start, self._mkItem())
 
     def remove(self, start: int, count: int):
         """Delete 'count' entries starting from 'start'"""

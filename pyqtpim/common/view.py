@@ -1,7 +1,7 @@
 import inspect
 import os.path
 from PySide2 import QtCore, QtWidgets
-from .data import EntryList
+from .data import Entry, EntryList
 from .model import EntryListModel, EntryListManagerModel
 
 
@@ -53,10 +53,11 @@ class EntryListView(QtWidgets.QTableView):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             i = idx.row()
-            path = self.model().item(i).fpath
-            with open(path, 'rt') as infile:
+            item: Entry = self.model().item(i)
+            path = item.fpath
+            if raw := item.load_raw():
                 msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "File content", path)
-                msg.setDetailedText(infile.read())
+                msg.setDetailedText(raw)
                 # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
                 msg.exec_()
 

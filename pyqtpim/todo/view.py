@@ -28,11 +28,12 @@ class TodoListView(EntryListView):
         return TodoListModel()
 
     def itemAdd(self):
-        item = Todo(self.model()._data.path)
         f = TodoForm(self)  # TODO: cache creation
-        f.load(item)
         if f.exec_():
-            if form2obj(f, item):
+            size = self.model().rowCount()
+            self.model().insertRow(size)
+            item: Todo = self.model().item(size)
+            if form2obj(f, item):   # ?
                 item.save()
 
     def itemEdit(self):
@@ -152,7 +153,7 @@ def form2obj(src: TodoForm, dst: Todo) -> bool:
     """Update Todo entry with form values.
     :return: True if anythong changed and entry must be saved.
 
-    :todo: unify
+    :todo: unify and/or hide into Entry setX()
     """
     changed = False
     # - cat

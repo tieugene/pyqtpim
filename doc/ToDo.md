@@ -3,9 +3,9 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] C[reate] (+uid, +dstamp, +created)
 - [ ] sync
 - [ ] TodoForm: interim logic
+- [ ] docstrings
 - [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
   - [ ] attach (url): QLineEdit[]
   - [ ] categories: special combobox (like RTM, Evolution)
