@@ -10,6 +10,7 @@
     - On datime: DateTime > Date > Time; after Date - Date only (00:00:00 not changed)
     - On date: DateTime > Date (time = 00:00:00)
   - [x] ~~QDateTimeEdit: inherit + replace setDate/setTime/setDateTime~~ - no effect
+- [x] GroupDAV sync (ext)
 
 ## ToDo
 - [x] Test:

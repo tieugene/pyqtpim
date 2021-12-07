@@ -54,8 +54,9 @@ class Entry(object):
 
     def save(self):
         """Save in-memory Vobject into in place of original file"""
+        tmp = self._data.serialize()
         with open(self._fpath, "wt") as f:
-            self._data.serialize(f)
+            f.write(tmp)
 
     def self_del(self):
         if os.path.isfile(self._fpath):

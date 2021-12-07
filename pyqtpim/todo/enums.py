@@ -12,17 +12,17 @@ class EProp(IntEnum):
     Categories = auto()     # *
     Class = auto()          # ?
     Comment = auto()        # *
-    Completed = auto()      # ?
+    Completed = auto()      # ? datetime.utc
     Contact = auto()        # *
     Created = auto()        # ? auto
     Description = auto()    # ?
-    DTStamp = auto()        # 1 auto
+    DTStamp = auto()        # 1 auto, datetime.utc
     DTStart = auto()        # ?
     Due = auto()            # ?
     # Duration              # ?
     # ExDate                # *
     # Geo                   # ?
-    LastModified = auto()   # ? auto
+    LastModified = auto()   # ? auto, datetime.utc
     Location = auto()       # ?
     # Organizer             # ?
     Percent = auto()        # ? ==  PERCENT-COMPLETE
