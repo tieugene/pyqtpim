@@ -3,23 +3,27 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] TodoForm: interim logic (on the fly)
+- [ ] Data: sqlite + sync w/ [local]
 - [ ] List:
-  - [ ] sort
+  - [ ] sort (1..4]
+  - [ ] filter
   - [ ] columns on/off
   - [ ] columns order
+- [ ] TodoForm: interim logic (on the fly; summary!)
 - [ ] docstrings
+- [ ] DTStart-link-Due = Duration?
 - [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
-  - [ ] attach: QLineEdit[]
-  - [ ] comment: QLineEdit[]
-  - [ ] contact: QLineEdit[]
-- [ ] GroupDAV sync (built-in: vdirsyncer.sync.sync())
+  - [ ] attach:  QLineEdit[] (url)
+  - [ ] comment: QLineEdit[] (str)
+  - [ ] contact: QLineEdit[] (email/msgr/uuid)
+- [ ] TZ (on/off)
+- [ ] Built-in sync (vdirsyncer.sync.sync())
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
-- [ ] 'Z' datetime makes exception
+- [ ] UTC ('Z') datetime makes exception
 - [ ] rollback on serialize() error (save())
-- [ ] Todo.Completed: exact datetime.utc
+- [ ] Todo.Completed: exact datetime[.utc]
 
 ### 0.3. Tuning
 - [ ] TodoForm.Categories: special combobox (like RTM, Evolution)
@@ -112,6 +116,7 @@
   - sql/books/ (list/Details)
 
 ### x.2. Try
+- [python-vdir](https://github.com/pimutils/python-vdir)
 - [ics-py](https://github.com/ics-py/ics-py/)
 - [icalendar](https://github.com/collective/icalendar/)
 - [Xandicos](https://github.com/jelmer/xandikos) (server)

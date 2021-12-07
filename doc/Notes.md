@@ -10,7 +10,7 @@
 - Categories:
   - TB: csv in one property
   - Evolution: one cat per property
-- Sync (vdirsyncer):
+- Sync (ext):
   - nano `~/.config/vdirsync/config`
   - `vdirsyncer discover`
   - `vdirsyncer sync`
