@@ -225,7 +225,8 @@ class Todo(Entry):
     def updateStamps(self):
         seq = 0 if (seq := self.getSequence()) is None else seq + 1
         self.__setFldByName('sequence', str(seq))
-        self.__setFldByName('last-modified', datetime.datetime.now(tz=vobject.icalendar.utc))
+        utc = vobject.icalendar.utc
+        self.__setFldByName('last-modified', datetime.datetime.now(tz=utc))
 
 
 class TodoList(EntryList):

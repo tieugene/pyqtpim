@@ -10,12 +10,10 @@
 - Categories:
   - TB: csv in one property
   - Evolution: one cat per property
-- Create:
-  - Entry(basedir) => mk ical object, uid, dtstamp, created
-  - [x] Open form with it
-  - [x] store
-  - [x] save
-  - insert into model
+- Sync (ext):
+  - nano `~/.config/vdirsync/config`
+  - `vdirsyncer discover`
+  - `vdirsyncer sync`
 
 ## vCard UML
 

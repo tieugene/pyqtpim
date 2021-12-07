@@ -3,19 +3,30 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] sync
-- [ ] TodoForm: interim logic
+- [ ] Data: sqlite + sync w/ [local]
+- [ ] List:
+  - [ ] sort (1..4]
+  - [ ] filter
+  - [ ] columns on/off
+  - [ ] columns order
+- [ ] TodoForm: interim logic (on the fly; summary!)
 - [ ] docstrings
+- [ ] DTStart-link-Due = Duration?
 - [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
-  - [ ] attach (url): QLineEdit[]
-  - [ ] categories: special combobox (like RTM, Evolution)
-  - [ ] comment: QLineEdit[]
-  - [ ] contact: QLineEdit[]
+  - [ ] attach:  QLineEdit[] (url)
+  - [ ] comment: QLineEdit[] (str)
+  - [ ] contact: QLineEdit[] (email/msgr/uuid)
+- [ ] TZ (on/off)
+- [ ] Built-in sync (vdirsyncer.sync.sync())
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
+- [ ] UTC ('Z') datetime makes exception
+- [ ] rollback on serialize() error (save())
+- [ ] Todo.Completed: exact datetime[.utc]
 
 ### 0.3. Tuning
+- [ ] TodoForm.Categories: special combobox (like RTM, Evolution)
 - [ ] 'Percent' > 'Progress'
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
@@ -24,10 +35,11 @@
 ## 1. Common
 - [ ] EL:
   - [ ] Data: sort
-  - [ ] View: Columns:
-     - [ ] on/off
-     - [ ] sort by
-     - [ ] order
+  - [ ] View:
+     - [ ] sort
+     - [ ] Columns:
+        - [ ] on/off
+        - [ ] order
 
 ### 1.1. Next:
 - [ ] map models and mappers using str
@@ -36,8 +48,8 @@
   - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
 - [ ] Sync:
   - [ ] [vdirsyncer](https://github.com/pimutils/vdirsyncer)
-  - [ ] [CalDAV](https://pypi.org/project/caldav/)
-  - [ ] [pyCardDAV](https://pypi.org/project/pyCardDAV/)
+  - [ ] [CalDAV](https://pypi.org/project/caldav/) (CalDAV client)
+  - [ ] [pyCardDAV](https://pypi.org/project/pyCardDAV/) (CardDAV CLI)
   - [ ] [~~SyncML~~](https://pypi.org/project/pysyncml/)
 - [ ] Actions: Enable/Disable by context
 - [ ] ELM:
@@ -83,7 +95,6 @@
 ## x. misc
 
 ### x.1. RTFM
-- Try: [ics-py](https://github.com/ics-py/ics-py)
 - Samples:
   - Mozilla Lightning
   - Apple Reminder
@@ -103,6 +114,12 @@
      - itemviews/addresbook/ (?)
      - tutorials/addressbook/ (CRUD)
   - sql/books/ (list/Details)
+
+### x.2. Try
+- [python-vdir](https://github.com/pimutils/python-vdir)
+- [ics-py](https://github.com/ics-py/ics-py/)
+- [icalendar](https://github.com/collective/icalendar/)
+- [Xandicos](https://github.com/jelmer/xandikos) (server)
 
 [^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
 [^2]: Lightning/radicale compatible; not drop data exist

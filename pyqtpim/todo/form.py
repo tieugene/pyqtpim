@@ -68,6 +68,7 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
                 self.f_time.setEnabled(True)
                 self.f_time.setTime(data.time())
                 self.t_tz = data.tzinfo
+                # print(self.t_tz)
             else:  # date
                 self.f_date.setDate(data)
 
