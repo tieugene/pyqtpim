@@ -1,28 +1,6 @@
+"""Misc VTODO utility enums and mappings.
+:todo: add vobjects field names"""
 from enum import IntEnum, unique, auto
-
-
-@unique
-class EClass(IntEnum):
-    """CLASS property values"""
-    Public = auto()
-    Private = auto()
-    Confidential = auto()
-
-
-@unique
-class EStatus(IntEnum):
-    """STATUS property values"""
-    NeedsAction = auto()
-    InProcess = auto()
-    Completed = auto()
-    Cancelled = auto()
-
-
-@unique
-class ETrans(IntEnum):
-    """TRANSPARENT property values"""
-    Opaque = auto()
-    Transparent = auto()
 
 
 @unique
@@ -36,15 +14,15 @@ class EProp(IntEnum):
     Comment = auto()        # *
     Completed = auto()      # ?
     Contact = auto()        # *
-    Created = auto()        # ?
+    Created = auto()        # ? auto
     Description = auto()    # ?
-    DTStamp = auto()        # 1
+    DTStamp = auto()        # 1 auto
     DTStart = auto()        # ?
     Due = auto()            # ?
     # Duration              # ?
     # ExDate                # *
     # Geo                   # ?
-    LastModified = auto()   # ?
+    LastModified = auto()   # ? auto
     Location = auto()       # ?
     # Organizer             # ?
     Percent = auto()        # ? ==  PERCENT-COMPLETE
@@ -55,8 +33,53 @@ class EProp(IntEnum):
     # REQUEST-STATUS        # *
     # Resources             # *
     RRule = auto()          # ?
-    Sequence = auto()       # ?
+    Sequence = auto()       # ? auto
     Status = auto()         # ?
     Summary = auto()        # ?
-    UID = auto()            # 1
-    URL = auto()            # ?[*]
+    UID = auto()            # 1 auto
+    URL = auto()            # ?
+
+
+@unique
+class EClass(IntEnum):
+    """CLASS property values"""
+    Public = auto()
+    Private = auto()
+    Confidential = auto()
+
+
+Raw2Enum_Class: dict[str, EClass] = {
+    'PUBLIC': EClass.Public,
+    'PRIVATE': EClass.Private,
+    'CONFIDENTIAL': EClass.Confidential
+}
+
+Enum2Raw_Class: dict[EClass, str] = {
+    EClass.Public: 'PUBLIC',
+    EClass.Private: 'PRIVATE',
+    EClass.Confidential: 'CONFIDENTIAL',
+}
+
+
+@unique
+class EStatus(IntEnum):
+    """STATUS property values"""
+    NeedsAction = auto()
+    InProcess = auto()
+    Completed = auto()
+    Cancelled = auto()
+
+
+Raw2Enum_Status: dict[str, EStatus] = {
+    'NEEDS-ACTION': EStatus.NeedsAction,
+    'IN-PROCESS': EStatus.InProcess,
+    'COMPLETED': EStatus.Completed,
+    'CANCELLED': EStatus.Cancelled
+}
+
+Enum2Raw_Status: dict[EStatus, str] = {
+    EStatus.NeedsAction: 'NEEDS-ACTION',
+    EStatus.InProcess: 'IN-PROCESS',
+    EStatus.Completed: 'COMPLETED',
+    EStatus.Cancelled: 'CANCELLED'
+}

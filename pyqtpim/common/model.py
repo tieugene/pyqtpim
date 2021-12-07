@@ -40,10 +40,26 @@ class EntryListModel(QtCore.QAbstractTableModel):
     def rowCount(self, index: QtCore.QModelIndex = None) -> int:
         return self.size
 
+    def insertRows(self, row: int, count: int, parent: QtCore.QModelIndex = None) -> bool:
+        self.beginInsertRows(parent, row, row+count-1)
+        self._data.insert(row, count)
+        self.endInsertRows()
+        return True
+
+    def removeRows(self, row: int, count: int, parent: QtCore.QModelIndex = None) -> bool:
+        self.beginRemoveRows(parent, row, row+count-1)
+        self._data.remove(row, count)
+        self.endRemoveRows()
+        return True
+
     # self
     @property
     def size(self) -> int:
         return self._data.size
+
+    @property
+    def path(self) -> str:
+        return self._data.path
 
     def _empty_item(self) -> EntryList:
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
@@ -56,10 +72,6 @@ class EntryListModel(QtCore.QAbstractTableModel):
 
     def item(self, i: int) -> Entry:
         return self._data.item(i)
-
-    @property
-    def path(self):
-        return self._data.path
 
 
 class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
@@ -78,7 +90,7 @@ class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
         return self.size
 
     def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex = None) -> bool:
-        """Delete count records starting from i."""
+        """Delete 'count' records starting from 'row0'."""
         self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
         for row in range(row0, row0 + count):
             self._data.itemDel(row)

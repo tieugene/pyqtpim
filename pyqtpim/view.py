@@ -19,6 +19,9 @@ class MainWindow(QtWidgets.QMainWindow):
     actEntryListInfo: QtWidgets.QAction
     actEntryCat: QtWidgets.QAction
     actEntryInside: QtWidgets.QAction
+    actEntryAdd: QtWidgets.QAction
+    actEntryEdit: QtWidgets.QAction
+    actEntryDel: QtWidgets.QAction
 
     def __init__(self):
         super().__init__()
@@ -55,19 +58,16 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryListAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
                                                  "&New List", self,
-                                                 shortcut="Ctrl+N",
                                                  statusTip="Add new List",
                                                  triggered=self.listAdd)
         # noinspection PyArgumentList
         self.actEntryListEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
                                                   "&Edit List", self,
-                                                  shortcut="Ctrl+E",
                                                   statusTip="Edit current List",
                                                   triggered=self.listEdit)
         # noinspection PyArgumentList
         self.actEntryListDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
                                                  "&Del List", self,
-                                                 shortcut="Ctrl+D",
                                                  statusTip="Delete current List",
                                                  triggered=self.listDel)
         # noinspection PyArgumentList
@@ -84,10 +84,27 @@ class MainWindow(QtWidgets.QMainWindow):
                                              triggered=self.entryCat)
         # noinspection PyArgumentList
         self.actEntryInside = QtWidgets.QAction(QtGui.QIcon(':/icons/code.svg'),
-                                              "Entry &View", self,
+                                                "Entry &View", self,
                                                 shortcut="Ctrl+V",
                                                 statusTip="Entry inner structure",
                                                 triggered=self.entryInside)
+        # noinspection PyArgumentList
+        self.actEntryAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
+                                             "&New Entry", self,
+                                             shortcut="Ctrl+N",
+                                             statusTip="Add new Entry",
+                                             triggered=self.entryAdd)
+        # noinspection PyArgumentList
+        self.actEntryEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
+                                              "&Edit Entry", self,
+                                              shortcut="Ctrl+E",
+                                              statusTip="Edit current Entry",
+                                              triggered=self.entryEdit)
+        # noinspection PyArgumentList
+        self.actEntryDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
+                                             "&Del Entry", self,
+                                             statusTip="Delete current Entry",
+                                             triggered=self.entryDel)
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
@@ -96,8 +113,13 @@ class MainWindow(QtWidgets.QMainWindow):
         menu_edit.addAction(self.actEntryListAdd)
         menu_edit.addAction(self.actEntryListEdit)
         menu_edit.addAction(self.actEntryListDel)
-        menu_edit.addAction(self.actEntryListInfo)
+        menu_edit.addSeparator()
+        menu_edit.addAction(self.actEntryAdd)
+        menu_edit.addAction(self.actEntryEdit)
+        menu_edit.addAction(self.actEntryDel)
         menu_view = self.menuBar().addMenu("&View")
+        menu_view.addAction(self.actEntryListInfo)
+        menu_view.addSeparator()
         menu_view.addAction(self.actEntryCat)
         menu_view.addAction(self.actEntryInside)
         menu_help = self.menuBar().addMenu("&Help")
@@ -133,3 +155,12 @@ class MainWindow(QtWidgets.QMainWindow):
     def entryInside(self):
         """Show entry structure"""
         self.todo.list.itemInside()
+
+    def entryAdd(self):
+        self.todo.list.itemAdd()
+
+    def entryEdit(self):
+        self.todo.list.itemEdit()
+
+    def entryDel(self):
+        self.todo.list.itemDel()

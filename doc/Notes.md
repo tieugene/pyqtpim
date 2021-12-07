@@ -2,6 +2,20 @@
 
 ## misc
 - ListView ask model w/ DisplayRole; DetailsView - w/ EditRole
+- Update VTODO:
+  - componet.serialize() works fine - does not touch any exc. changed
+  - but VTODO only; parent not available
+  - => Todo(icalendar.vtodo) => Todo(icalendar)
+- tz: can be for datetime and time
+- Categories:
+  - TB: csv in one property
+  - Evolution: one cat per property
+- Create:
+  - Entry(basedir) => mk ical object, uid, dtstamp, created
+  - [x] Open form with it
+  - [x] store
+  - [x] save
+  - insert into model
 
 ## vCard UML
 

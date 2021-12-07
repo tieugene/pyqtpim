@@ -3,20 +3,23 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] C~~R~~UD
-- [ ] multivalues edit: multiline|checklist|stringlist:
-  - [ ] categories
-  - [ ] attach
-  - [ ] contact
-  - [ ] comment
+- [ ] sync
+- [ ] TodoForm: interim logic
+- [ ] docstrings
+- [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
+  - [ ] attach (url): QLineEdit[]
+  - [ ] categories: special combobox (like RTM, Evolution)
+  - [ ] comment: QLineEdit[]
+  - [ ] contact: QLineEdit[]
+- [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
-- [ ] Todo.Details: clear unused on change (None?)
 
 ### 0.3. Tuning
+- [ ] 'Percent' > 'Progress'
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
-- [ ] Expandable 'View File' messagebox
+- [ ] Expandable 'View File' messagebox (~~QDialog.setSizeGripEnabled()~~)
 
 ## 1. Common
 - [ ] EL:
@@ -27,15 +30,15 @@
      - [ ] order
 
 ### 1.1. Next:
-- map models and mappers using str
+- [ ] map models and mappers using str
 - [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
   - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
   - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
 - [ ] Sync:
-  - [ ] [SyncML](https://pypi.org/project/pysyncml/)
+  - [ ] [vdirsyncer](https://github.com/pimutils/vdirsyncer)
   - [ ] [CalDAV](https://pypi.org/project/caldav/)
   - [ ] [pyCardDAV](https://pypi.org/project/pyCardDAV/)
-  - [ ] [](https://github.com/pimutils/vdirsyncer)
+  - [ ] [~~SyncML~~](https://pypi.org/project/pysyncml/)
 - [ ] Actions: Enable/Disable by context
 - [ ] ELM:
   - [ ] Model:
@@ -60,11 +63,17 @@
 ## 2. ToDo
 - [ ] E:
   - […] Extend
-  - [ ] View: Show raw content (html dt/dd | markdown):
-     - Note #1: handle multiline strings (description)
-     - Note #2: handle multivalues (categories, attach)
-  - [ ] CRUD[^2]
-- [ ] EL: View: columnt delegates
+  - […] CRUD[^2]
+  - [ ] edit timezone
+- [ ] EL: View: column delegates
+- [ ] TodoForm: f_list
+
+### RTM
+- InstantAdd (+Inbox)
+- Enums:
+  - location
+  - category ('tags')
+- Add properties on demand
 
 ## 3. Contacts
 - [ ] E:
@@ -74,6 +83,14 @@
 ## x. misc
 
 ### x.1. RTFM
+- Try: [ics-py](https://github.com/ics-py/ics-py)
+- Samples:
+  - Mozilla Lightning
+  - Apple Reminder
+  - [Rainlendar2](http://www.rainlendar.net/) (&euro;5..10)
+  - [Evolution](https://wiki.gnome.org/Apps/Evolution)
+  - [OpenTasks](https://opentasks.app)
+  - [RTM](https://www.rememberthemilk.com) ($40/y)
 - [pimutils](https://github.com/pimutils)
 - PySide2 Book[^4]
 - Radicale src

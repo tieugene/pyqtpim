@@ -1,8 +1,10 @@
 """Common vCard/iCal parents"""
 
 # 1. std
+import datetime
 import inspect
 import os
+import uuid
 from _collections import OrderedDict
 from enum import IntEnum
 from typing import Any, Optional
@@ -13,26 +15,54 @@ from . import exc
 
 
 class Entry(object):
-    _fname: str  # filename
+    _fpath: str                     # filepath
     _data: vobject.base.Component   # loaded vobject
-    _name2func: dict[IntEnum, Any]      # mapping model column name to getter
+    _name2func: dict[IntEnum, Any]  # mapping model column name to getter
 
-    def __init__(self, fname: str, data: vobject.base.Component):
-        self._fname = fname
+    def __init__(self, fname: str, data: vobject.base.Component = None):
+        if data is None:
+            uid = uuid.uuid4()
+            stamp = datetime.datetime.now(tz=vobject.icalendar.utc)
+            data = vobject.iCalendar()
+            data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
+            data.add('vtodo')
+            data.vtodo.add('uid').value = str(uid)
+            data.vtodo.add('dtstamp').value = stamp
+            data.vtodo.add('created').value = stamp
+            fname = os.path.join(fname, str(uid) + '.ics')
+        self._fpath = fname
         self._data = data
 
     @property
-    def fname(self) -> str:
-        return self._fname
+    def fpath(self) -> str:
+        return self._fpath
 
     def getPropByName(self, fld_name: IntEnum) -> Any:
         if fld := self._name2func.get(fld_name):
             return fld()
 
+    def load_raw(self) -> Optional[str]:
+        """Load entry as raw text"""
+        if os.path.isfile(self._fpath):
+            with open(self._fpath, 'rt') as infile:
+                return infile.read()
+
     def RawContent(self) -> Optional[OrderedDict]:
         """Get entry inside as structure"""
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
         return OrderedDict()
+
+    def save(self):
+        """Save in-memory Vobject into in place of original file"""
+        with open(self._fpath, "wt") as f:
+            self._data.serialize(f)
+
+    def self_del(self):
+        if os.path.isfile(self._fpath):
+            os.remove(self._fpath)
+
+    def serialize(self) -> str:
+        return self._data.serialize()
 
 
 class EntryList(object):
@@ -40,7 +70,7 @@ class EntryList(object):
     __path: str
     __name: str
     __ready: bool
-    _data: list
+    _data: list[Entry]
 
     def __init__(self, name: str = None, path: str = None):
         self.__name = name
@@ -48,7 +78,11 @@ class EntryList(object):
         self.__ready = False
         self._data = []
 
-    def _load_one(self, fname: str, _: vobject.base.Component):
+    def _load_one(self, fpath: str, _: vobject.base.Component):
+        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
+
+    def _mkItem(self) -> Entry:
+        """Create new empty item"""
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def __load(self):
@@ -62,7 +96,7 @@ class EntryList(object):
                     with open(entry.path, 'rt') as stream:
                         # TODO: chk mimetype
                         if vcard := vobject.readOne(stream):
-                            self._load_one(entry.name, vcard)
+                            self._load_one(entry.path, vcard)
                         else:
                             raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
 
@@ -100,6 +134,17 @@ class EntryList(object):
             self._data.clear()
             self.__path = path
             self.__ready = False
+
+    def insert(self, start: int, count: int):
+        """Handle: 0+: insert(), rowCount+: append()"""
+        for _ in range(count):
+            self._data.insert(start, self._mkItem())
+
+    def remove(self, start: int, count: int):
+        """Delete 'count' entries starting from 'start'"""
+        for i in range(start, start+count):
+            self._data[i].self_del()
+        del self._data[start:start+count]
 
 
 class EntryListManager(list[EntryList]):
