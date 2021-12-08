@@ -2,23 +2,23 @@ from PySide2 import QtSql
 
 STORE_SQL = '''
     CREATE TABLE IF NOT EXISTS store (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         active INTEGER NOT NULL DEFAULT 0,
         name VARCHAR UNIQUE NOT NULL,
         connection VARCHAR UNIQUE NOT NULL
-    ) WITHOUT ROWID
+    )
     '''
 # CREATE INDEX store_name ON store (name)
 CATEGORY_SQL = '''
     CREATE TABLE IF NOT EXISTS category (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR UNIQUE NOT NULL
-    ) WITHOUT ROWID
+    )
     '''
 # CREATE INDEX category_name ON category (name)
 ENTRY_SQL = '''
     CREATE TABLE IF NOT EXISTS entry (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         store_id REFERENCES store(id) NOT NULL,
         created DATETIME NOT NULL,
         modified DATETIME NOT NULL,
@@ -31,7 +31,7 @@ ENTRY_SQL = '''
         summary VARCHAR NOT NULL,
         location VARCHAR NULL,
         body TEXT NOT NULL
-    ) WITHOUT ROWID
+    )
     '''
 ENTRYCAT_SQL = '''
     CREATE TABLE IF NOT EXISTS entrycat (

@@ -58,6 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryListAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
                                                  "&New List", self,
+                                                 shortcut="Ctrl+N",
                                                  statusTip="Add new List",
                                                  triggered=self.listAdd)
         # noinspection PyArgumentList
@@ -92,7 +93,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
                                              "&New Entry", self,
-                                             shortcut="Ctrl+N",
                                              statusTip="Add new Entry",
                                              triggered=self.entryAdd)
         # noinspection PyArgumentList

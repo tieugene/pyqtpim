@@ -134,14 +134,14 @@ class EntryListManagerModel(QtSql.QSqlTableModel):
         self._data.itemUpdate(i, name, path)
         MySettings.list_update(self._set_group, i, {"name": name, "path": path})
 
-    def findByName(self, s: str, i: int = None) -> bool:
-        """Find existent CL by name [excluding i-th entry]
-        :return: True if found
-        """
-        return self._data.findByName(s, i)
+    # def findByName(self, s: str, i: int = None) -> bool:
+    #     """Find existent CL by name [excluding i-th entry]
+    #     :return: True if found
+    #     """
+    #     return self._data.findByName(s, i)
 
-    def findByPath(self, s: str, i: int = None) -> bool:
-        """Find existent CL by path [excluding i-th entry]
-        :return: True if found
-        """
-        return self._data.findByPath(s, i)
+    # def findByPath(self, s: str, i: int = None) -> bool:
+    #     """Find existent CL by path [excluding i-th entry]
+    #     :return: True if found
+    #     """
+    #     return self._data.findByPath(s, i)
