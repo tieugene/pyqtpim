@@ -63,6 +63,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryListEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
                                                   "&Edit List", self,
+                                                  shortcut="Ctrl+E",
                                                   statusTip="Edit current List",
                                                   triggered=self.listEdit)
         # noinspection PyArgumentList
@@ -97,7 +98,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
                                               "&Edit Entry", self,
-                                              shortcut="Ctrl+E",
                                               statusTip="Edit current Entry",
                                               triggered=self.entryEdit)
         # noinspection PyArgumentList

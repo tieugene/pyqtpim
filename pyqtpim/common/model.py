@@ -76,7 +76,7 @@ class EntryListModel(QtCore.QAbstractTableModel):
 
 class EntryListManagerModel(QtSql.QSqlTableModel):
     _set_group: SetGroup
-    _data: EntryListManager
+    # _data: EntryListManager
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

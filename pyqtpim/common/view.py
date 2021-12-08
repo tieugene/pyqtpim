@@ -38,6 +38,7 @@ class EntryListView(QtWidgets.QTableView):
         # signals
         # # self.activated.connect(self.rowChanged)
         self.selectionModel().currentRowChanged.connect(self.__details.mapper.setCurrentModelIndex)
+        # self.resizeColumnsToContents() - QTableView only
 
     def _empty_model(self) -> EntryListModel:
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
@@ -99,18 +100,15 @@ class EntryListManagerView(QtWidgets.QListView):
         # self.setSelectionMode(self.SingleSelection)
         self.setModel(self._empty_model())
         self.setModelColumn(self.model().fieldIndex('name'))
-        # self.model().setEditStrategy(QtSql.QSqlTableModel.OnManualSubmit)
         self.setEditTriggers(self.NoEditTriggers)
-        # self.resizeColumnsToContents() - QTableView only
-        # set model required
-        # self.selectionModel().currentRowChanged.connect(self.rowChanged)
 
     def _empty_model(self) -> EntryListManagerModel:
         print("Virtual EntryListManagerView._empty_model()")
         return EntryListManagerModel(self)
 
     def itemAdd(self):
-        """Add new CL."""
+        """Add new CL.
+        todo: chk path exists and is dir"""
         dialog = EntryListForm(self._title)
         while dialog.exec_():
             name = dialog.name
@@ -134,39 +132,38 @@ class EntryListManagerView(QtWidgets.QListView):
             break
 
     def itemEdit(self):
-        indexes = self.selectionModel().selectedRows()
-        if not indexes:
+        """:todo: chk path exists and is dir"""
+        if not (indexes := self.selectedIndexes()):
             return
-        idx = indexes[0]
-        i = idx.row()
-        cl = self.model().item(i)
-        dialog = EntryListForm(self._title, cl.name, cl.path)
-        while dialog.exec_():
+        row = indexes[0].row()
+        rec = self.model().record(row)
+        old_name = rec.value('name')
+        old_path = rec.value('connection')
+        old_active = rec.value('active')
+        dialog = EntryListForm(self._title, old_name, old_path, old_active)
+        if dialog.exec_():
             name = dialog.name
             path = dialog.path
-            # check values
-            # - changed
-            if name == cl.name and path == cl.path:  # nothing changed
-                break
-            # - name is uniq but not this
-            if self.model().findByName(name, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'name'",
-                                              f"There is another {self._title} with name '{name}'")
-                continue
-            # - path is uniq but not this
-            if self.model().findByPath(path, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'path'",
-                                              f"There is another {self._title} with path '{path}'")
-                continue
-            # - path exists and is dir
-            if not os.path.isdir(path):
-                QtWidgets.QMessageBox.warning(self, "Wrong 'path'",
-                                              f"Path '{path}' is not dir or not exists")
-                continue
-            self.model().itemUpdate(idx, name, path)    # update UI
-            break
+            active = dialog.active
+            changed = False
+            if name != old_name:
+                rec.setValue('name', name)
+                changed = True
+            if path != old_path:
+                rec.setValue('path', path)
+                changed = True
+            if active != old_active:
+                rec.setValue('active', active)
+                changed = True
+            if changed:
+                if self.model().updateRowInTable(row, rec):
+                    self.model().select()   # FIXME: update view
 
     def itemDel(self):
+        if not (indexes := self.selectedIndexes()):
+            return
+        row = indexes[0].row()
+
         indexes = self.selectionModel().selectedRows()
         for index in indexes:
             i = index.row()
@@ -188,28 +185,23 @@ class EntryListManagerView(QtWidgets.QListView):
                                           f"Path: {cl.path}\n"
                                           f"Records: {cl.size}")
 
-    def rowChanged(self, cur: QtCore.QModelIndex, _: QtCore.QModelIndex):
-        """Fully refresh EL widget on ELM row changed"""
-        if cur.isValid():
-            self.__list.refresh(self.model().item(cur.row()))
-        else:
-            # print("No list selected")
-            self.__list.refresh()
-
 
 class EntryListForm(QtWidgets.QDialog):
     """ A dialog to add (Create) or edit (Update) EL in ELM."""
     nameText: QtWidgets.QLineEdit
     pathText: QtWidgets.QLineEdit
+    activeBool: QtWidgets.QCheckBox
 
-    def __init__(self, title: str, name: str = None, path: str = None):
+    def __init__(self, title: str, name: str = None, path: str = None, active: bool = False):
         super().__init__()
         name_label = QtWidgets.QLabel("Name")
         path_label = QtWidgets.QLabel("Path")
         path_button = QtWidgets.QPushButton("...")
+        active_label = QtWidgets.QLabel("Active")
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         self.nameText = QtWidgets.QLineEdit()
         self.pathText = QtWidgets.QLineEdit()
+        self.activeBool = QtWidgets.QCheckBox()
 
         grid = QtWidgets.QGridLayout()
         grid.setColumnStretch(0, 0)
@@ -220,6 +212,8 @@ class EntryListForm(QtWidgets.QDialog):
         grid.addWidget(path_label, 1, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         grid.addWidget(self.pathText, 1, 1)
         grid.addWidget(path_button, 1, 2)
+        grid.addWidget(active_label, 2, 0)
+        grid.addWidget(self.activeBool, 2, 1, 1, 2)
 
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(grid)
@@ -236,6 +230,7 @@ class EntryListForm(QtWidgets.QDialog):
             self.nameText.setText(name)
         if path:
             self.pathText.setText(path)
+        self.activeBool.setChecked(active)
 
     def browse_dir(self):
         # TODO: set starting path
@@ -256,3 +251,7 @@ class EntryListForm(QtWidgets.QDialog):
     @property
     def path(self):
         return self.pathText.text()
+
+    @property
+    def active(self):
+        return self.activeBool.isChecked()

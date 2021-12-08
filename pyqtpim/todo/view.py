@@ -16,6 +16,8 @@ class TodoListView(EntryListView):
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
         # self.setColumnHidden(1, True)
+        # self.setColumnHidden(self.model().fieldIndex('id'), True)
+        # self.setColumnHidden(self.model().fieldIndex('connection'), True)
 
     def _empty_model(self) -> TodoListModel:
         return TodoListModel()
@@ -51,8 +53,6 @@ class TodoListManagerView(EntryListManagerView):
 
     def __init__(self, parent, dependant: TodoListView):
         super().__init__(parent, dependant)
-        # self.setColumnHidden(self.model().fieldIndex('id'), True)
-        # self.setColumnHidden(self.model().fieldIndex('connection'), True)
 
     def _empty_model(self) -> TodoListManagerModel:
         return TodoListManagerModel()

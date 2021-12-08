@@ -3,40 +3,40 @@ from PySide2 import QtSql
 STORE_SQL = '''
     CREATE TABLE IF NOT EXISTS store (
         id INTEGER PRIMARY KEY,
-        active INTEGER DEFAULT 0,
-        name VARCHAR,
-        connection VARCHAR
+        active INTEGER NOT NULL DEFAULT 0,
+        name VARCHAR UNIQUE NOT NULL,
+        connection VARCHAR UNIQUE NOT NULL
     ) WITHOUT ROWID
     '''
 # CREATE INDEX store_name ON store (name)
 CATEGORY_SQL = '''
     CREATE TABLE IF NOT EXISTS category (
         id INTEGER PRIMARY KEY,
-        name VARCHAR
+        name VARCHAR UNIQUE NOT NULL
     ) WITHOUT ROWID
     '''
 # CREATE INDEX category_name ON category (name)
 ENTRY_SQL = '''
     CREATE TABLE IF NOT EXISTS entry (
         id INTEGER PRIMARY KEY,
-        store_id REFERENCES store(id),
-        created DATETIME,
-        modified DATETIME,
+        store_id REFERENCES store(id) NOT NULL,
+        created DATETIME NOT NULL,
+        modified DATETIME NOT NULL,
         dtstart ANY NULL,
         due ANY NULL,
         completed DATETIME NULL,
         progress TINYINT NULL,
         priority TINYINT NULL,
         status TINYINT NULL,
-        summary VARCHAR,
+        summary VARCHAR NOT NULL,
         location VARCHAR NULL,
-        body TEXT
+        body TEXT NOT NULL
     ) WITHOUT ROWID
     '''
 ENTRYCAT_SQL = '''
     CREATE TABLE IF NOT EXISTS entrycat (
-        entry_id REFERENCES entry(id),
-        category_id REFERENCES category(id)
+        entry_id REFERENCES entry(id) NOT NULL,
+        category_id REFERENCES category(id) NOT NULL
     )
 '''
 # CREATE INDEX entrycat_entry ON entrycat (entry_id)
