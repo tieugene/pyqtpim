@@ -1,0 +1,41 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Store {
+    id: ID
+    active: bool
+    name: str
+    connection: str
+}
+
+class Category {
+    id: ID
+    subj: str
+}
+
+class Entry {
+    id: ID
+    store_id: IDREF
+    created: datetime
+    modified: datetime
+    dtstart: date[time] null
+    due: date[time] null
+    completed: datetime null
+    progress: int
+    priority: idref
+    status: idref
+    summary: str
+    location: str
+    body: text
+}
+
+class EntryCategory {
+    Category: IDREF
+    Entry: IDREF
+}
+
+Store *-- Entry
+Category *-- EntryCategory
+Entry *-- EntryCategory
+
+@enduml

@@ -15,6 +15,8 @@
   - `vdirsyncer discover`
   - `vdirsyncer sync`
 
+self.record(index.row()).value('active').toBool()
+
 ## vCard UML
 
 - Property params:

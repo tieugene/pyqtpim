@@ -1,6 +1,6 @@
 import inspect
 import os.path
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets, QtSql
 from .data import Entry, EntryList
 from .model import EntryListModel, EntryListManagerModel
 
@@ -96,14 +96,18 @@ class EntryListManagerView(QtWidgets.QListView):
     def __init__(self, parent, dependant: EntryListView):
         super().__init__(parent)
         self.__list = dependant
-        self.setSelectionMode(self.SingleSelection)
+        # self.setSelectionMode(self.SingleSelection)
         self.setModel(self._empty_model())
+        self.setModelColumn(self.model().fieldIndex('name'))
+        # self.model().setEditStrategy(QtSql.QSqlTableModel.OnManualSubmit)
+        self.setEditTriggers(self.NoEditTriggers)
+        # self.resizeColumnsToContents() - QTableView only
         # set model required
-        self.selectionModel().currentRowChanged.connect(self.rowChanged)
+        # self.selectionModel().currentRowChanged.connect(self.rowChanged)
 
     def _empty_model(self) -> EntryListManagerModel:
         print("Virtual EntryListManagerView._empty_model()")
-        return EntryListManagerModel()
+        return EntryListManagerModel(self)
 
     def itemAdd(self):
         """Add new CL."""

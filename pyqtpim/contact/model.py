@@ -29,4 +29,4 @@ class ContactListManagerModel(EntryListManagerModel):
         super().__init__(*args, **kwargs)
         self._set_group = SetGroup.Contacts
         self._data = ContactListManager()
-        self._init_data()
+        # self._init_data()

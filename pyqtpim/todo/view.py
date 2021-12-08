@@ -12,13 +12,6 @@ from .form import TodoForm
 from . import enums
 
 
-class TodoListManagerView(EntryListManagerView):
-    _title = 'ToDo list'
-
-    def _empty_model(self) -> TodoListManagerModel:
-        return TodoListManagerModel()
-
-
 class TodoListView(EntryListView):
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
@@ -51,6 +44,18 @@ class TodoListView(EntryListView):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             self.model().removeRow(idx.row())
+
+
+class TodoListManagerView(EntryListManagerView):
+    _title = 'ToDo list'
+
+    def __init__(self, parent, dependant: TodoListView):
+        super().__init__(parent, dependant)
+        # self.setColumnHidden(self.model().fieldIndex('id'), True)
+        # self.setColumnHidden(self.model().fieldIndex('connection'), True)
+
+    def _empty_model(self) -> TodoListManagerModel:
+        return TodoListManagerModel()
 
 
 class TodoView(EntryView):

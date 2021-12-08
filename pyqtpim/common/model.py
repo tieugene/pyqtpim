@@ -4,7 +4,7 @@ from enum import IntEnum
 from typing import Any
 import inspect
 # 2. PySide
-from PySide2 import QtCore
+from PySide2 import QtCore, QtSql
 # 3. local
 from .settings import MySettings, SetGroup
 from .data import Entry, EntryList, EntryListManager
@@ -74,41 +74,47 @@ class EntryListModel(QtCore.QAbstractTableModel):
         return self._data.item(i)
 
 
-class EntryListManagerModel(QtCore.QStringListModel):  # or QAbstraactListModel
+class EntryListManagerModel(QtSql.QSqlTableModel):
     _set_group: SetGroup
     _data: EntryListManager
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.setTable("store")
+        self.setHeaderData(self.fieldIndex('id'), QtCore.Qt.Horizontal, 'ID')
+        self.setHeaderData(self.fieldIndex('active'), QtCore.Qt.Horizontal, '✓')
+        self.setHeaderData(self.fieldIndex('name'), QtCore.Qt.Horizontal, "Name")
+        self.setHeaderData(self.fieldIndex('connection'), QtCore.Qt.Horizontal, "Connection")
+        self.select()
 
-    # inherited
-    def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
-        if role == QtCore.Qt.DisplayRole:
-            return self._data[index.row()].name
+    def flags(self, index):
+        fl = QtSql.QSqlTableModel.flags(self, index)
+        if index.column() == self.fieldIndex('name'):
+            fl |= QtCore.Qt.ItemIsUserCheckable
+        return fl
 
-    def rowCount(self, index: QtCore.QModelIndex = None) -> int:
-        return self.size
+    def data(self, index: QtCore.QModelIndex, role=QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.CheckStateRole and index.column() == self.fieldIndex('name'):
+            checked = self.data(index.siblingAtColumn(self.fieldIndex('active')))
+            return QtCore.Qt.Checked if checked else QtCore.Qt.Unchecked
+        else:
+            return QtSql.QSqlTableModel.data(self, index, role)
 
-    def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex = None) -> bool:
-        """Delete 'count' records starting from 'row0'."""
-        self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
-        for row in range(row0, row0 + count):
-            self._data.itemDel(row)
-            MySettings.list_del(self._set_group, row)
-        self.endRemoveRows()
-        return True
+    # def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex = None) -> bool:
+    #     """Delete 'count' records starting from 'row0'."""
+    #     self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
+    #     for row in range(row0, row0 + count):
+    #         self._data.itemDel(row)
+    #         MySettings.list_del(self._set_group, row)
+    #     self.endRemoveRows()
+    #     return True
 
-    # self
-    def _init_data(self):
-        for name, path in MySettings.list_ls(self._set_group):
-            self._data.itemAdd(name, path)
+    # @property
+    # def size(self) -> int:
+    #     return self._data.size
 
-    @property
-    def size(self) -> int:
-        return self._data.size
-
-    def item(self, i: int) -> EntryList:
-        return self._data[i]
+    # def item(self, i: int) -> EntryList:
+    #     return self._data[i]
 
     def itemAdd(self, name: str, path: str):
         """Add new EntryList

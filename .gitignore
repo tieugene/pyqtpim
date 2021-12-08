@@ -133,3 +133,4 @@ dmypy.json
 /pyqtpim/pyqtpim.pyproject.user
 /_*/
 /*.sh
+/*.sqlite3

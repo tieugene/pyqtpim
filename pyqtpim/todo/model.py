@@ -81,5 +81,5 @@ class TodoListManagerModel(EntryListManagerModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._set_group = SetGroup.ToDo
-        self._data = TodoListManager()
-        self._init_data()
+        # self._data = TodoListManager()
+        # self._init_data()
