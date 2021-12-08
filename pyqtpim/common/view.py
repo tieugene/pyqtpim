@@ -175,12 +175,12 @@ class EntryListForm(QtWidgets.QDialog):
 
 class EntryListManagerView(QtWidgets.QListView):
     __form: EntryListForm
-    __list: EntryListView
+    _list: EntryListView
     _title: str
 
     def __init__(self, parent, dependant: EntryListView):
         super().__init__(parent)
-        self.__list = dependant
+        self._list = dependant
         # self.setSelectionMode(self.SingleSelection)
         self.setModel(self._empty_model())
         self.setModelColumn(self.model().fieldIndex('name'))

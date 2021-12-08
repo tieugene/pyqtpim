@@ -2,8 +2,10 @@
 
 ## 0. Now
 
-### 0.1. Job
-- [ ] Data: sqlite + sync w/ [local]
+### 0.0. Job
+- [ ] sync
+
+### 0.1. Job-2
 - [ ] List:
   - [ ] sort (1..4]
   - [ ] filter

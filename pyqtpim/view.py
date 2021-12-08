@@ -17,6 +17,7 @@ class MainWindow(QtWidgets.QMainWindow):
     actEntryListEdit: QtWidgets.QAction
     actEntryListDel: QtWidgets.QAction
     actEntryListInfo: QtWidgets.QAction
+    actEntryListSync: QtWidgets.QAction
     actEntryCat: QtWidgets.QAction
     actEntryInside: QtWidgets.QAction
     actEntryAdd: QtWidgets.QAction
@@ -79,6 +80,12 @@ class MainWindow(QtWidgets.QMainWindow):
                                                   statusTip="Info about current List",
                                                   triggered=self.listInfo)
         # noinspection PyArgumentList
+        self.actEntryListSync = QtWidgets.QAction(QtGui.QIcon(':/icons/info.svg'),
+                                                  "List &Sync", self,
+                                                  shortcut="Ctrl+S",
+                                                  statusTip="Sync current List",
+                                                  triggered=self.listSync)
+        # noinspection PyArgumentList
         self.actEntryCat = QtWidgets.QAction(QtGui.QIcon(':/icons/eye.svg'),
                                              "Entry &File", self,
                                              shortcut="Ctrl+F",
@@ -108,6 +115,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
+        menu_file.addAction(self.actEntryListSync)
         menu_file.addAction(self.actExit)
         menu_edit = self.menuBar().addMenu("&Edit")
         menu_edit.addAction(self.actEntryListAdd)
@@ -147,6 +155,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def listInfo(self):
         (self.todo.sources.itemInfo, self.contacts.sources.itemInfo)[self.tabs.currentIndex()]()
+
+    def listSync(self):
+        self.todo.sources.itemSync()
 
     def entryCat(self):
         """Show file content"""

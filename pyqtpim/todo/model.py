@@ -24,57 +24,61 @@ class TodoListModel(EntryListModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._data = TodoList()
-        self._fld_names = (
-            (enums.EProp.Summary, "Summary"),
-            (enums.EProp.Categories, "Cat"),
-            (enums.EProp.Completed, "Completed"),
-            (enums.EProp.DTStart, "DTStart"),
-            (enums.EProp.Due, "Due"),
-            (enums.EProp.Location, "Loc"),
-            (enums.EProp.Percent, "%"),
-            (enums.EProp.Priority, "Prio"),
-            (enums.EProp.Status, "Status"),
-        )
+        # self._data = TodoList()
+        self.setTable("entry")
+        self.setHeaderData(self.fieldIndex('id'), QtCore.Qt.Horizontal, 'ID')
+        self.setHeaderData(self.fieldIndex('store_id'), QtCore.Qt.Horizontal, 'store')
+        self.setHeaderData(self.fieldIndex('created'), QtCore.Qt.Horizontal, "Created")
+        self.setHeaderData(self.fieldIndex('modified'), QtCore.Qt.Horizontal, "Updated")
+        self.setHeaderData(self.fieldIndex('dtstart'), QtCore.Qt.Horizontal, "DTStart")
+        self.setHeaderData(self.fieldIndex('due'), QtCore.Qt.Horizontal, "Due")
+        self.setHeaderData(self.fieldIndex('completed'), QtCore.Qt.Horizontal, "Completed")
+        self.setHeaderData(self.fieldIndex('progress'), QtCore.Qt.Horizontal, "%")
+        self.setHeaderData(self.fieldIndex('priority'), QtCore.Qt.Horizontal, "Prio")
+        self.setHeaderData(self.fieldIndex('status'), QtCore.Qt.Horizontal, "Status")
+        self.setHeaderData(self.fieldIndex('summary'), QtCore.Qt.Horizontal, "Summary")
+        self.setHeaderData(self.fieldIndex('location'), QtCore.Qt.Horizontal, "Loc")
+        self.setHeaderData(self.fieldIndex('body'), QtCore.Qt.Horizontal, "Body")
+        self.select()
 
-    def _empty_item(self) -> TodoList:
-        return TodoList()
+    # def _empty_item(self) -> TodoList:
+    #    return TodoList()
 
-    def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
-        """
-
-        :param index:
-        :param role:
-        :return:
-
-        Types from uplink:
-        - NoneType
-        - int
-        - str
-        - PySide2.QtCore.QDate
-        - PySide2.QtCore.QDateTime
-        - EClass
-        - EStatus
-        """
-        def __chk_type(_v: Any):
-            t = type(_v)
-            if t not in self.__types:
-                self.__types.add(t)
-                print(t)
-        v = super().data(index, role)
-        # __chk_type(v)
-        # FIXME: too dumb selection
-        if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # list/details
-            if isinstance(v, enums.EClass):
-                v = self.__DemapClass[v]
-            elif isinstance(v, enums.EStatus):
-                v = self.__DemapStatus[v]
-            elif isinstance(v, list):
-                if role == QtCore.Qt.DisplayRole:
-                    v = ', '.join(v)
-                else:
-                    v = '\n'.join(v)
-        return v
+    # def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
+    #     """
+    #
+    #     :param index:
+    #     :param role:
+    #     :return:
+    #
+    #     Types from uplink:
+    #     - NoneType
+    #     - int
+    #     - str
+    #     - PySide2.QtCore.QDate
+    #     - PySide2.QtCore.QDateTime
+    #     - EClass
+    #     - EStatus
+    #     """
+    #     def __chk_type(_v: Any):
+    #         t = type(_v)
+    #         if t not in self.__types:
+    #             self.__types.add(t)
+    #             print(t)
+    #     v = super().data(index, role)
+    #     # __chk_type(v)
+    #     # FIXME: too dumb selection
+    #     if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # list/details
+    #         if isinstance(v, enums.EClass):
+    #             v = self.__DemapClass[v]
+    #         elif isinstance(v, enums.EStatus):
+    #             v = self.__DemapStatus[v]
+    #         elif isinstance(v, list):
+    #             if role == QtCore.Qt.DisplayRole:
+    #                 v = ', '.join(v)
+    #             else:
+    #                 v = '\n'.join(v)
+    #     return v
 
 
 class TodoListManagerModel(EntryListManagerModel):

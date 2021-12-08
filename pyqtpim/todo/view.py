@@ -1,11 +1,13 @@
 """GUI representation of ToDo things"""
 # 1. std
 import datetime
+import os
 from typing import Any
 # 2. PySide
+import vobject
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryView, EntryListView, EntryListManagerView
+from common import EntryView, EntryListView, EntryListManagerView, exc
 from .model import TodoListManagerModel, TodoListModel
 from .data import Todo
 from .form import TodoForm
@@ -15,9 +17,8 @@ from . import enums
 class TodoListView(EntryListView):
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
-        # self.setColumnHidden(1, True)
-        # self.setColumnHidden(self.model().fieldIndex('id'), True)
-        # self.setColumnHidden(self.model().fieldIndex('connection'), True)
+        self.setColumnHidden(self.model().fieldIndex('id'), True)
+        self.setColumnHidden(self.model().fieldIndex('body'), True)
 
     def _empty_model(self) -> TodoListModel:
         return TodoListModel()
@@ -56,6 +57,13 @@ class TodoListManagerView(EntryListManagerView):
 
     def _empty_model(self) -> TodoListManagerModel:
         return TodoListManagerModel()
+
+    def itemSync(self):
+        """Sync Store with its connection"""
+        if not (indexes := self.selectedIndexes()):
+            return
+        rec = self.model().record(indexes[0].row())
+        syncStore(self._list.model(), rec.value('id'), rec.value('connection'))
 
 
 class TodoView(EntryView):
@@ -229,3 +237,52 @@ def form2obj(src: TodoForm, dst: Todo) -> bool:
         dst.setURL(v_new)
         changed = True
     return changed
+
+
+def syncStore(model: TodoListModel, store_id: int, path: str):
+    """Sync VTODO records with file dir"""
+    with os.scandir(path) as itr:
+        for entry in itr:
+            if not entry.is_file():
+                continue
+            with open(entry.path, 'rt') as stream:
+                if ventry := vobject.readOne(stream):
+                    if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
+                        loadVtodo(model, store_id, ventry)
+                else:
+                    raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
+    model.select()
+
+
+def loadVtodo(model: TodoListModel, store_id: int, ventry: vobject.base.Component):
+    """Load one VTODO file into DB
+
+    :param model: destination.
+    :param store_id: subj.
+    :param ventry: whole of iCalendar file.
+    :return:
+    """
+    vtodo = ventry.vtodo
+    rec = model.record()
+    rec.setValue('store_id', store_id)
+    rec.setValue('created', vtodo.created.value)
+    rec.setValue('modified', vtodo.last_modified.value)
+    rec.setValue('summary', vtodo.summary.value)
+    rec.setValue('body', ventry.serialize())
+    if 'dtstart' in vtodo.contents:
+        rec.setValue('dtstart', vtodo.dtstart.value)
+    if 'due' in vtodo.contents:
+        rec.setValue('due', vtodo.due.value)
+    if 'completed' in vtodo.contents:
+        rec.setValue('completed', vtodo.completed.value)
+    if 'percent-complete' in vtodo.contents:
+        rec.setValue('progress', vtodo.percent_complete.value)
+    if 'priority' in vtodo.contents:
+        rec.setValue('priority', vtodo.priority.value)
+    if 'status' in vtodo.contents:
+        rec.setValue('status', vtodo.status.value)
+    if 'location' in vtodo.contents:
+        rec.setValue('location', vtodo.location.value)
+    ok = model.insertRecord(model.rowCount(), rec)
+    if not ok:
+        print(vtodo.summary, "Oops")
