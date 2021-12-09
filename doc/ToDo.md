@@ -3,7 +3,11 @@
 ## 0. Now
 
 ### 0.0. Job
-- [ ] sync
+- [ ] sync:
+  - [ ] date[times]: str iso 8601 (date[time].isoformat()/fromisoformat(); 
+  - [ ] body: db/file
+  - [ ] uid: ?
+  - [ ] vcal itself: dict[id, vcal]
 
 ### 0.1. Job-2
 - [ ] List:

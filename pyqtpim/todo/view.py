@@ -248,41 +248,41 @@ def syncStore(model: TodoListModel, store_id: int, path: str):
             with open(entry.path, 'rt') as stream:
                 if ventry := vobject.readOne(stream):
                     if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        loadVtodo(model, store_id, ventry)
+                        vtodo = Todo(entry.path, ventry)
+                        loadVtodo(model, store_id, vtodo)
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()
 
 
-def loadVtodo(model: TodoListModel, store_id: int, ventry: vobject.base.Component):
+def loadVtodo(model: TodoListModel, store_id: int, vtodo: Todo):
     """Load one VTODO file into DB
 
     :param model: destination.
     :param store_id: subj.
-    :param ventry: whole of iCalendar file.
+    :param vtodo: whole of iCalendar.
     :return:
     """
-    vtodo = ventry.vtodo
     rec = model.record()
     rec.setValue('store_id', store_id)
-    rec.setValue('created', vtodo.created.value)
-    rec.setValue('modified', vtodo.last_modified.value)
-    rec.setValue('summary', vtodo.summary.value)
-    rec.setValue('body', ventry.serialize())
-    if 'dtstart' in vtodo.contents:
-        rec.setValue('dtstart', vtodo.dtstart.value)
-    if 'due' in vtodo.contents:
-        rec.setValue('due', vtodo.due.value)
-    if 'completed' in vtodo.contents:
-        rec.setValue('completed', vtodo.completed.value)
-    if 'percent-complete' in vtodo.contents:
-        rec.setValue('progress', vtodo.percent_complete.value)
-    if 'priority' in vtodo.contents:
-        rec.setValue('priority', vtodo.priority.value)
-    if 'status' in vtodo.contents:
-        rec.setValue('status', vtodo.status.value)
-    if 'location' in vtodo.contents:
-        rec.setValue('location', vtodo.location.value)
+    rec.setValue('created', vtodo.getCreated().isoformat())
+    rec.setValue('modified', vtodo.getLastModified().isoformat())
+    rec.setValue('summary', vtodo.getSummary())
+    rec.setValue('body', vtodo.serialize())
+    if v := vtodo.getDTStart():
+        rec.setValue('dtstart', v.isoformat())
+    if v := vtodo.getDue():
+        rec.setValue('due', v.isoformat())
+    if v := vtodo.getCompleted():
+        rec.setValue('completed', v.isoformat())
+    if not (v := vtodo.getPercent()) is None:
+        rec.setValue('progress', v)
+    if not (v := vtodo.getPriority()) is None:
+        rec.setValue('priority', v)
+    if v := vtodo.getStatus():
+        rec.setValue('status', v.value)
+    if v := vtodo.getLocation():
+        rec.setValue('location', v)
     ok = model.insertRecord(model.rowCount(), rec)
     if not ok:
         print(vtodo.summary, "Oops")
