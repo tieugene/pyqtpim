@@ -15,21 +15,12 @@ from . import exc
 
 
 class Entry(object):
+    """:todo: del _fpath"""
     _fpath: str                     # filepath
     _data: vobject.base.Component   # loaded vobject
     _name2func: dict[IntEnum, Any]  # mapping model column name to getter
 
-    def __init__(self, fname: str, data: vobject.base.Component = None):
-        if data is None:
-            uid = uuid.uuid4()
-            stamp = datetime.datetime.now(tz=vobject.icalendar.utc)
-            data = vobject.iCalendar()
-            data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
-            data.add('vtodo')
-            data.vtodo.add('uid').value = str(uid)
-            data.vtodo.add('dtstamp').value = stamp
-            data.vtodo.add('created').value = stamp
-            fname = os.path.join(fname, str(uid) + '.ics')
+    def __init__(self, fname: str, data: vobject.base.Component):
         self._fpath = fname
         self._data = data
 
@@ -67,7 +58,9 @@ class Entry(object):
 
 
 class EntryList(object):
-    """List of Entries"""
+    """List of Entries
+    :todo: del
+    """
     __path: str
     __name: str
     __ready: bool
@@ -149,7 +142,9 @@ class EntryList(object):
 
 
 class EntryListManager(list[EntryList]):
-    """List of Lists of Entries."""
+    """List of Lists of Entries.
+    :todo: del
+    """
 
     def __init__(self):
         super().__init__()

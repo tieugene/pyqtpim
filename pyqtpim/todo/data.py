@@ -2,6 +2,8 @@
 :todo: field type enum
 """
 # 1. std
+import os
+import uuid
 from _collections import OrderedDict
 import datetime
 from typing import Optional, Union, Any
@@ -14,6 +16,16 @@ from . import enums
 
 class Todo(Entry):
     def __init__(self, fpath: str, data: vobject.base.Component = None):
+        if data is None:
+            uid = uuid.uuid4()
+            stamp = datetime.datetime.now(tz=vobject.icalendar.utc)
+            data = vobject.iCalendar()
+            data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
+            data.add('vtodo')
+            data.vtodo.add('uid').value = str(uid)
+            data.vtodo.add('dtstamp').value = stamp
+            data.vtodo.add('created').value = stamp
+            fpath = os.path.join(fpath, str(uid) + '.ics')
         super().__init__(fpath, data)
         self._name2func = {
             enums.EProp.Categories: self.getCategories,
@@ -240,5 +252,6 @@ class TodoList(EntryList):
 
 
 class TodoListManager(EntryListManager):
+    """todo: del"""
     def itemAdd(self, name: str, path: str):
         self.append(TodoList(name, path))

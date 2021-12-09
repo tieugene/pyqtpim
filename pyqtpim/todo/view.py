@@ -5,7 +5,7 @@ import os
 from typing import Any
 # 2. PySide
 import vobject
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, EntryListManagerView, exc
 from .model import TodoListManagerModel, TodoListModel
@@ -90,7 +90,7 @@ class TodoView(EntryView):
 
     def __idxChgd(self, idx: int):
         """Only for selection; not calling on deselection"""
-        self.__fill_details(self.mapper.model().item(idx))
+        self.__fill_details(self.mapper.model().getEntry(idx))
 
     def __fill_details(self, data: Todo = None):    # TODO: clear on None
         def __mk_row(title: str, value: Any):
@@ -121,7 +121,7 @@ class TodoView(EntryView):
         text += '</table>'
         self.details.setText(text)
 
-    def setModel(self, model: QtCore.QStringListModel):
+    def setModel(self, model: QtSql.QSqlTableModel):
         """Setup mapper
         :todo: indexOf
         """

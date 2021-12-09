@@ -1,14 +1,16 @@
 # 1. system
 from typing import Any
 # 2. PySide
+import vobject
 from PySide2 import QtCore
 # 3. local
 from common import SetGroup, EntryListModel, EntryListManagerModel
-from .data import TodoList, TodoListManager
+from .data import TodoList, TodoListManager, Todo
 from . import enums
 
 
 class TodoListModel(EntryListModel):
+    __entry_cache: dict[int, vobject.base.Component]
     __types = set()  # temp types cache
     __DemapClass = {
         enums.EClass.Public: "Do something",
@@ -24,6 +26,7 @@ class TodoListModel(EntryListModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.__entry_cache = dict()
         # self._data = TodoList()
         self.setTable("entry")
         self.setHeaderData(self.fieldIndex('id'), QtCore.Qt.Horizontal, 'ID')
@@ -40,6 +43,13 @@ class TodoListModel(EntryListModel):
         self.setHeaderData(self.fieldIndex('location'), QtCore.Qt.Horizontal, "Loc")
         self.setHeaderData(self.fieldIndex('body'), QtCore.Qt.Horizontal, "Body")
         self.select()
+
+    def getEntry(self, idx: int):
+        """Get [cached] entry body"""
+        if (v := self.__entry_cache.get(idx)) is None:
+            v = Todo('', vobject.readOne(self.record(idx).value('body')))
+            self.__entry_cache[idx] = v
+        return v
 
     # def _empty_item(self) -> TodoList:
     #    return TodoList()
