@@ -50,17 +50,16 @@ class EntryListView(QtWidgets.QTableView):
         self.__details.clean()
 
     def itemCat(self):
-        """Show file content"""
+        """Show Entry content"""
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
-            i = idx.row()
-            item: Entry = self.model().item(i)
-            path = item.fpath
-            if raw := item.load_raw():
-                msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "File content", path)
-                msg.setDetailedText(raw)
-                # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-                msg.exec_()
+            row = idx.row()
+            rec = self.model().record(row)
+            body = rec.value('body')
+            msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", rec.value('summary'))
+            msg.setDetailedText(body)
+            # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+            msg.exec_()
 
     def itemInside(self):
         """Show entry content
@@ -74,7 +73,7 @@ class EntryListView(QtWidgets.QTableView):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             i = idx.row()
-            raw = self.model().item(i).RawContent()
+            raw = self.model().getEntry(i).RawContent()
             # icon, title, text
             msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
             # richtext

@@ -1,10 +1,8 @@
 """Common vCard/iCal parents"""
 
 # 1. std
-import datetime
 import inspect
 import os
-import uuid
 from _collections import OrderedDict
 from enum import IntEnum
 from typing import Any, Optional
@@ -15,43 +13,20 @@ from . import exc
 
 
 class Entry(object):
-    """:todo: del _fpath"""
-    _fpath: str                     # filepath
     _data: vobject.base.Component   # loaded vobject
     _name2func: dict[IntEnum, Any]  # mapping model column name to getter
 
-    def __init__(self, fname: str, data: vobject.base.Component):
-        self._fpath = fname
+    def __init__(self, data: vobject.base.Component):
         self._data = data
-
-    @property
-    def fpath(self) -> str:
-        return self._fpath
 
     def getPropByName(self, fld_name: IntEnum) -> Any:
         if fld := self._name2func.get(fld_name):
             return fld()
 
-    def load_raw(self) -> Optional[str]:
-        """Load entry as raw text"""
-        if os.path.isfile(self._fpath):
-            with open(self._fpath, 'rt') as infile:
-                return infile.read()
-
     def RawContent(self) -> Optional[OrderedDict]:
         """Get entry inside as structure"""
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
         return OrderedDict()
-
-    def save(self):
-        """Save in-memory Vobject into in place of original file"""
-        tmp = self._data.serialize()
-        with open(self._fpath, "wt") as f:
-            f.write(tmp)
-
-    def self_del(self):
-        if os.path.isfile(self._fpath):
-            os.remove(self._fpath)
 
     def serialize(self) -> str:
         return self._data.serialize()
@@ -111,11 +86,6 @@ class EntryList(object):
     def size(self):
         self.__chk_ready()
         return len(self._data)
-
-    def print(self):
-        self.__chk_ready()
-        for v in self._data:
-            v.print()
 
     def item(self, i: int) -> Entry:
         """Get list item"""

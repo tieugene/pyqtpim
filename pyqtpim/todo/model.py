@@ -1,11 +1,10 @@
 # 1. system
-from typing import Any
 # 2. PySide
 import vobject
 from PySide2 import QtCore
 # 3. local
 from common import SetGroup, EntryListModel, EntryListManagerModel
-from .data import TodoList, TodoListManager, Todo
+from .data import Todo
 from . import enums
 
 
@@ -47,7 +46,7 @@ class TodoListModel(EntryListModel):
     def getEntry(self, idx: int):
         """Get [cached] entry body"""
         if (v := self.__entry_cache.get(idx)) is None:
-            v = Todo('', vobject.readOne(self.record(idx).value('body')))
+            v = Todo(vobject.readOne(self.record(idx).value('body')))
             self.__entry_cache[idx] = v
         return v
 

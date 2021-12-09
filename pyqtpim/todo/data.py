@@ -2,7 +2,6 @@
 :todo: field type enum
 """
 # 1. std
-import os
 import uuid
 from _collections import OrderedDict
 import datetime
@@ -15,7 +14,7 @@ from . import enums
 
 
 class Todo(Entry):
-    def __init__(self, fpath: str, data: vobject.base.Component = None):
+    def __init__(self, data: vobject.base.Component = None):
         if data is None:
             uid = uuid.uuid4()
             stamp = datetime.datetime.now(tz=vobject.icalendar.utc)
@@ -25,8 +24,7 @@ class Todo(Entry):
             data.vtodo.add('uid').value = str(uid)
             data.vtodo.add('dtstamp').value = stamp
             data.vtodo.add('created').value = stamp
-            fpath = os.path.join(fpath, str(uid) + '.ics')
-        super().__init__(fpath, data)
+        super().__init__(data)
         self._name2func = {
             enums.EProp.Categories: self.getCategories,
             enums.EProp.Class: self.getClass,
@@ -53,7 +51,7 @@ class Todo(Entry):
 
     def save(self):
         self.updateStamps()
-        super().save()
+        # super().save()
 
     def RawContent(self) -> Optional[OrderedDict]:
         """Return inner item content as structure.
@@ -245,7 +243,7 @@ class TodoList(EntryList):
     """todo: collect categories/locations on load"""
     def _load_one(self, fpath: str, data: vobject.base.Component):
         if data.name == 'VCALENDAR' and 'vtodo' in data.contents:
-            self._data.append(Todo(fpath, data))
+            self._data.append(Todo(data))
 
     def _mkItem(self):
         return Todo(self.path)
