@@ -19,6 +19,10 @@
   - [x] ~~uid~~
   - [x] vcal cache: dict[id, vcal]
 - [x] ~~QSqlRelTablrModel~~ bad idea
+- [x] Todo:
+  - [x] U (+f_list)
+  - [x] D
+
 
 ## Contacts.File-based
 - [ ] CLM:

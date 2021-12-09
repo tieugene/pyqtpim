@@ -4,8 +4,6 @@
 
 ### 0.0. Job
 - Todo:
-  - [ ] U (+f_list)
-  - [ ] D
   - [ ] C
 - Store:
   - [ ] listview => tableview

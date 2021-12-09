@@ -50,7 +50,11 @@ class TodoListView(EntryListView):
     def entryDel(self):
         idx = self.currentIndex()
         if idx.isValid():
-            self.model().removeRow(idx.row())
+            row = idx.row()
+            model: TodoListModel = self.model()
+            model.delEntry(row)
+            model.removeRow(row)
+            model.select()
 
 
 class TodoListManagerView(EntryListManagerView):

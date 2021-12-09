@@ -51,6 +51,11 @@ class TodoListModel(EntryListModel):
             self.__entry_cache[idx] = v
         return v
 
+    def delEntry(self, idx: int):
+        """Get [cached] entry body"""
+        if idx in self.__entry_cache:
+            del self.__entry_cache[idx]
+
     # def _empty_item(self) -> TodoList:
     #    return TodoList()
 
