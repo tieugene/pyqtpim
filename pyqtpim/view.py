@@ -59,13 +59,11 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryListAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
                                                  "&New List", self,
-                                                 shortcut="Ctrl+N",
                                                  statusTip="Add new List",
                                                  triggered=self.listAdd)
         # noinspection PyArgumentList
         self.actEntryListEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
                                                   "&Edit List", self,
-                                                  shortcut="Ctrl+E",
                                                   statusTip="Edit current List",
                                                   triggered=self.listEdit)
         # noinspection PyArgumentList
@@ -100,11 +98,13 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
                                              "&New Entry", self,
+                                             shortcut="Ctrl+N",
                                              statusTip="Add new Entry",
                                              triggered=self.entryAdd)
         # noinspection PyArgumentList
         self.actEntryEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
                                               "&Edit Entry", self,
+                                              shortcut="Ctrl+E",
                                               statusTip="Edit current Entry",
                                               triggered=self.entryEdit)
         # noinspection PyArgumentList
@@ -145,33 +145,33 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.about(self, "About PyQtPIM", "PySide2 powered Personal Information Manager.")
 
     def listAdd(self):
-        (self.todo.sources.itemAdd, self.contacts.sources.itemAdd)[self.tabs.currentIndex()]()
+        (self.todo.sources.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
 
     def listEdit(self):
-        (self.todo.sources.itemEdit, self.contacts.sources.itemEdit)[self.tabs.currentIndex()]()
+        (self.todo.sources.storeEdit, self.contacts.sources.storeEdit)[self.tabs.currentIndex()]()
 
     def listDel(self):
-        (self.todo.sources.itemDel, self.contacts.sources.itemDel)[self.tabs.currentIndex()]()
+        (self.todo.sources.storeDel, self.contacts.sources.storeDel)[self.tabs.currentIndex()]()
 
     def listInfo(self):
-        (self.todo.sources.itemInfo, self.contacts.sources.itemInfo)[self.tabs.currentIndex()]()
+        (self.todo.sources.storeInfo, self.contacts.sources.storeInfo)[self.tabs.currentIndex()]()
 
     def listSync(self):
-        self.todo.sources.itemSync()
+        self.todo.sources.storeSync()
 
     def entryCat(self):
         """Show file content"""
-        (self.todo.list.itemCat, self.contacts.list.itemCat)[self.tabs.currentIndex()]()
+        (self.todo.list.entryCat, self.contacts.list.entryCat)[self.tabs.currentIndex()]()
 
     def entryInside(self):
         """Show entry structure"""
-        self.todo.list.itemInside()
+        self.todo.list.entryInside()
 
     def entryAdd(self):
-        self.todo.list.itemAdd()
+        self.todo.list.entryAdd()
 
     def entryEdit(self):
-        self.todo.list.itemEdit()
+        self.todo.list.entryEdit()
 
     def entryDel(self):
-        self.todo.list.itemDel()
+        self.todo.list.entryDel()

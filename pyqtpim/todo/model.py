@@ -1,7 +1,7 @@
 # 1. system
 # 2. PySide
 import vobject
-from PySide2 import QtCore
+from PySide2 import QtCore, QtSql
 # 3. local
 from common import SetGroup, EntryListModel, EntryListManagerModel
 from .data import Todo
@@ -49,6 +49,43 @@ class TodoListModel(EntryListModel):
             v = Todo(vobject.readOne(self.record(idx).value('body')))
             self.__entry_cache[idx] = v
         return v
+
+    def mkRecord(self, entry: Todo) -> QtSql.QSqlRecord:
+        """Make new record and fill it with ventry content"""
+        rec: QtSql.QSqlRecord = self.record()
+        rec.setValue('body', entry.serialize())
+        rec.setValue('created', entry.getCreated().isoformat())
+        rec.setValue('modified', entry.getLastModified().isoformat())
+        rec.setValue('summary', entry.getSummary())
+        if v := entry.getDTStart():
+            rec.setValue('dtstart', v.isoformat())
+        else:
+            rec.setNull('dtstart')
+        if v := entry.getDue():
+            rec.setValue('due', v.isoformat())
+        else:
+            rec.setNull('dtstart')
+        if v := entry.getCompleted():
+            rec.setValue('completed', v.isoformat())
+        else:
+            rec.setNull('dtstart')
+        if not (v := entry.getPercent()) is None:
+            rec.setValue('progress', v)
+        else:
+            rec.setNull('dtstart')
+        if not (v := entry.getPriority()) is None:
+            rec.setValue('priority', v)
+        else:
+            rec.setNull('dtstart')
+        if v := entry.getStatus():
+            rec.setValue('status', v.value)
+        else:
+            rec.setNull('dtstart')
+        if v := entry.getLocation():
+            rec.setValue('location', v)
+        else:
+            rec.setNull('dtstart')
+        return rec
 
     # def _empty_item(self) -> TodoList:
     #    return TodoList()

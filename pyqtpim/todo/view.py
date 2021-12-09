@@ -23,27 +23,32 @@ class TodoListView(EntryListView):
     def _empty_model(self) -> TodoListModel:
         return TodoListModel()
 
-    def itemAdd(self):
+    def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
             size = self.model().rowCount()
             self.model().insertRow(size)
-            item: Todo = self.model().item(size)
-            if form2obj(f, item):   # ?
-                item.save()
+            entry: Todo = self.model().item(size)
+            if form2obj(f, entry):   # ?
+                # FIXME:
+                entry.save()
 
-    def itemEdit(self):
+    def entryEdit(self):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
-            i = idx.row()
-            item: Todo = self.model().item(i)
+            row = idx.row()
+            model: TodoListModel = self.model()
+            entry: Todo = model.getEntry(row)
             f = TodoForm(self)  # TODO: cache creation
-            f.load(item)
+            f.load(entry)
             if f.exec_():
-                if form2obj(f, item):
-                    item.save()
+                if form2obj(f, entry):
+                    ...
+                    # model.updateRowInTable(row, model.mkRecord(entry))
+                    # TODO:
+                    # entry.save()
 
-    def itemDel(self):
+    def entryDel(self):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             self.model().removeRow(idx.row())
@@ -58,7 +63,7 @@ class TodoListManagerView(EntryListManagerView):
     def _empty_model(self) -> TodoListManagerModel:
         return TodoListManagerModel()
 
-    def itemSync(self):
+    def storeSync(self):
         """Sync Store with its connection"""
         if not (indexes := self.selectedIndexes()):
             return
@@ -248,41 +253,12 @@ def syncStore(model: TodoListModel, store_id: int, path: str):
             with open(entry.path, 'rt') as stream:
                 if ventry := vobject.readOne(stream):
                     if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        vtodo = Todo(entry.path, ventry)
-                        loadVtodo(model, store_id, vtodo)
+                        vtodo = Todo(ventry)
+                        rec = model.mkRecord(vtodo)
+                        rec.setValue('store_id', store_id)
+                        ok = model.insertRecord(model.rowCount(), rec)
+                        if not ok:
+                            print(vtodo.summary, "Oops")
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()
-
-
-def loadVtodo(model: TodoListModel, store_id: int, vtodo: Todo):
-    """Load one VTODO file into DB
-
-    :param model: destination.
-    :param store_id: subj.
-    :param vtodo: whole of iCalendar.
-    :return:
-    """
-    rec = model.record()
-    rec.setValue('store_id', store_id)
-    rec.setValue('created', vtodo.getCreated().isoformat())
-    rec.setValue('modified', vtodo.getLastModified().isoformat())
-    rec.setValue('summary', vtodo.getSummary())
-    rec.setValue('body', vtodo.serialize())
-    if v := vtodo.getDTStart():
-        rec.setValue('dtstart', v.isoformat())
-    if v := vtodo.getDue():
-        rec.setValue('due', v.isoformat())
-    if v := vtodo.getCompleted():
-        rec.setValue('completed', v.isoformat())
-    if not (v := vtodo.getPercent()) is None:
-        rec.setValue('progress', v)
-    if not (v := vtodo.getPriority()) is None:
-        rec.setValue('priority', v)
-    if v := vtodo.getStatus():
-        rec.setValue('status', v.value)
-    if v := vtodo.getLocation():
-        rec.setValue('location', v)
-    ok = model.insertRecord(model.rowCount(), rec)
-    if not ok:
-        print(vtodo.summary, "Oops")

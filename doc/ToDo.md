@@ -3,11 +3,17 @@
 ## 0. Now
 
 ### 0.0. Job
-- [ ] sync:
-  - [ ] date[times]: str iso 8601 (date[time].isoformat()/fromisoformat(); 
-  - [ ] body: db/file
-  - [ ] uid: ?
-  - [ ] vcal itself: dict[id, vcal]
+- TodoList:
+  - [ ] RelModel
+  - [ ] add f_list
+  - [ ] U
+  - [ ] C
+  - [ ] D
+- Store:
+  - [ ] table
+  - [ ] check on/off
+  - [ ] set filter
+  - [ ] 2-way sync (**del!**)
 
 ### 0.1. Job-2
 - [ ] List:

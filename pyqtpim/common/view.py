@@ -49,8 +49,8 @@ class EntryListView(QtWidgets.QTableView):
         self.model().switch_data(data)
         self.__details.clean()
 
-    def itemCat(self):
-        """Show Entry content"""
+    def entryCat(self):
+        """Show raw Entry content"""
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             row = idx.row()
@@ -61,8 +61,8 @@ class EntryListView(QtWidgets.QTableView):
             # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
             msg.exec_()
 
-    def itemInside(self):
-        """Show entry content
+    def entryInside(self):
+        """Show clean entry content
         :todo: style it
         Simple:
         msg.setText(raw['summary'])
@@ -190,7 +190,7 @@ class EntryListManagerView(QtWidgets.QListView):
         print("Virtual EntryListManagerView._empty_model()")
         return EntryListManagerModel(self)
 
-    def itemAdd(self):
+    def storeAdd(self):
         """Add new Store"""
         self.__form.setIdx()
         if self.__form.exec_():
@@ -203,7 +203,7 @@ class EntryListManagerView(QtWidgets.QListView):
                 print("Oops")
             self.model().select()   # FIXME: refresh view or model
 
-    def itemEdit(self):
+    def storeEdit(self):
         """Edit Store"""
         if not (indexes := self.selectedIndexes()):
             return
@@ -212,7 +212,7 @@ class EntryListManagerView(QtWidgets.QListView):
         if self.__form.exec_():
             self.model().submit()
 
-    def itemDel(self):
+    def storeDel(self):
         if not (indexes := self.selectedIndexes()):
             return
         for index in indexes:
@@ -224,7 +224,7 @@ class EntryListManagerView(QtWidgets.QListView):
                 self.model().removeRow(row)
                 self.model().select()   # FIXME: refresh view or model
 
-    def itemInfo(self):
+    def storeInfo(self):
         if not (indexes := self.selectedIndexes()):
             return
         rec = self.model().record(indexes[0].row())
