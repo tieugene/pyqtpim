@@ -12,7 +12,8 @@ import vobject
 from . import exc
 
 
-class Entry(object):
+class VObj(object):
+    """In-memory vobject object"""
     _data: vobject.base.Component   # loaded vobject
     _name2func: dict[IntEnum, Any]  # mapping model column name to getter
 
@@ -39,7 +40,7 @@ class EntryList(object):
     __path: str
     __name: str
     __ready: bool
-    _data: list[Entry]
+    _data: list[VObj]
 
     def __init__(self, name: str = None, path: str = None):
         self.__name = name
@@ -50,7 +51,7 @@ class EntryList(object):
     def _load_one(self, fpath: str, _: vobject.base.Component):
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
-    def _mkItem(self) -> Entry:
+    def _mkItem(self) -> VObj:
         """Create new empty item"""
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
@@ -87,7 +88,7 @@ class EntryList(object):
         self.__chk_ready()
         return len(self._data)
 
-    def item(self, i: int) -> Entry:
+    def item(self, i: int) -> VObj:
         """Get list item"""
         self.__chk_ready()
         return self._data[i]

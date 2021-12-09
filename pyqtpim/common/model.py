@@ -1,13 +1,8 @@
 # 1. system
-import datetime
-from enum import IntEnum
-from typing import Any
-import inspect
 # 2. PySide
 from PySide2 import QtCore, QtSql
 # 3. local
 from .settings import MySettings, SetGroup
-from .data import Entry, EntryList, EntryListManager
 
 
 class EntryListModel(QtSql.QSqlTableModel):

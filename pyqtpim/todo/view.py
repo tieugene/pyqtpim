@@ -9,8 +9,8 @@ from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, EntryListManagerView, exc
 from .model import TodoListManagerModel, TodoListModel
-from .data import Todo
-from .form import TodoForm
+from .data import VObjTodo
+from .form import TodoForm, form2rec_upd
 from . import enums
 
 
@@ -28,28 +28,27 @@ class TodoListView(EntryListView):
         if f.exec_():
             size = self.model().rowCount()
             self.model().insertRow(size)
-            entry: Todo = self.model().item(size)
-            if form2obj(f, entry):   # ?
+            entry: VObjTodo = self.model().item(size)
+            if form2rec_upd(f, entry):   # ?
                 # FIXME:
                 entry.save()
 
     def entryEdit(self):
-        idx = self.selectionModel().currentIndex()
+        idx = self.currentIndex()
         if idx.isValid():
             row = idx.row()
             model: TodoListModel = self.model()
-            entry: Todo = model.getEntry(row)
+            entry: VObjTodo = model.getEntry(row)
+            rec = model.record(row)
+            store_id = rec.value('store_id')
             f = TodoForm(self)  # TODO: cache creation
-            f.load(entry)
+            f.load(entry, store_id)    # model.relation(col).indexColumn()
             if f.exec_():
-                if form2obj(f, entry):
-                    ...
-                    # model.updateRowInTable(row, model.mkRecord(entry))
-                    # TODO:
-                    # entry.save()
+                if form2rec_upd(f, entry, rec):
+                    model.setRecord(row, rec)
 
     def entryDel(self):
-        idx = self.selectionModel().currentIndex()
+        idx = self.currentIndex()
         if idx.isValid():
             self.model().removeRow(idx.row())
 
@@ -97,7 +96,7 @@ class TodoView(EntryView):
         """Only for selection; not calling on deselection"""
         self.__fill_details(self.mapper.model().getEntry(idx))
 
-    def __fill_details(self, data: Todo = None):    # TODO: clear on None
+    def __fill_details(self, data: VObjTodo = None):    # TODO: clear on None
         def __mk_row(title: str, value: Any):
             if value is None:
                 value = ''
@@ -131,7 +130,7 @@ class TodoView(EntryView):
         :todo: indexOf
         """
         super().setModel(model)
-        self.mapper.addMapping(self.summary, 0)
+        self.mapper.addMapping(self.summary, model.fieldIndex('summary'))
         self.mapper.currentIndexChanged.connect(self.__idxChgd)
 
     def clean(self):
@@ -167,83 +166,6 @@ class TodosWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
 
-def form2obj(src: TodoForm, dst: Todo) -> bool:
-    """Update Todo entry with form values.
-    :return: True if anythong changed and entry must be saved.
-
-    :todo: unify and/or hide into Entry setX()
-    """
-    changed = False
-    # - cat
-    if v_new := src.f_category.text():
-        v_new = [s.strip() for s in v_new.split(',')]
-        v_new.sort()
-    else:
-        v_new = None
-    v_old = dst.getCategories()
-    if v_old != v_new:  # compare 0/1/2+ x 0/1/2+
-        dst.setCategories(v_new)
-        changed = True
-    # - class (combo)
-    v_new = src.f_class.getData()
-    if dst.getClass() != v_new:
-        dst.setClass(v_new)
-        changed = True
-    # - completed
-    v_new = src.f_completed.getData()
-    if dst.getCompleted() != v_new:
-        dst.setCompleted(v_new)
-        changed = True
-    # - description
-    v_new = src.f_description.toPlainText() or None
-    if dst.getDescription() != v_new:
-        dst.setDescription(v_new)
-        changed = True
-    # - dtstart
-    v_new = src.f_dtstart.getData()
-    if dst.getDTStart() != v_new:
-        dst.setDTStart(v_new)
-        changed = True
-    # - due
-    v_new = src.f_due.getData()
-    if dst.getDue() != v_new:
-        dst.setDue(v_new)
-        changed = True
-    # - location
-    v_new = src.f_location.text() or None
-    if dst.getLocation() != v_new:
-        dst.setLocation(v_new)
-        changed = True
-    # - percent
-    v_new = src.f_percent.getData()
-    v_old = dst.getPercent()
-    if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
-        dst.setPercent(v_new)
-        changed = True
-    # - priority
-    v_new = src.f_priority.getData()
-    v_old = dst.getPriority()
-    if v_old != v_new and not (v_new == 0 and v_old is None):
-        dst.setPriority(v_new)
-        changed = True
-    # - status (combo)
-    v_new = src.f_status.getData()
-    if dst.getStatus() != v_new:
-        dst.setStatus(v_new)
-        changed = True
-    # - summary
-    v_new = src.f_summary.text() or None
-    if dst.getSummary() != v_new:
-        dst.setSummary(v_new)
-        changed = True
-    # - url
-    v_new = src.f_url.text() or None
-    if dst.getURL() != v_new:
-        dst.setURL(v_new)
-        changed = True
-    return changed
-
-
 def syncStore(model: TodoListModel, store_id: int, path: str):
     """Sync VTODO records with file dir"""
     with os.scandir(path) as itr:
@@ -253,12 +175,12 @@ def syncStore(model: TodoListModel, store_id: int, path: str):
             with open(entry.path, 'rt') as stream:
                 if ventry := vobject.readOne(stream):
                     if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        vtodo = Todo(ventry)
-                        rec = model.mkRecord(vtodo)
+                        vtodo = VObjTodo(ventry)
+                        rec = obj2rec(vtodo)   # FIXME: updateRecord()
                         rec.setValue('store_id', store_id)
-                        ok = model.insertRecord(model.rowCount(), rec)
+                        ok = model.insertRecord(model.rowCount(), rec)  # or -1
                         if not ok:
-                            print(vtodo.summary, "Oops")
+                            print(vtodo.getSummary(), "Oops")
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()

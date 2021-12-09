@@ -9,11 +9,11 @@ Most interesting (see contents:dict):
 # 2. 3rd
 import vobject
 # 3. local
-from common import exc, Entry, EntryList, EntryListManager
+from common import exc, VObj, EntryList, EntryListManager
 from . import enums
 
 
-class Contact(Entry):
+class Contact(VObj):
     """Contact itself"""
     def __init__(self, path: str, vcard: vobject.base.Component):
         super().__init__(path, vcard)

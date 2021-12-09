@@ -1,7 +1,7 @@
 import inspect
 import os.path
 from PySide2 import QtCore, QtWidgets, QtSql
-from .data import Entry, EntryList
+from .data import VObj, EntryList
 from .model import EntryListModel, EntryListManagerModel
 
 

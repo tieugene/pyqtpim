@@ -9,11 +9,12 @@ from typing import Optional, Union, Any
 # 2. 3rd
 import vobject
 # 3. local
-from common import Entry, EntryList, EntryListManager
+from common import VObj, EntryList, EntryListManager
 from . import enums
 
 
-class Todo(Entry):
+class VObjTodo(VObj):
+    """In-memory one-file VTODO"""
     def __init__(self, data: vobject.base.Component = None):
         if data is None:
             uid = uuid.uuid4()
@@ -243,10 +244,10 @@ class TodoList(EntryList):
     """todo: collect categories/locations on load"""
     def _load_one(self, fpath: str, data: vobject.base.Component):
         if data.name == 'VCALENDAR' and 'vtodo' in data.contents:
-            self._data.append(Todo(data))
+            self._data.append(VObjTodo(data))
 
     def _mkItem(self):
-        return Todo(self.path)
+        return VObjTodo(self.path)
 
 
 class TodoListManager(EntryListManager):

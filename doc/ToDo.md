@@ -3,17 +3,20 @@
 ## 0. Now
 
 ### 0.0. Job
-- TodoList:
-  - [ ] RelModel
-  - [ ] add f_list
-  - [ ] U
-  - [ ] C
+- Todo:
+  - [ ] U (+f_list)
   - [ ] D
+  - [ ] C
 - Store:
-  - [ ] table
+  - [ ] listview => tableview
   - [ ] check on/off
   - [ ] set filter
   - [ ] 2-way sync (**del!**)
+- TodoForm: .setValidator()
+- Think:
+  - all models - QSqlQueryModel
+  - insert/update/delete using sql
+  - db Entry repr class (`Entry.fld` against `record(i).value('fld')`)
 
 ### 0.1. Job-2
 - [ ] List:
