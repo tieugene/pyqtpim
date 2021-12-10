@@ -3,8 +3,6 @@
 ## 0. Now
 
 ### 0.0. Job
-- Todo:
-  - [ ] C
 - Store:
   - [ ] listview => tableview
   - [ ] check on/off

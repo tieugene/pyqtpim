@@ -494,3 +494,35 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         rec.setValue('body', obj.serialize())
         rec_chgd = True
     return rec_chgd
+
+
+def form2obj(form: TodoForm) -> (VObjTodo, int):
+    obj = VObjTodo()
+    if v_new := form.f_category.text():
+        v_new = [s.strip() for s in v_new.split(',')]
+        v_new.sort()
+        obj.setCategories(v_new)
+    if v_new := form.f_class.getData():
+        obj.setClass(v_new)
+    if v_new := form.f_completed.getData():
+        obj.setCompleted(v_new)
+    if v_new := form.f_description.toPlainText():
+        obj.setDescription(v_new)
+    if v_new := form.f_dtstart.getData():
+        obj.setDTStart(v_new)
+    if v_new := form.f_due.getData():
+        obj.setDue(v_new)
+    if v_new := form.f_location.text():
+        obj.setLocation(v_new)
+    if v_new := form.f_percent.getData():
+        obj.setPercent(v_new)
+    if v_new := form.f_priority.getData():
+        obj.setPriority(v_new)
+    if v_new := form.f_status.getData():
+        obj.setStatus(v_new)
+    if v_new := form.f_summary.text():
+        obj.setSummary(v_new)
+    if v_new := form.f_url.text():
+        obj.setURL(v_new)
+    obj.updateStamps()
+    return obj, form.f_list.getData()

@@ -26,7 +26,7 @@ class VObjTodo(VObj):
             data.vtodo.add('dtstamp').value = stamp
             data.vtodo.add('created').value = stamp
         super().__init__(data)
-        self._name2func = {
+        self._name2func = {  # FIXME: static
             enums.EProp.Categories: self.getCategories,
             enums.EProp.Class: self.getClass,
             enums.EProp.Comment: self.getComment,
@@ -99,7 +99,7 @@ class VObjTodo(VObj):
                     self._data.vtodo.add(fld).value = data
 
     # getters
-    def getAttach(self) -> Optional[Union[str, list[str]]]:
+    def getAttach(self) -> Optional[list[str]]:
         return self.__getFldByName('attach')
 
     def getCategories(self) -> Optional[Union[str, list[str]]]:

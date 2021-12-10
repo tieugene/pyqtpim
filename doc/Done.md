@@ -16,12 +16,12 @@
 - [x] 1-way sync:
   - [x] date[times]: str iso 8601 (date[time].isoformat()/fromisoformat(); 
   - [x] body: db
-  - [x] ~~uid~~
-  - [x] vcal cache: dict[id, vcal]
+  - [x] ~~vcal cache~~: dict[id, vcal]
 - [x] ~~QSqlRelTablrModel~~ bad idea
 - [x] Todo:
   - [x] U (+f_list)
   - [x] D
+  - [x] C
 
 
 ## Contacts.File-based

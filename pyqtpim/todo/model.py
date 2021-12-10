@@ -9,7 +9,7 @@ from . import enums
 
 
 class TodoListModel(EntryListModel):
-    __entry_cache: dict[int, vobject.base.Component]
+    __entry_cache: dict[int, vobject.base.Component]    # entry.id: VObj
     __types = set()  # temp types cache
     __DemapClass = {
         enums.EClass.Public: "Do something",
@@ -44,17 +44,25 @@ class TodoListModel(EntryListModel):
         self.setHeaderData(self.fieldIndex('body'), QtCore.Qt.Horizontal, "Body")
         self.select()
 
-    def getEntry(self, idx: int):
+    def setObj(self, rec: QtSql.QSqlRecord, obj: VObjTodo):
         """Get [cached] entry body"""
-        if (v := self.__entry_cache.get(idx)) is None:
-            v = VObjTodo(vobject.readOne(self.record(idx).value('body')))
-            self.__entry_cache[idx] = v
-        return v
+        self.__entry_cache[rec.value('id')] = obj
 
-    def delEntry(self, idx: int):
+    def getObj(self, row: int):
         """Get [cached] entry body"""
-        if idx in self.__entry_cache:
-            del self.__entry_cache[idx]
+        if rec := self.record(row):
+            _id = rec.value('id')
+            if (v := self.__entry_cache.get(_id)) is None:
+                v = VObjTodo(vobject.readOne(rec.value('body')))
+                self.__entry_cache[_id] = v
+            return v
+
+    def delObj(self, row: int):
+        """Get [cached] entry body"""
+        if rec := self.record(row):
+            _id = rec.value('_id')
+            if _id in self.__entry_cache:
+                del self.__entry_cache[_id]
 
     # def _empty_item(self) -> TodoList:
     #    return TodoList()
@@ -104,39 +112,24 @@ class TodoListManagerModel(EntryListManagerModel):
         # self._init_data()
 
 
-def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord):
+def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord, store_id: int):
     """Create new record and fill it with ventry content"""
-    # rec: QtSql.QSqlRecord = self.record()
-    rec.setValue('body', obj.serialize())
+    rec.setValue('store_id', store_id)
     rec.setValue('created', obj.getCreated().isoformat())
     rec.setValue('modified', obj.getLastModified().isoformat())
-    rec.setValue('summary', obj.getSummary())
     if v := obj.getDTStart():
         rec.setValue('dtstart', v.isoformat())
-    else:
-        rec.setNull('dtstart')
     if v := obj.getDue():
         rec.setValue('due', v.isoformat())
-    else:
-        rec.setNull('due')
     if v := obj.getCompleted():
         rec.setValue('completed', v.isoformat())
-    else:
-        rec.setNull('completed')
     if not (v := obj.getPercent()) is None:
         rec.setValue('progress', v)
-    else:
-        rec.setNull('progress')
     if not (v := obj.getPriority()) is None:
         rec.setValue('priority', v)
-    else:
-        rec.setNull('priority')
     if v := obj.getStatus():
         rec.setValue('status', v.value)
-    else:
-        rec.setNull('status')
+    rec.setValue('summary', obj.getSummary())
     if v := obj.getLocation():
         rec.setValue('location', v)
-    else:
-        rec.setNull('location')
-    return rec
+    rec.setValue('body', obj.serialize())

@@ -8,9 +8,9 @@ import vobject
 from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, EntryListManagerView, exc
-from .model import TodoListManagerModel, TodoListModel
+from .model import TodoListManagerModel, TodoListModel, obj2rec
 from .data import VObjTodo
-from .form import TodoForm, form2rec_upd
+from .form import TodoForm, form2rec_upd, form2obj
 from . import enums
 
 
@@ -26,33 +26,34 @@ class TodoListView(EntryListView):
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
-            size = self.model().rowCount()
-            self.model().insertRow(size)
-            entry: VObjTodo = self.model().item(size)
-            if form2rec_upd(f, entry):   # ?
-                # FIXME:
-                entry.save()
+            obj, store_id = form2obj(f)
+            rec = self.model().record()  # new empty
+            obj2rec(obj, rec, store_id)
+            self.model().insertRecord(-1, rec)
+            self.model().select()
+            # adding obj to cache unavailable
 
     def entryEdit(self):
         idx = self.currentIndex()
         if idx.isValid():
             row = idx.row()
             model: TodoListModel = self.model()
-            entry: VObjTodo = model.getEntry(row)
+            obj: VObjTodo = model.getObj(row)
             rec = model.record(row)
             store_id = rec.value('store_id')
             f = TodoForm(self)  # TODO: cache creation
-            f.load(entry, store_id)    # model.relation(col).indexColumn()
+            f.load(obj, store_id)    # model.relation(col).indexColumn()
             if f.exec_():
-                if form2rec_upd(f, entry, rec):
+                if form2rec_upd(f, obj, rec):
                     model.setRecord(row, rec)
+                    model.setObj(rec, obj)
 
     def entryDel(self):
         idx = self.currentIndex()
         if idx.isValid():
             row = idx.row()
             model: TodoListModel = self.model()
-            model.delEntry(row)
+            model.delObj(row)
             model.removeRow(row)
             model.select()
 
@@ -96,9 +97,9 @@ class TodoView(EntryView):
         layout.addWidget(self.details)
         self.setLayout(layout)
 
-    def __idxChgd(self, idx: int):
+    def __idxChgd(self, row: int):
         """Only for selection; not calling on deselection"""
-        self.__fill_details(self.mapper.model().getEntry(idx))
+        self.__fill_details(self.mapper.model().getObj(row))
 
     def __fill_details(self, data: VObjTodo = None):    # TODO: clear on None
         def __mk_row(title: str, value: Any):
@@ -179,12 +180,13 @@ def syncStore(model: TodoListModel, store_id: int, path: str):
             with open(entry.path, 'rt') as stream:
                 if ventry := vobject.readOne(stream):
                     if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        vtodo = VObjTodo(ventry)
-                        rec = obj2rec(vtodo)   # FIXME: updateRecord()
-                        rec.setValue('store_id', store_id)
-                        ok = model.insertRecord(model.rowCount(), rec)  # or -1
+                        obj = VObjTodo(ventry)
+                        rec = model.record()
+                        obj2rec(obj, rec, store_id)
+                        # rec.setValue('store_id', store_id)
+                        ok = model.insertRecord(-1, rec)
                         if not ok:
-                            print(vtodo.getSummary(), "Oops")
+                            print(obj.getSummary(), "Oops")
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()

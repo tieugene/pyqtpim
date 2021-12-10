@@ -21,16 +21,16 @@
   -  form & !store: update entry
   -  form &  store: save entry and store
 - Form <> Rec+Entry <> File:
-  - New from Form:
+  - [x] New from Form:
     - new Obj
     - new Rec from Obj
-  - Upd from Form:
+  - [x] Upd from Form:
     - upd Obj
     - upd Rec from Form/Obj
-  - New from File:
+  - [ ] New from File:
     - add Obj
     - new Rec from Obj
-  - Upd from File:
+  - [ ] Upd from File:
     - repl Obj
     - upd all Rec from Obj
   - Operations:
