@@ -1,6 +1,7 @@
+"""vCard/iCal views parents"""
+
 import inspect
 from PySide2 import QtCore, QtWidgets, QtSql
-from .data import EntryList
 from .model import EntryModel, StoreModel
 
 
@@ -20,6 +21,7 @@ class EntryView(QtWidgets.QGroupBox):
 
 
 class EntryListView(QtWidgets.QTableView):
+    _own_model = EntryModel
     __details: EntryView
 
     def __init__(self, parent, dependant: EntryView):
@@ -31,22 +33,13 @@ class EntryListView(QtWidgets.QTableView):
         # self.setSortingEnabled(True) # requires sorting itself
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().hide()
-        __model = self._empty_model()
+        __model = self._own_model()
         self.setModel(__model)
         self.__details.setModel(__model)
         # signals
         # # self.activated.connect(self.rowChanged)
         self.selectionModel().currentRowChanged.connect(self.__details.mapper.setCurrentModelIndex)
         # self.resizeColumnsToContents() - QTableView only
-
-    def _empty_model(self) -> EntryModel:
-        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
-        return EntryModel()
-
-    def refresh(self, data: EntryList = None):
-        # print("List refresh call")
-        self.model().switch_data(data)
-        self.__details.clean()
 
     def entryCat(self):
         """Show raw Entry content"""
@@ -72,7 +65,7 @@ class EntryListView(QtWidgets.QTableView):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             i = idx.row()
-            raw = self.model().getEntry(i).RawContent()
+            raw = self.model().getObj(i).RawContent()
             # icon, title, text
             msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
             # richtext
@@ -172,6 +165,7 @@ class StoreForm(QtWidgets.QDialog):
 
 
 class StoreListView(QtWidgets.QListView):
+    _own_model = StoreModel
     __form: StoreForm
     _list: EntryListView
     _title: str
@@ -180,14 +174,10 @@ class StoreListView(QtWidgets.QListView):
         super().__init__(parent)
         self._list = dependant
         # self.setSelectionMode(self.SingleSelection)
-        self.setModel(self._empty_model())
+        self.setModel(self._own_model())
         self.setModelColumn(self.model().fieldIndex('name'))
         self.setEditTriggers(self.NoEditTriggers)
         self.__form = StoreForm(self._title, self.model())
-
-    def _empty_model(self) -> StoreModel:
-        print("Virtual EntryListManagerView._empty_model()")
-        return StoreModel(self)
 
     def storeAdd(self):
         """Add new Store"""

@@ -9,7 +9,7 @@ from typing import Optional, Union, Any
 # 2. 3rd
 import vobject
 # 3. local
-from common import VObj, EntryList, EntryListManager
+from common import VObj
 from . import enums
 
 
@@ -238,19 +238,3 @@ class VObjTodo(VObj):
         self.__setFldByName('sequence', str(seq))
         utc = vobject.icalendar.utc
         self.__setFldByName('last-modified', datetime.datetime.now(tz=utc))
-
-
-class TodoList(EntryList):
-    """FIXME: del"""
-    def _load_one(self, fpath: str, data: vobject.base.Component):
-        if data.name == 'VCALENDAR' and 'vtodo' in data.contents:
-            self._data.append(VObjTodo(data))
-
-    def _mkItem(self):
-        return VObjTodo(self.path)
-
-
-class TodoListManager(EntryListManager):
-    """FIXME: del"""
-    def itemAdd(self, name: str, path: str):
-        self.append(TodoList(name, path))

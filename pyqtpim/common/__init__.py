@@ -4,7 +4,7 @@ from .model import EntryModel, StoreModel
 from .view import EntryView, EntryListView, StoreListView
 __all__ = [
     'MySettings', 'SetGroup',
-    'VObj', 'EntryList', 'EntryListManager',
+    'VObj',
     'EntryModel', 'StoreModel',
     'EntryView', 'EntryListView', 'StoreListView'
 ]

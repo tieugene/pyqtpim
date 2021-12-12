@@ -1,3 +1,3 @@
-from .data import VObjTodo, TodoList, TodoListManager
+from .data import VObjTodo
 from .view import TodosWidget
-__all__ = ['TodosWidget', 'VObjTodo', 'TodoList', 'TodoListManager']
+__all__ = ['TodosWidget', 'VObjTodo']

@@ -5,29 +5,15 @@ from PySide2 import QtCore, QtSql
 # 3. local
 from common import SetGroup, EntryModel, StoreModel
 from .data import VObjTodo
-from . import enums
 
 
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
     __entry_cache: dict[int, VObjTodo]    # entry.id: VObj
-    __types = set()  # temp types cache
-    __DemapClass = {
-        enums.EClass.Public: "Do something",
-        enums.EClass.Private: "wait...",
-        enums.EClass.Confidential: "OK"
-    }
-    __DemapStatus = {
-        enums.EStatus.NeedsAction: "Do something",
-        enums.EStatus.InProcess: "wait...",
-        enums.EStatus.Completed: "OK",
-        enums.EStatus.Cancelled: "WontFix",
-    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__entry_cache = dict()
-        # self._data = TodoList()
         self.setTable("entry")
         # self.setRelation(self.fieldIndex('store_id'), QtSql.QSqlRelation('store', 'id', 'name'))
         self.setHeaderData(self.fieldIndex('id'), QtCore.Qt.Horizontal, 'ID')
@@ -80,45 +66,6 @@ class TodoModel(EntryModel):
         else:
             filt = 'FALSE'  # nothing to show
         self.setFilter(filt)
-
-    # def _empty_item(self) -> TodoList:
-    #    return TodoList()
-
-    # def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
-    #     """
-    #
-    #     :param index:
-    #     :param role:
-    #     :return:
-    #
-    #     Types from uplink:
-    #     - NoneType
-    #     - int
-    #     - str
-    #     - PySide2.QtCore.QDate
-    #     - PySide2.QtCore.QDateTime
-    #     - EClass
-    #     - EStatus
-    #     """
-    #     def __chk_type(_v: Any):
-    #         t = type(_v)
-    #         if t not in self.__types:
-    #             self.__types.add(t)
-    #             print(t)
-    #     v = super().data(index, role)
-    #     # __chk_type(v)
-    #     # FIXME: too dumb selection
-    #     if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:  # list/details
-    #         if isinstance(v, enums.EClass):
-    #             v = self.__DemapClass[v]
-    #         elif isinstance(v, enums.EStatus):
-    #             v = self.__DemapStatus[v]
-    #         elif isinstance(v, list):
-    #             if role == QtCore.Qt.DisplayRole:
-    #                 v = ', '.join(v)
-    #             else:
-    #                 v = '\n'.join(v)
-    #     return v
 
 
 class TodoStoreModel(StoreModel):

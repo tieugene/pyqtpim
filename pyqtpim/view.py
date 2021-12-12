@@ -145,19 +145,19 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.about(self, "About PyQtPIM", "PySide2 powered Personal Information Manager.")
 
     def listAdd(self):
-        (self.todo.sources.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
+        (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
 
     def listEdit(self):
-        (self.todo.sources.storeEdit, self.contacts.sources.storeEdit)[self.tabs.currentIndex()]()
+        (self.todo.stores.storeEdit, self.contacts.sources.storeEdit)[self.tabs.currentIndex()]()
 
     def listDel(self):
-        (self.todo.sources.storeDel, self.contacts.sources.storeDel)[self.tabs.currentIndex()]()
+        (self.todo.stores.storeDel, self.contacts.sources.storeDel)[self.tabs.currentIndex()]()
 
     def listInfo(self):
-        (self.todo.sources.storeInfo, self.contacts.sources.storeInfo)[self.tabs.currentIndex()]()
+        (self.todo.stores.storeInfo, self.contacts.sources.storeInfo)[self.tabs.currentIndex()]()
 
     def listSync(self):
-        self.todo.sources.storeSync()
+        self.todo.stores.storeSync()
 
     def entryCat(self):
         """Show file content"""

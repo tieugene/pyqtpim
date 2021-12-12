@@ -15,13 +15,12 @@ from . import enums
 
 
 class TodoListView(EntryListView):
+    _own_model = TodoModel
+    """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
         self.setColumnHidden(self.model().fieldIndex('id'), True)
         self.setColumnHidden(self.model().fieldIndex('body'), True)
-
-    def _empty_model(self) -> TodoModel:
-        return TodoModel()
 
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
@@ -59,14 +58,12 @@ class TodoListView(EntryListView):
 
 
 class TodoStoreListView(StoreListView):
+    _own_model = TodoStoreModel
     _title = 'ToDo list'
 
     def __init__(self, parent, dependant: TodoListView):
         super().__init__(parent, dependant)
         # self.model().activeChanged.connect(self._list.model().updateFilterByStore)
-
-    def _empty_model(self) -> TodoStoreModel:
-        return TodoStoreModel()
 
     def storeSync(self):
         """Sync Store with its connection"""
@@ -145,23 +142,23 @@ class TodoView(EntryView):
 
 
 class TodosWidget(QtWidgets.QWidget):
-    sources: TodoStoreListView
+    stores: TodoStoreListView
     list: TodoListView
     details: TodoView
 
     def __init__(self):
         super().__init__()
         self.__createWidgets()
-        self.sources.model().activeChanged.connect(self.list.model().updateFilterByStore)
+        self.stores.model().activeChanged.connect(self.list.model().updateFilterByStore)
 
     def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
         self.details = TodoView(splitter)
         self.list = TodoListView(splitter, self.details)
-        self.sources = TodoStoreListView(splitter, self.list)
+        self.stores = TodoStoreListView(splitter, self.list)
         # layout
-        splitter.addWidget(self.sources)
+        splitter.addWidget(self.stores)
         splitter.addWidget(self.list)
         splitter.addWidget(self.details)
         splitter.setOrientation(QtCore.Qt.Horizontal)
