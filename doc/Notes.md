@@ -1,5 +1,11 @@
 # Notes
 
+## Tips
+- [CheckBox in QListView using QSqlTableModel](https://stackoverflow.com/questions/48193325/checkbox-in-qlistview-using-qsqltablemodel)
+- [PyQt Layouts](https://realpython.com/python-pyqt-layout/)
+- [Программирование на PyQt5 (43) - использование БД](https://russianblogs.com/article/36811088928/)
+- [PyQt5 DB programming — CUD](https://developpaper.com/pyqt5-database-programming-adding-deleting-and-modifying-examples/)
+
 ## misc
 - ListView ask model w/ DisplayRole; DetailsView - w/ EditRole
 - Update VTODO:

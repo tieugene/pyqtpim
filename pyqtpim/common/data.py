@@ -34,9 +34,7 @@ class VObj(object):
 
 
 class EntryList(object):
-    """List of Entries
-    :todo: del
-    """
+    """FIXME: del"""
     __path: str
     __name: str
     __ready: bool
@@ -113,9 +111,7 @@ class EntryList(object):
 
 
 class EntryListManager(list[EntryList]):
-    """List of Lists of Entries.
-    :todo: del
-    """
+    """FIXME: del"""
 
     def __init__(self):
         super().__init__()

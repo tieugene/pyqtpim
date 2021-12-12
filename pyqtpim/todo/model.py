@@ -9,7 +9,8 @@ from . import enums
 
 
 class TodoModel(EntryModel):
-    __entry_cache: dict[int, vobject.base.Component]    # entry.id: VObj
+    """todo: collect categories/locations on load"""
+    __entry_cache: dict[int, VObjTodo]    # entry.id: VObj
     __types = set()  # temp types cache
     __DemapClass = {
         enums.EClass.Public: "Do something",
@@ -42,10 +43,11 @@ class TodoModel(EntryModel):
         self.setHeaderData(self.fieldIndex('summary'), QtCore.Qt.Horizontal, "Summary")
         self.setHeaderData(self.fieldIndex('location'), QtCore.Qt.Horizontal, "Loc")
         self.setHeaderData(self.fieldIndex('body'), QtCore.Qt.Horizontal, "Body")
+        self.updateFilterByStore()
         self.select()
 
     def setObj(self, rec: QtSql.QSqlRecord, obj: VObjTodo):
-        """Get [cached] entry body"""
+        """Add entry body to cache"""
         self.__entry_cache[rec.value('id')] = obj
 
     def getObj(self, row: int):
@@ -58,11 +60,26 @@ class TodoModel(EntryModel):
             return v
 
     def delObj(self, row: int):
-        """Get [cached] entry body"""
+        """Del entry body from cache"""
         if rec := self.record(row):
             _id = rec.value('_id')
             if _id in self.__entry_cache:
                 del self.__entry_cache[_id]
+
+    def updateFilterByStore(self):
+        """"""
+        active = set()
+        query: QtSql.QSqlQuery = QtSql.QSqlQuery('SELECT id FROM store WHERE active IS TRUE')
+        while query.next():
+            active.add(query.value(0))
+        if active:
+            if len(active) == 1:
+                filt = 'store_id = %d' % active.pop()
+            else:
+                filt = 'store_id IN %s' % str(tuple(active))
+        else:
+            filt = 'FALSE'  # nothing to show
+        self.setFilter(filt)
 
     # def _empty_item(self) -> TodoList:
     #    return TodoList()
@@ -108,8 +125,6 @@ class TodoStoreModel(StoreModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._set_group = SetGroup.ToDo
-        # self._data = TodoListManager()
-        # self._init_data()
 
 
 def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord, store_id: int):

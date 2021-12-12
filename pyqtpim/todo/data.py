@@ -241,7 +241,7 @@ class VObjTodo(VObj):
 
 
 class TodoList(EntryList):
-    """todo: collect categories/locations on load"""
+    """FIXME: del"""
     def _load_one(self, fpath: str, data: vobject.base.Component):
         if data.name == 'VCALENDAR' and 'vtodo' in data.contents:
             self._data.append(VObjTodo(data))
@@ -251,6 +251,6 @@ class TodoList(EntryList):
 
 
 class TodoListManager(EntryListManager):
-    """todo: del"""
+    """FIXME: del"""
     def itemAdd(self, name: str, path: str):
         self.append(TodoList(name, path))

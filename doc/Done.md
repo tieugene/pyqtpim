@@ -24,6 +24,7 @@
   - [x] C
 - [x] Store:
   - [x] active: check on/off
+  - [x] set filter
 
 ## Contacts.File-based
 - [ ] CLM:

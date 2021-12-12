@@ -58,11 +58,12 @@ class TodoListView(EntryListView):
             model.select()
 
 
-class TodoStoreView(StoreListView):
+class TodoStoreListView(StoreListView):
     _title = 'ToDo list'
 
     def __init__(self, parent, dependant: TodoListView):
         super().__init__(parent, dependant)
+        # self.model().activeChanged.connect(self._list.model().updateFilterByStore)
 
     def _empty_model(self) -> TodoStoreModel:
         return TodoStoreModel()
@@ -144,20 +145,21 @@ class TodoView(EntryView):
 
 
 class TodosWidget(QtWidgets.QWidget):
-    sources: TodoStoreView
+    sources: TodoStoreListView
     list: TodoListView
     details: TodoView
 
     def __init__(self):
         super().__init__()
         self.__createWidgets()
+        self.sources.model().activeChanged.connect(self.list.model().updateFilterByStore)
 
     def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
         self.details = TodoView(splitter)
         self.list = TodoListView(splitter, self.details)
-        self.sources = TodoStoreView(splitter, self.list)
+        self.sources = TodoStoreListView(splitter, self.list)
         # layout
         splitter.addWidget(self.sources)
         splitter.addWidget(self.list)

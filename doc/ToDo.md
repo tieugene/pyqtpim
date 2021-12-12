@@ -4,14 +4,12 @@
 
 ### 0.1. Job
 - [ ] Remove unwanted
-- [ ] Store:
-  - [ ] set filter
 - [ ] TodoList:
-  - [ ] sort (multicolumn)
-  - [ ] filter (QSortFilterProxyModel?)
+  - [ ] [multi]sort (multicolumn)
+  - [ ] multifilter (QSortFilterProxyModel?)
   - [ ] columns on/off
   - [ ] columns order
-- [ ] TodoForm: interim logic (on the fly; summary!, .setValidator())
+- [ ] TodoForm: interim logic (on the fly, *summary*, .setValidator())
 - [ ] docstrings
 - [ ] DTStart-link-Due = Duration?
 - [ ] TodoForm: multivalues: (multiline|checklist|stringlist)

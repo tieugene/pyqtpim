@@ -72,6 +72,7 @@ class EntryModel(QtSql.QSqlTableModel):
 
 
 class StoreModel(QtSql.QSqlTableModel):
+    activeChanged: QtCore.Signal = QtCore.Signal()  #
     _set_group: SetGroup
 
     def __init__(self, *args, **kwargs):
@@ -84,6 +85,7 @@ class StoreModel(QtSql.QSqlTableModel):
         self.setHeaderData(self.fieldIndex('connection'), QtCore.Qt.Horizontal, "Connection")
         self.select()
 
+    # Inherited
     def flags(self, index):
         fl = QtSql.QSqlTableModel.flags(self, index)
         if index.column() == self.fieldIndex('name'):
@@ -105,5 +107,8 @@ class StoreModel(QtSql.QSqlTableModel):
             self.setData(index.siblingAtColumn(self.fieldIndex('active')), 1 if value == QtCore.Qt.Checked else 0)
             self.submit()
             # self.dataChanged.emit(index, index, (role,))
+            self.activeChanged.emit()
             return True
         return QtSql.QSqlTableModel.setData(self, index, value, role)
+
+    # Hand-made
