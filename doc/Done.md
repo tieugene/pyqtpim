@@ -22,7 +22,8 @@
   - [x] U (+f_list)
   - [x] D
   - [x] C
-
+- [x] Store:
+  - [x] active: check on/off
 
 ## Contacts.File-based
 - [ ] CLM:

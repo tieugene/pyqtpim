@@ -39,6 +39,10 @@
     - get Obj from File
     - new Rec from Obj
     - upd Rec from Obj | Form/Obj
+- QSortFilterProxyModel:
+  - [RTFM2](https://pretagteam.com/question/sort-by-multiple-columns-in-pyqt-model)
+  - [RTFM1](https://github.com/dimkanovikov/MultisortTableView)
+
 
 self.record(index.row()).value('active').toBool()
 

@@ -7,8 +7,8 @@ from typing import Any
 import vobject
 from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
-from common import EntryView, EntryListView, EntryListManagerView, exc
-from .model import TodoListManagerModel, TodoListModel, obj2rec
+from common import EntryView, EntryListView, StoreListView, exc
+from .model import TodoStoreModel, TodoModel, obj2rec
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
 from . import enums
@@ -20,8 +20,8 @@ class TodoListView(EntryListView):
         self.setColumnHidden(self.model().fieldIndex('id'), True)
         self.setColumnHidden(self.model().fieldIndex('body'), True)
 
-    def _empty_model(self) -> TodoListModel:
-        return TodoListModel()
+    def _empty_model(self) -> TodoModel:
+        return TodoModel()
 
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
@@ -37,7 +37,7 @@ class TodoListView(EntryListView):
         idx = self.currentIndex()
         if idx.isValid():
             row = idx.row()
-            model: TodoListModel = self.model()
+            model: TodoModel = self.model()
             obj: VObjTodo = model.getObj(row)
             rec = model.record(row)
             store_id = rec.value('store_id')
@@ -52,20 +52,20 @@ class TodoListView(EntryListView):
         idx = self.currentIndex()
         if idx.isValid():
             row = idx.row()
-            model: TodoListModel = self.model()
+            model: TodoModel = self.model()
             model.delObj(row)
             model.removeRow(row)
             model.select()
 
 
-class TodoListManagerView(EntryListManagerView):
+class TodoStoreView(StoreListView):
     _title = 'ToDo list'
 
     def __init__(self, parent, dependant: TodoListView):
         super().__init__(parent, dependant)
 
-    def _empty_model(self) -> TodoListManagerModel:
-        return TodoListManagerModel()
+    def _empty_model(self) -> TodoStoreModel:
+        return TodoStoreModel()
 
     def storeSync(self):
         """Sync Store with its connection"""
@@ -144,7 +144,7 @@ class TodoView(EntryView):
 
 
 class TodosWidget(QtWidgets.QWidget):
-    sources: TodoListManagerView
+    sources: TodoStoreView
     list: TodoListView
     details: TodoView
 
@@ -157,7 +157,7 @@ class TodosWidget(QtWidgets.QWidget):
         splitter = QtWidgets.QSplitter(self)
         self.details = TodoView(splitter)
         self.list = TodoListView(splitter, self.details)
-        self.sources = TodoListManagerView(splitter, self.list)
+        self.sources = TodoStoreView(splitter, self.list)
         # layout
         splitter.addWidget(self.sources)
         splitter.addWidget(self.list)
@@ -171,7 +171,7 @@ class TodosWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
 
-def syncStore(model: TodoListModel, store_id: int, path: str):
+def syncStore(model: TodoModel, store_id: int, path: str):
     """Sync VTODO records with file dir"""
     with os.scandir(path) as itr:
         for entry in itr:

@@ -3,12 +3,12 @@
 import vobject
 from PySide2 import QtCore, QtSql
 # 3. local
-from common import SetGroup, EntryListModel, EntryListManagerModel
+from common import SetGroup, EntryModel, StoreModel
 from .data import VObjTodo
 from . import enums
 
 
-class TodoListModel(EntryListModel):
+class TodoModel(EntryModel):
     __entry_cache: dict[int, vobject.base.Component]    # entry.id: VObj
     __types = set()  # temp types cache
     __DemapClass = {
@@ -104,7 +104,7 @@ class TodoListModel(EntryListModel):
     #     return v
 
 
-class TodoListManagerModel(EntryListManagerModel):
+class TodoStoreModel(StoreModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._set_group = SetGroup.ToDo

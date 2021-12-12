@@ -2,7 +2,7 @@ import inspect
 import os.path
 from PySide2 import QtCore, QtWidgets, QtSql
 from .data import VObj, EntryList
-from .model import EntryListModel, EntryListManagerModel
+from .model import EntryModel, StoreModel
 
 
 class EntryView(QtWidgets.QGroupBox):
@@ -40,9 +40,9 @@ class EntryListView(QtWidgets.QTableView):
         self.selectionModel().currentRowChanged.connect(self.__details.mapper.setCurrentModelIndex)
         # self.resizeColumnsToContents() - QTableView only
 
-    def _empty_model(self) -> EntryListModel:
+    def _empty_model(self) -> EntryModel:
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
-        return EntryListModel()
+        return EntryModel()
 
     def refresh(self, data: EntryList = None):
         # print("List refresh call")
@@ -89,7 +89,7 @@ class EntryListView(QtWidgets.QTableView):
             msg.exec_()
 
 
-class EntryListForm(QtWidgets.QDialog):
+class StoreForm(QtWidgets.QDialog):
     """ A dialog to add (Create) or edit (Update) EL in ELM.
     :todo: chk path exists and is dir"""
     __mapper: QtWidgets.QDataWidgetMapper
@@ -172,8 +172,8 @@ class EntryListForm(QtWidgets.QDialog):
         return self.f_active.isChecked()
 
 
-class EntryListManagerView(QtWidgets.QListView):
-    __form: EntryListForm
+class StoreListView(QtWidgets.QListView):
+    __form: StoreForm
     _list: EntryListView
     _title: str
 
@@ -184,11 +184,11 @@ class EntryListManagerView(QtWidgets.QListView):
         self.setModel(self._empty_model())
         self.setModelColumn(self.model().fieldIndex('name'))
         self.setEditTriggers(self.NoEditTriggers)
-        self.__form = EntryListForm(self._title, self.model())
+        self.__form = StoreForm(self._title, self.model())
 
-    def _empty_model(self) -> EntryListManagerModel:
+    def _empty_model(self) -> StoreModel:
         print("Virtual EntryListManagerView._empty_model()")
-        return EntryListManagerModel(self)
+        return StoreModel(self)
 
     def storeAdd(self):
         """Add new Store"""

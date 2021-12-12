@@ -1,11 +1,13 @@
 # 1. system
 # 2. PySide
+from typing import Any
+
 from PySide2 import QtCore, QtSql
 # 3. local
 from .settings import MySettings, SetGroup
 
 
-class EntryListModel(QtSql.QSqlTableModel):
+class EntryModel(QtSql.QSqlTableModel):
     # _data: EntryList
     # _fld_names: tuple[tuple[IntEnum, str]]  # FIXME:
 
@@ -69,13 +71,13 @@ class EntryListModel(QtSql.QSqlTableModel):
     #     return self._data.item(i)
 
 
-class EntryListManagerModel(QtSql.QSqlTableModel):
+class StoreModel(QtSql.QSqlTableModel):
     _set_group: SetGroup
-    # _data: EntryListManager
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setTable("store")
+        self.setSort(self.fieldIndex('id'), QtCore.Qt.SortOrder.AscendingOrder)
         self.setHeaderData(self.fieldIndex('id'), QtCore.Qt.Horizontal, 'ID')
         self.setHeaderData(self.fieldIndex('active'), QtCore.Qt.Horizontal, '✓')
         self.setHeaderData(self.fieldIndex('name'), QtCore.Qt.Horizontal, "Name")
@@ -88,36 +90,20 @@ class EntryListManagerModel(QtSql.QSqlTableModel):
             fl |= QtCore.Qt.ItemIsUserCheckable
         return fl
 
-    def data(self, index: QtCore.QModelIndex, role=QtCore.Qt.DisplayRole):
-        if role == QtCore.Qt.CheckStateRole and index.column() == self.fieldIndex('name'):
-            checked = self.data(index.siblingAtColumn(self.fieldIndex('active')))
-            return QtCore.Qt.Checked if checked else QtCore.Qt.Unchecked
+    def data(self, index: QtCore.QModelIndex, role=QtCore.Qt.DisplayRole) -> Any:
+        if role == QtCore.Qt.CheckStateRole \
+                and (self.flags(index) & QtCore.Qt.ItemIsUserCheckable != QtCore.Qt.NoItemFlags):
+            return QtCore.Qt.Checked if bool(self.data(index.siblingAtColumn(self.fieldIndex('active')))) \
+                    else QtCore.Qt.Unchecked
         else:
             return QtSql.QSqlTableModel.data(self, index, role)
 
-    # def removeRows(self, row0: int, count: int, _: QtCore.QModelIndex = None) -> bool:
-    #     """Delete 'count' records starting from 'row0'."""
-    #     self.beginRemoveRows(QtCore.QModelIndex(), row0, row0 + count - 1)
-    #     for row in range(row0, row0 + count):
-    #         self._data.itemDel(row)
-    #         MySettings.list_del(self._set_group, row)
-    #     self.endRemoveRows()
-    #     return True
-
-    # def itemAdd(self, name: str, path: str):
-    #     """Add new EntryList
-    #     :todo: implement insertRow() -> bool
-    #     """
-    #     i = self.size
-    #     self.beginInsertRows(QtCore.QModelIndex(), i, i)
-    #     self._data.itemAdd(name, path)
-    #     self.endInsertRows()
-    #     MySettings.list_append(self._set_group, {"name": name, "path": path})
-
-    # def itemUpdate(self, idx: QtCore.QModelIndex, name: str, path: str):
-    #     """Update EntryList.
-    #     :todo: implement setData() -> bool
-    #     """
-    #     i = idx.row()
-    #     self._data.itemUpdate(i, name, path)
-    #     MySettings.list_update(self._set_group, i, {"name": name, "path": path})
+    def setData(self, index: QtCore.QModelIndex, value: Any, role: int = QtCore.Qt.EditRole) -> bool:
+        if role == QtCore.Qt.CheckStateRole and \
+                (self.flags(index) & QtCore.Qt.ItemIsUserCheckable != QtCore.Qt.NoItemFlags):
+            # value = QtCore.Qt.Unchecked=0 | QtCore.Qt.Checked=2
+            self.setData(index.siblingAtColumn(self.fieldIndex('active')), 1 if value == QtCore.Qt.Checked else 0)
+            self.submit()
+            # self.dataChanged.emit(index, index, (role,))
+            return True
+        return QtSql.QSqlTableModel.setData(self, index, value, role)

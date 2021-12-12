@@ -3,12 +3,12 @@
 # 1. system
 # 2. PySide
 # 3. local
-from common import SetGroup, EntryListModel, EntryListManagerModel
+from common import SetGroup, EntryModel, StoreModel
 from .data import ContactList, ContactListManager
 from . import enums
 
 
-class ContactListModel(EntryListModel):
+class ContactModel(EntryModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._data = ContactList()
@@ -24,7 +24,7 @@ class ContactListModel(EntryListModel):
         return ContactList()
 
 
-class ContactListManagerModel(EntryListManagerModel):
+class ContactListManagerModel(StoreModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._set_group = SetGroup.Contacts
