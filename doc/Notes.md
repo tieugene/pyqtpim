@@ -1,5 +1,11 @@
 # Notes
 
+## Tips
+- [CheckBox in QListView using QSqlTableModel](https://stackoverflow.com/questions/48193325/checkbox-in-qlistview-using-qsqltablemodel)
+- [PyQt Layouts](https://realpython.com/python-pyqt-layout/)
+- [Программирование на PyQt5 (43) - использование БД](https://russianblogs.com/article/36811088928/)
+- [PyQt5 DB programming — CUD](https://developpaper.com/pyqt5-database-programming-adding-deleting-and-modifying-examples/)
+
 ## misc
 - ListView ask model w/ DisplayRole; DetailsView - w/ EditRole
 - Update VTODO:
@@ -14,6 +20,37 @@
   - nano `~/.config/vdirsync/config`
   - `vdirsyncer discover`
   - `vdirsyncer sync`
+- QSqlRelationalTableModel: `store_id` changed to `name`, no one from `store_id`, `entry_store_id`, `entry_name_id`, `store_name_id` not works
+- Update Todo record:
+  - !form & !store: do nothing
+  - !form &  store: just update store
+  -  form & !store: update entry
+  -  form &  store: save entry and store
+- Form <> Rec+Entry <> File:
+  - [x] New from Form:
+    - new Obj
+    - new Rec from Obj
+  - [x] Upd from Form:
+    - upd Obj
+    - upd Rec from Form/Obj
+  - [ ] New from File:
+    - add Obj
+    - new Rec from Obj
+  - [ ] Upd from File:
+    - repl Obj
+    - upd all Rec from Obj
+  - Operations:
+    - new Obj from Form
+    - upd Obj from Form
+    - get Obj from File
+    - new Rec from Obj
+    - upd Rec from Obj | Form/Obj
+- QSortFilterProxyModel:
+  - [RTFM2](https://pretagteam.com/question/sort-by-multiple-columns-in-pyqt-model)
+  - [RTFM1](https://github.com/dimkanovikov/MultisortTableView)
+
+
+self.record(index.row()).value('active').toBool()
 
 ## vCard UML
 

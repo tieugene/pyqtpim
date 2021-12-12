@@ -1,56 +1,76 @@
 """GUI representation of ToDo things"""
 # 1. std
 import datetime
+import os
 from typing import Any
 # 2. PySide
-from PySide2 import QtCore, QtWidgets
+import vobject
+from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
-from common import EntryView, EntryListView, EntryListManagerView
-from .model import TodoListManagerModel, TodoListModel
-from .data import Todo
-from .form import TodoForm
+from common import EntryView, EntryListView, StoreListView, exc
+from .model import TodoStoreModel, TodoModel, obj2rec
+from .data import VObjTodo
+from .form import TodoForm, form2rec_upd, form2obj
 from . import enums
 
 
-class TodoListManagerView(EntryListManagerView):
-    _title = 'ToDo list'
-
-    def _empty_model(self) -> TodoListManagerModel:
-        return TodoListManagerModel()
-
-
 class TodoListView(EntryListView):
+    _own_model = TodoModel
+    """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
-        # self.setColumnHidden(1, True)
+        self.setColumnHidden(self.model().fieldIndex('id'), True)
+        self.setColumnHidden(self.model().fieldIndex('body'), True)
 
-    def _empty_model(self) -> TodoListModel:
-        return TodoListModel()
-
-    def itemAdd(self):
+    def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
-            size = self.model().rowCount()
-            self.model().insertRow(size)
-            item: Todo = self.model().item(size)
-            if form2obj(f, item):   # ?
-                item.save()
+            obj, store_id = form2obj(f)
+            rec = self.model().record()  # new empty
+            obj2rec(obj, rec, store_id)
+            self.model().insertRecord(-1, rec)
+            self.model().select()
+            # adding obj to cache unavailable
 
-    def itemEdit(self):
-        idx = self.selectionModel().currentIndex()
+    def entryEdit(self):
+        idx = self.currentIndex()
         if idx.isValid():
-            i = idx.row()
-            item: Todo = self.model().item(i)
+            row = idx.row()
+            model: TodoModel = self.model()
+            obj: VObjTodo = model.getObj(row)
+            rec = model.record(row)
+            store_id = rec.value('store_id')
             f = TodoForm(self)  # TODO: cache creation
-            f.load(item)
+            f.load(obj, store_id)    # model.relation(col).indexColumn()
             if f.exec_():
-                if form2obj(f, item):
-                    item.save()
+                if form2rec_upd(f, obj, rec):
+                    model.setRecord(row, rec)
+                    model.setObj(rec, obj)
 
-    def itemDel(self):
-        idx = self.selectionModel().currentIndex()
+    def entryDel(self):
+        idx = self.currentIndex()
         if idx.isValid():
-            self.model().removeRow(idx.row())
+            row = idx.row()
+            model: TodoModel = self.model()
+            model.delObj(row)
+            model.removeRow(row)
+            model.select()
+
+
+class TodoStoreListView(StoreListView):
+    _own_model = TodoStoreModel
+    _title = 'ToDo list'
+
+    def __init__(self, parent, dependant: TodoListView):
+        super().__init__(parent, dependant)
+        # self.model().activeChanged.connect(self._list.model().updateFilterByStore)
+
+    def storeSync(self):
+        """Sync Store with its connection"""
+        if not (indexes := self.selectedIndexes()):
+            return
+        rec = self.model().record(indexes[0].row())
+        syncStore(self._list.model(), rec.value('id'), rec.value('connection'))
 
 
 class TodoView(EntryView):
@@ -75,11 +95,11 @@ class TodoView(EntryView):
         layout.addWidget(self.details)
         self.setLayout(layout)
 
-    def __idxChgd(self, idx: int):
+    def __idxChgd(self, row: int):
         """Only for selection; not calling on deselection"""
-        self.__fill_details(self.mapper.model().item(idx))
+        self.__fill_details(self.mapper.model().getObj(row))
 
-    def __fill_details(self, data: Todo = None):    # TODO: clear on None
+    def __fill_details(self, data: VObjTodo = None):    # TODO: clear on None
         def __mk_row(title: str, value: Any):
             if value is None:
                 value = ''
@@ -108,12 +128,12 @@ class TodoView(EntryView):
         text += '</table>'
         self.details.setText(text)
 
-    def setModel(self, model: QtCore.QStringListModel):
+    def setModel(self, model: QtSql.QSqlTableModel):
         """Setup mapper
         :todo: indexOf
         """
         super().setModel(model)
-        self.mapper.addMapping(self.summary, 0)
+        self.mapper.addMapping(self.summary, model.fieldIndex('summary'))
         self.mapper.currentIndexChanged.connect(self.__idxChgd)
 
     def clean(self):
@@ -122,22 +142,23 @@ class TodoView(EntryView):
 
 
 class TodosWidget(QtWidgets.QWidget):
-    sources: TodoListManagerView
+    stores: TodoStoreListView
     list: TodoListView
     details: TodoView
 
     def __init__(self):
         super().__init__()
         self.__createWidgets()
+        self.stores.model().activeChanged.connect(self.list.model().updateFilterByStore)
 
     def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
         self.details = TodoView(splitter)
         self.list = TodoListView(splitter, self.details)
-        self.sources = TodoListManagerView(splitter, self.list)
+        self.stores = TodoStoreListView(splitter, self.list)
         # layout
-        splitter.addWidget(self.sources)
+        splitter.addWidget(self.stores)
         splitter.addWidget(self.list)
         splitter.addWidget(self.details)
         splitter.setOrientation(QtCore.Qt.Horizontal)
@@ -149,78 +170,22 @@ class TodosWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
 
-def form2obj(src: TodoForm, dst: Todo) -> bool:
-    """Update Todo entry with form values.
-    :return: True if anythong changed and entry must be saved.
-
-    :todo: unify and/or hide into Entry setX()
-    """
-    changed = False
-    # - cat
-    if v_new := src.f_category.text():
-        v_new = [s.strip() for s in v_new.split(',')]
-        v_new.sort()
-    else:
-        v_new = None
-    v_old = dst.getCategories()
-    if v_old != v_new:  # compare 0/1/2+ x 0/1/2+
-        dst.setCategories(v_new)
-        changed = True
-    # - class (combo)
-    v_new = src.f_class.getData()
-    if dst.getClass() != v_new:
-        dst.setClass(v_new)
-        changed = True
-    # - completed
-    v_new = src.f_completed.getData()
-    if dst.getCompleted() != v_new:
-        dst.setCompleted(v_new)
-        changed = True
-    # - description
-    v_new = src.f_description.toPlainText() or None
-    if dst.getDescription() != v_new:
-        dst.setDescription(v_new)
-        changed = True
-    # - dtstart
-    v_new = src.f_dtstart.getData()
-    if dst.getDTStart() != v_new:
-        dst.setDTStart(v_new)
-        changed = True
-    # - due
-    v_new = src.f_due.getData()
-    if dst.getDue() != v_new:
-        dst.setDue(v_new)
-        changed = True
-    # - location
-    v_new = src.f_location.text() or None
-    if dst.getLocation() != v_new:
-        dst.setLocation(v_new)
-        changed = True
-    # - percent
-    v_new = src.f_percent.getData()
-    v_old = dst.getPercent()
-    if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
-        dst.setPercent(v_new)
-        changed = True
-    # - priority
-    v_new = src.f_priority.getData()
-    v_old = dst.getPriority()
-    if v_old != v_new and not (v_new == 0 and v_old is None):
-        dst.setPriority(v_new)
-        changed = True
-    # - status (combo)
-    v_new = src.f_status.getData()
-    if dst.getStatus() != v_new:
-        dst.setStatus(v_new)
-        changed = True
-    # - summary
-    v_new = src.f_summary.text() or None
-    if dst.getSummary() != v_new:
-        dst.setSummary(v_new)
-        changed = True
-    # - url
-    v_new = src.f_url.text() or None
-    if dst.getURL() != v_new:
-        dst.setURL(v_new)
-        changed = True
-    return changed
+def syncStore(model: TodoModel, store_id: int, path: str):
+    """Sync VTODO records with file dir"""
+    with os.scandir(path) as itr:
+        for entry in itr:
+            if not entry.is_file():
+                continue
+            with open(entry.path, 'rt') as stream:
+                if ventry := vobject.readOne(stream):
+                    if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
+                        obj = VObjTodo(ventry)
+                        rec = model.record()
+                        obj2rec(obj, rec, store_id)
+                        # rec.setValue('store_id', store_id)
+                        ok = model.insertRecord(-1, rec)
+                        if not ok:
+                            print(obj.getSummary(), "Oops")
+                else:
+                    raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
+    model.select()

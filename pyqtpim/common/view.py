@@ -1,8 +1,8 @@
+"""vCard/iCal views parents"""
+
 import inspect
-import os.path
-from PySide2 import QtCore, QtWidgets
-from .data import Entry, EntryList
-from .model import EntryListModel, EntryListManagerModel
+from PySide2 import QtCore, QtWidgets, QtSql
+from .model import EntryModel, StoreModel
 
 
 class EntryView(QtWidgets.QGroupBox):
@@ -21,6 +21,7 @@ class EntryView(QtWidgets.QGroupBox):
 
 
 class EntryListView(QtWidgets.QTableView):
+    _own_model = EntryModel
     __details: EntryView
 
     def __init__(self, parent, dependant: EntryView):
@@ -32,37 +33,28 @@ class EntryListView(QtWidgets.QTableView):
         # self.setSortingEnabled(True) # requires sorting itself
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().hide()
-        __model = self._empty_model()
+        __model = self._own_model()
         self.setModel(__model)
         self.__details.setModel(__model)
         # signals
         # # self.activated.connect(self.rowChanged)
         self.selectionModel().currentRowChanged.connect(self.__details.mapper.setCurrentModelIndex)
+        # self.resizeColumnsToContents() - QTableView only
 
-    def _empty_model(self) -> EntryListModel:
-        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
-        return EntryListModel()
-
-    def refresh(self, data: EntryList = None):
-        # print("List refresh call")
-        self.model().switch_data(data)
-        self.__details.clean()
-
-    def itemCat(self):
-        """Show file content"""
+    def entryCat(self):
+        """Show raw Entry content"""
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
-            i = idx.row()
-            item: Entry = self.model().item(i)
-            path = item.fpath
-            if raw := item.load_raw():
-                msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "File content", path)
-                msg.setDetailedText(raw)
-                # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-                msg.exec_()
+            row = idx.row()
+            rec = self.model().record(row)
+            body = rec.value('body')
+            msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", rec.value('summary'))
+            msg.setDetailedText(body)
+            # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+            msg.exec_()
 
-    def itemInside(self):
-        """Show entry content
+    def entryInside(self):
+        """Show clean entry content
         :todo: style it
         Simple:
         msg.setText(raw['summary'])
@@ -73,7 +65,7 @@ class EntryListView(QtWidgets.QTableView):
         idx = self.selectionModel().currentIndex()
         if idx.isValid():
             i = idx.row()
-            raw = self.model().item(i).RawContent()
+            raw = self.model().getObj(i).RawContent()
             # icon, title, text
             msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
             # richtext
@@ -89,166 +81,143 @@ class EntryListView(QtWidgets.QTableView):
             msg.exec_()
 
 
-class EntryListManagerView(QtWidgets.QListView):
-    __list: EntryListView
-    _title: str
+class StoreForm(QtWidgets.QDialog):
+    """ A dialog to add (Create) or edit (Update) EL in ELM.
+    :todo: chk path exists and is dir"""
+    __mapper: QtWidgets.QDataWidgetMapper
+    __title: str
+    f_name: QtWidgets.QLineEdit
+    f_connection: QtWidgets.QLineEdit
+    f_active: QtWidgets.QCheckBox
 
-    def __init__(self, parent, dependant: EntryListView):
-        super().__init__(parent)
-        self.__list = dependant
-        self.setSelectionMode(self.SingleSelection)
-        self.setModel(self._empty_model())
-        # set model required
-        self.selectionModel().currentRowChanged.connect(self.rowChanged)
-
-    def _empty_model(self) -> EntryListManagerModel:
-        print("Virtual EntryListManagerView._empty_model()")
-        return EntryListManagerModel()
-
-    def itemAdd(self):
-        """Add new CL."""
-        dialog = EntryListForm(self._title)
-        while dialog.exec_():
-            name = dialog.name
-            path = dialog.path
-            # check values
-            # - name is uniq
-            if self.model().findByName(name):
-                QtWidgets.QMessageBox.warning(self, "Duplicated 'name'",
-                                              f"{self._title} with name '{name}' already registered")
-                continue
-            # - path is uniq
-            if self.model().findByPath(path):
-                QtWidgets.QMessageBox.warning(self, "Duplicated 'path'",
-                                              f"{self._title} with path '{path}' already registered")
-                continue
-            # - path exists and is dir
-            if not os.path.isdir(path):
-                QtWidgets.QMessageBox.warning(self, "Wrong 'path'", f"Path '{path}' is not dir or not exists")
-                continue
-            self.model().itemAdd(name, path)    # update UI
-            break
-
-    def itemEdit(self):
-        indexes = self.selectionModel().selectedRows()
-        if not indexes:
-            return
-        idx = indexes[0]
-        i = idx.row()
-        cl = self.model().item(i)
-        dialog = EntryListForm(self._title, cl.name, cl.path)
-        while dialog.exec_():
-            name = dialog.name
-            path = dialog.path
-            # check values
-            # - changed
-            if name == cl.name and path == cl.path:  # nothing changed
-                break
-            # - name is uniq but not this
-            if self.model().findByName(name, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'name'",
-                                              f"There is another {self._title} with name '{name}'")
-                continue
-            # - path is uniq but not this
-            if self.model().findByPath(path, i):
-                QtWidgets.QMessageBox.warning(self, "Traversal 'path'",
-                                              f"There is another {self._title} with path '{path}'")
-                continue
-            # - path exists and is dir
-            if not os.path.isdir(path):
-                QtWidgets.QMessageBox.warning(self, "Wrong 'path'",
-                                              f"Path '{path}' is not dir or not exists")
-                continue
-            self.model().itemUpdate(idx, name, path)    # update UI
-            break
-
-    def itemDel(self):
-        indexes = self.selectionModel().selectedRows()
-        for index in indexes:
-            i = index.row()
-            name = self.model().item(i).name
-            if QtWidgets.QMessageBox.question(self, f"Deleting {self._title}",
-                                              f"Are you sure to delete '{name}'")\
-                    == QtWidgets.QMessageBox.StandardButton.Yes:
-                self.model().removeRow(i)
-
-    def itemInfo(self):
-        indexes = self.selectionModel().selectedRows()
-        if not indexes:
-            return
-        idx = indexes[0]
-        cl = self.model().item(idx.row())
-        QtWidgets.QMessageBox.information(self, f"{self._title} info",
-                                          f"EntryList info:\n"
-                                          f"Name: {cl.name}\n"
-                                          f"Path: {cl.path}\n"
-                                          f"Records: {cl.size}")
-
-    def rowChanged(self, cur: QtCore.QModelIndex, _: QtCore.QModelIndex):
-        """Fully refresh EL widget on ELM row changed"""
-        if cur.isValid():
-            self.__list.refresh(self.model().item(cur.row()))
-        else:
-            # print("No list selected")
-            self.__list.refresh()
-
-
-class EntryListForm(QtWidgets.QDialog):
-    """ A dialog to add (Create) or edit (Update) EL in ELM."""
-    nameText: QtWidgets.QLineEdit
-    pathText: QtWidgets.QLineEdit
-
-    def __init__(self, title: str, name: str = None, path: str = None):
+    def __init__(self, title: str, model: QtSql.QSqlTableModel):
         super().__init__()
-        name_label = QtWidgets.QLabel("Name")
-        path_label = QtWidgets.QLabel("Path")
-        path_button = QtWidgets.QPushButton("...")
+        self.__title = title
+        # 1. widets
+        l_name = QtWidgets.QLabel("Name")
+        l_connection = QtWidgets.QLabel("Path")
+        b_connection = QtWidgets.QPushButton('…')
+        l_active = QtWidgets.QLabel("Active")
         button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
-        self.nameText = QtWidgets.QLineEdit()
-        self.pathText = QtWidgets.QLineEdit()
-
+        self.f_name = QtWidgets.QLineEdit()
+        self.f_connection = QtWidgets.QLineEdit()
+        self.f_active = QtWidgets.QCheckBox()
+        # 2. layout
         grid = QtWidgets.QGridLayout()
         grid.setColumnStretch(0, 0)
         grid.setColumnStretch(1, 1)
         grid.setColumnStretch(2, 0)
-        grid.addWidget(name_label, 0, 0)
-        grid.addWidget(self.nameText, 0, 1, 1, 2)
-        grid.addWidget(path_label, 1, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
-        grid.addWidget(self.pathText, 1, 1)
-        grid.addWidget(path_button, 1, 2)
-
+        grid.addWidget(l_name, 0, 0)
+        grid.addWidget(self.f_name, 0, 1, 1, 2)
+        grid.addWidget(l_connection, 1, 0, QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
+        grid.addWidget(self.f_connection, 1, 1)
+        grid.addWidget(b_connection, 1, 2)
+        grid.addWidget(l_active, 2, 0)
+        grid.addWidget(self.f_active, 2, 1, 1, 2)
         layout = QtWidgets.QVBoxLayout()
         layout.addLayout(grid)
         layout.addWidget(button_box)
         self.setLayout(layout)
-
-        path_button.clicked.connect(self.browse_dir)
-        button_box.accepted.connect(self.chk_values)
+        # 3. signal
+        b_connection.clicked.connect(self.__browse_dir)
+        button_box.accepted.connect(self.__chk_values)
         button_box.rejected.connect(self.reject)
-        act = "Edit" if name or path else "Add"
-        self.setWindowTitle(f"{act} a {title}")
+        # 4. mapping
+        self.__mapper = QtWidgets.QDataWidgetMapper()
+        self.__mapper.setModel(model)
+        self.__mapper.addMapping(self.f_name, model.fieldIndex('name'))
+        self.__mapper.addMapping(self.f_connection, model.fieldIndex('connection'))
+        self.__mapper.addMapping(self.f_active, model.fieldIndex('active'))  # FIXME: not writes
 
-        if name:
-            self.nameText.setText(name)
-        if path:
-            self.pathText.setText(path)
+    def setIdx(self, idx: QtCore.QModelIndex = None):
+        if idx:
+            self.__mapper.setCurrentModelIndex(idx)
+        else:
+            self.f_name.clear()
+            self.f_connection.clear()
+            self.f_active.setChecked(False)
+        act = "Edit" if idx else "Add"
+        self.setWindowTitle(f"{act} a {self.__title}")
 
-    def browse_dir(self):
+    def __browse_dir(self):
         # TODO: set starting path
         if directory := QtCore.QDir.toNativeSeparators(
                 QtWidgets.QFileDialog.getExistingDirectory(self, "Select dir", QtCore.QDir.currentPath())):
-            self.pathText.setText(directory)
+            self.f_connection.setText(directory)
 
-    def chk_values(self):
-        if self.name and self.path:
+    def __chk_values(self):
+        if self.name and self.connection:
             self.accept()
         else:
             QtWidgets.QMessageBox.warning(self, "Empty values", "As 'name' as 'path' must not be empty")
 
     @property
     def name(self):
-        return self.nameText.text()
+        return self.f_name.text()
 
     @property
-    def path(self):
-        return self.pathText.text()
+    def connection(self):
+        return self.f_connection.text()
+
+    @property
+    def active(self):
+        return self.f_active.isChecked()
+
+
+class StoreListView(QtWidgets.QListView):
+    _own_model = StoreModel
+    __form: StoreForm
+    _list: EntryListView
+    _title: str
+
+    def __init__(self, parent, dependant: EntryListView):
+        super().__init__(parent)
+        self._list = dependant
+        # self.setSelectionMode(self.SingleSelection)
+        self.setModel(self._own_model())
+        self.setModelColumn(self.model().fieldIndex('name'))
+        self.setEditTriggers(self.NoEditTriggers)
+        self.__form = StoreForm(self._title, self.model())
+
+    def storeAdd(self):
+        """Add new Store"""
+        self.__form.setIdx()
+        if self.__form.exec_():
+            rec = self.model().record()
+            rec.setValue('name', self.__form.name)
+            rec.setValue('connection', self.__form.connection)
+            rec.setValue('active', int(self.__form.active))
+            ok = self.model().insertRecord(self.model().rowCount(), rec)
+            if not ok:
+                print("Oops")
+            self.model().select()   # FIXME: refresh view or model
+
+    def storeEdit(self):
+        """Edit Store"""
+        if not (indexes := self.selectedIndexes()):
+            return
+        idx = indexes[0]
+        self.__form.setIdx(idx)
+        if self.__form.exec_():
+            self.model().submit()
+
+    def storeDel(self):
+        if not (indexes := self.selectedIndexes()):
+            return
+        for index in indexes:
+            row = index.row()
+            name = self.model().record(row).value('name')
+            if QtWidgets.QMessageBox.question(self, f"Deleting {self._title}",
+                                              f"Are you sure to delete '{name}'")\
+                    == QtWidgets.QMessageBox.StandardButton.Yes:
+                self.model().removeRow(row)
+                self.model().select()   # FIXME: refresh view or model
+
+    def storeInfo(self):
+        if not (indexes := self.selectedIndexes()):
+            return
+        rec = self.model().record(indexes[0].row())
+        QtWidgets.QMessageBox.information(self, f"{self._title} info",
+                                          f"{self._title} info:\n"
+                                          f"Name: {rec.value('name')}\n"
+                                          f"Path: {rec.value('connection')}")

@@ -1,10 +1,10 @@
 from .settings import MySettings, SetGroup
-from .data import Entry, EntryList, EntryListManager
-from .model import EntryListModel, EntryListManagerModel
-from .view import EntryView, EntryListView, EntryListManagerView
+from .data import VObj, EntryList, EntryListManager
+from .model import EntryModel, StoreModel
+from .view import EntryView, EntryListView, StoreListView
 __all__ = [
     'MySettings', 'SetGroup',
-    'Entry', 'EntryList', 'EntryListManager',
-    'EntryListModel', 'EntryListManagerModel',
-    'EntryView', 'EntryListView', 'EntryListManagerView'
+    'VObj',
+    'EntryModel', 'StoreModel',
+    'EntryView', 'EntryListView', 'StoreListView'
 ]

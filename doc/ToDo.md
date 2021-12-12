@@ -3,13 +3,13 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] Data: sqlite + sync w/ [local]
-- [ ] List:
-  - [ ] sort (1..4]
-  - [ ] filter
+- [ ] Remove unwanted
+- [ ] TodoList:
+  - [ ] [multi]sort (multicolumn)
+  - [ ] multifilter (QSortFilterProxyModel?)
   - [ ] columns on/off
   - [ ] columns order
-- [ ] TodoForm: interim logic (on the fly; summary!)
+- [ ] TodoForm: interim logic (on the fly, *summary*, .setValidator())
 - [ ] docstrings
 - [ ] DTStart-link-Due = Duration?
 - [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
@@ -17,7 +17,9 @@
   - [ ] comment: QLineEdit[] (str)
   - [ ] contact: QLineEdit[] (email/msgr/uuid)
 - [ ] TZ (on/off)
-- [ ] Built-in sync (vdirsyncer.sync.sync())
+- [ ] Built-in sync:
+  - [ ] 2-way (**del!**)
+  - [ ] vdirsyncer.sync.sync()
 - [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
@@ -27,10 +29,11 @@
 
 ### 0.3. Tuning
 - [ ] TodoForm.Categories: special combobox (like RTM, Evolution)
-- [ ] 'Percent' > 'Progress'
+- [ ] 'Percent' => 'Progress'
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox (~~QDialog.setSizeGripEnabled()~~)
+- [ ] db Entry repr class (`Entry.fld` against `record(i).value('fld')`)
 
 ## 1. Common
 - [ ] EL:
@@ -42,6 +45,9 @@
         - [ ] order
 
 ### 1.1. Next:
+- [ ] DB:
+  - [ ] QSqlTableModel => QSqlQueryModel
+  - [ ] insert/update/delete using sql
 - [ ] map models and mappers using str
 - [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
   - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()

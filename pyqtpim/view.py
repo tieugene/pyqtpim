@@ -17,6 +17,7 @@ class MainWindow(QtWidgets.QMainWindow):
     actEntryListEdit: QtWidgets.QAction
     actEntryListDel: QtWidgets.QAction
     actEntryListInfo: QtWidgets.QAction
+    actEntryListSync: QtWidgets.QAction
     actEntryCat: QtWidgets.QAction
     actEntryInside: QtWidgets.QAction
     actEntryAdd: QtWidgets.QAction
@@ -77,6 +78,12 @@ class MainWindow(QtWidgets.QMainWindow):
                                                   statusTip="Info about current List",
                                                   triggered=self.listInfo)
         # noinspection PyArgumentList
+        self.actEntryListSync = QtWidgets.QAction(QtGui.QIcon(':/icons/info.svg'),
+                                                  "List &Sync", self,
+                                                  shortcut="Ctrl+S",
+                                                  statusTip="Sync current List",
+                                                  triggered=self.listSync)
+        # noinspection PyArgumentList
         self.actEntryCat = QtWidgets.QAction(QtGui.QIcon(':/icons/eye.svg'),
                                              "Entry &File", self,
                                              shortcut="Ctrl+F",
@@ -108,6 +115,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
+        menu_file.addAction(self.actEntryListSync)
         menu_file.addAction(self.actExit)
         menu_edit = self.menuBar().addMenu("&Edit")
         menu_edit.addAction(self.actEntryListAdd)
@@ -137,30 +145,33 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMessageBox.about(self, "About PyQtPIM", "PySide2 powered Personal Information Manager.")
 
     def listAdd(self):
-        (self.todo.sources.itemAdd, self.contacts.sources.itemAdd)[self.tabs.currentIndex()]()
+        (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
 
     def listEdit(self):
-        (self.todo.sources.itemEdit, self.contacts.sources.itemEdit)[self.tabs.currentIndex()]()
+        (self.todo.stores.storeEdit, self.contacts.sources.storeEdit)[self.tabs.currentIndex()]()
 
     def listDel(self):
-        (self.todo.sources.itemDel, self.contacts.sources.itemDel)[self.tabs.currentIndex()]()
+        (self.todo.stores.storeDel, self.contacts.sources.storeDel)[self.tabs.currentIndex()]()
 
     def listInfo(self):
-        (self.todo.sources.itemInfo, self.contacts.sources.itemInfo)[self.tabs.currentIndex()]()
+        (self.todo.stores.storeInfo, self.contacts.sources.storeInfo)[self.tabs.currentIndex()]()
+
+    def listSync(self):
+        self.todo.stores.storeSync()
 
     def entryCat(self):
         """Show file content"""
-        (self.todo.list.itemCat, self.contacts.list.itemCat)[self.tabs.currentIndex()]()
+        (self.todo.list.entryCat, self.contacts.list.entryCat)[self.tabs.currentIndex()]()
 
     def entryInside(self):
         """Show entry structure"""
-        self.todo.list.itemInside()
+        self.todo.list.entryInside()
 
     def entryAdd(self):
-        self.todo.list.itemAdd()
+        self.todo.list.entryAdd()
 
     def entryEdit(self):
-        self.todo.list.itemEdit()
+        self.todo.list.entryEdit()
 
     def entryDel(self):
-        self.todo.list.itemDel()
+        self.todo.list.entryDel()

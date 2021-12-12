@@ -12,7 +12,36 @@
   - [x] ~~QDateTimeEdit: inherit + replace setDate/setTime/setDateTime~~ - no effect
 - [x] GroupDAV sync (ext)
 
-## ToDo
+### Todo.SQL-based
+- [x] 1-way sync:
+  - [x] date[times]: str iso 8601 (date[time].isoformat()/fromisoformat(); 
+  - [x] body: db
+  - [x] ~~vcal cache~~: dict[id, vcal]
+- [x] ~~QSqlRelTablrModel~~ bad idea
+- [x] Todo:
+  - [x] U (+f_list)
+  - [x] D
+  - [x] C
+- [x] Store:
+  - [x] active: check on/off
+  - [x] set filter
+
+## Contacts.File-based
+- [ ] CLM:
+  - [x] CRUD, Info
+  - [x] Hidden inner data
+- [ ] CL:
+  - [ ] CRUD:
+    - [ ] C
+    - [x] R
+    - [ ] U
+    - [ ] D
+  - [x] Load on demand
+  - [x] Hidden inner data
+- [ ] C:
+  - [x] Hidden inner data
+
+## ToDo.File-based
 - [x] Test:
   - [x] ~~Find: TB Ligtning extension for todo in localdir~~
   - [x] ~~Lightning todo w/ local dir (`file:///`)~~
@@ -46,18 +75,3 @@
 - [x] Todo.Details: print `None`s
 - [x] Something wrong with cats
 - [x] LastModified: add 'Z'
-
-## Contacts
-- [ ] CLM:
-  - [x] CRUD, Info
-  - [x] Hidden inner data
-- [ ] CL:
-  - [ ] CRUD:
-    - [ ] C
-    - [x] R
-    - [ ] U
-    - [ ] D
-  - [x] Load on demand
-  - [x] Hidden inner data
-- [ ] C:
-  - [x] Hidden inner data

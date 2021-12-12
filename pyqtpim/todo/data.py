@@ -2,20 +2,31 @@
 :todo: field type enum
 """
 # 1. std
+import uuid
 from _collections import OrderedDict
 import datetime
 from typing import Optional, Union, Any
 # 2. 3rd
 import vobject
 # 3. local
-from common import Entry, EntryList, EntryListManager
+from common import VObj
 from . import enums
 
 
-class Todo(Entry):
-    def __init__(self, fpath: str, data: vobject.base.Component = None):
-        super().__init__(fpath, data)
-        self._name2func = {
+class VObjTodo(VObj):
+    """In-memory one-file VTODO"""
+    def __init__(self, data: vobject.base.Component = None):
+        if data is None:
+            uid = uuid.uuid4()
+            stamp = datetime.datetime.now(tz=vobject.icalendar.utc)
+            data = vobject.iCalendar()
+            data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
+            data.add('vtodo')
+            data.vtodo.add('uid').value = str(uid)
+            data.vtodo.add('dtstamp').value = stamp
+            data.vtodo.add('created').value = stamp
+        super().__init__(data)
+        self._name2func = {  # FIXME: static
             enums.EProp.Categories: self.getCategories,
             enums.EProp.Class: self.getClass,
             enums.EProp.Comment: self.getComment,
@@ -41,7 +52,7 @@ class Todo(Entry):
 
     def save(self):
         self.updateStamps()
-        super().save()
+        # super().save()
 
     def RawContent(self) -> Optional[OrderedDict]:
         """Return inner item content as structure.
@@ -88,7 +99,7 @@ class Todo(Entry):
                     self._data.vtodo.add(fld).value = data
 
     # getters
-    def getAttach(self) -> Optional[Union[str, list[str]]]:
+    def getAttach(self) -> Optional[list[str]]:
         return self.__getFldByName('attach')
 
     def getCategories(self) -> Optional[Union[str, list[str]]]:
@@ -227,18 +238,3 @@ class Todo(Entry):
         self.__setFldByName('sequence', str(seq))
         utc = vobject.icalendar.utc
         self.__setFldByName('last-modified', datetime.datetime.now(tz=utc))
-
-
-class TodoList(EntryList):
-    """todo: collect categories/locations on load"""
-    def _load_one(self, fpath: str, data: vobject.base.Component):
-        if data.name == 'VCALENDAR' and 'vtodo' in data.contents:
-            self._data.append(Todo(fpath, data))
-
-    def _mkItem(self):
-        return Todo(self.path)
-
-
-class TodoListManager(EntryListManager):
-    def itemAdd(self, name: str, path: str):
-        self.append(TodoList(name, path))

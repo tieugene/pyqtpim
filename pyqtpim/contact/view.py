@@ -2,11 +2,11 @@
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryView, EntryListView, EntryListManagerView
-from .model import ContactListManagerModel, ContactListModel
+from common import EntryView, EntryListView, StoreListView
+from .model import ContactListManagerModel, ContactModel
 
 
-class ContactListManagerView(EntryListManagerView):
+class ContactListManagerView(StoreListView):
     _title = 'Contact list'
 
     def _empty_model(self) -> ContactListManagerModel:
@@ -14,8 +14,8 @@ class ContactListManagerView(EntryListManagerView):
 
 
 class ContactListView(EntryListView):
-    def _empty_model(self) -> ContactListModel:
-        return ContactListModel()
+    def _empty_model(self) -> ContactModel:
+        return ContactModel()
 
 
 class ContactView(EntryView):
