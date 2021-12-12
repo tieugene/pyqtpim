@@ -6,6 +6,32 @@
 - [Программирование на PyQt5 (43) - использование БД](https://russianblogs.com/article/36811088928/)
 - [PyQt5 DB programming — CUD](https://developpaper.com/pyqt5-database-programming-adding-deleting-and-modifying-examples/)
 
+## RTFM:
+- Sync:
+  - [vdirsyncer](https://github.com/pimutils/vdirsyncer)
+  - [CalDAV](https://pypi.org/project/caldav/) (CalDAV client)
+  - [pyCardDAV](https://pypi.org/project/pyCardDAV/) (CardDAV CLI)
+  - [~~SyncML~~](https://pypi.org/project/pysyncml/)
+- Samples:
+  - Mozilla Lightning
+  - Apple Reminder
+  - [Rainlendar2](http://www.rainlendar.net/) (&euro;5..10)
+  - [Evolution](https://wiki.gnome.org/Apps/Evolution)
+  - [OpenTasks](https://opentasks.app)
+  - [RTM](https://www.rememberthemilk.com) ($40/y)
+- [pimutils](https://github.com/pimutils)
+- PySide2 Book[^4]
+- Radicale src
+- pyside2/examples:
+  - tutorial/t8.py (UI)
+  - widgets:
+     - mainwindows/ (UI, mainwindow)
+     - layouts/ (UI, layouts)
+     - gallery/ (UI, widgets)
+     - itemviews/addresbook/ (?)
+     - tutorials/addressbook/ (CRUD)
+  - sql/books/ (list/Details)
+
 ## misc
 - ListView ask model w/ DisplayRole; DetailsView - w/ EditRole
 - Update VTODO:
@@ -208,3 +234,5 @@ knownChildren = {
 ```bash
 rsync -avz --del --exclude=".*" my.remote.host::dav .
 ```
+
+[^4]: [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?
