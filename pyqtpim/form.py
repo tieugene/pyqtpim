@@ -1,6 +1,7 @@
 from PySide2 import QtWidgets, QtCore
 
 from todo import ColHeader
+from common import MySettings, SetGroup
 
 
 class SettingsView(QtWidgets.QDialog):
@@ -16,7 +17,7 @@ class SettingsView(QtWidgets.QDialog):
         self.f_todo_col2show = QtWidgets.QListWidget()
         self.f_todo_col2show.addItems(ColHeader)
         for i in range(self.f_todo_col2show.count()):
-            item: QtWidgets.QListWidgetItem = self.f_todo_col2show.item(i)
+            item = self.f_todo_col2show.item(i)
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)  # FIXME: |
         # the end
         self.button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
@@ -30,6 +31,17 @@ class SettingsView(QtWidgets.QDialog):
         layout.addRow(self.button_box)
         self.setLayout(layout)
 
-    def load(self):
+    # Inherit
+    def accept(self):
+        col2show = set()
         for i in range(self.f_todo_col2show.count()):
-            self.f_todo_col2show.item(i).setCheckState(QtCore.Qt.Checked)
+            if self.f_todo_col2show.item(i).checkState() == QtCore.Qt.Checked:
+                col2show.add(i)
+        MySettings.set(SetGroup.ToDo, 'col2show', col2show)
+        return super().accept()
+
+    # Hand-made
+    def load(self):
+        col2show = MySettings.get(SetGroup.ToDo, 'col2show')
+        for i in range(self.f_todo_col2show.count()):
+            self.f_todo_col2show.item(i).setCheckState(QtCore.Qt.Checked if i in col2show else QtCore.Qt.Unchecked)
