@@ -21,6 +21,7 @@ class TodoListView(EntryListView):
         super().__init__(parent, dependant)
         self.updateCol2Show()
         self.setColumnHidden(self.model().fieldIndex('body'), True)
+        self.horizontalHeader().setSectionsMovable(True)
 
     def updateCol2Show(self):
         col2show = MySettings.get(SetGroup.ToDo, 'col2show')

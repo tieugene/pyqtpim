@@ -12,6 +12,7 @@ class SettingsView(QtWidgets.QDialog):
         self.__createWidgets()
         self.__setLayout()
         self.setWindowTitle("Settings")
+        # TODO: add 'Reset to default' button
 
     def __createWidgets(self):
         self.f_todo_col2show = QtWidgets.QListWidget()

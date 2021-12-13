@@ -4,10 +4,10 @@
 
 ### 0.1. Job
 - [ ] TodoList:
-  - [ ] columns on/off (tv.setColumnHidden()
-     - [ ] settings: `col2show: set[str]`
-  - [ ] columns order (tv.swapSections()/tv.moveSection(), handly - QHeaderView.XsectionMovable())
-     - [ ] settings: ?list
+  - [ ] columns order:
+     - [x] handly: QHeaderView.sectionMovable(); sectrionMoved()?
+     - [ ] settings: QHeaderView.visualIndex() => list?
+     - [ ] init: .swapSections()/.moveSection()
   - [ ] QSortFilterProxyModel:
      - [ ] multisort (e.g. default: prio=>due=>summary)
      - [ ] multifilter
@@ -31,6 +31,7 @@
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox (~~QDialog.setSizeGripEnabled()~~)
+- [ ] Settings.col2show: wrap set into readable
 
 ## 1. Common
 - [ ] Docs: compare PIMs

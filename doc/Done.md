@@ -26,6 +26,8 @@
   - [x] active: check on/off
   - [x] set filter
 - [x] Remove unwanted (file-based)
+- [x] TodoList: columns on/off
+
 
 ## Contacts.File-based
 - [ ] CLM:
