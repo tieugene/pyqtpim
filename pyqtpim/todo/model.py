@@ -3,33 +3,25 @@
 import vobject
 from PySide2 import QtCore, QtSql
 # 3. local
-from common import SetGroup, EntryModel, StoreModel
+from common import SetGroup, EntryModel, EntryProxyModel, StoreModel
 from .data import VObjTodo
+from . import enums
 
 
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
-    __entry_cache: dict[int, VObjTodo]    # entry.id: VObj
+    __entry_cache: dict[int, VObjTodo]  # entry.id: VObj
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__entry_cache = dict()
         self.setTable("entry")
         # self.setRelation(self.fieldIndex('store_id'), QtSql.QSqlRelation('store', 'id', 'name'))
-        self.setHeaderData(self.fieldIndex('id'), QtCore.Qt.Horizontal, 'ID')
-        self.setHeaderData(self.fieldIndex('store_id'), QtCore.Qt.Horizontal, 'store')
-        self.setHeaderData(self.fieldIndex('created'), QtCore.Qt.Horizontal, "Created")
-        self.setHeaderData(self.fieldIndex('modified'), QtCore.Qt.Horizontal, "Updated")
-        self.setHeaderData(self.fieldIndex('dtstart'), QtCore.Qt.Horizontal, "DTStart")
-        self.setHeaderData(self.fieldIndex('due'), QtCore.Qt.Horizontal, "Due")
-        self.setHeaderData(self.fieldIndex('completed'), QtCore.Qt.Horizontal, "Completed")
-        self.setHeaderData(self.fieldIndex('progress'), QtCore.Qt.Horizontal, "%")
-        self.setHeaderData(self.fieldIndex('priority'), QtCore.Qt.Horizontal, "Prio")
-        self.setHeaderData(self.fieldIndex('status'), QtCore.Qt.Horizontal, "Status")
-        self.setHeaderData(self.fieldIndex('summary'), QtCore.Qt.Horizontal, "Summary")
-        self.setHeaderData(self.fieldIndex('location'), QtCore.Qt.Horizontal, "Loc")
+        for i in range(len(enums.ColHeader)):
+            self.setHeaderData(i, QtCore.Qt.Horizontal, enums.ColHeader[i])
         self.setHeaderData(self.fieldIndex('body'), QtCore.Qt.Horizontal, "Body")
         self.updateFilterByStore()
+        # self.setSort(self.fieldIndex('priority'), QtCore.Qt.SortOrder.AscendingOrder)
         self.select()
 
     def setObj(self, rec: QtSql.QSqlRecord, obj: VObjTodo):
@@ -66,6 +58,13 @@ class TodoModel(EntryModel):
         else:
             filt = 'FALSE'  # nothing to show
         self.setFilter(filt)
+
+
+class TodoProxyModel(EntryProxyModel):
+    _own_model = TodoModel
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class TodoStoreModel(StoreModel):

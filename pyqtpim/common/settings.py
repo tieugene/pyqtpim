@@ -1,6 +1,8 @@
 from enum import Enum
+from typing import Any
 
 from PySide2.QtCore import QCoreApplication, QSettings
+# from todo import ColHeader
 
 
 class SetGroup(Enum):
@@ -9,9 +11,10 @@ class SetGroup(Enum):
 
 
 class MySettings:
-    """QSettings extender"""
+    """QSettings extender
+    TODO: wrap 'set's into ','.join(set)
+    """
     __settings: QSettings
-    __cache: dict[SetGroup]
 
     @staticmethod
     def setup():
@@ -20,69 +23,25 @@ class MySettings:
         QCoreApplication.setApplicationName("PyQtPIM")
         QSettings.setDefaultFormat(QSettings.IniFormat)
         MySettings.__settings = QSettings()
-        MySettings.__cache = {
-            SetGroup.Contacts: [],
-            SetGroup.ToDo: []
-        }
-        MySettings.__list_preload(SetGroup.Contacts)
-        MySettings.__list_preload(SetGroup.ToDo)
 
     @staticmethod
-    def __list_preload(group: SetGroup):
-        s = MySettings.__settings
-        s.beginGroup(group.value)
-        size = s.beginReadArray('list')
-        for i in range(size):
-            s.setArrayIndex(i)
-            name = s.value('name')
-            path = s.value('path')
-            MySettings.__cache[group].append((name, path))
-        s.endArray()
-        s.endGroup()
+    def get(group: SetGroup, key: str) -> Any:
+        retvalue = None
+        if key in {'col2show', 'colorder'}:
+            s = MySettings.__settings
+            s.beginGroup(group.value)
+            if key == 'col2show':
+                retvalue = s.value('col2show', set(range(12)))  # len(ColHeader)
+            elif key == 'colorder':
+                retvalue = s.value('colorder', range(13))
+                retvalue = map(int, retvalue)
+            s.endGroup()
+        return retvalue
 
     @staticmethod
-    def list_ls(group: SetGroup) -> list:
-        return MySettings.__cache[group]
-
-    @staticmethod
-    def list_append(group: SetGroup, data: dict):
-        """Append array in group"""
-        s = MySettings.__settings
-        s.beginGroup(group.value)
-        s.beginWriteArray('list')
-        s.setArrayIndex(len(MySettings.__cache[group]))
-        for k, v in data.items():
-            s.setValue(k, v)
-        s.endArray()
-        s.endGroup()
-        MySettings.__cache[group].append((data['name'], data['path']))
-
-    @staticmethod
-    def list_update(group: SetGroup, i: int, data: dict):
-        s = MySettings.__settings
-        s.beginGroup(group.value)
-        s.beginWriteArray('list')
-        s.setArrayIndex(i)
-        for k, v in data.items():
-            s.setValue(k, v)
-        s.setArrayIndex(len(MySettings.__cache[group]) - 1)
-        s.endArray()
-        s.endGroup()
-        MySettings.__cache[group][i] = (data['name'], data['path'])
-
-    @staticmethod
-    def list_del(group: SetGroup, i: int):
-        del MySettings.__cache[group][i]
-        s = MySettings.__settings
-        s.beginGroup(group.value)
-        s.beginWriteArray('list')
-        while i < len(MySettings.__cache[group]):
-            s.setArrayIndex(i)
-            s.setValue('name', MySettings.__cache[group][i][0])
-            s.setValue('path', MySettings.__cache[group][i][1])
-            i += 1
-        s.setArrayIndex(i)
-        s.remove("")
-        s.endArray()
-        s.setValue('list' + '/size', i)  # hack, but...
-        s.endGroup()
+    def set(group: SetGroup, key: str, val: Any):
+        if key in {'col2show', 'colorder'}:
+            s = MySettings.__settings
+            s.beginGroup(group.value)
+            s.setValue(key, val)
+            s.endGroup()

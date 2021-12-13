@@ -7,7 +7,7 @@ from typing import Any
 import vobject
 from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
-from common import EntryView, EntryListView, StoreListView, exc
+from common import EntryView, EntryListView, StoreListView, exc, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, obj2rec
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
@@ -19,8 +19,44 @@ class TodoListView(EntryListView):
     """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
-        self.setColumnHidden(self.model().fieldIndex('id'), True)
+        self.reloadCol2Show()
         self.setColumnHidden(self.model().fieldIndex('body'), True)
+        self.reloadColOrder()
+        self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
+        self.horizontalHeader().setSectionsMovable(True)
+
+    def sectionMoved(self, lIdx: int, ovIdx: int, nvIdx: int):
+        """Section lIdx moved from ovIdx to nvIdx"""
+        self.resaveColOrder()
+
+    def reloadCol2Show(self):
+        """[Re]load colums visibility from settings"""
+        col2show = MySettings.get(SetGroup.ToDo, 'col2show')
+        for i in range(self.model().columnCount()):
+            self.setColumnHidden(i, not (i in col2show))
+
+    def reloadColOrder(self):
+        """[Re]load columns order from settings
+        :todo: Need to think:
+        for each pos:
+          find who must be in this pos
+          move that into pos
+        """
+        col_order = MySettings.get(SetGroup.ToDo, 'colorder')
+        hh = self.horizontalHeader()
+        for li, vi in enumerate(col_order):
+            cvi = hh.visualIndex(li)
+            if cvi != vi:
+                self.horizontalHeader().moveSection(cvi, vi)
+
+    def resaveColOrder(self):
+        """[Re]save columns order to settings"""
+        col_order = list()
+        for li in range(self.model().columnCount()):
+            vi = self.horizontalHeader().visualIndex(li)
+            col_order.append(vi)
+        # print("Col_order:", col_order)
+        MySettings.set(SetGroup.ToDo, 'colorder', col_order)
 
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
@@ -171,7 +207,9 @@ class TodosWidget(QtWidgets.QWidget):
 
 
 def syncStore(model: TodoModel, store_id: int, path: str):
-    """Sync VTODO records with file dir"""
+    """Sync VTODO records with file dir
+    :todo: hide into model
+    """
     with os.scandir(path) as itr:
         for entry in itr:
             if not entry.is_file():

@@ -12,7 +12,7 @@
   - [x] ~~QDateTimeEdit: inherit + replace setDate/setTime/setDateTime~~ - no effect
 - [x] GroupDAV sync (ext)
 
-### Todo.SQL-based
+### Todo
 - [x] 1-way sync:
   - [x] date[times]: str iso 8601 (date[time].isoformat()/fromisoformat(); 
   - [x] body: db
@@ -25,6 +25,12 @@
 - [x] Store:
   - [x] active: check on/off
   - [x] set filter
+- [x] Remove unwanted (file-based)
+- [x] TodoList: columns on/off
+- [x] TodoList: column order
+- [x] ~~DTStart-link-Due (TB) => Duration?~~ No
+
+
 
 ## Contacts.File-based
 - [ ] CLM:

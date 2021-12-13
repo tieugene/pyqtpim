@@ -276,6 +276,7 @@ class StatusCombo(SpecialCombo):
 class TodoForm(QtWidgets.QDialog):
     """
     Create/Update form for VTODO
+    :todo: Interim logic (on the fly, mandatory 'summary', .setValidator()
     :todo: popup/pulldown info: created, dtstamp, modified, sequence, uid
     :todo: select optional fields to show: class, ...
     :todo: set default values: priority, ...
@@ -345,7 +346,7 @@ class TodoForm(QtWidgets.QDialog):
         layout.addRow("Location", self.f_location)  # on demand
         layout.addRow("URL", self.f_url)            # on demand
         layout.addRow("Description", self.f_description)
-        # finish
+        # the end
         layout.addRow(self.button_box)
         self.setLayout(layout)
 

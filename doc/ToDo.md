@@ -3,29 +3,23 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] Remove unwanted
 - [ ] TodoList:
-  - [ ] [multi]sort (multicolumn)
-  - [ ] multifilter (QSortFilterProxyModel?)
-  - [ ] columns on/off
-  - [ ] columns order
-- [ ] TodoForm: interim logic (on the fly, *summary*, .setValidator())
+  - [ ] QSortFilterProxyModel:
+     - [ ] multisort (e.g. default: prio=>due=>summary)
+     - [ ] multifilter (e.g. 'Today')
+- [ ] TodoForm: interim logic
 - [ ] docstrings
-- [ ] DTStart-link-Due = Duration?
 - [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
   - [ ] attach:  QLineEdit[] (url)
   - [ ] comment: QLineEdit[] (str)
   - [ ] contact: QLineEdit[] (email/msgr/uuid)
 - [ ] TZ (on/off)
-- [ ] Built-in sync:
-  - [ ] 2-way (**del!**)
-  - [ ] vdirsyncer.sync.sync()
-- [ ] Docs: compare PIMs
 
 ### 0.2. Fixme
 - [ ] UTC ('Z') datetime makes exception
 - [ ] rollback on serialize() error (save())
 - [ ] Todo.Completed: exact datetime[.utc]
+- [ ] Todo.reloadColOrder() algo
 
 ### 0.3. Tuning
 - [ ] TodoForm.Categories: special combobox (like RTM, Evolution)
@@ -33,9 +27,11 @@
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox (~~QDialog.setSizeGripEnabled()~~)
-- [ ] db Entry repr class (`Entry.fld` against `record(i).value('fld')`)
+- [ ] Settings.col2show: wrap set into readable
 
 ## 1. Common
+- [ ] Docs: compare PIMs
+- [ ] 2-way sync
 - [ ] EL:
   - [ ] Data: sort
   - [ ] View:
@@ -44,47 +40,12 @@
         - [ ] on/off
         - [ ] order
 
-### 1.1. Next:
-- [ ] DB:
-  - [ ] QSqlTableModel => QSqlQueryModel
-  - [ ] insert/update/delete using sql
-- [ ] map models and mappers using str
-- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
-  - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
-  - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
-- [ ] Sync:
-  - [ ] [vdirsyncer](https://github.com/pimutils/vdirsyncer)
-  - [ ] [CalDAV](https://pypi.org/project/caldav/) (CalDAV client)
-  - [ ] [pyCardDAV](https://pypi.org/project/pyCardDAV/) (CardDAV CLI)
-  - [ ] [~~SyncML~~](https://pypi.org/project/pysyncml/)
-- [ ] Actions: Enable/Disable by context
-- [ ] ELM:
-  - [ ] Model:
-     - [ ] insertRows()
-     - [ ] updateRows()
-     - [x] QStringListModel
-     - [ ] *All* virtual list / checkboxes
-- [ ] EL:
-  - [ ] Data: async load
-  - [ ] Model: QStandardItemModel (?)
-- [ ] E:
-  - [ ] description/notes format as markdown:
-     - X-ALT-DESC;FMTTYPE=text/html:
-     - DESCRIPTION;ALTREP=text/html:
-- [ ] Deployment:
-  - [ ] docstrings
-  - [ ] pylint
-  - [ ] tox.ini
-  - [ ] setup.py
-  - [ ] \*.spec
-
 ## 2. ToDo
 - [ ] E:
   - […] Extend
   - […] CRUD[^2]
   - [ ] edit timezone
 - [ ] EL: View: column delegates
-- [ ] TodoForm: f_list
 
 ### RTM
 - InstantAdd (+Inbox)
@@ -98,30 +59,30 @@
   - [ ] Extend
   - [ ] CRUD[^3]
 
+## 4. Next:
+- [ ] db Entry repr class (`Entry.fld` against `record(i).value('fld')`)
+- [ ] DB:
+  - [ ] QSqlTableModel => QSqlQueryModel
+  - [ ] insert/update/delete using sql
+- [ ] map models and mappers using str
+- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
+  - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
+  - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
+- [ ] Actions: Enable/Disable by context
+- [ ] E:
+  - [ ] description/notes format as markdown:
+     - X-ALT-DESC;FMTTYPE=text/html:
+     - DESCRIPTION;ALTREP=text/html:
+- [ ] Deployment:
+  - [ ] docstrings
+  - [ ] pylint
+  - [ ] tox.ini
+  - [ ] setup.py
+  - [ ] \*.spec
+
 ## x. misc
 
-### x.1. RTFM
-- Samples:
-  - Mozilla Lightning
-  - Apple Reminder
-  - [Rainlendar2](http://www.rainlendar.net/) (&euro;5..10)
-  - [Evolution](https://wiki.gnome.org/Apps/Evolution)
-  - [OpenTasks](https://opentasks.app)
-  - [RTM](https://www.rememberthemilk.com) ($40/y)
-- [pimutils](https://github.com/pimutils)
-- PySide2 Book[^4]
-- Radicale src
-- pyside2/examples:
-  - tutorial/t8.py (UI)
-  - widgets:
-     - mainwindows/ (UI, mainwindow)
-     - layouts/ (UI, layouts)
-     - gallery/ (UI, widgets)
-     - itemviews/addresbook/ (?)
-     - tutorials/addressbook/ (CRUD)
-  - sql/books/ (list/Details)
-
-### x.2. Try
+### x.1. Try
 - [python-vdir](https://github.com/pimutils/python-vdir)
 - [ics-py](https://github.com/ics-py/ics-py/)
 - [icalendar](https://github.com/collective/icalendar/)
@@ -130,4 +91,4 @@
 [^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
 [^2]: Lightning/radicale compatible; not drop data exist
 [^3]: CardBook/radicale compatible; not drop data exist
-[^4]: [Create GUI applications with Pyhon & Qt5 (PySide2 Edition)](https://www.pythonguis.com/pyside2-book/) &copy; Martin Fitzpatrick, $19/1295..14xx RUB, -35%?
+
