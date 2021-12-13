@@ -4,10 +4,13 @@
 
 ### 0.1. Job
 - [ ] TodoList:
-  - [ ] columns on/off
-  - [ ] columns order
-  - [ ] [multi]sort
-  - [ ] multifilter (QSortFilterProxyModel?)
+  - [ ] columns on/off (tv.setColumnHidden()
+     - [ ] settings: `col2show: set[str]`
+  - [ ] columns order (tv.swapSections()/tv.moveSection(), handly - QHeaderView.XsectionMovable())
+     - [ ] settings: ?list
+  - [ ] QSortFilterProxyModel:
+     - [ ] multisort (e.g. default: prio=>due=>summary)
+     - [ ] multifilter
 - [ ] TodoForm: interim logic (on the fly, *summary*, .setValidator())
 - [ ] docstrings
 - [ ] DTStart-link-Due = Duration?

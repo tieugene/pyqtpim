@@ -1,3 +1,4 @@
 from .data import VObjTodo
 from .view import TodosWidget
-__all__ = ['TodosWidget', 'VObjTodo']
+from .enums import ColHeader
+__all__ = ['TodosWidget', 'VObjTodo', 'ColHeader']

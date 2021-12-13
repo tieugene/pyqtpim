@@ -83,3 +83,18 @@ Enum2Raw_Status: dict[EStatus, str] = {
     EStatus.Completed: 'COMPLETED',
     EStatus.Cancelled: 'CANCELLED'
 }
+
+ColHeader = (
+    "ID",
+    "Store",
+    "Created",
+    "Modified",
+    "DTStart",
+    "Due",
+    "Completed",
+    "Progress",
+    "Priority",
+    "Status",
+    "Sumamry",
+    "Location"
+)

@@ -345,7 +345,7 @@ class TodoForm(QtWidgets.QDialog):
         layout.addRow("Location", self.f_location)  # on demand
         layout.addRow("URL", self.f_url)            # on demand
         layout.addRow("Description", self.f_description)
-        # finish
+        # the end
         layout.addRow(self.button_box)
         self.setLayout(layout)
 

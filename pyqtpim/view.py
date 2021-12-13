@@ -1,8 +1,9 @@
 """Main GUI"""
 
-from PySide2 import QtWidgets, QtGui
+from PySide2 import QtWidgets, QtGui, QtCore
 from contact import ContactsWidget
-from todo import TodosWidget
+from todo import TodosWidget, ColHeader
+from form import SettingsView
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -10,9 +11,11 @@ class MainWindow(QtWidgets.QMainWindow):
     contacts: ContactsWidget
     # misc
     tabs: QtWidgets.QTabWidget
+    settings_view: SettingsView
     # actions
     actExit: QtWidgets.QAction
     actAbout: QtWidgets.QAction
+    actSettings: QtWidgets.QAction
     actEntryListAdd: QtWidgets.QAction
     actEntryListEdit: QtWidgets.QAction
     actEntryListDel: QtWidgets.QAction
@@ -32,6 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createToolBars()
         self.createStatusBar()
         self.setWindowTitle("PyQtPIM")
+        self.settings_view = SettingsView()
 
     def createWidgets(self):
         # order
@@ -56,6 +60,11 @@ class MainWindow(QtWidgets.QMainWindow):
                                           "&About", self,
                                           statusTip="Show the application's About box",
                                           triggered=self.about)
+        # noinspection PyArgumentList
+        self.actSettings = QtWidgets.QAction(QtGui.QIcon(':/icons/cog.svg'),
+                                             "&Settings", self,
+                                             statusTip="Define settings",
+                                             triggered=self.settings)
         # noinspection PyArgumentList
         self.actEntryListAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
                                                  "&New List", self,
@@ -116,6 +125,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
         menu_file.addAction(self.actEntryListSync)
+        menu_file.addSeparator()
+        menu_file.addAction(self.actSettings)
         menu_file.addAction(self.actExit)
         menu_edit = self.menuBar().addMenu("&Edit")
         menu_edit.addAction(self.actEntryListAdd)
@@ -143,6 +154,10 @@ class MainWindow(QtWidgets.QMainWindow):
     # actions
     def about(self):
         QtWidgets.QMessageBox.about(self, "About PyQtPIM", "PySide2 powered Personal Information Manager.")
+
+    def settings(self):
+        self.settings_view.load()
+        self.settings_view.exec_()
 
     def listAdd(self):
         (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
