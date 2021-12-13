@@ -7,7 +7,7 @@ from typing import Any
 import vobject
 from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
-from common import EntryView, EntryListView, StoreListView, exc
+from common import EntryView, EntryListView, StoreListView, exc, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, obj2rec
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
@@ -19,8 +19,13 @@ class TodoListView(EntryListView):
     """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
-        self.setColumnHidden(self.model().fieldIndex('id'), True)
+        self.updateCol2Show()
         self.setColumnHidden(self.model().fieldIndex('body'), True)
+
+    def updateCol2Show(self):
+        col2show = MySettings.get(SetGroup.ToDo, 'col2show')
+        for i in range(self.model().columnCount()):
+            self.setColumnHidden(i, not (i in col2show))
 
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
@@ -171,7 +176,9 @@ class TodosWidget(QtWidgets.QWidget):
 
 
 def syncStore(model: TodoModel, store_id: int, path: str):
-    """Sync VTODO records with file dir"""
+    """Sync VTODO records with file dir
+    :todo: hide into model
+    """
     with os.scandir(path) as itr:
         for entry in itr:
             if not entry.is_file():

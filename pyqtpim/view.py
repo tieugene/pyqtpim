@@ -157,7 +157,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def settings(self):
         self.settings_view.load()
-        self.settings_view.exec_()
+        if self.settings_view.exec_():
+            self.todo.list.updateCol2Show()
 
     def listAdd(self):
         (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
