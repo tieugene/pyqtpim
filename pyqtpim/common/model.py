@@ -14,6 +14,13 @@ class EntryModel(QtSql.QSqlTableModel):
         super().__init__(*args, **kwargs)
 
 
+class EntryProxyModel(QtCore.QSortFilterProxyModel):
+    _own_model = EntryModel
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class StoreModel(QtSql.QSqlTableModel):
     activeChanged: QtCore.Signal = QtCore.Signal()
     _set_group: SetGroup

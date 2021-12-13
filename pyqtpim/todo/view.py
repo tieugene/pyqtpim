@@ -25,20 +25,23 @@ class TodoListView(EntryListView):
         self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
         self.horizontalHeader().setSectionsMovable(True)
 
-    @QtCore.Slot(int, int, int)
     def sectionMoved(self, lIdx: int, ovIdx: int, nvIdx: int):
         """Section lIdx moved from ovIdx to nvIdx"""
         self.resaveColOrder()
 
     def reloadCol2Show(self):
-        """[Re]load] colums visibility from settings"""
+        """[Re]load colums visibility from settings"""
         col2show = MySettings.get(SetGroup.ToDo, 'col2show')
         for i in range(self.model().columnCount()):
             self.setColumnHidden(i, not (i in col2show))
 
     def reloadColOrder(self):
         """[Re]load columns order from settings
-        :todo: Need to think"""
+        :todo: Need to think:
+        for each pos:
+          find who must be in this pos
+          move that into pos
+        """
         col_order = MySettings.get(SetGroup.ToDo, 'colorder')
         hh = self.horizontalHeader()
         for li, vi in enumerate(col_order):

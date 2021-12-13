@@ -28,6 +28,8 @@
 - [x] Remove unwanted (file-based)
 - [x] TodoList: columns on/off
 - [x] TodoList: column order
+- [x] ~~DTStart-link-Due (TB) => Duration?~~ No
+
 
 
 ## Contacts.File-based

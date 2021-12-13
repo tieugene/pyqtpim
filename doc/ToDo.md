@@ -9,7 +9,6 @@
      - [ ] multifilter (e.g. 'Today')
 - [ ] TodoForm: interim logic
 - [ ] docstrings
-- [ ] DTStart-link-Due = Duration?
 - [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
   - [ ] attach:  QLineEdit[] (url)
   - [ ] comment: QLineEdit[] (str)
