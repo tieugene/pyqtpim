@@ -27,6 +27,7 @@
   - [x] set filter
 - [x] Remove unwanted (file-based)
 - [x] TodoList: columns on/off
+- [x] TodoList: column order
 
 
 ## Contacts.File-based

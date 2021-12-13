@@ -4,14 +4,10 @@
 
 ### 0.1. Job
 - [ ] TodoList:
-  - [ ] columns order:
-     - [x] handly: QHeaderView.sectionMovable(); sectrionMoved()?
-     - [ ] settings: QHeaderView.visualIndex() => list?
-     - [ ] init: .swapSections()/.moveSection()
   - [ ] QSortFilterProxyModel:
      - [ ] multisort (e.g. default: prio=>due=>summary)
-     - [ ] multifilter
-- [ ] TodoForm: interim logic (on the fly, *summary*, .setValidator())
+     - [ ] multifilter (e.g. 'Today')
+- [ ] TodoForm: interim logic
 - [ ] docstrings
 - [ ] DTStart-link-Due = Duration?
 - [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
@@ -24,6 +20,7 @@
 - [ ] UTC ('Z') datetime makes exception
 - [ ] rollback on serialize() error (save())
 - [ ] Todo.Completed: exact datetime[.utc]
+- [ ] Todo.reloadColOrder() algo
 
 ### 0.3. Tuning
 - [ ] TodoForm.Categories: special combobox (like RTM, Evolution)
