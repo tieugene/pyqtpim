@@ -31,17 +31,18 @@ class MySettings:
             s = MySettings.__settings
             s.beginGroup(group.value)
             if key == 'col2show':
-                retvalue = s.value('col2show', set(range(12)))  # len(ColHeader)
+                retvalue = s.value('col2show', list(range(12)))  # len(ColHeader)
             elif key == 'colorder':
-                retvalue = s.value('colorder', range(13))
-                retvalue = map(int, retvalue)
+                retvalue = s.value('colorder', list(range(13)))
             s.endGroup()
+            retvalue = tuple(map(int, retvalue))
         return retvalue
 
     @staticmethod
     def set(group: SetGroup, key: str, val: Any):
         if key in {'col2show', 'colorder'}:
+            # print("Save", key, type(val), val)
             s = MySettings.__settings
             s.beginGroup(group.value)
-            s.setValue(key, val)
+            s.setValue(key, list(val))
             s.endGroup()

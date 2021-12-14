@@ -29,7 +29,8 @@
 - [x] TodoList: columns on/off
 - [x] TodoList: column order
 - [x] ~~DTStart-link-Due (TB) => Duration?~~ No
-
+- [x] Todo.reloadColOrder() algo
+- [x] Settings.col2show: wrap set into readable
 
 
 ## Contacts.File-based
