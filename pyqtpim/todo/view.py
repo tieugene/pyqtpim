@@ -19,7 +19,7 @@ class TodoListView(EntryListView):
     """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
-        self.reloadCol2Show()
+        self.loadCol2Show()
         self.setColumnHidden(self.model().fieldIndex('body'), True)
         self.loadColOrder()
         self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
@@ -30,9 +30,9 @@ class TodoListView(EntryListView):
         """Section lidx moved from ovidx to nvidx"""
         self.saveColOrder()
 
-    def reloadCol2Show(self):
+    def loadCol2Show(self):
         """[Re]load colums visibility from settings"""
-        col2show = MySettings.get(SetGroup.ToDo, 'col2show')
+        col2show = set(MySettings.get(SetGroup.ToDo, 'col2show'))
         for i in range(self.model().columnCount()):
             self.setColumnHidden(i, not (i in col2show))
 

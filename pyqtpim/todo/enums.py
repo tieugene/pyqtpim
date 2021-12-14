@@ -92,8 +92,8 @@ ColHeader = (
     "DTStart",
     "Due",
     "Completed",
-    "Progress",
-    "Priority",
+    '%',
+    '!',
     "Status",
     "Sumamry",
     "Location"

@@ -9,10 +9,10 @@
      - [ ] multifilter (e.g. 'Today')
 - [ ] TodoForm:
   - [ ] interim logic
-  - [ ] multivalues: (multiline|checklist|stringlist)
-     - [ ] attach:  QLineEdit[]/QListView (url)
-     - [ ] comment: QLineEdit[] (str)
-     - [ ] contact: QLineEdit[] (email/msgr/uuid)
+  - [ ] multivalues: (QLineEdit[]/QListView)
+     - [ ] attach: (url)
+     - [ ] comment: (str)
+     - [ ] contact: (email/msgr/uuid)
   - [ ] TZ (on/off)
 
 ### 0.2. Fixme
@@ -26,7 +26,6 @@
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox
-- [ ] Settings.col2show: wrap set into readable
 - [ ] TodoList: save/restore col widths
 
 ## 1. Common
