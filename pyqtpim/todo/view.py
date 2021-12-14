@@ -21,13 +21,14 @@ class TodoListView(EntryListView):
         super().__init__(parent, dependant)
         self.reloadCol2Show()
         self.setColumnHidden(self.model().fieldIndex('body'), True)
-        self.reloadColOrder()
+        self.loadColOrder()
         self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
         self.horizontalHeader().setSectionsMovable(True)
+        self.sortByColumn(self.model().fieldIndex('id'))
 
-    def sectionMoved(self, lIdx: int, ovIdx: int, nvIdx: int):
-        """Section lIdx moved from ovIdx to nvIdx"""
-        self.resaveColOrder()
+    def sectionMoved(self, lidx: int, ovidx: int, nvidx: int):
+        """Section lidx moved from ovidx to nvidx"""
+        self.saveColOrder()
 
     def reloadCol2Show(self):
         """[Re]load colums visibility from settings"""
@@ -35,27 +36,18 @@ class TodoListView(EntryListView):
         for i in range(self.model().columnCount()):
             self.setColumnHidden(i, not (i in col2show))
 
-    def reloadColOrder(self):
-        """[Re]load columns order from settings
-        :todo: Need to think:
-        for each pos:
-          find who must be in this pos
-          move that into pos
-        """
+    def loadColOrder(self):
+        """[Re]load columns order from settings"""
         col_order = MySettings.get(SetGroup.ToDo, 'colorder')
-        hh = self.horizontalHeader()
-        for li, vi in enumerate(col_order):
-            cvi = hh.visualIndex(li)
-            if cvi != vi:
+        for vi, li in enumerate(col_order):
+            if (cvi := self.horizontalHeader().visualIndex(li)) != vi:
                 self.horizontalHeader().moveSection(cvi, vi)
 
-    def resaveColOrder(self):
+    def saveColOrder(self):
         """[Re]save columns order to settings"""
         col_order = list()
-        for li in range(self.model().columnCount()):
-            vi = self.horizontalHeader().visualIndex(li)
-            col_order.append(vi)
-        # print("Col_order:", col_order)
+        for vi in range(self.horizontalHeader().count()):
+            col_order.append(self.horizontalHeader().logicalIndex(vi))  # colorder[vi] = li
         MySettings.set(SetGroup.ToDo, 'colorder', col_order)
 
     def entryAdd(self):

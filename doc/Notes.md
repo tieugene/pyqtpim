@@ -74,6 +74,12 @@
 - QSortFilterProxyModel:
   - [RTFM2](https://pretagteam.com/question/sort-by-multiple-columns-in-pyqt-model)
   - [RTFM1](https://github.com/dimkanovikov/MultisortTableView)
+- QHeaderView (li = model columnt index):
+  - moveSection(vi0, vi1)
+  - swapSections(vi0, vi1)
+  - visualIndex(li) = vi
+  - logicalIndex(vi) = li
+- ColOrder: Prio/Sum/Due/Status/DTStart/Progress/Completed/Modified/Store
 
 
 self.record(index.row()).value('active').toBool()

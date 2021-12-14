@@ -34,7 +34,7 @@ class MySettings:
                 retvalue = s.value('col2show', set(range(12)))  # len(ColHeader)
             elif key == 'colorder':
                 retvalue = s.value('colorder', range(13))
-                retvalue = map(int, retvalue)
+                retvalue = tuple(map(int, retvalue))
             s.endGroup()
         return retvalue
 

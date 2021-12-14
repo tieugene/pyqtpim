@@ -7,44 +7,43 @@
   - [ ] QSortFilterProxyModel:
      - [ ] multisort (e.g. default: prio=>due=>summary)
      - [ ] multifilter (e.g. 'Today')
-- [ ] TodoForm: interim logic
-- [ ] docstrings
-- [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
-  - [ ] attach:  QLineEdit[] (url)
-  - [ ] comment: QLineEdit[] (str)
-  - [ ] contact: QLineEdit[] (email/msgr/uuid)
-- [ ] TZ (on/off)
+- [ ] TodoForm:
+  - [ ] interim logic
+  - [ ] multivalues: (multiline|checklist|stringlist)
+     - [ ] attach:  QLineEdit[]/QListView (url)
+     - [ ] comment: QLineEdit[] (str)
+     - [ ] contact: QLineEdit[] (email/msgr/uuid)
+  - [ ] TZ (on/off)
 
 ### 0.2. Fixme
 - [ ] UTC ('Z') datetime makes exception
 - [ ] rollback on serialize() error (save())
 - [ ] Todo.Completed: exact datetime[.utc]
-- [ ] Todo.reloadColOrder() algo
 
 ### 0.3. Tuning
-- [ ] TodoForm.Categories: special combobox (like RTM, Evolution)
+- [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
 - [ ] 'Percent' => 'Progress'
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
-- [ ] Expandable 'View File' messagebox (~~QDialog.setSizeGripEnabled()~~)
+- [ ] Expandable 'View File' messagebox
 - [ ] Settings.col2show: wrap set into readable
+- [ ] TodoList: save/restore col widths
 
 ## 1. Common
-- [ ] Docs: compare PIMs
+- [ ] Docs:
+  - [ ] docstrings
+  - [ ] component diagram (UML)
+  - [ ] compare PIMs
 - [ ] 2-way sync
-- [ ] EL:
-  - [ ] Data: sort
-  - [ ] View:
-     - [ ] sort
-     - [ ] Columns:
-        - [ ] on/off
-        - [ ] order
+- [ ] EL: View:
+  - [ ] sort
+  - [ ] filter
 
 ## 2. ToDo
 - [ ] E:
   - […] Extend
   - […] CRUD[^2]
-  - [ ] edit timezone
+  - [ ] timezone
 - [ ] EL: View: column delegates
 
 ### RTM
