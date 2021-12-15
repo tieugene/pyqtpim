@@ -31,7 +31,7 @@
 - [x] ~~DTStart-link-Due (TB) => Duration?~~ No
 - [x] Todo.reloadColOrder() algo
 - [x] Settings.col2show: wrap set into readable
-
+- [x] TodoList: QSortFilterProxyModel
 
 ## Contacts.File-based
 - [ ] CLM:

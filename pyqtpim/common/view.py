@@ -22,24 +22,19 @@ class EntryView(QtWidgets.QGroupBox):
 
 class EntryListView(QtWidgets.QTableView):
     _own_model = EntryModel
-    __details: EntryView
+    _details: EntryView
 
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent)
-        self.__details = dependant
+        self._details = dependant
         self.setSelectionBehavior(self.SelectRows)
         self.setSelectionMode(self.SingleSelection)
         # self.setEditTriggers(self.NoEditTriggers)
         # self.setSortingEnabled(True) # requires sorting itself
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().hide()
-        __model = self._own_model()
+        __model = self._own_model(self)
         self.setModel(__model)
-        self.__details.setModel(__model)
-        # signals
-        # # self.activated.connect(self.rowChanged)
-        self.selectionModel().currentRowChanged.connect(self.__details.mapper.setCurrentModelIndex)
-        # self.resizeColumnsToContents() - QTableView only
 
     def entryCat(self):
         """Show raw Entry content"""

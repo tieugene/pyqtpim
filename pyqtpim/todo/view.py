@@ -5,28 +5,39 @@ import os
 from typing import Any
 # 2. PySide
 import vobject
-from PySide2 import QtCore, QtWidgets, QtSql
+from PySide2 import QtCore, QtWidgets
 # 3. local
 from common import EntryView, EntryListView, StoreListView, exc, MySettings, SetGroup
-from .model import TodoStoreModel, TodoModel, obj2rec
+from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2rec
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
 from . import enums
 
 
 class TodoListView(EntryListView):
-    _own_model = TodoModel
+    _own_model = TodoProxyModel
     """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
+        self._details.setModel(self.model().sourceModel())
+        # addons
         self.loadCol2Show()
-        self.setColumnHidden(self.model().fieldIndex('body'), True)
+        self.setColumnHidden(self.model().sourceModel().fieldIndex('body'), True)
         self.loadColOrder()
         self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
         self.horizontalHeader().setSectionsMovable(True)
-        self.sortByColumn(self.model().fieldIndex('id'))
+        self.sortByColumn(self.model().sourceModel().fieldIndex('id'))
+        # signals
+        # # self.activated.connect(self.rowChanged)
+        self.selectionModel().currentRowChanged.connect(self.rowChanged)
 
-    def sectionMoved(self, lidx: int, ovidx: int, nvidx: int):
+    def rowChanged(self, idx):
+        """:todo: find sourceModel row"""
+        self._details.mapper.setCurrentModelIndex(
+            self._details.mapper.model().index(self.model().mapToSource(idx).row(), 0)
+        )
+
+    def sectionMoved(self, _: int, __: int, ___: int):
         """Section lidx moved from ovidx to nvidx"""
         self.saveColOrder()
 
@@ -54,35 +65,40 @@ class TodoListView(EntryListView):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
             obj, store_id = form2obj(f)
-            rec = self.model().record()  # new empty
+            realmodel = self.model().sourceModel()
+            rec = realmodel.record()  # new empty
             obj2rec(obj, rec, store_id)
-            self.model().insertRecord(-1, rec)
-            self.model().select()
+            if not realmodel.insertRecord(-1, rec):
+                print("Something wrong with adding record")
+            realmodel.select()  # FIXME: update the row only
             # adding obj to cache unavailable
 
     def entryEdit(self):
         idx = self.currentIndex()
         if idx.isValid():
-            row = idx.row()
-            model: TodoModel = self.model()
-            obj: VObjTodo = model.getObj(row)
-            rec = model.record(row)
+            row = self.model().mapToSource(idx).row()
+            realmodel: TodoModel = self.model().sourceModel()
+            obj: VObjTodo = realmodel.getObj(row)
+            rec = realmodel.record(row)
             store_id = rec.value('store_id')
             f = TodoForm(self)  # TODO: cache creation
             f.load(obj, store_id)    # model.relation(col).indexColumn()
             if f.exec_():
                 if form2rec_upd(f, obj, rec):
-                    model.setRecord(row, rec)
-                    model.setObj(rec, obj)
+                    if not realmodel.setRecord(row, rec):
+                        print("Something wrong with updating record")
+                    realmodel.setObj(rec, obj)
+                    realmodel.select()  # FIXME: update the record only
 
     def entryDel(self):
         idx = self.currentIndex()
         if idx.isValid():
-            row = idx.row()
-            model: TodoModel = self.model()
-            model.delObj(row)
-            model.removeRow(row)
-            model.select()
+            row = self.model().mapToSource(idx).row()
+            realmodel: TodoModel = self.model().sourceModel()
+            realmodel.delObj(row)
+            if not realmodel.removeRow(row):
+                print("Something wrong with deleting")
+            realmodel.select()  # FIXME: update the record only
 
 
 class TodoStoreListView(StoreListView):
@@ -98,7 +114,7 @@ class TodoStoreListView(StoreListView):
         if not (indexes := self.selectedIndexes()):
             return
         rec = self.model().record(indexes[0].row())
-        syncStore(self._list.model(), rec.value('id'), rec.value('connection'))
+        syncStore(self._list.model().sourceModel(), rec.value('id'), rec.value('connection'))
 
 
 class TodoView(EntryView):
@@ -156,7 +172,7 @@ class TodoView(EntryView):
         text += '</table>'
         self.details.setText(text)
 
-    def setModel(self, model: QtSql.QSqlTableModel):
+    def setModel(self, model: TodoModel):
         """Setup mapper
         :todo: indexOf
         """
@@ -177,7 +193,7 @@ class TodosWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.__createWidgets()
-        self.stores.model().activeChanged.connect(self.list.model().updateFilterByStore)
+        self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
 
     def __createWidgets(self):
         # order
@@ -213,9 +229,8 @@ def syncStore(model: TodoModel, store_id: int, path: str):
                         rec = model.record()
                         obj2rec(obj, rec, store_id)
                         # rec.setValue('store_id', store_id)
-                        ok = model.insertRecord(-1, rec)
-                        if not ok:
-                            print(obj.getSummary(), "Oops")
+                        if not model.insertRecord(-1, rec):
+                            print(obj.getSummary(), "Something wrong with adding record")
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()

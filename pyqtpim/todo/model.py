@@ -1,5 +1,7 @@
 # 1. system
 # 2. PySide
+import datetime
+
 import vobject
 from PySide2 import QtCore, QtSql
 # 3. local
@@ -65,6 +67,24 @@ class TodoProxyModel(EntryProxyModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
+        """Default: id asc; std: Prio>Due>Summary"""
+        return False
+        realmodel = self.sourceModel()
+        prio_left = realmodel.data(realmodel.index(source_left.row(), realmodel.fieldIndex('priority')))
+        prio_right = realmodel.data(realmodel.index(source_right.row(), realmodel.fieldIndex('priority')))
+        # print(prio_left, "vs", prio_right)
+
+    def filterAcceptsRow(self, source_row: int, source_parent: QtCore.QModelIndex) -> bool:
+        """Default: all; Today: Due <= today [todo: and not completed]"""
+        return True
+        today = datetime.date.today()
+        due: str = self.sourceModel().data(self.sourceModel().index(source_row, self.sourceModel().fieldIndex('due')))
+        if due:
+            return datetime.date.fromisoformat(due) <= today
+        else:
+            return False
 
 
 class TodoStoreModel(StoreModel):
