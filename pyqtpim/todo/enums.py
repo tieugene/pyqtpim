@@ -40,6 +40,7 @@ class EProp(IntEnum):
     URL = auto()            # ?
 
 
+# --- Class
 @unique
 class EClass(IntEnum):
     """CLASS property values"""
@@ -61,6 +62,7 @@ Enum2Raw_Class: dict[EClass, str] = {
 }
 
 
+# --- Status
 @unique
 class EStatus(IntEnum):
     """STATUS property values"""
@@ -84,6 +86,31 @@ Enum2Raw_Status: dict[EStatus, str] = {
     EStatus.Cancelled: 'CANCELLED'
 }
 
+
+# --- Priority
+@unique
+class EPrio(IntEnum):
+    """STATUS property values"""
+    Low = auto()
+    Normal = auto()
+    High = auto()
+
+
+Raw2Enum_Prio: tuple = (
+    None,
+    EPrio.High.value,
+    EPrio.High.value,
+    EPrio.High.value,
+    EPrio.High.value,
+    EPrio.Normal.value,
+    EPrio.Low.value,
+    EPrio.Low.value,
+    EPrio.Low.value,
+    EPrio.Low.value
+)
+
+
+# --- Columns
 ColHeader = (
     "ID",
     "Store",

@@ -106,11 +106,12 @@ def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord, store_id: int):
         rec.setValue('completed', v.isoformat())
     if not (v := obj.getPercent()) is None:
         rec.setValue('progress', v)
-    if not (v := obj.getPriority()) is None:
-        rec.setValue('priority', v)
+    if v := obj.getPriority():
+        rec.setValue('priority', enums.Raw2Enum_Prio[v])
     if v := obj.getStatus():
         rec.setValue('status', v.value)
     rec.setValue('summary', obj.getSummary())
     if v := obj.getLocation():
         rec.setValue('location', v)
-    rec.setValue('body', obj.serialize())
+    body = obj.serialize()
+    rec.setValue('body', body)

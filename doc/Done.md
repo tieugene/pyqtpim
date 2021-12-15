@@ -32,6 +32,8 @@
 - [x] Todo.reloadColOrder() algo
 - [x] Settings.col2show: wrap set into readable
 - [x] TodoList: QSortFilterProxyModel
+- [x] Todo.Form: fixed Completed
+- [x] Todo.Prio: simplify (N..1..2..3)
 
 ## Contacts.File-based
 - [ ] CLM:

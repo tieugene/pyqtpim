@@ -155,16 +155,15 @@ class TodoView(EntryView):
                 value = value.strftime('%y.%m.%d')
             return f"<tr><th>{title}:</th><td>{value}</td></tr>"
         text = '<table>'
+        text += __mk_row("Priority", data.getPriority())
         text += __mk_row("Categories", data.getCategories())
         text += __mk_row("Class", enums.Enum2Raw_Class.get(data.getClass()))
-        text += __mk_row("Completed", data.getCompleted())
         text += __mk_row("DTStart", data.getDTStart())
         text += __mk_row("Due", data.getDue())
-        text += __mk_row("Location", data.getLocation())
-        text += __mk_row("Percent", data.getPercent())
-        text += __mk_row("Priority", data.getPriority())
-        text += __mk_row("Priority", data.getPriority())
+        text += __mk_row("Progress", data.getPercent())
+        text += __mk_row("Completed", data.getCompleted())
         text += __mk_row("Status", enums.Enum2Raw_Status.get(data.getStatus()))
+        text += __mk_row("Location", data.getLocation())
         text += __mk_row("URL", data.getURL())
         if desc := data.getDescription():
             desc = '<br/>'.join(desc.splitlines())

@@ -69,7 +69,7 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
-            return self.f_datetime.datetime().toPython()
+            return self.f_datetime.dateTime().toPython()
 
 
 class CheckableDateAndTimeEdit(QtWidgets.QWidget):
@@ -448,6 +448,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     v_new = form.f_percent.getData()
     v_old = obj.getPercent()    # 0+
     if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
+        print("v_new:", v_new, type(v_new))
         obj.setPercent(v_new)
         if v_new is not None:
             rec.setValue('progress', v_new)
@@ -459,8 +460,8 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     v_old = obj.getPriority()
     if v_old != v_new and not (v_new == 0 and v_old is None):
         obj.setPriority(v_new)
-        if v_new is not None:
-            rec.setValue('priority', v_new)
+        if v_new:
+            rec.setValue('priority', enums.Raw2Enum_Prio[v_new])
         else:
             rec.setNull('priority')
         obj_chgd = rec_chgd = True
@@ -492,7 +493,8 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     if obj_chgd:
         obj.updateStamps()
         rec.setValue('modified', obj.getLastModified().isoformat())
-        rec.setValue('body', obj.serialize())
+        body = obj.serialize()
+        rec.setValue('body', body)
         rec_chgd = True
     return rec_chgd
 

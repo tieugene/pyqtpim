@@ -4,21 +4,33 @@
 
 ### 0.1. Job
 - [ ] TodoList:
-  - [ ] multisort (e.g. default: prio=>due=>summary)
+  - [ ] multisort (predefined/tunable)
   - [ ] multifilter (e.g. 'Today')
+  - [ ] delegates:
+     - [ ] datetimes: as localtime
+     - [ ] Prio: red &uarr;&oplus;&and; / green &star;&odot; / blue &darr;&ominus;&or;
+     - [ ] Status: ?/&hellip;/&check;/&cross;
+     - [ ] Store: name
 - [ ] TodoForm:
   - [ ] interim logic
   - [ ] multivalues: (QLineEdit[]/QListView)
      - [ ] attach: (url)
      - [ ] comment: (str)
      - [ ] contact: (email/msgr/uuid)
-  - [ ] TZ (on/off)
-- [ ] Todo: Categories CRUD
+  - [ ] TZ (on/off): default store as localtime
+- [ ] Categories
+- [ ] Sync
+- [ ] Datetimes:
+  - [ ] VObj: as is (UTC/localtime|tzed)
+  - [ ] DB: utc
+  - [ ] Show: localtime
 
 ### 0.2. Fixme
+- [ ] Error changing % (form:495)
 - [ ] UTC ('Z') datetime makes exception
 - [ ] rollback on serialize() error (save())
 - [ ] Todo.Completed: exact datetime[.utc]
+- [ ] Modified: remove msec
 
 ### 0.3. Tuning
 - [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
