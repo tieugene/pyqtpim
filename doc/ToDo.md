@@ -4,9 +4,8 @@
 
 ### 0.1. Job
 - [ ] TodoList:
-  - [ ] QSortFilterProxyModel:
-     - [ ] multisort (e.g. default: prio=>due=>summary)
-     - [ ] multifilter (e.g. 'Today')
+  - [ ] multisort (e.g. default: prio=>due=>summary)
+  - [ ] multifilter (e.g. 'Today')
 - [ ] TodoForm:
   - [ ] interim logic
   - [ ] multivalues: (QLineEdit[]/QListView)
@@ -14,6 +13,7 @@
      - [ ] comment: (str)
      - [ ] contact: (email/msgr/uuid)
   - [ ] TZ (on/off)
+- [ ] Todo: Categories CRUD
 
 ### 0.2. Fixme
 - [ ] UTC ('Z') datetime makes exception

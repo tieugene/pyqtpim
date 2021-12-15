@@ -80,6 +80,18 @@
   - visualIndex(li) = vi
   - logicalIndex(vi) = li
 - ColOrder: Prio/Sum/Due/Status/DTStart/Progress/Completed/Modified/Store
+- delTodoEntry (sql):
+
+    ```python
+    entry_id = self.model().getRecID(idx)
+    q = QtSql.QSqlQuery()
+    if not q.prepare(query.delTodoEntry):
+        print("Cannot prepare '%s'" % query.delTodoEntry)
+    q.bindValue(0, entry_id)
+    if not q.exec_():
+        print("Something bad with deleting Todo #", entry_id)
+    self.model().sourceModel().select()
+    ```
 
 
 self.record(index.row()).value('active').toBool()

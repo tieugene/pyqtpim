@@ -6,7 +6,7 @@ from typing import Any
 
 from PySide2 import QtCore, QtSql
 # 3. local
-from .settings import MySettings, SetGroup
+from .settings import SetGroup
 
 
 class EntryModel(QtSql.QSqlTableModel):
@@ -19,6 +19,7 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.setSourceModel(self._own_model(self))
 
 
 class StoreModel(QtSql.QSqlTableModel):
@@ -44,7 +45,7 @@ class StoreModel(QtSql.QSqlTableModel):
 
     def data(self, index: QtCore.QModelIndex, role=QtCore.Qt.DisplayRole) -> Any:
         if role == QtCore.Qt.CheckStateRole \
-                and (self.flags(index) & QtCore.Qt.ItemIsUserCheckable != QtCore.Qt.NoItemFlags):
+                and ((self.flags(index) & QtCore.Qt.ItemIsUserCheckable) != QtCore.Qt.NoItemFlags):
             return QtCore.Qt.Checked if bool(self.data(index.siblingAtColumn(self.fieldIndex('active')))) \
                     else QtCore.Qt.Unchecked
         else:
