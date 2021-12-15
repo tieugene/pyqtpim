@@ -26,11 +26,12 @@
   - [ ] Show: localtime
 
 ### 0.2. Fixme
-- [ ] Error changing % (form:495)
+- [ ] Form errors:
+  - [ ] C prio
+  - [ ] U % (form:495)
 - [ ] UTC ('Z') datetime makes exception
 - [ ] rollback on serialize() error (save())
 - [ ] Todo.Completed: exact datetime[.utc]
-- [ ] Modified: remove msec
 
 ### 0.3. Tuning
 - [ ] TodoForm.Categories: special combobox (as RTM/Evolution)

@@ -13,12 +13,16 @@ from common import VObj
 from . import enums
 
 
+def _now():
+    return datetime.datetime.now(tz=vobject.icalendar.utc).replace(microsecond=0)
+
+
 class VObjTodo(VObj):
     """In-memory one-file VTODO"""
     def __init__(self, data: vobject.base.Component = None):
         if data is None:
             uid = uuid.uuid4()
-            stamp = datetime.datetime.now(tz=vobject.icalendar.utc)
+            stamp = _now()
             data = vobject.iCalendar()
             data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
             data.add('vtodo')
@@ -236,5 +240,4 @@ class VObjTodo(VObj):
     def updateStamps(self):
         seq = 0 if (seq := self.getSequence()) is None else seq + 1
         self.__setFldByName('sequence', str(seq))
-        utc = vobject.icalendar.utc
-        self.__setFldByName('last-modified', datetime.datetime.now(tz=utc))
+        self.__setFldByName('last-modified', _now())
