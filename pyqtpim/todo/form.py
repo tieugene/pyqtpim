@@ -75,9 +75,11 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
 class CheckableDateAndTimeEdit(QtWidgets.QWidget):
     is_enabled: QtWidgets.QCheckBox
     is_timed: QtWidgets.QCheckBox
+    is_tzed: QtWidgets.QCheckBox
     f_date: QtWidgets.QDateEdit
     f_time: QtWidgets.QTimeEdit
     t_tz: datetime.tzinfo   # TODO: handle tz
+    l_tz: QtWidgets.QLabel
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -85,15 +87,19 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         # self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.is_enabled = QtWidgets.QCheckBox()
         self.is_timed = QtWidgets.QCheckBox()
+        self.is_tzed = QtWidgets.QCheckBox()
         self.f_date = QtWidgets.QDateEdit()
         self.f_date.setCalendarPopup(True)
         self.f_time = QtWidgets.QTimeEdit()
+        self.l_tz = QtWidgets.QLabel()
         self.t_tz = None
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_date)
         layout.addWidget(self.is_timed)
         layout.addWidget(self.f_time)
+        layout.addWidget(self.is_tzed)
+        layout.addWidget(self.l_tz)
         self.setLayout(layout)
         self.__reset()
         # signals
@@ -101,11 +107,18 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.is_timed.stateChanged[int].connect(self.__switch_time)
 
     def __reset(self):
+        now = datetime.datetime.now().astimezone()
         self.is_enabled.setChecked(False)
+        self.f_date.setDate(now.date())
         self.f_date.setEnabled(False)
         self.is_timed.setChecked(False)
         self.is_timed.setEnabled(False)
         self.f_time.setEnabled(False)
+        self.f_time.setTime(now.time())
+        self.is_tzed.setChecked(False)
+        self.is_tzed.setEnabled(False)
+        self.l_tz.setText(now.tzname())
+        self.t_tz = now.tzinfo
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """
@@ -115,9 +128,11 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_date.setEnabled(bool(state))
         self.is_timed.setEnabled(bool(state))
         self.f_time.setEnabled(bool(state) and self.is_timed.isChecked())
+        self.is_tzed.setEnabled(bool(state) and self.is_timed.isChecked())
 
     def __switch_time(self, state: QtCore.Qt.CheckState):
         self.f_time.setEnabled(bool(state))
+        self.is_tzed.setEnabled(bool(state))
 
     def setData(self, data: Optional[Union[datetime.date, datetime.datetime]] = None):
         if data:
@@ -129,8 +144,10 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                 self.is_timed.setChecked(True)
                 self.f_time.setEnabled(True)
                 self.f_time.setTime(data.time())
-                self.t_tz = data.tzinfo
-                # print(self.t_tz)
+                self.t_tz = data.tzinfo     # real/None (naive)
+                if self.t_tz:
+                    self.is_tzed.setChecked(True)
+                    self.l_tz.setText(data.tzname())  # self.t_tz.tzname(data)
             else:  # date
                 self.f_date.setDate(data)
 
@@ -140,7 +157,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                 return datetime.datetime.combine(
                     self.f_date.date().toPython(),
                     self.f_time.time().toPython(),
-                    tzinfo=self.t_tz
+                    tzinfo=self.t_tz if self.is_tzed.isChecked() else None
                 )
             else:
                 return self.f_date.date().toPython()

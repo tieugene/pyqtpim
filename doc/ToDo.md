@@ -3,18 +3,14 @@
 ## 0. Now
 
 ### 0.1. Job
+- [ ] Datetimes: VObj/DB/Edit/Show
+- [ ] TodoForm: interim logic
 - [ ] TodoList:
-  - [ ] save/restore col widths
+  - [ ] autowidth: id, prio, status, %
   - [ ] multisort (predefined/tunable)
   - [ ] multifilter (e.g. 'Today')
-- [ ] TodoForm:
-  - [ ] interim logic
 - [ ] Categories
 - [ ] Sync
-- [ ] Datetimes:
-  - [ ] VObj: as is (UTC/localtime|tzed)
-  - [ ] DB: utc
-  - [ ] Show: localtime
 
 ### 0.2. Fixme
 - [ ] Form errors:
@@ -25,11 +21,12 @@
 - [ ] Todo.Completed: exact datetime.utc
 
 ### 0.3. Tuning
-- [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
 - [ ] 'Percent' => 'Progress'
+- [ ] Shrink widget groups
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox
+- [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
 
 ## 1. Common
 - [ ] Docs:

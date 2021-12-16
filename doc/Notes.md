@@ -74,25 +74,34 @@
 - QSortFilterProxyModel:
   - [RTFM2](https://pretagteam.com/question/sort-by-multiple-columns-in-pyqt-model)
   - [RTFM1](https://github.com/dimkanovikov/MultisortTableView)
-- QHeaderView (li = model columnt index):
-  - moveSection(vi0, vi1)
-  - swapSections(vi0, vi1)
-  - visualIndex(li) = vi
-  - logicalIndex(vi) = li
-- ColOrder: Prio/Sum/Due/Status/DTStart/Progress/Completed/Modified/Store
-- delTodoEntry (sql):
+- Datetimes:
+  - current:
+     - datetime.datetime.now() # 
+     - datetime.datetime.now(timezone.utc) # UTC current time
+     - datetime.datetime.utcnow() # naive
+  - Timezone:
 
-    ```python
-    entry_id = self.model().getRecID(idx)
-    q = QtSql.QSqlQuery()
-    if not q.prepare(query.delTodoEntry):
-        print("Cannot prepare '%s'" % query.delTodoEntry)
-    q.bindValue(0, entry_id)
-    if not q.exec_():
-        print("Something bad with deleting Todo #", entry_id)
-    self.model().sourceModel().select()
-    ```
+```python
+now: datetime = datetime.datetime.now()     # datetime.datetime naive
+local_now = now.astimezone()                # datetime.datetime w/ tz
+local_tz = local_now.tzinfo                 # datetime.tzinfo
+local_tzname = local_tz.tzname(local_now)   # str
+print(local_tzname)
+```
+or `datetime.datetime.now().astimezone().tzname()`
 
+Datetimes:
+
+Name	| type	| VObj	| SQL	| Edit	| Show
+------|---------|------|------|-----|------
+COMPLETED	| dt	| dtZ	| dtZ	| LocTime	| LocTime
+CREATED	| dt	| dtZ	| dtZ	| ---	| LocTime
+DTSTAMP	| dt	| dtZ	| ---	| ---	| LocTime
+DTSTART	| date	| date	| date	| date	| date
+	| dt	| dt[tz]	| dt[Z]	| ?	| LocTime
+DUE	| date	| date	| date	| date	| date
+	| dt	| dt[tz]	| dt[Z]	| ?	| LocTime
+LAST-M…D	| dt	| dtZ	| dtZ	| ---	| LocTime
 
 self.record(index.row()).value('active').toBool()
 
