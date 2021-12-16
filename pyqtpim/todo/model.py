@@ -1,9 +1,10 @@
 # 1. system
 # 2. PySide
 import datetime
+from typing import Any
 
 import vobject
-from PySide2 import QtCore, QtSql
+from PySide2 import QtCore, QtSql, QtGui
 # 3. local
 from common import SetGroup, EntryModel, EntryProxyModel, StoreModel
 from .data import VObjTodo
@@ -26,6 +27,39 @@ class TodoModel(EntryModel):
         # self.setSort(self.fieldIndex('priority'), QtCore.Qt.SortOrder.AscendingOrder)
         self.select()
 
+    # Inherit
+    def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
+        if not idx.isValid():
+            return None
+        # item = idx.internalPointer()
+        # item.itemData[]
+        if role == QtCore.Qt.DisplayRole:
+            col = idx.column()
+            rec = self.record(idx.row())
+            if col == self.fieldIndex('priority'):
+                if v := rec.value('priority'):
+                    return enums.TDecor_Prio[v]
+            elif col == self.fieldIndex('status'):
+                if v := rec.value('status'):
+                    return enums.TDecor_Status[v]
+            elif col == self.fieldIndex('store_id'):
+                return self.store_name[rec.value('store_id')]
+            else:
+                return super().data(idx, role)
+        elif role == QtCore.Qt.ForegroundRole:
+            col = idx.column()
+            rec = self.record(idx.row())
+            if col == self.fieldIndex('priority'):
+                if v := rec.value('priority'):
+                    return enums.TColor_Prio[v]
+            if col == self.fieldIndex('status'):
+                if v := rec.value('status'):
+                    return enums.TColor_Status[v]
+            return super().data(idx, role)
+        else:
+            return super().data(idx, role)
+
+    # Hand-made
     def setObj(self, rec: QtSql.QSqlRecord, obj: VObjTodo):
         """Add entry body to cache"""
         self.__entry_cache[rec.value('id')] = obj

@@ -10,6 +10,8 @@ from .settings import SetGroup
 
 
 class EntryModel(QtSql.QSqlTableModel):
+    store_name = dict()  # class-wide cache of Store names (id:name)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -35,6 +37,7 @@ class StoreModel(QtSql.QSqlTableModel):
         self.setHeaderData(self.fieldIndex('name'), QtCore.Qt.Horizontal, "Name")
         self.setHeaderData(self.fieldIndex('connection'), QtCore.Qt.Horizontal, "Connection")
         self.select()
+        self.updataChildCache()
 
     # Inherit
     def flags(self, index):
@@ -43,7 +46,7 @@ class StoreModel(QtSql.QSqlTableModel):
             fl |= QtCore.Qt.ItemIsUserCheckable
         return fl
 
-    def data(self, index: QtCore.QModelIndex, role=QtCore.Qt.DisplayRole) -> Any:
+    def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
         if role == QtCore.Qt.CheckStateRole \
                 and ((self.flags(index) & QtCore.Qt.ItemIsUserCheckable) != QtCore.Qt.NoItemFlags):
             return QtCore.Qt.Checked if bool(self.data(index.siblingAtColumn(self.fieldIndex('active')))) \
@@ -60,3 +63,11 @@ class StoreModel(QtSql.QSqlTableModel):
             self.activeChanged.emit()
             return True
         return QtSql.QSqlTableModel.setData(self, index, value, role)
+
+    # Hand-made
+    def updataChildCache(self):
+        """Update child model's cache"""
+        EntryModel.store_name.clear()
+        for i in range(self.rowCount()):
+            EntryModel.store_name[self.record(i).value(self.fieldIndex('id'))] =\
+                self.record(i).value(self.fieldIndex('name'))

@@ -1,6 +1,7 @@
 """Misc VTODO utility enums and mappings.
 :todo: add vobjects field names"""
-from enum import IntEnum, unique, auto
+from enum import IntEnum, unique, auto, Enum
+from PySide2 import QtCore, QtGui
 
 
 @unique
@@ -38,6 +39,13 @@ class EProp(IntEnum):
     Summary = auto()        # ?
     UID = auto()            # 1 auto
     URL = auto()            # ?
+
+
+@unique
+class EDBFld(Enum):
+    """Database table field names
+    :todo:"""
+    ID = 'id'
 
 
 # --- Class
@@ -85,7 +93,14 @@ Enum2Raw_Status: dict[EStatus, str] = {
     EStatus.Completed: 'COMPLETED',
     EStatus.Cancelled: 'CANCELLED'
 }
-
+TDecor_Status = ' ?…✓✗'
+TColor_Status = (
+    None,
+    QtGui.QBrush(QtCore.Qt.blue),
+    QtGui.QBrush(QtCore.Qt.yellow),
+    QtGui.QBrush(QtCore.Qt.green),
+    QtGui.QBrush(QtCore.Qt.red)
+)
 
 # --- Priority
 @unique
@@ -109,6 +124,13 @@ Raw2Enum_Prio: tuple = (
     EPrio.Low.value
 )
 
+TDecor_Prio = ' ↓-!'
+TColor_Prio = (
+    None,
+    QtGui.QBrush(QtCore.Qt.blue),
+    QtGui.QBrush(QtCore.Qt.green),
+    QtGui.QBrush(QtCore.Qt.red)
+)
 
 # --- Columns
 ColHeader = (

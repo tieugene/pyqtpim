@@ -185,7 +185,9 @@ class StoreListView(QtWidgets.QListView):
             ok = self.model().insertRecord(self.model().rowCount(), rec)
             if not ok:
                 print("Oops")
-            self.model().select()   # FIXME: refresh view or model
+            else:
+                self.model().updataChildCache()
+                self.model().select()   # FIXME: refresh view or model
 
     def storeEdit(self):
         """Edit Store"""
@@ -195,6 +197,7 @@ class StoreListView(QtWidgets.QListView):
         self.__form.setIdx(idx)
         if self.__form.exec_():
             self.model().submit()
+            self.model().updataChildCache()
 
     def storeDel(self):
         if not (indexes := self.selectedIndexes()):
@@ -206,6 +209,7 @@ class StoreListView(QtWidgets.QListView):
                                               f"Are you sure to delete '{name}'")\
                     == QtWidgets.QMessageBox.StandardButton.Yes:
                 self.model().removeRow(row)
+                self.model().updataChildCache()
                 self.model().select()   # FIXME: refresh view or model
 
     def storeInfo(self):

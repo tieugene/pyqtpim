@@ -4,20 +4,11 @@
 
 ### 0.1. Job
 - [ ] TodoList:
+  - [ ] save/restore col widths
   - [ ] multisort (predefined/tunable)
   - [ ] multifilter (e.g. 'Today')
-  - [ ] delegates:
-     - [ ] datetimes: as localtime
-     - [ ] Prio: red &uarr;&oplus;&and; / green &star;&odot; / blue &darr;&ominus;&or;
-     - [ ] Status: ?/&hellip;/&check;/&cross;
-     - [ ] Store: name
 - [ ] TodoForm:
   - [ ] interim logic
-  - [ ] multivalues: (QLineEdit[]/QListView)
-     - [ ] attach: (url)
-     - [ ] comment: (str)
-     - [ ] contact: (email/msgr/uuid)
-  - [ ] TZ (on/off): default store as localtime
 - [ ] Categories
 - [ ] Sync
 - [ ] Datetimes:
@@ -31,7 +22,7 @@
   - [ ] U % (form:495)
 - [ ] UTC ('Z') datetime makes exception
 - [ ] rollback on serialize() error (save())
-- [ ] Todo.Completed: exact datetime[.utc]
+- [ ] Todo.Completed: exact datetime.utc
 
 ### 0.3. Tuning
 - [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
@@ -39,7 +30,6 @@
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox
-- [ ] TodoList: save/restore col widths
 
 ## 1. Common
 - [ ] Docs:
@@ -56,6 +46,10 @@
   - […] Extend
   - […] CRUD[^2]
   - [ ] timezone
+  - [ ] multivalues: (QLineEdit[]/QListView)
+     - [ ] attach: (url)
+     - [ ] comment: (str)
+     - [ ] contact: (email/msgr/uuid)
 - [ ] EL: View: column delegates
 
 ### RTM

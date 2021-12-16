@@ -35,6 +35,7 @@
 - [x] Todo.Form: fixed Completed
 - [x] Todo.Prio: simplify (N..1..2..3)
 - [x] Created/Modified: remove msec
+- [x] TodoListView decorate: Prio, Status, Store
 
 ## Contacts.File-based
 - [ ] CLM:
