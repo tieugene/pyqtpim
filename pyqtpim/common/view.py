@@ -37,43 +37,10 @@ class EntryListView(QtWidgets.QTableView):
         self.setModel(__model)
 
     def entryCat(self):
-        """Show raw Entry content"""
-        idx = self.selectionModel().currentIndex()
-        if idx.isValid():
-            row = idx.row()
-            rec = self.model().record(row)
-            body = rec.value('body')
-            msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", rec.value('summary'))
-            msg.setDetailedText(body)
-            # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-            msg.exec_()
+        print("Stub")
 
     def entryInside(self):
-        """Show clean entry content
-        :todo: style it
-        Simple:
-        msg.setText(raw['summary'])
-        for ...
-          txt += f"{k}: {v}\n"
-        msg.setDetailedText(txt)
-        """
-        idx = self.selectionModel().currentIndex()
-        if idx.isValid():
-            i = idx.row()
-            raw = self.model().getObj(i).RawContent()
-            # icon, title, text
-            msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
-            # richtext
-            txt = "<html><body><table><tbody>"
-            for k, v in raw.items():
-                if k == 'description':
-                    v = f"<pre>{v}</pre>"
-                txt += f"<tr><th>{k}:</th><td>{v}</td></tr>"
-            txt += "<tbody></table></body><html>"
-            msg.setText(txt)
-            msg.setTextFormat(QtCore.Qt.RichText)
-            # msg.setSizeGripEnabled(True)  # not works
-            msg.exec_()
+        print("Stub")
 
 
 class StoreForm(QtWidgets.QDialog):

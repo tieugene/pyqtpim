@@ -1,7 +1,7 @@
 # 1. system
 # 2. PySide
 import datetime
-from typing import Any
+from typing import Any, Union
 
 import vobject
 from PySide2 import QtCore, QtSql, QtGui
@@ -29,6 +29,22 @@ class TodoModel(EntryModel):
 
     # Inherit
     def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
+        def __utc2disp(data: str):
+            """Convert UTC datetime into viewable localtime"""
+            if data:
+                return datetime.datetime.fromisoformat(data).astimezone().replace(tzinfo=None).isoformat(sep=' ')
+        def __vardatime2disp(data: str):
+            """Convert date/datetime (naive/tzed) into viewable localtime"""
+            if data:
+                v = datetime.datetime.fromisoformat(data)
+                if isinstance(v, datetime.datetime):
+                    if v.tzinfo:
+                        return v.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
+                    else:  # naive => as is, w/o seconds
+                        return data.replace('T', ' ')[:16]
+                else:  # date => no convert
+                    return data
+
         if not idx.isValid():
             return None
         # item = idx.internalPointer()
@@ -44,6 +60,16 @@ class TodoModel(EntryModel):
                     return enums.TDecor_Status[v]
             elif col == self.fieldIndex('store_id'):
                 return self.store_name[rec.value('store_id')]
+            elif col == self.fieldIndex('created'):
+                return __utc2disp(rec.value('created'))
+            elif col == self.fieldIndex('modified'):
+                return __utc2disp(rec.value('modified'))
+            elif col == self.fieldIndex('completed'):
+                return __utc2disp(rec.value('completed'))
+            elif col == self.fieldIndex('dtstart'):
+                return __vardatime2disp(rec.value('dtstart'))
+            elif col == self.fieldIndex('due'):
+                return __vardatime2disp(rec.value('due'))
             else:
                 return super().data(idx, role)
         elif role == QtCore.Qt.ForegroundRole:

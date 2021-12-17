@@ -8,7 +8,7 @@
   - [x] Form
   - [x] DB
   - [x] Show.Details (raw)
-  - [ ] Show.List (local)
+  - [x] Show.List (local)
 - [ ] TodoForm: interim logic
 - [ ] TodoList:
   - [ ] autowidth: id, prio, status, %

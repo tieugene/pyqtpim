@@ -75,30 +75,75 @@ class TodoListView(EntryListView):
 
     def entryEdit(self):
         idx = self.currentIndex()
-        if idx.isValid():
-            row = self.model().mapToSource(idx).row()
-            realmodel: TodoModel = self.model().sourceModel()
-            obj: VObjTodo = realmodel.getObj(row)
-            rec = realmodel.record(row)
-            store_id = rec.value('store_id')
-            f = TodoForm(self)  # TODO: cache creation
-            f.load(obj, store_id)    # model.relation(col).indexColumn()
-            if f.exec_():
-                if form2rec_upd(f, obj, rec):
-                    if not realmodel.setRecord(row, rec):
-                        print("Something wrong with updating record")
-                    realmodel.setObj(rec, obj)
-                    realmodel.select()  # FIXME: update the record only
+        if not idx.isValid():
+            return
+        row = self.model().mapToSource(idx).row()
+        realmodel: TodoModel = self.model().sourceModel()
+        obj: VObjTodo = realmodel.getObj(row)
+        rec = realmodel.record(row)
+        store_id = rec.value('store_id')
+        f = TodoForm(self)  # TODO: cache creation
+        f.load(obj, store_id)    # model.relation(col).indexColumn()
+        if f.exec_():
+            if form2rec_upd(f, obj, rec):
+                if not realmodel.setRecord(row, rec):
+                    print("Something wrong with updating record")
+                realmodel.setObj(rec, obj)
+                realmodel.select()  # FIXME: update the record only
 
     def entryDel(self):
         idx = self.currentIndex()
-        if idx.isValid():
-            row = self.model().mapToSource(idx).row()
-            realmodel: TodoModel = self.model().sourceModel()
-            realmodel.delObj(row)
-            if not realmodel.removeRow(row):
-                print("Something wrong with deleting")
-            realmodel.select()  # FIXME: update the record only
+        if not idx.isValid():
+            return
+        row = self.model().mapToSource(idx).row()
+        realmodel: TodoModel = self.model().sourceModel()
+        realmodel.delObj(row)
+        if not realmodel.removeRow(row):
+            print("Something wrong with deleting")
+        realmodel.select()  # FIXME: update the record only
+
+    def entryCat(self):
+        """Show raw Entry content"""
+        idx = self.selectionModel().currentIndex()
+        if not idx.isValid():
+            return
+        realmodel = self.model().sourceModel()
+        row = self.model().mapToSource(idx).row()
+        rec = realmodel.record(row)
+        body = rec.value('body')
+        msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", rec.value('summary'))
+        msg.setDetailedText(body)
+        # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        msg.exec_()
+
+    def entryInside(self):
+        """Show clean entry content
+        :todo: style it
+        Simple:
+        msg.setText(raw['summary'])
+        for ...
+          txt += f"{k}: {v}\n"
+        msg.setDetailedText(txt)
+        """
+        idx = self.selectionModel().currentIndex()
+        if not idx.isValid():
+            return
+        realmodel = self.model().sourceModel()
+        row = self.model().mapToSource(idx).row()
+        raw = realmodel.getObj(row).RawContent()
+        # icon, title, text
+        msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
+        # richtext
+        txt = "<html><body><table><tbody>"
+        for k, v in raw.items():
+            if k == 'description':
+                v = f"<pre>{v}</pre>"
+            txt += f"<tr><th>{k}:</th><td>{v}</td></tr>"
+        txt += "<tbody></table></body><html>"
+        msg.setText(txt)
+        msg.setTextFormat(QtCore.Qt.RichText)
+        # msg.setSizeGripEnabled(True)  # not works
+        msg.exec_()
 
 
 class TodoStoreListView(StoreListView):
