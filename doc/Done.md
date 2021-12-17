@@ -44,6 +44,7 @@
   - [x] Show.List (local)
   - [x] VObj (DTStart/Due; naive/tz)
   - [x] fixed: naive > tzed: x
+- [x] TodoListView: autowidth: id, prio, status, % (?)
 
 ## Contacts.File-based
 - [ ] CLM:

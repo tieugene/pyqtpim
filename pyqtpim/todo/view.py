@@ -24,8 +24,15 @@ class TodoListView(EntryListView):
         self.loadCol2Show()
         self.setColumnHidden(self.model().sourceModel().fieldIndex('body'), True)
         self.loadColOrder()
-        self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
-        self.horizontalHeader().setSectionsMovable(True)
+        hh = self.horizontalHeader()
+        hh.sectionMoved.connect(self.sectionMoved)
+        hh.setSectionsMovable(True)
+        for c in ('id', 'progress', 'priority', 'status'):
+            hh.setSectionResizeMode(
+                hh.visualIndex(self.model().sourceModel().fieldIndex(c)),
+                hh.ResizeMode.ResizeToContents
+            )
+        # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
         self.sortByColumn(self.model().sourceModel().fieldIndex('id'))
         # signals
         # # self.activated.connect(self.rowChanged)

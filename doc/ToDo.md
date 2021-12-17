@@ -3,9 +3,7 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] TodoForm: validator
 - [ ] TodoList:
-  - [ ] autowidth: id, prio, status, %
   - [ ] multisort (predefined/tunable)
   - [ ] multifilter (e.g. 'Today') (model.setFilter()?)
 - [ ] Categories
@@ -13,7 +11,7 @@
 
 ### 0.2. Fixme
 - [ ] TodoForm:
-  - [ ] rework/fix Prio
+  - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'
 - [ ] TodoForm save errors:
   - [ ] C prio
