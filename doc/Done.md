@@ -43,6 +43,7 @@
   - [x] Show.Details (raw)
   - [x] Show.List (local)
   - [x] VObj (DTStart/Due; naive/tz)
+  - [x] fixed: naive > tzed: x
 
 ## Contacts.File-based
 - [ ] CLM:

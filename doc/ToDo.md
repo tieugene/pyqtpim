@@ -3,7 +3,7 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] TodoForm: interim logic
+- [ ] TodoForm: validator
 - [ ] TodoList:
   - [ ] autowidth: id, prio, status, %
   - [ ] multisort (predefined/tunable)
@@ -12,10 +12,10 @@
 - [ ] Sync
 
 ### 0.2. Fixme
-- [ ] Datetime (dtstart, due):
-  - [ ] naive > tzed: x (eq datetimes)
+- [ ] TodoForm:
+  - [ ] rework/fix Prio
   - [ ] default tz - 'file...'
-- [ ] Form errors:
+- [ ] TodoForm save errors:
   - [ ] C prio
   - [ ] U % (form:495)
 - [ ] rollback on serialize() error (save())
@@ -42,12 +42,12 @@
 - [ ] E:
   - […] Extend
   - […] CRUD[^2]
-  - [ ] timezone
+  - [ ] TodoForm: interim logic
   - [ ] multivalues: (QLineEdit[]/QListView)
      - [ ] attach: (url)
      - [ ] comment: (str)
      - [ ] contact: (email/msgr/uuid)
-- [ ] EL: View: column delegates
+- [x] EL: View: column delegates
 
 ### RTM
 - InstantAdd (+Inbox)
