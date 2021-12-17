@@ -3,30 +3,22 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] Datetimes (Edit/VObj/DB/Show)
-  - [ ] VObj (DTStart/Due; naive/tz)
-  - [x] Form
-  - [x] DB
-  - [x] Show.Details (raw)
-  - [x] Show.List (local)
 - [ ] TodoForm: interim logic
 - [ ] TodoList:
   - [ ] autowidth: id, prio, status, %
   - [ ] multisort (predefined/tunable)
-  - [ ] multifilter (e.g. 'Today')
+  - [ ] multifilter (e.g. 'Today') (model.setFilter()?)
 - [ ] Categories
 - [ ] Sync
 
 ### 0.2. Fixme
 - [ ] Datetime (dtstart, due):
-  - [ ] naive stores to VObj as date
-  - [ ] w/ tzinfo - exception
+  - [ ] naive > tzed: x (eq datetimes)
+  - [ ] default tz - 'file...'
 - [ ] Form errors:
   - [ ] C prio
   - [ ] U % (form:495)
-- [ ] UTC ('Z') datetime makes exception
 - [ ] rollback on serialize() error (save())
-- [ ] Todo.Completed: exact datetime.utc
 
 ### 0.3. Tuning
 - [ ] 'Percent' => 'Progress'

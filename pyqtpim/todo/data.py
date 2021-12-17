@@ -81,8 +81,12 @@ class VObjTodo(VObj):
                 v = [i.value for i in v_list]
             return v
 
-    def __setFldByName(self, fld: str, data: Optional[Union[int, str, datetime.date, datetime.datetime, list]]):
-        """Create/update standalone [optional] field"""
+    def __setFldByName(self, fld: str, data: Any, force=False):
+        """Create/update standalone [optional] field
+        :param force: recreate field
+        """
+        if force and fld in self._data.vtodo.contents:
+            del self._data.vtodo.contents[fld]
         if isinstance(data, list):
             if fld in self._data.vtodo.contents:
                 del self._data.vtodo.contents[fld]
@@ -96,7 +100,7 @@ class VObjTodo(VObj):
             else:
                 if fld in self._data.vtodo.contents:
                     # print("Set", fld, ':', self._data.vtodo.contents[fld][0].value, '=>', data)
-                    # self._data.vtodo.<fld>>.value
+                    # self._data.vtodo.<fld>.value
                     self._data.vtodo.contents[fld][0].value = data
                 else:
                     # print("Add", fld, data)
@@ -213,11 +217,13 @@ class VObjTodo(VObj):
         self.__setFldByName('description', data)
 
     def setDTStart(self, data: Optional[Union[datetime.date, datetime.datetime]]):
-        print(data)
-        self.__setFldByName('dtstart', data)
+        # Workaround https://github.com/eventable/vobject/issues/180
+        # print("setDTStart:", data, type(data))
+        self.__setFldByName('dtstart', data, force=True)
 
     def setDue(self, data: Optional[Union[datetime.date, datetime.datetime]]):
-        self.__setFldByName('due', data)
+        # Workaround
+        self.__setFldByName('due', data, force=True)
 
     def setLocation(self, data: Optional[str]):
         self.__setFldByName('location', data)

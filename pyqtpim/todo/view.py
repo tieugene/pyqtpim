@@ -200,12 +200,14 @@ class TodoView(EntryView):
                 value = value.strftime('%y.%m.%d')
             return f"<tr><th>{title}:</th><td>{value}</td></tr>"
         text = '<table>'
-        text += __mk_row("Created", data.getCreated().isoformat())
-        text += __mk_row("DTSTamp", data.getDTStamp().isoformat())
+        # text += __mk_row("Created", data.getCreated().isoformat())
+        # text += __mk_row("DTSTamp", data.getDTStamp().isoformat())
         text += __mk_row("Modified", data.getLastModified().isoformat())
         text += __mk_row("Priority", data.getPriority())
         text += __mk_row("Categories", data.getCategories())
         text += __mk_row("Class", enums.Enum2Raw_Class.get(data.getClass()))
+        # v = data.getDTStart()
+        # print("Print DTSTart:", v, type(v))
         text += __mk_row("DTStart", v.isoformat() if (v := data.getDTStart()) else '---')
         text += __mk_row("Due", v.isoformat() if (v := data.getDue()) else '---')
         text += __mk_row("Progress", data.getPercent())

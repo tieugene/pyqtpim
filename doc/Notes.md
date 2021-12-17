@@ -105,6 +105,22 @@ LAST-M…D	| dt	| dtZ	| dtZ	| ---	| LocTime
 
 self.record(index.row()).value('active').toBool()
 
+- Datetimes changes:
+  - N>D: VALUE=DATE:20211217
+  - D>DT: VALUE=DATE:20211217T174522
+  - D>DTtz: TZID=MSK;VALUE=DATE:20211217T174623
+  - N>DTtz: TZID=MSK:20211217T174955
+  - DTtz>DT: TZID=MSK:20211217T174955
+  - DTtz>D: VALUE=DATE;X-VOBJ-ORIGINAL-TZID=MSK:20211217
+
+F\2 | N | D | DT| DTtz
+----|---|---|---|---
+N   | - | + |  |  
+D   |  | - | x |  
+DT  |  |  | - |  
+DTtz|  |  |  | - 
+
+
 ## vCard UML
 
 - Property params:

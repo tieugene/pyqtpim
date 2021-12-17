@@ -3,11 +3,22 @@
 import datetime
 from typing import Optional, Union, Any
 # 2. PySide
-import vobject
 from PySide2 import QtWidgets, QtCore, QtSql
-# 3. local
+# 3. 3rds
+import dateutil
+import vobject
+# 4. local
 from .data import VObjTodo
 from . import enums
+
+
+def _tz_local():
+    # return dateutil.tz.tz.tzlocal()     # 'MSK'
+    return dateutil.tz.gettz()
+
+
+def _tz_utc():
+    return vobject.iCalendar.utc
 
 
 class ListEdit(QtWidgets.QComboBox):
@@ -112,6 +123,10 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
 
     def __reset(self):
         now = datetime.datetime.now().replace(microsecond=0).astimezone()
+        self.t_tz = _tz_local()
+        # self.t_tz = dateutil.tz.tz._tzicalvtz(now.tzinfo) - bad idea
+        # print("Init:", type(self.t_tz))
+        # pprint.pprint(self.t_tz.__dict__)
         self.is_enabled.setChecked(False)
         self.f_date.setDate(now.date())
         self.f_date.setEnabled(False)
@@ -121,8 +136,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_time.setTime(now.time())
         self.is_tzed.setChecked(False)
         self.is_tzed.setEnabled(False)
-        self.l_tz.setText(now.tzname())
-        self.t_tz = now.tzinfo
+        self.l_tz.setText(str(self.t_tz))   # FIXME:
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """
@@ -140,19 +154,21 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
 
     def setData(self, data: Optional[Union[datetime.date, datetime.datetime]] = None):
         if data:
+            # print("setData:", type(data), data)
             self.is_enabled.setChecked(True)
             self.f_date.setEnabled(True)
             self.is_timed.setEnabled(True)
             if isinstance(data, datetime.datetime):
-                print(data)
                 self.f_date.setDate(data.date())
                 self.is_timed.setChecked(True)
                 self.f_time.setEnabled(True)
                 self.f_time.setTime(data.time())
-                self.t_tz = data.tzinfo     # real/None (naive)
+                self.t_tz = data.tzinfo     # real/None (naive); type=dateutil.tz.tz._tzicalvtz
                 if self.t_tz:
+                    # print("Set data:", type(self.t_tz))
+                    # print(self.t_tz.__dict__)
                     self.is_tzed.setChecked(True)
-                    self.l_tz.setText(data.tzname())  # self.t_tz.tzname(data)
+                    self.l_tz.setText(self.t_tz._tzid)  # ok: data.tzname(); self.t_tz.tzname(data)
             else:  # date
                 self.f_date.setDate(data)
 
@@ -384,7 +400,7 @@ class TodoForm(QtWidgets.QDialog):
             else:
                 self.f_category.setText(v)
         self.f_class.setData(data.getClass())
-        self.f_completed.setData(data.getCompleted().astimezone())
+        self.f_completed.setData(v.astimezone() if (v := data.getCompleted()) else None)
         self.f_description.setPlainText(data.getDescription())
         self.f_dtstart.setData(data.getDTStart())
         self.f_due.setData(data.getDue())
@@ -427,7 +443,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     # - completed
     v_new = form.f_completed.getData()
     if v_new:
-        v_new = v_new.astimezone(vobject.icalendar.utc)  # FIXME: shift to UTC
+        v_new = v_new.astimezone(_tz_utc())
     if obj.getCompleted() != v_new:
         obj.setCompleted(v_new)
         if v_new:
@@ -443,7 +459,10 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = True
     # - dtstart
     v_new = form.f_dtstart.getData()
-    if obj.getDTStart() != v_new:
+    v_old = obj.getDTStart()
+    # print("DTStart:", type(v_old), v_old, "=>", type(v_new), v_new)
+    if v_old != v_new:
+        # print("Changed")
         obj.setDTStart(v_new)
         if v_new:
             rec.setValue('dtstart', v_new.isoformat())
@@ -472,7 +491,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     v_new = form.f_percent.getData()
     v_old = obj.getPercent()    # 0+
     if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
-        print("v_new:", v_new, type(v_new))
+        # print("v_new:", v_new, type(v_new))
         obj.setPercent(v_new)
         if v_new is not None:
             rec.setValue('progress', v_new)
@@ -532,7 +551,7 @@ def form2obj(form: TodoForm) -> (VObjTodo, int):
     if v_new := form.f_class.getData():
         obj.setClass(v_new)
     if v_new := form.f_completed.getData():
-        obj.setCompleted(v_new.astimezone(vobject.icalendar.utc))
+        obj.setCompleted(v_new.astimezone(_tz_utc()))
     if v_new := form.f_description.toPlainText():
         obj.setDescription(v_new)
     if v_new := form.f_dtstart.getData():

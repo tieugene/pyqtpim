@@ -36,6 +36,13 @@
 - [x] Todo.Prio: simplify (N..1..2..3)
 - [x] Created/Modified: remove msec
 - [x] TodoListView decorate: Prio, Status, Store
+- [x] Todo.Completed: exact datetime.utc
+- [x] Datetimes (Edit/VObj/DB/Show)
+  - [x] Form
+  - [x] DB
+  - [x] Show.Details (raw)
+  - [x] Show.List (local)
+  - [x] VObj (DTStart/Due; naive/tz)
 
 ## Contacts.File-based
 - [ ] CLM:
