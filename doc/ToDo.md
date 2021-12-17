@@ -3,48 +3,50 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] TodoList:
-  - [ ] QSortFilterProxyModel:
-     - [ ] multisort (e.g. default: prio=>due=>summary)
-     - [ ] multifilter (e.g. 'Today')
 - [ ] TodoForm: interim logic
-- [ ] docstrings
-- [ ] TodoForm: multivalues: (multiline|checklist|stringlist)
-  - [ ] attach:  QLineEdit[] (url)
-  - [ ] comment: QLineEdit[] (str)
-  - [ ] contact: QLineEdit[] (email/msgr/uuid)
-- [ ] TZ (on/off)
+- [ ] TodoList:
+  - [ ] autowidth: id, prio, status, %
+  - [ ] multisort (predefined/tunable)
+  - [ ] multifilter (e.g. 'Today') (model.setFilter()?)
+- [ ] Categories
+- [ ] Sync
 
 ### 0.2. Fixme
-- [ ] UTC ('Z') datetime makes exception
+- [ ] Datetime (dtstart, due):
+  - [ ] naive > tzed: x (eq datetimes)
+  - [ ] default tz - 'file...'
+- [ ] Form errors:
+  - [ ] C prio
+  - [ ] U % (form:495)
 - [ ] rollback on serialize() error (save())
-- [ ] Todo.Completed: exact datetime[.utc]
-- [ ] Todo.reloadColOrder() algo
 
 ### 0.3. Tuning
-- [ ] TodoForm.Categories: special combobox (like RTM, Evolution)
 - [ ] 'Percent' => 'Progress'
+- [ ] Shrink widget groups
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
-- [ ] Expandable 'View File' messagebox (~~QDialog.setSizeGripEnabled()~~)
-- [ ] Settings.col2show: wrap set into readable
+- [ ] Expandable 'View File' messagebox
+- [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
 
 ## 1. Common
-- [ ] Docs: compare PIMs
+- [ ] Docs:
+  - [ ] docstrings
+  - [ ] component diagram (UML)
+  - [ ] compare PIMs
 - [ ] 2-way sync
-- [ ] EL:
-  - [ ] Data: sort
-  - [ ] View:
-     - [ ] sort
-     - [ ] Columns:
-        - [ ] on/off
-        - [ ] order
+- [ ] EL: View:
+  - [ ] sort
+  - [ ] filter
 
 ## 2. ToDo
 - [ ] E:
   - […] Extend
   - […] CRUD[^2]
-  - [ ] edit timezone
+  - [ ] timezone
+  - [ ] multivalues: (QLineEdit[]/QListView)
+     - [ ] attach: (url)
+     - [ ] comment: (str)
+     - [ ] contact: (email/msgr/uuid)
 - [ ] EL: View: column delegates
 
 ### RTM

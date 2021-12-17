@@ -1,6 +1,7 @@
 """Misc VTODO utility enums and mappings.
 :todo: add vobjects field names"""
-from enum import IntEnum, unique, auto
+from enum import IntEnum, unique, auto, Enum
+from PySide2 import QtCore, QtGui
 
 
 @unique
@@ -41,6 +42,14 @@ class EProp(IntEnum):
 
 
 @unique
+class EDBFld(Enum):
+    """Database table field names
+    :todo:"""
+    ID = 'id'
+
+
+# --- Class
+@unique
 class EClass(IntEnum):
     """CLASS property values"""
     Public = auto()
@@ -61,6 +70,7 @@ Enum2Raw_Class: dict[EClass, str] = {
 }
 
 
+# --- Status
 @unique
 class EStatus(IntEnum):
     """STATUS property values"""
@@ -83,7 +93,46 @@ Enum2Raw_Status: dict[EStatus, str] = {
     EStatus.Completed: 'COMPLETED',
     EStatus.Cancelled: 'CANCELLED'
 }
+TDecor_Status = ' ?…✓✗'
+TColor_Status = (
+    None,
+    QtGui.QBrush(QtCore.Qt.blue),
+    QtGui.QBrush(QtCore.Qt.yellow),
+    QtGui.QBrush(QtCore.Qt.green),
+    QtGui.QBrush(QtCore.Qt.red)
+)
 
+# --- Priority
+@unique
+class EPrio(IntEnum):
+    """STATUS property values"""
+    Low = auto()
+    Normal = auto()
+    High = auto()
+
+
+Raw2Enum_Prio: tuple = (
+    None,
+    EPrio.High.value,
+    EPrio.High.value,
+    EPrio.High.value,
+    EPrio.High.value,
+    EPrio.Normal.value,
+    EPrio.Low.value,
+    EPrio.Low.value,
+    EPrio.Low.value,
+    EPrio.Low.value
+)
+
+TDecor_Prio = ' ↓-!'
+TColor_Prio = (
+    None,
+    QtGui.QBrush(QtCore.Qt.blue),
+    QtGui.QBrush(QtCore.Qt.green),
+    QtGui.QBrush(QtCore.Qt.red)
+)
+
+# --- Columns
 ColHeader = (
     "ID",
     "Store",
@@ -92,8 +141,8 @@ ColHeader = (
     "DTStart",
     "Due",
     "Completed",
-    "Progress",
-    "Priority",
+    '%',
+    '!',
     "Status",
     "Sumamry",
     "Location"

@@ -5,92 +5,145 @@ import os
 from typing import Any
 # 2. PySide
 import vobject
-from PySide2 import QtCore, QtWidgets, QtSql
+from PySide2 import QtCore, QtWidgets
 # 3. local
 from common import EntryView, EntryListView, StoreListView, exc, MySettings, SetGroup
-from .model import TodoStoreModel, TodoModel, obj2rec
+from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2rec
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
 from . import enums
 
 
 class TodoListView(EntryListView):
-    _own_model = TodoModel
+    _own_model = TodoProxyModel
     """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
-        self.reloadCol2Show()
-        self.setColumnHidden(self.model().fieldIndex('body'), True)
-        self.reloadColOrder()
+        self._details.setModel(self.model().sourceModel())
+        # addons
+        self.loadCol2Show()
+        self.setColumnHidden(self.model().sourceModel().fieldIndex('body'), True)
+        self.loadColOrder()
         self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
         self.horizontalHeader().setSectionsMovable(True)
+        self.sortByColumn(self.model().sourceModel().fieldIndex('id'))
+        # signals
+        # # self.activated.connect(self.rowChanged)
+        self.selectionModel().currentRowChanged.connect(self.rowChanged)
 
-    def sectionMoved(self, lIdx: int, ovIdx: int, nvIdx: int):
-        """Section lIdx moved from ovIdx to nvIdx"""
-        self.resaveColOrder()
+    def rowChanged(self, idx):
+        """:todo: find sourceModel row"""
+        self._details.mapper.setCurrentModelIndex(
+            self._details.mapper.model().index(self.model().mapToSource(idx).row(), 0)
+        )
 
-    def reloadCol2Show(self):
+    def sectionMoved(self, _: int, __: int, ___: int):
+        """Section lidx moved from ovidx to nvidx"""
+        self.saveColOrder()
+
+    def loadCol2Show(self):
         """[Re]load colums visibility from settings"""
-        col2show = MySettings.get(SetGroup.ToDo, 'col2show')
+        col2show = set(MySettings.get(SetGroup.ToDo, 'col2show'))
         for i in range(self.model().columnCount()):
             self.setColumnHidden(i, not (i in col2show))
 
-    def reloadColOrder(self):
-        """[Re]load columns order from settings
-        :todo: Need to think:
-        for each pos:
-          find who must be in this pos
-          move that into pos
-        """
+    def loadColOrder(self):
+        """[Re]load columns order from settings"""
         col_order = MySettings.get(SetGroup.ToDo, 'colorder')
-        hh = self.horizontalHeader()
-        for li, vi in enumerate(col_order):
-            cvi = hh.visualIndex(li)
-            if cvi != vi:
+        for vi, li in enumerate(col_order):
+            if (cvi := self.horizontalHeader().visualIndex(li)) != vi:
                 self.horizontalHeader().moveSection(cvi, vi)
 
-    def resaveColOrder(self):
+    def saveColOrder(self):
         """[Re]save columns order to settings"""
         col_order = list()
-        for li in range(self.model().columnCount()):
-            vi = self.horizontalHeader().visualIndex(li)
-            col_order.append(vi)
-        # print("Col_order:", col_order)
+        for vi in range(self.horizontalHeader().count()):
+            col_order.append(self.horizontalHeader().logicalIndex(vi))  # colorder[vi] = li
         MySettings.set(SetGroup.ToDo, 'colorder', col_order)
 
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
             obj, store_id = form2obj(f)
-            rec = self.model().record()  # new empty
+            realmodel = self.model().sourceModel()
+            rec = realmodel.record()  # new empty
             obj2rec(obj, rec, store_id)
-            self.model().insertRecord(-1, rec)
-            self.model().select()
+            if not realmodel.insertRecord(-1, rec):
+                print("Something wrong with adding record")
+            realmodel.select()  # FIXME: update the row only
             # adding obj to cache unavailable
 
     def entryEdit(self):
         idx = self.currentIndex()
-        if idx.isValid():
-            row = idx.row()
-            model: TodoModel = self.model()
-            obj: VObjTodo = model.getObj(row)
-            rec = model.record(row)
-            store_id = rec.value('store_id')
-            f = TodoForm(self)  # TODO: cache creation
-            f.load(obj, store_id)    # model.relation(col).indexColumn()
-            if f.exec_():
-                if form2rec_upd(f, obj, rec):
-                    model.setRecord(row, rec)
-                    model.setObj(rec, obj)
+        if not idx.isValid():
+            return
+        row = self.model().mapToSource(idx).row()
+        realmodel: TodoModel = self.model().sourceModel()
+        obj: VObjTodo = realmodel.getObj(row)
+        rec = realmodel.record(row)
+        store_id = rec.value('store_id')
+        f = TodoForm(self)  # TODO: cache creation
+        f.load(obj, store_id)    # model.relation(col).indexColumn()
+        if f.exec_():
+            if form2rec_upd(f, obj, rec):
+                if not realmodel.setRecord(row, rec):
+                    print("Something wrong with updating record")
+                realmodel.setObj(rec, obj)
+                realmodel.select()  # FIXME: update the record only
 
     def entryDel(self):
         idx = self.currentIndex()
-        if idx.isValid():
-            row = idx.row()
-            model: TodoModel = self.model()
-            model.delObj(row)
-            model.removeRow(row)
-            model.select()
+        if not idx.isValid():
+            return
+        row = self.model().mapToSource(idx).row()
+        realmodel: TodoModel = self.model().sourceModel()
+        realmodel.delObj(row)
+        if not realmodel.removeRow(row):
+            print("Something wrong with deleting")
+        realmodel.select()  # FIXME: update the record only
+
+    def entryCat(self):
+        """Show raw Entry content"""
+        idx = self.selectionModel().currentIndex()
+        if not idx.isValid():
+            return
+        realmodel = self.model().sourceModel()
+        row = self.model().mapToSource(idx).row()
+        rec = realmodel.record(row)
+        body = rec.value('body')
+        msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", rec.value('summary'))
+        msg.setDetailedText(body)
+        # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        msg.exec_()
+
+    def entryInside(self):
+        """Show clean entry content
+        :todo: style it
+        Simple:
+        msg.setText(raw['summary'])
+        for ...
+          txt += f"{k}: {v}\n"
+        msg.setDetailedText(txt)
+        """
+        idx = self.selectionModel().currentIndex()
+        if not idx.isValid():
+            return
+        realmodel = self.model().sourceModel()
+        row = self.model().mapToSource(idx).row()
+        raw = realmodel.getObj(row).RawContent()
+        # icon, title, text
+        msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
+        # richtext
+        txt = "<html><body><table><tbody>"
+        for k, v in raw.items():
+            if k == 'description':
+                v = f"<pre>{v}</pre>"
+            txt += f"<tr><th>{k}:</th><td>{v}</td></tr>"
+        txt += "<tbody></table></body><html>"
+        msg.setText(txt)
+        msg.setTextFormat(QtCore.Qt.RichText)
+        # msg.setSizeGripEnabled(True)  # not works
+        msg.exec_()
 
 
 class TodoStoreListView(StoreListView):
@@ -106,7 +159,7 @@ class TodoStoreListView(StoreListView):
         if not (indexes := self.selectedIndexes()):
             return
         rec = self.model().record(indexes[0].row())
-        syncStore(self._list.model(), rec.value('id'), rec.value('connection'))
+        syncStore(self._list.model().sourceModel(), rec.value('id'), rec.value('connection'))
 
 
 class TodoView(EntryView):
@@ -147,16 +200,20 @@ class TodoView(EntryView):
                 value = value.strftime('%y.%m.%d')
             return f"<tr><th>{title}:</th><td>{value}</td></tr>"
         text = '<table>'
+        # text += __mk_row("Created", data.getCreated().isoformat())
+        # text += __mk_row("DTSTamp", data.getDTStamp().isoformat())
+        text += __mk_row("Modified", data.getLastModified().isoformat())
+        text += __mk_row("Priority", data.getPriority())
         text += __mk_row("Categories", data.getCategories())
         text += __mk_row("Class", enums.Enum2Raw_Class.get(data.getClass()))
-        text += __mk_row("Completed", data.getCompleted())
-        text += __mk_row("DTStart", data.getDTStart())
-        text += __mk_row("Due", data.getDue())
-        text += __mk_row("Location", data.getLocation())
-        text += __mk_row("Percent", data.getPercent())
-        text += __mk_row("Priority", data.getPriority())
-        text += __mk_row("Priority", data.getPriority())
+        # v = data.getDTStart()
+        # print("Print DTSTart:", v, type(v))
+        text += __mk_row("DTStart", v.isoformat() if (v := data.getDTStart()) else '---')
+        text += __mk_row("Due", v.isoformat() if (v := data.getDue()) else '---')
+        text += __mk_row("Progress", data.getPercent())
+        text += __mk_row("Completed", v.isoformat() if (v := data.getCompleted()) else '---')
         text += __mk_row("Status", enums.Enum2Raw_Status.get(data.getStatus()))
+        text += __mk_row("Location", data.getLocation())
         text += __mk_row("URL", data.getURL())
         if desc := data.getDescription():
             desc = '<br/>'.join(desc.splitlines())
@@ -164,7 +221,7 @@ class TodoView(EntryView):
         text += '</table>'
         self.details.setText(text)
 
-    def setModel(self, model: QtSql.QSqlTableModel):
+    def setModel(self, model: TodoModel):
         """Setup mapper
         :todo: indexOf
         """
@@ -185,7 +242,7 @@ class TodosWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.__createWidgets()
-        self.stores.model().activeChanged.connect(self.list.model().updateFilterByStore)
+        self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
 
     def __createWidgets(self):
         # order
@@ -221,9 +278,8 @@ def syncStore(model: TodoModel, store_id: int, path: str):
                         rec = model.record()
                         obj2rec(obj, rec, store_id)
                         # rec.setValue('store_id', store_id)
-                        ok = model.insertRecord(-1, rec)
-                        if not ok:
-                            print(obj.getSummary(), "Oops")
+                        if not model.insertRecord(-1, rec):
+                            print(obj.getSummary(), "Something wrong with adding record")
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()

@@ -29,8 +29,20 @@
 - [x] TodoList: columns on/off
 - [x] TodoList: column order
 - [x] ~~DTStart-link-Due (TB) => Duration?~~ No
-
-
+- [x] Todo.reloadColOrder() algo
+- [x] Settings.col2show: wrap set into readable
+- [x] TodoList: QSortFilterProxyModel
+- [x] Todo.Form: fixed Completed
+- [x] Todo.Prio: simplify (N..1..2..3)
+- [x] Created/Modified: remove msec
+- [x] TodoListView decorate: Prio, Status, Store
+- [x] Todo.Completed: exact datetime.utc
+- [x] Datetimes (Edit/VObj/DB/Show)
+  - [x] Form
+  - [x] DB
+  - [x] Show.Details (raw)
+  - [x] Show.List (local)
+  - [x] VObj (DTStart/Due; naive/tz)
 
 ## Contacts.File-based
 - [ ] CLM:

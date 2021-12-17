@@ -4,9 +4,21 @@ import datetime
 from typing import Optional, Union, Any
 # 2. PySide
 from PySide2 import QtWidgets, QtCore, QtSql
-# 3. local
+# 3. 3rds
+import dateutil
+import vobject
+# 4. local
 from .data import VObjTodo
 from . import enums
+
+
+def _tz_local():
+    # return dateutil.tz.tz.tzlocal()     # 'MSK'
+    return dateutil.tz.gettz()
+
+
+def _tz_utc():
+    return vobject.iCalendar.utc
 
 
 class ListEdit(QtWidgets.QComboBox):
@@ -32,6 +44,7 @@ class ListEdit(QtWidgets.QComboBox):
 
 
 class CheckableDateTimeEdit(QtWidgets.QWidget):
+    """Fixme: UTC<>local"""
     is_enabled: QtWidgets.QCheckBox
     f_datetime: QtWidgets.QDateTimeEdit
 
@@ -51,8 +64,10 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
         self.is_enabled.stateChanged[int].connect(self.__switch_all)
 
     def __reset(self):
+        now = datetime.datetime.now().replace(microsecond=0)
         self.is_enabled.setChecked(False)
         self.f_datetime.setEnabled(False)
+        self.f_datetime.setDateTime(now)
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """
@@ -69,15 +84,17 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
-            return self.f_datetime.datetime().toPython()
+            return self.f_datetime.dateTime().toPython().replace(microsecond=0)
 
 
 class CheckableDateAndTimeEdit(QtWidgets.QWidget):
     is_enabled: QtWidgets.QCheckBox
     is_timed: QtWidgets.QCheckBox
+    is_tzed: QtWidgets.QCheckBox
     f_date: QtWidgets.QDateEdit
     f_time: QtWidgets.QTimeEdit
     t_tz: datetime.tzinfo   # TODO: handle tz
+    l_tz: QtWidgets.QLabel
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -85,15 +102,19 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         # self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         self.is_enabled = QtWidgets.QCheckBox()
         self.is_timed = QtWidgets.QCheckBox()
+        self.is_tzed = QtWidgets.QCheckBox()
         self.f_date = QtWidgets.QDateEdit()
         self.f_date.setCalendarPopup(True)
         self.f_time = QtWidgets.QTimeEdit()
+        self.l_tz = QtWidgets.QLabel()
         self.t_tz = None
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_date)
         layout.addWidget(self.is_timed)
         layout.addWidget(self.f_time)
+        layout.addWidget(self.is_tzed)
+        layout.addWidget(self.l_tz)
         self.setLayout(layout)
         self.__reset()
         # signals
@@ -101,11 +122,21 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.is_timed.stateChanged[int].connect(self.__switch_time)
 
     def __reset(self):
+        now = datetime.datetime.now().replace(microsecond=0).astimezone()
+        self.t_tz = _tz_local()
+        # self.t_tz = dateutil.tz.tz._tzicalvtz(now.tzinfo) - bad idea
+        # print("Init:", type(self.t_tz))
+        # pprint.pprint(self.t_tz.__dict__)
         self.is_enabled.setChecked(False)
+        self.f_date.setDate(now.date())
         self.f_date.setEnabled(False)
         self.is_timed.setChecked(False)
         self.is_timed.setEnabled(False)
         self.f_time.setEnabled(False)
+        self.f_time.setTime(now.time())
+        self.is_tzed.setChecked(False)
+        self.is_tzed.setEnabled(False)
+        self.l_tz.setText(str(self.t_tz))   # FIXME:
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """
@@ -115,12 +146,15 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_date.setEnabled(bool(state))
         self.is_timed.setEnabled(bool(state))
         self.f_time.setEnabled(bool(state) and self.is_timed.isChecked())
+        self.is_tzed.setEnabled(bool(state) and self.is_timed.isChecked())
 
     def __switch_time(self, state: QtCore.Qt.CheckState):
         self.f_time.setEnabled(bool(state))
+        self.is_tzed.setEnabled(bool(state))
 
     def setData(self, data: Optional[Union[datetime.date, datetime.datetime]] = None):
         if data:
+            # print("setData:", type(data), data)
             self.is_enabled.setChecked(True)
             self.f_date.setEnabled(True)
             self.is_timed.setEnabled(True)
@@ -129,8 +163,12 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                 self.is_timed.setChecked(True)
                 self.f_time.setEnabled(True)
                 self.f_time.setTime(data.time())
-                self.t_tz = data.tzinfo
-                # print(self.t_tz)
+                self.t_tz = data.tzinfo     # real/None (naive); type=dateutil.tz.tz._tzicalvtz
+                if self.t_tz:
+                    # print("Set data:", type(self.t_tz))
+                    # print(self.t_tz.__dict__)
+                    self.is_tzed.setChecked(True)
+                    self.l_tz.setText(self.t_tz._tzid)  # ok: data.tzname(); self.t_tz.tzname(data)
             else:  # date
                 self.f_date.setDate(data)
 
@@ -140,8 +178,8 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                 return datetime.datetime.combine(
                     self.f_date.date().toPython(),
                     self.f_time.time().toPython(),
-                    tzinfo=self.t_tz
-                )
+                    tzinfo=self.t_tz if self.is_tzed.isChecked() else None
+                ).replace(microsecond=0)
             else:
                 return self.f_date.date().toPython()
 
@@ -362,7 +400,7 @@ class TodoForm(QtWidgets.QDialog):
             else:
                 self.f_category.setText(v)
         self.f_class.setData(data.getClass())
-        self.f_completed.setData(data.getCompleted())
+        self.f_completed.setData(v.astimezone() if (v := data.getCompleted()) else None)
         self.f_description.setPlainText(data.getDescription())
         self.f_dtstart.setData(data.getDTStart())
         self.f_due.setData(data.getDue())
@@ -404,6 +442,8 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = True
     # - completed
     v_new = form.f_completed.getData()
+    if v_new:
+        v_new = v_new.astimezone(_tz_utc())
     if obj.getCompleted() != v_new:
         obj.setCompleted(v_new)
         if v_new:
@@ -419,7 +459,10 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = True
     # - dtstart
     v_new = form.f_dtstart.getData()
-    if obj.getDTStart() != v_new:
+    v_old = obj.getDTStart()
+    # print("DTStart:", type(v_old), v_old, "=>", type(v_new), v_new)
+    if v_old != v_new:
+        # print("Changed")
         obj.setDTStart(v_new)
         if v_new:
             rec.setValue('dtstart', v_new.isoformat())
@@ -448,6 +491,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     v_new = form.f_percent.getData()
     v_old = obj.getPercent()    # 0+
     if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
+        # print("v_new:", v_new, type(v_new))
         obj.setPercent(v_new)
         if v_new is not None:
             rec.setValue('progress', v_new)
@@ -459,8 +503,8 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     v_old = obj.getPriority()
     if v_old != v_new and not (v_new == 0 and v_old is None):
         obj.setPriority(v_new)
-        if v_new is not None:
-            rec.setValue('priority', v_new)
+        if v_new:
+            rec.setValue('priority', enums.Raw2Enum_Prio[v_new])
         else:
             rec.setNull('priority')
         obj_chgd = rec_chgd = True
@@ -492,7 +536,8 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     if obj_chgd:
         obj.updateStamps()
         rec.setValue('modified', obj.getLastModified().isoformat())
-        rec.setValue('body', obj.serialize())
+        body = obj.serialize()
+        rec.setValue('body', body)
         rec_chgd = True
     return rec_chgd
 
@@ -506,7 +551,7 @@ def form2obj(form: TodoForm) -> (VObjTodo, int):
     if v_new := form.f_class.getData():
         obj.setClass(v_new)
     if v_new := form.f_completed.getData():
-        obj.setCompleted(v_new)
+        obj.setCompleted(v_new.astimezone(_tz_utc()))
     if v_new := form.f_description.toPlainText():
         obj.setDescription(v_new)
     if v_new := form.f_dtstart.getData():
