@@ -13,7 +13,7 @@ from common import VObj
 from . import enums
 
 
-def _now():
+def _utcnow():
     return datetime.datetime.now(tz=vobject.icalendar.utc).replace(microsecond=0)
 
 
@@ -22,7 +22,7 @@ class VObjTodo(VObj):
     def __init__(self, data: vobject.base.Component = None):
         if data is None:
             uid = uuid.uuid4()
-            stamp = _now()
+            stamp = _utcnow()
             data = vobject.iCalendar()
             data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
             data.add('vtodo')
@@ -213,6 +213,7 @@ class VObjTodo(VObj):
         self.__setFldByName('description', data)
 
     def setDTStart(self, data: Optional[Union[datetime.date, datetime.datetime]]):
+        print(data)
         self.__setFldByName('dtstart', data)
 
     def setDue(self, data: Optional[Union[datetime.date, datetime.datetime]]):
@@ -240,4 +241,4 @@ class VObjTodo(VObj):
     def updateStamps(self):
         seq = 0 if (seq := self.getSequence()) is None else seq + 1
         self.__setFldByName('sequence', str(seq))
-        self.__setFldByName('last-modified', _now())
+        self.__setFldByName('last-modified', _utcnow())

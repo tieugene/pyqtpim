@@ -130,8 +130,8 @@ class TodoStoreModel(StoreModel):
 def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord, store_id: int):
     """Create new record and fill it with ventry content"""
     rec.setValue('store_id', store_id)
-    rec.setValue('created', obj.getCreated().isoformat())
-    rec.setValue('modified', obj.getLastModified().isoformat())
+    rec.setValue('created', obj.getCreated().replace(tzinfo=datetime.timezone.utc).isoformat())
+    rec.setValue('modified', obj.getLastModified().replace(tzinfo=datetime.timezone.utc).isoformat())
     if v := obj.getDTStart():
         rec.setValue('dtstart', v.isoformat())
     if v := obj.getDue():

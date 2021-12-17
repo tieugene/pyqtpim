@@ -3,7 +3,12 @@
 ## 0. Now
 
 ### 0.1. Job
-- [ ] Datetimes: VObj/DB/Edit/Show
+- [ ] Datetimes (Edit/VObj/DB/Show)
+  - [ ] VObj (DTStart/Due; naive/tz)
+  - [x] Form
+  - [x] DB
+  - [x] Show.Details (raw)
+  - [ ] Show.List (local)
 - [ ] TodoForm: interim logic
 - [ ] TodoList:
   - [ ] autowidth: id, prio, status, %
@@ -13,6 +18,9 @@
 - [ ] Sync
 
 ### 0.2. Fixme
+- [ ] Datetime (dtstart, due):
+  - [ ] naive stores to VObj as date
+  - [ ] w/ tzinfo - exception
 - [ ] Form errors:
   - [ ] C prio
   - [ ] U % (form:495)

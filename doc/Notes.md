@@ -98,9 +98,9 @@ COMPLETED	| dt	| dtZ	| dtZ	| LocTime	| LocTime
 CREATED	| dt	| dtZ	| dtZ	| ---	| LocTime
 DTSTAMP	| dt	| dtZ	| ---	| ---	| LocTime
 DTSTART	| date	| date	| date	| date	| date
-	| dt	| dt[tz]	| dt[Z]	| ?	| LocTime
+	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
 DUE	| date	| date	| date	| date	| date
-	| dt	| dt[tz]	| dt[Z]	| ?	| LocTime
+	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
 LAST-M…D	| dt	| dtZ	| dtZ	| ---	| LocTime
 
 self.record(index.row()).value('active').toBool()

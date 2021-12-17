@@ -3,6 +3,7 @@
 import datetime
 from typing import Optional, Union, Any
 # 2. PySide
+import vobject
 from PySide2 import QtWidgets, QtCore, QtSql
 # 3. local
 from .data import VObjTodo
@@ -32,6 +33,7 @@ class ListEdit(QtWidgets.QComboBox):
 
 
 class CheckableDateTimeEdit(QtWidgets.QWidget):
+    """Fixme: UTC<>local"""
     is_enabled: QtWidgets.QCheckBox
     f_datetime: QtWidgets.QDateTimeEdit
 
@@ -51,8 +53,10 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
         self.is_enabled.stateChanged[int].connect(self.__switch_all)
 
     def __reset(self):
+        now = datetime.datetime.now().replace(microsecond=0)
         self.is_enabled.setChecked(False)
         self.f_datetime.setEnabled(False)
+        self.f_datetime.setDateTime(now)
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """
@@ -69,7 +73,7 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
-            return self.f_datetime.dateTime().toPython()
+            return self.f_datetime.dateTime().toPython().replace(microsecond=0)
 
 
 class CheckableDateAndTimeEdit(QtWidgets.QWidget):
@@ -107,7 +111,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.is_timed.stateChanged[int].connect(self.__switch_time)
 
     def __reset(self):
-        now = datetime.datetime.now().astimezone()
+        now = datetime.datetime.now().replace(microsecond=0).astimezone()
         self.is_enabled.setChecked(False)
         self.f_date.setDate(now.date())
         self.f_date.setEnabled(False)
@@ -140,6 +144,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
             self.f_date.setEnabled(True)
             self.is_timed.setEnabled(True)
             if isinstance(data, datetime.datetime):
+                print(data)
                 self.f_date.setDate(data.date())
                 self.is_timed.setChecked(True)
                 self.f_time.setEnabled(True)
@@ -158,7 +163,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                     self.f_date.date().toPython(),
                     self.f_time.time().toPython(),
                     tzinfo=self.t_tz if self.is_tzed.isChecked() else None
-                )
+                ).replace(microsecond=0)
             else:
                 return self.f_date.date().toPython()
 
@@ -379,7 +384,7 @@ class TodoForm(QtWidgets.QDialog):
             else:
                 self.f_category.setText(v)
         self.f_class.setData(data.getClass())
-        self.f_completed.setData(data.getCompleted())
+        self.f_completed.setData(data.getCompleted().astimezone())
         self.f_description.setPlainText(data.getDescription())
         self.f_dtstart.setData(data.getDTStart())
         self.f_due.setData(data.getDue())
@@ -421,6 +426,8 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = True
     # - completed
     v_new = form.f_completed.getData()
+    if v_new:
+        v_new = v_new.astimezone(vobject.icalendar.utc)  # FIXME: shift to UTC
     if obj.getCompleted() != v_new:
         obj.setCompleted(v_new)
         if v_new:
@@ -525,7 +532,7 @@ def form2obj(form: TodoForm) -> (VObjTodo, int):
     if v_new := form.f_class.getData():
         obj.setClass(v_new)
     if v_new := form.f_completed.getData():
-        obj.setCompleted(v_new)
+        obj.setCompleted(v_new.astimezone(vobject.icalendar.utc))
     if v_new := form.f_description.toPlainText():
         obj.setDescription(v_new)
     if v_new := form.f_dtstart.getData():
