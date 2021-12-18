@@ -30,7 +30,8 @@
 - &ominus; Class cannot be None
 
 ### [OpenTasks](https://opentasks.app)
-- &ominus; 
+- &ominus; Cannot Status=None (bug [#807](https://github.com/dmfs/opentasks/issues/807))
+- &oplus; Subtasks?
 
 ### Apple Reminder
 

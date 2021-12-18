@@ -47,6 +47,7 @@
 - [x] TodoListView: autowidth: id, prio, status, % (?)
 - [x] Teach: idx.internalPointer() = None
 - [x] Teach: Closed todo = Status=Completed, %=100, Completed=datetime
+- [x] TodoListView: multisort (proxy; id | Summary | Prio > Due > Summary
 
 ## Contacts.File-based
 - [ ] CLM:

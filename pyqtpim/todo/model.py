@@ -1,7 +1,7 @@
 # 1. system
 # 2. PySide
 import datetime
-from typing import Any, Union
+from typing import Any, Union, Callable
 
 import vobject
 from PySide2 import QtCore, QtSql, QtGui
@@ -123,17 +123,63 @@ class TodoModel(EntryModel):
 
 class TodoProxyModel(EntryProxyModel):
     _own_model = TodoModel
+    __currentSorter: Callable
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.__currentSort = self.__lessThen_ID
+        self.setDynamicSortFilter(True)
+        # TODO: self.resizeColumntToContent(*)
 
-    def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
-        """Default: id asc; std: Prio>Due>Summary"""
-        return False
+    def __lessThen_ID(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()
-        prio_left = realmodel.data(realmodel.index(source_left.row(), realmodel.fieldIndex('priority')))
-        prio_right = realmodel.data(realmodel.index(source_right.row(), realmodel.fieldIndex('priority')))
-        # print(prio_left, "vs", prio_right)
+        data_left = realmodel.data(realmodel.index(source_left.row(), realmodel.fieldIndex('id')))
+        data_right = realmodel.data(realmodel.index(source_right.row(), realmodel.fieldIndex('id')))
+        return data_right < data_left
+
+    def __lessThen_Name(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
+        realmodel = self.sourceModel()
+        data_left = realmodel.data(realmodel.index(source_left.row(), realmodel.fieldIndex('summary')))
+        data_right = realmodel.data(realmodel.index(source_right.row(), realmodel.fieldIndex('summary')))
+        return data_right < data_left
+
+    def __lessThen_PrioDueName(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
+        """Sorting Prio>Due>Summary"""
+
+        def __get_prio(vobj: VObjTodo) -> int:
+            if v := vobj.getPriority():
+                return enums.Raw2Enum_Prio[v]
+            else:
+                return 0
+
+        def __get_due_date(vobj: VObjTodo) -> datetime.date:
+            if v := vobj.getDue():
+                if isinstance(v, datetime.datetime):
+                    return v.date()
+                return v
+            return datetime.date(9999, 12, 31)
+
+        realmodel = self.sourceModel()
+        obj_left: VObjTodo = realmodel.getObj(source_left.row())
+        obj_right: VObjTodo = realmodel.getObj(source_right.row())
+        # 1. Prio
+        prio_left = __get_prio(obj_left)
+        prio_right = __get_prio(obj_right)
+        if prio_left != prio_right:
+            return prio_left < prio_right
+        # 2. Due
+        due_left = __get_due_date(obj_left)
+        due_right = __get_due_date(obj_left)
+        if due_left != due_right:
+            return due_left < due_right
+        # 3. Summary
+        return obj_right.getSummary() < obj_left.getSummary()
+
+    # Inherit
+    def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
+        """:todo: combine per-column built-in sort with complex one"""
+        return self.__currentSort(source_left, source_right)
+        # return False
 
     def filterAcceptsRow(self, source_row: int, source_parent: QtCore.QModelIndex) -> bool:
         """Default: all; Today: Due <= today [todo: and not completed]"""
@@ -144,6 +190,16 @@ class TodoProxyModel(EntryProxyModel):
             return datetime.date.fromisoformat(due) <= today
         else:
             return False
+
+    # Hand-made
+    def sortChanged(self, sort_id: enums.ESortBy):
+        self.beginResetModel()
+        self.__currentSort = {
+            enums.ESortBy.ID: self.__lessThen_ID,
+            enums.ESortBy.Name: self.__lessThen_Name,
+            enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
+        }[sort_id]
+        self.endResetModel()
 
 
 class TodoStoreModel(StoreModel):

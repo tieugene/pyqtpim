@@ -241,24 +241,61 @@ class TodoView(EntryView):
         self.details.clear()
 
 
+class TodoSortView(QtWidgets.QWidget):
+    by_id: QtWidgets.QRadioButton
+    by_name: QtWidgets.QRadioButton
+    by_pdn: QtWidgets.QRadioButton
+    bg: QtWidgets.QButtonGroup
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        # self.setTitle("Sort")
+        # widgets
+        self.by_id = QtWidgets.QRadioButton("ID", self)
+        self.by_name = QtWidgets.QRadioButton("Name", self)
+        self.by_pdn = QtWidgets.QRadioButton("!→Due→Name", self)
+        # logic
+        self.bg = QtWidgets.QButtonGroup(self)
+        self.bg.addButton(self.by_id, enums.ESortBy.ID)
+        self.bg.addButton(self.by_name, enums.ESortBy.Name)
+        self.bg.addButton(self.by_pdn, enums.ESortBy.PrioDueName)
+        # layout
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self.by_id)
+        layout.addWidget(self.by_name)
+        layout.addWidget(self.by_pdn)
+        # layout.addStretch(1);
+        self.setLayout(layout)
+        # the end
+        self.by_id.setChecked(True)
+
+
 class TodosWidget(QtWidgets.QWidget):
     stores: TodoStoreListView
+    l_sort: TodoSortView
+    # l_filt: QtWidgets.QGroupBox
     list: TodoListView
     details: TodoView
 
     def __init__(self):
         super().__init__()
         self.__createWidgets()
-        self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
+        self.__createConnections()
 
     def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
         self.details = TodoView(splitter)
         self.list = TodoListView(splitter, self.details)
-        self.stores = TodoStoreListView(splitter, self.list)
+        left_panel = QtWidgets.QWidget(splitter)
+        self.stores = TodoStoreListView(left_panel, self.list)
+        self.l_sort = TodoSortView(left_panel)
+        left_layout = QtWidgets.QVBoxLayout(left_panel)
+        left_layout.addWidget(self.stores)
+        left_layout.addWidget(self.l_sort)
+        left_panel.setLayout(left_layout)
         # layout
-        splitter.addWidget(self.stores)
+        splitter.addWidget(left_panel)
         splitter.addWidget(self.list)
         splitter.addWidget(self.details)
         splitter.setOrientation(QtCore.Qt.Horizontal)
@@ -268,6 +305,10 @@ class TodosWidget(QtWidgets.QWidget):
         layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(splitter)
         self.setLayout(layout)
+
+    def __createConnections(self):
+        self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
+        self.l_sort.bg.idClicked.connect(self.list.model().sortChanged)
 
 
 def syncStore(model: TodoModel, store_id: int, path: str):

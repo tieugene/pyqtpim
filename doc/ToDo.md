@@ -9,12 +9,7 @@
 
 ### 0.1. Job
 - [ ] TodoList (proxy):
-  - [ ] multisort (predefined/tunable):
-     - id
-     - summary
-     - Prio > Due > Summary
   - [ ] multifilter
-- [ ] Categories
 - [ ] Sync
 
 ### 0.2. Fixme
@@ -27,6 +22,9 @@
 - [ ] rollback on serialize() error (save())
 
 ### 0.3. Tuning
+- [ ] Settings save/restore:
+  - [ ] sort
+  - [ ] filter
 - [ ] 'Percent' => 'Progress'
 - [ ] Shrink widget groups
 - [ ] ELM.View: auto-h/w
@@ -45,17 +43,17 @@
   - [ ] filter
 
 ## 2. ToDo
+- [ ] Categories
 - [ ] E:
   - […] Extend
   - […] CRUD[^2]
   - [ ] TodoForm: interim logic:
     - [ ] Summary != empty
     - [ ] Status & Completed & Progress
-  - [ ] multivalues: (QLineEdit[]/QListView)
+  - [ ] multivalues: (QLineEdit[]/QListView/QPlainTextEdit)
      - [ ] attach: (url)
      - [ ] comment: (str)
      - [ ] contact: (email/msgr/uuid)
-- [x] EL: View: column delegates
 
 ### RTM
 - InstantAdd (+Inbox)

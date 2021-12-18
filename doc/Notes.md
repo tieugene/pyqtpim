@@ -5,6 +5,11 @@
 - [PyQt Layouts](https://realpython.com/python-pyqt-layout/)
 - [Программирование на PyQt5 (43) - использование БД](https://russianblogs.com/article/36811088928/)
 - [PyQt5 DB programming — CUD](https://developpaper.com/pyqt5-database-programming-adding-deleting-and-modifying-examples/)
+- [Simple Todo](https://www.pythonguis.com/tutorials/modelview-architecture/)
+- QSFPM:
+  - [Custom QSFPM example](https://doc.qt.io/qt-5/qtwidgets-itemviews-customsortfiltermodel-example.html)
+  - [Sorting and filtering table data with QSFPM](https://www.walletfox.com/course/qsortfilterproxymodelexample.php)
+  - [Сортировка и фильтрация ... через Custom QSFPM](https://evileg.com/en/forum/topic/1421/)
 
 ## RTFM:
 - Sync:

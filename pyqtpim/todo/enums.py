@@ -147,3 +147,12 @@ ColHeader = (
     "Sumamry",
     "Location"
 )
+
+
+# --- Sorting
+@unique
+class ESortBy(IntEnum):
+    """List sorting order"""
+    ID = auto()
+    Name = auto()
+    PrioDueName = auto()
