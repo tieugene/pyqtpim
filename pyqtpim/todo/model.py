@@ -1,10 +1,10 @@
 # 1. system
 # 2. PySide
 import datetime
-from typing import Any, Union, Callable
+from typing import Any, Callable
 
 import vobject
-from PySide2 import QtCore, QtSql, QtGui
+from PySide2 import QtCore, QtSql
 # 3. local
 from common import SetGroup, EntryModel, EntryProxyModel, StoreModel
 from .data import VObjTodo
@@ -37,10 +37,9 @@ class TodoModel(EntryModel):
         def __vardatime2disp(data: str):
             """Convert datetime (naive/tzed) into viewable localtime"""
             if data:
-
-                if isinstance(v := datetime.datetime.fromisoformat(data), datetime.datetime):
-                    if v.tzinfo:
-                        return v.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
+                if isinstance(datime := datetime.datetime.fromisoformat(data), datetime.datetime):
+                    if datime.tzinfo:
+                        return datime.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
                     else:  # naive => as is, w/o seconds
                         return data.replace('T', ' ')[:16]
                 else:  # date => no convert
