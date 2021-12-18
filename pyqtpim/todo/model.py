@@ -123,10 +123,12 @@ class TodoModel(EntryModel):
 class TodoProxyModel(EntryProxyModel):
     _own_model = TodoModel
     __currentSorter: Callable
+    __currentFilter: Callable
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__currentSort = self.__lessThen_ID
+        self.__currentFilter = self.__accept_All
         self.setDynamicSortFilter(True)
         # TODO: self.resizeColumntToContent(*)
 
@@ -174,6 +176,9 @@ class TodoProxyModel(EntryProxyModel):
         # 3. Summary
         return obj_right.getSummary() < obj_left.getSummary()
 
+    def __accept_All(self, _: int) -> bool:
+        return True
+
     # Inherit
     def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         """:todo: combine per-column built-in sort with complex one"""
@@ -199,6 +204,16 @@ class TodoProxyModel(EntryProxyModel):
             enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
         }[sort_id]
         self.endResetModel()
+
+    def filtChanged(self, filt_id: enums.EFiltBy):
+        self.__currentFilter = {
+            enums.EFiltBy.All: self.__accept_All,
+            enums.EFiltBy.Done: self.__accept_All,
+            enums.EFiltBy.Today: self.__accept_All,
+            enums.EFiltBy.Tomorrow: self.__accept_All
+        }[filt_id]
+        print("Filter changed:", filt_id)
+        self.invalidateFilter()
 
 
 class TodoStoreModel(StoreModel):
