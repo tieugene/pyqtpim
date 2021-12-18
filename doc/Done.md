@@ -45,6 +45,8 @@
   - [x] VObj (DTStart/Due; naive/tz)
   - [x] fixed: naive > tzed: x
 - [x] TodoListView: autowidth: id, prio, status, % (?)
+- [x] Teach: idx.internalPointer() = None
+- [x] Teach: Closed todo = Status=Completed, %=100, Completed=datetime
 
 ## Contacts.File-based
 - [ ] CLM:

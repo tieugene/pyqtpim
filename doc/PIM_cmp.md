@@ -1,17 +1,39 @@
 # PIM comparision
 
 - ToDo only
-- CalDAV
+- User defined CalDAV server
 
 ## By one
-### Mozilla Lightning
-### [Rainlendar2](http://www.rainlendar.net/)
-(&euro;5..10)
-### [Evolution](https://wiki.gnome.org/Apps/Evolution)
-### [OpenTasks](https://opentasks.app)
+
 ### [RTM](https://www.rememberthemilk.com)
-($40/y)
+- &ominus; $40/y
+- &ominus; Not supports user WebDAV
+- &ominus; Attaches only GDrive/Dropbox/MyComp (Pro)
+- &oplus; Subtasks (Pro)
+- &ominus; Off-line - Pro only
+- &odot; RAM=200MB (Linux)
+
+### Mozilla Lightning
+- &ominus; DTStart/Due - datetime only
+- &ominus; Filters not work
+- &ominus; Permanent buggy
+
+### [Rainlendar2](http://www.rainlendar.net/)
+- &ominus; (&euro;5..10)
+- &ominus; страшный шоппц
+
+### [Evolution](https://wiki.gnome.org/Apps/Evolution)
+- &ominus; Громоздкие *.ics
+- &oplus; DTStart/Due date/datetime
+- &ominus; But both only
+- &oplus; Custom sort
+- &ominus; Class cannot be None
+
+### [OpenTasks](https://opentasks.app)
+- &ominus; 
+
 ### Apple Reminder
 
 ## Alltogether
+
 ### Fields

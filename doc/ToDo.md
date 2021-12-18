@@ -2,10 +2,18 @@
 
 ## 0. Now
 
+### 0.0. Idea
+- [ ] Back to file-based
+  - [ ] QSFPM
+  - [ ] All entries in one container
+
 ### 0.1. Job
-- [ ] TodoList:
-  - [ ] multisort (predefined/tunable)
-  - [ ] multifilter (e.g. 'Today') (model.setFilter()?)
+- [ ] TodoList (proxy):
+  - [ ] multisort (predefined/tunable):
+     - id
+     - summary
+     - Prio > Due > Summary
+  - [ ] multifilter
 - [ ] Categories
 - [ ] Sync
 
@@ -40,7 +48,9 @@
 - [ ] E:
   - […] Extend
   - […] CRUD[^2]
-  - [ ] TodoForm: interim logic
+  - [ ] TodoForm: interim logic:
+    - [ ] Summary != empty
+    - [ ] Status & Completed & Progress
   - [ ] multivalues: (QLineEdit[]/QListView)
      - [ ] attach: (url)
      - [ ] comment: (str)

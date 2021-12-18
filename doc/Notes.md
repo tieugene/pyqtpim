@@ -79,47 +79,37 @@
      - datetime.datetime.now() # 
      - datetime.datetime.now(timezone.utc) # UTC current time
      - datetime.datetime.utcnow() # naive
-  - Timezone:
+  - Timezone (`datetime.datetime.now().astimezone().tzname()`):
 
-```python
-now: datetime = datetime.datetime.now()     # datetime.datetime naive
-local_now = now.astimezone()                # datetime.datetime w/ tz
-local_tz = local_now.tzinfo                 # datetime.tzinfo
-local_tzname = local_tz.tzname(local_now)   # str
-print(local_tzname)
-```
-or `datetime.datetime.now().astimezone().tzname()`
+    ```python
+    now: datetime = datetime.datetime.now()     # datetime.datetime naive
+    local_now = now.astimezone()                # datetime.datetime w/ tz
+    local_tz = local_now.tzinfo                 # datetime.tzinfo
+    local_tzname = local_tz.tzname(local_now)   # str
+    print(local_tzname)
+    ```
 
-Datetimes:
+- Datetimes:
 
-Name	| type	| VObj	| SQL	| Edit	| Show
-------|---------|------|------|-----|------
-COMPLETED	| dt	| dtZ	| dtZ	| LocTime	| LocTime
-CREATED	| dt	| dtZ	| dtZ	| ---	| LocTime
-DTSTAMP	| dt	| dtZ	| ---	| ---	| LocTime
-DTSTART	| date	| date	| date	| date	| date
-	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
-DUE	| date	| date	| date	| date	| date
-	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
-LAST-M…D	| dt	| dtZ	| dtZ	| ---	| LocTime
+    Name	| type	| VObj	| SQL	| Edit	| Show
+    ------|---------|------|------|-----|------
+    COMPLETED	| dt	| dtZ	| dtZ	| LocTime	| LocTime
+    CREATED	| dt	| dtZ	| dtZ	| ---	| LocTime
+    DTSTAMP	| dt	| dtZ	| ---	| ---	| LocTime
+    DTSTART	| date	| date	| date	| date	| date
+    	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
+    DUE	| date	| date	| date	| date	| date
+    	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
+    LAST-M…D	| dt	| dtZ	| dtZ	| ---	| LocTime
+- Sort (selectable, SQL):
+  - id
+  - Summary[>Due[>Prio]
+  - Prio>Due>Summary
+- Filters (Due|Status|Completed):
+  - Active/Complete
+  - All/Today/Tomorrow/Week
 
 self.record(index.row()).value('active').toBool()
-
-- Datetimes changes:
-  - N>D: VALUE=DATE:20211217
-  - D>DT: VALUE=DATE:20211217T174522
-  - D>DTtz: TZID=MSK;VALUE=DATE:20211217T174623
-  - N>DTtz: TZID=MSK:20211217T174955
-  - DTtz>DT: TZID=MSK:20211217T174955
-  - DTtz>D: VALUE=DATE;X-VOBJ-ORIGINAL-TZID=MSK:20211217
-
-F\2 | N | D | DT| DTtz
-----|---|---|---|---
-N   | - | + |  |  
-D   |  | - | x |  
-DT  |  |  | - |  
-DTtz|  |  |  | - 
-
 
 ## vCard UML
 

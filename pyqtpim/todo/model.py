@@ -33,11 +33,12 @@ class TodoModel(EntryModel):
             """Convert UTC datetime into viewable localtime"""
             if data:
                 return datetime.datetime.fromisoformat(data).astimezone().replace(tzinfo=None).isoformat(sep=' ')
+
         def __vardatime2disp(data: str):
-            """Convert date/datetime (naive/tzed) into viewable localtime"""
+            """Convert datetime (naive/tzed) into viewable localtime"""
             if data:
-                v = datetime.datetime.fromisoformat(data)
-                if isinstance(v, datetime.datetime):
+
+                if isinstance(v := datetime.datetime.fromisoformat(data), datetime.datetime):
                     if v.tzinfo:
                         return v.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
                     else:  # naive => as is, w/o seconds
@@ -47,8 +48,6 @@ class TodoModel(EntryModel):
 
         if not idx.isValid():
             return None
-        # item = idx.internalPointer()
-        # item.itemData[]
         if role == QtCore.Qt.DisplayRole:
             col = idx.column()
             rec = self.record(idx.row())
