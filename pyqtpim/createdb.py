@@ -21,6 +21,7 @@ ENTRY_SQL = '''
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         store_id REFERENCES store(id) NOT NULL,
         created DATETIME NOT NULL,
+        dtstamp DATETIME NOT NULL,
         modified DATETIME NOT NULL,
         dtstart ANY NULL,
         due ANY NULL,

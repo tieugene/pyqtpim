@@ -62,6 +62,8 @@ class TodoModel(EntryModel):
                 return self.store_name[rec.value('store_id')]
             elif col == self.fieldIndex('created'):
                 return __utc2disp(rec.value('created'))
+            elif col == self.fieldIndex('dtstamp'):
+                return __utc2disp(rec.value('dtstamp'))
             elif col == self.fieldIndex('modified'):
                 return __utc2disp(rec.value('modified'))
             elif col == self.fieldIndex('completed'):
@@ -246,6 +248,7 @@ def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord, store_id: int):
     """Create new record and fill it with ventry content"""
     rec.setValue('store_id', store_id)
     rec.setValue('created', obj.getCreated().replace(tzinfo=datetime.timezone.utc).isoformat())
+    rec.setValue('dtstamp', obj.getDTStamp().replace(tzinfo=datetime.timezone.utc).isoformat())
     rec.setValue('modified', obj.getLastModified().replace(tzinfo=datetime.timezone.utc).isoformat())
     if v := obj.getDTStart():
         rec.setValue('dtstart', v.isoformat())

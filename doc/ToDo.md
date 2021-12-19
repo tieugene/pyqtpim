@@ -10,7 +10,8 @@
   - [ ] ? tmp SQLite in-mem DB
 
 ### 0.1. Job
-- [ ] Teach: dtstamp vs last-modified
+- [ ] Teach: dtstamp vs created vs last-modified
+  (dtstamp *mostly* == last-modified)
 - [ ] Sync
 - [ ] TodoList: multifilter (SQL)
 
