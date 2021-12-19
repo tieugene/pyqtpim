@@ -43,6 +43,12 @@
   - [x] Show.Details (raw)
   - [x] Show.List (local)
   - [x] VObj (DTStart/Due; naive/tz)
+  - [x] fixed: naive > tzed: x
+- [x] TodoListView: autowidth: id, prio, status, % (?)
+- [x] Teach: idx.internalPointer() = None
+- [x] Teach: Closed todo = Status=Completed, %=100, Completed=datetime
+- [x] TodoList: multisort (proxy; ID|Summary|Prio>Due>Summary)
+- [x] TodoList: multifilter (QSFPM)
 
 ## Contacts.File-based
 - [ ] CLM:

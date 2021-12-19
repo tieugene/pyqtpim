@@ -1,13 +1,11 @@
 """GUI representation of ToDo things"""
 # 1. std
 import datetime
-import os
 from typing import Any
 # 2. PySide
-import vobject
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryView, EntryListView, StoreListView, exc, MySettings, SetGroup
+from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2rec
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
@@ -24,8 +22,15 @@ class TodoListView(EntryListView):
         self.loadCol2Show()
         self.setColumnHidden(self.model().sourceModel().fieldIndex('body'), True)
         self.loadColOrder()
-        self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
-        self.horizontalHeader().setSectionsMovable(True)
+        hh = self.horizontalHeader()
+        hh.sectionMoved.connect(self.sectionMoved)
+        hh.setSectionsMovable(True)
+        for c in ('id', 'progress', 'priority', 'status'):
+            hh.setSectionResizeMode(
+                hh.visualIndex(self.model().sourceModel().fieldIndex(c)),
+                hh.ResizeMode.ResizeToContents
+            )
+        # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
         self.sortByColumn(self.model().sourceModel().fieldIndex('id'))
         # signals
         # # self.activated.connect(self.rowChanged)
@@ -159,7 +164,7 @@ class TodoStoreListView(StoreListView):
         if not (indexes := self.selectedIndexes()):
             return
         rec = self.model().record(indexes[0].row())
-        syncStore(self._list.model().sourceModel(), rec.value('id'), rec.value('connection'))
+        self._list.model().sourceModel().reloadAll(rec.value('id'), rec.value('connection'))
 
 
 class TodoView(EntryView):
@@ -234,24 +239,97 @@ class TodoView(EntryView):
         self.details.clear()
 
 
+class TodoSortWidget(QtWidgets.QGroupBox):
+    by_id: QtWidgets.QRadioButton
+    by_name: QtWidgets.QRadioButton
+    by_pdn: QtWidgets.QRadioButton
+    bg: QtWidgets.QButtonGroup
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setTitle("Sort")
+        # widgets
+        self.by_id = QtWidgets.QRadioButton("ID", self)
+        self.by_name = QtWidgets.QRadioButton("Name", self)
+        self.by_pdn = QtWidgets.QRadioButton("!→Due→Name", self)
+        # logic
+        self.bg = QtWidgets.QButtonGroup(self)
+        self.bg.addButton(self.by_id, enums.ESortBy.ID)
+        self.bg.addButton(self.by_name, enums.ESortBy.Name)
+        self.bg.addButton(self.by_pdn, enums.ESortBy.PrioDueName)
+        # layout
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self.by_id)
+        layout.addWidget(self.by_name)
+        layout.addWidget(self.by_pdn)
+        # layout.addStretch(1);
+        self.setLayout(layout)
+        # the end
+        self.by_id.setChecked(True)
+
+
+class TodoFilterWidget(QtWidgets.QGroupBox):
+    f_All: QtWidgets.QRadioButton
+    f_Closed: QtWidgets.QRadioButton
+    f_Today: QtWidgets.QRadioButton
+    f_Tomorrow: QtWidgets.QRadioButton
+    bg: QtWidgets.QButtonGroup
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.setTitle("Filter")
+        # widgets
+        self.f_All = QtWidgets.QRadioButton("All", self)
+        self.f_Closed = QtWidgets.QRadioButton("Closed", self)
+        self.f_Today = QtWidgets.QRadioButton("Today", self)
+        self.f_Tomorrow = QtWidgets.QRadioButton("Tomorrow", self)
+        # logic
+        self.bg = QtWidgets.QButtonGroup(self)
+        self.bg.addButton(self.f_All, enums.EFiltBy.All)
+        self.bg.addButton(self.f_Closed, enums.EFiltBy.Closed)
+        self.bg.addButton(self.f_Today, enums.EFiltBy.Today)
+        self.bg.addButton(self.f_Tomorrow, enums.EFiltBy.Tomorrow)
+        # layout
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self.f_All)
+        layout.addWidget(self.f_Closed)
+        layout.addWidget(self.f_Today)
+        layout.addWidget(self.f_Tomorrow)
+        # layout.addStretch(1);
+        self.setLayout(layout)
+        # the end
+        self.f_All.setChecked(True)
+
+
 class TodosWidget(QtWidgets.QWidget):
     stores: TodoStoreListView
+    l_sort: TodoSortWidget
+    l_filt: TodoFilterWidget
+    # l_filt: QtWidgets.QGroupBox
     list: TodoListView
     details: TodoView
 
     def __init__(self):
         super().__init__()
         self.__createWidgets()
-        self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
+        self.__createConnections()
 
     def __createWidgets(self):
         # order
         splitter = QtWidgets.QSplitter(self)
         self.details = TodoView(splitter)
         self.list = TodoListView(splitter, self.details)
-        self.stores = TodoStoreListView(splitter, self.list)
+        left_panel = QtWidgets.QWidget(splitter)
+        self.stores = TodoStoreListView(left_panel, self.list)
+        self.l_sort = TodoSortWidget(left_panel)
+        self.l_filt = TodoFilterWidget(left_panel)
+        left_layout = QtWidgets.QVBoxLayout(left_panel)
+        left_layout.addWidget(self.stores)
+        left_layout.addWidget(self.l_sort)
+        left_layout.addWidget(self.l_filt)
+        left_panel.setLayout(left_layout)
         # layout
-        splitter.addWidget(self.stores)
+        splitter.addWidget(left_panel)
         splitter.addWidget(self.list)
         splitter.addWidget(self.details)
         splitter.setOrientation(QtCore.Qt.Horizontal)
@@ -262,24 +340,7 @@ class TodosWidget(QtWidgets.QWidget):
         layout.addWidget(splitter)
         self.setLayout(layout)
 
-
-def syncStore(model: TodoModel, store_id: int, path: str):
-    """Sync VTODO records with file dir
-    :todo: hide into model
-    """
-    with os.scandir(path) as itr:
-        for entry in itr:
-            if not entry.is_file():
-                continue
-            with open(entry.path, 'rt') as stream:
-                if ventry := vobject.readOne(stream):
-                    if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        obj = VObjTodo(ventry)
-                        rec = model.record()
-                        obj2rec(obj, rec, store_id)
-                        # rec.setValue('store_id', store_id)
-                        if not model.insertRecord(-1, rec):
-                            print(obj.getSummary(), "Something wrong with adding record")
-                else:
-                    raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
-    model.select()
+    def __createConnections(self):
+        self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
+        self.l_sort.bg.idClicked.connect(self.list.model().sortChanged)
+        self.l_filt.bg.idClicked.connect(self.list.model().filtChanged)

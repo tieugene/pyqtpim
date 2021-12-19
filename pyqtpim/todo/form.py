@@ -154,7 +154,6 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
 
     def setData(self, data: Optional[Union[datetime.date, datetime.datetime]] = None):
         if data:
-            # print("setData:", type(data), data)
             self.is_enabled.setChecked(True)
             self.f_date.setEnabled(True)
             self.is_timed.setEnabled(True)
@@ -163,12 +162,10 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                 self.is_timed.setChecked(True)
                 self.f_time.setEnabled(True)
                 self.f_time.setTime(data.time())
-                self.t_tz = data.tzinfo     # real/None (naive); type=dateutil.tz.tz._tzicalvtz
-                if self.t_tz:
-                    # print("Set data:", type(self.t_tz))
-                    # print(self.t_tz.__dict__)
+                if data.tzinfo:
                     self.is_tzed.setChecked(True)
-                    self.l_tz.setText(self.t_tz._tzid)  # ok: data.tzname(); self.t_tz.tzname(data)
+                    self.t_tz = data.tzinfo     # real/None (naive); type=dateutil.tz.tz._tzicalvtz
+                    self.l_tz.setText(self.t_tz._tzid)
             else:  # date
                 self.f_date.setDate(data)
 
@@ -460,9 +457,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     # - dtstart
     v_new = form.f_dtstart.getData()
     v_old = obj.getDTStart()
-    # print("DTStart:", type(v_old), v_old, "=>", type(v_new), v_new)
     if v_old != v_new:
-        # print("Changed")
         obj.setDTStart(v_new)
         if v_new:
             rec.setValue('dtstart', v_new.isoformat())

@@ -153,6 +153,9 @@ class VObjTodo(VObj):
     def getDue(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         return self.__getFldByName('due')
 
+    def getDue_as_date(self) -> Optional[datetime.date]:
+        return retvalue.date() if isinstance(retvalue := self.getDue(), datetime.datetime) else retvalue
+
     def getLastModified(self) -> Optional[datetime.datetime]:
         return self.__getFldByName('last-modified')
 

@@ -8,37 +8,37 @@ from PySide2 import QtCore, QtGui
 class EProp(IntEnum):
     """VTODO properties (usual).
      (21..25 from 32 available)"""
-    Attach = auto()         # *
+    Attach = auto()  # *
     # Attendee              # *
-    Categories = auto()     # *
-    Class = auto()          # ?
-    Comment = auto()        # *
-    Completed = auto()      # ? datetime.utc
-    Contact = auto()        # *
-    Created = auto()        # ? auto
-    Description = auto()    # ?
-    DTStamp = auto()        # 1 auto, datetime.utc
-    DTStart = auto()        # ?
-    Due = auto()            # ?
+    Categories = auto()  # *
+    Class = auto()  # ?
+    Comment = auto()  # *
+    Completed = auto()  # ? datetime.utc
+    Contact = auto()  # *
+    Created = auto()  # ? auto
+    Description = auto()  # ?
+    DTStamp = auto()  # 1 auto, datetime.utc
+    DTStart = auto()  # ?
+    Due = auto()  # ?
     # Duration              # ?
     # ExDate                # *
     # Geo                   # ?
-    LastModified = auto()   # ? auto, datetime.utc
-    Location = auto()       # ?
+    LastModified = auto()  # ? auto, datetime.utc
+    Location = auto()  # ?
     # Organizer             # ?
-    Percent = auto()        # ? ==  PERCENT-COMPLETE
-    Priority = auto()       # ?
+    Percent = auto()  # ? ==  PERCENT-COMPLETE
+    Priority = auto()  # ?
     # RDate                 # *
     # RECURRENCE-ID         # ?
-    RelatedTo = auto()      # *
+    RelatedTo = auto()  # *
     # REQUEST-STATUS        # *
     # Resources             # *
-    RRule = auto()          # ?
-    Sequence = auto()       # ? auto
-    Status = auto()         # ?
-    Summary = auto()        # ?
-    UID = auto()            # 1 auto
-    URL = auto()            # ?
+    RRule = auto()  # ?
+    Sequence = auto()  # ? auto
+    Status = auto()  # ?
+    Summary = auto()  # ?
+    UID = auto()  # 1 auto
+    URL = auto()  # ?
 
 
 @unique
@@ -102,6 +102,7 @@ TColor_Status = (
     QtGui.QBrush(QtCore.Qt.red)
 )
 
+
 # --- Priority
 @unique
 class EPrio(IntEnum):
@@ -147,3 +148,22 @@ ColHeader = (
     "Sumamry",
     "Location"
 )
+
+
+# --- Sorting
+@unique
+class ESortBy(IntEnum):
+    """List sorting order"""
+    ID = auto()
+    Name = auto()
+    PrioDueName = auto()
+
+
+# --- Filtering
+@unique
+class EFiltBy(IntEnum):
+    """List filter rules"""
+    All = auto()
+    Closed = auto()
+    Today = auto()
+    Tomorrow = auto()

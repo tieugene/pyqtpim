@@ -2,25 +2,36 @@
 
 ## 0. Now
 
+### 0.0. Idea
+- [ ] SQL and File as uninfied backend
+- [ ] Back to file-based
+  - [ ] QSFPM
+  - [ ] All entries in one container
+  - [ ] ? tmp SQLite in-mem DB
+
 ### 0.1. Job
-- [ ] TodoForm: interim logic
-- [ ] TodoList:
-  - [ ] autowidth: id, prio, status, %
-  - [ ] multisort (predefined/tunable)
-  - [ ] multifilter (e.g. 'Today') (model.setFilter()?)
-- [ ] Categories
+- [ ] Teach: dtstamp vs last-modified
 - [ ] Sync
+- [ ] TodoList: multifilter (SQL)
 
 ### 0.2. Fixme
-- [ ] Datetime (dtstart, due):
-  - [ ] naive > tzed: x (eq datetimes)
+- [ ] `store` adds new rec with `id=0`
+- [ ] `ti.Job` not loadable:  
+   *pyqtpim/todo/model.py:248, obj2rec:
+   obj.getCreated()==None*
+- [ ] List sync => List reload
+- [ ] TodoForm:
+  - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'
-- [ ] Form errors:
+- [ ] TodoForm save errors:
   - [ ] C prio
   - [ ] U % (form:495)
 - [ ] rollback on serialize() error (save())
 
 ### 0.3. Tuning
+- [ ] Settings save/restore:
+  - [ ] sort
+  - [ ] filter
 - [ ] 'Percent' => 'Progress'
 - [ ] Shrink widget groups
 - [ ] ELM.View: auto-h/w
@@ -39,15 +50,17 @@
   - [ ] filter
 
 ## 2. ToDo
+- [ ] Categories
 - [ ] E:
   - […] Extend
   - […] CRUD[^2]
-  - [ ] timezone
-  - [ ] multivalues: (QLineEdit[]/QListView)
+  - [ ] TodoForm: interim logic:
+    - [ ] Summary != empty
+    - [ ] Status & Completed & Progress
+  - [ ] multivalues: (QLineEdit[]/QListView/QPlainTextEdit)
      - [ ] attach: (url)
      - [ ] comment: (str)
      - [ ] contact: (email/msgr/uuid)
-- [ ] EL: View: column delegates
 
 ### RTM
 - InstantAdd (+Inbox)

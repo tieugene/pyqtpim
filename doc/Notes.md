@@ -5,6 +5,11 @@
 - [PyQt Layouts](https://realpython.com/python-pyqt-layout/)
 - [Программирование на PyQt5 (43) - использование БД](https://russianblogs.com/article/36811088928/)
 - [PyQt5 DB programming — CUD](https://developpaper.com/pyqt5-database-programming-adding-deleting-and-modifying-examples/)
+- [Simple Todo](https://www.pythonguis.com/tutorials/modelview-architecture/)
+- QSFPM:
+  - [Custom QSFPM example](https://doc.qt.io/qt-5/qtwidgets-itemviews-customsortfiltermodel-example.html)
+  - [Sorting and filtering table data with QSFPM](https://www.walletfox.com/course/qsortfilterproxymodelexample.php)
+  - [Сортировка и фильтрация ... через Custom QSFPM](https://evileg.com/en/forum/topic/1421/)
 
 ## RTFM:
 - Sync:
@@ -79,47 +84,42 @@
      - datetime.datetime.now() # 
      - datetime.datetime.now(timezone.utc) # UTC current time
      - datetime.datetime.utcnow() # naive
-  - Timezone:
+  - Timezone (`datetime.datetime.now().astimezone().tzname()`):
 
-```python
-now: datetime = datetime.datetime.now()     # datetime.datetime naive
-local_now = now.astimezone()                # datetime.datetime w/ tz
-local_tz = local_now.tzinfo                 # datetime.tzinfo
-local_tzname = local_tz.tzname(local_now)   # str
-print(local_tzname)
-```
-or `datetime.datetime.now().astimezone().tzname()`
+    ```python
+    now: datetime = datetime.datetime.now()     # datetime.datetime naive
+    local_now = now.astimezone()                # datetime.datetime w/ tz
+    local_tz = local_now.tzinfo                 # datetime.tzinfo
+    local_tzname = local_tz.tzname(local_now)   # str
+    print(local_tzname)
+    ```
 
-Datetimes:
+- Datetimes:
 
-Name	| type	| VObj	| SQL	| Edit	| Show
-------|---------|------|------|-----|------
-COMPLETED	| dt	| dtZ	| dtZ	| LocTime	| LocTime
-CREATED	| dt	| dtZ	| dtZ	| ---	| LocTime
-DTSTAMP	| dt	| dtZ	| ---	| ---	| LocTime
-DTSTART	| date	| date	| date	| date	| date
-	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
-DUE	| date	| date	| date	| date	| date
-	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
-LAST-M…D	| dt	| dtZ	| dtZ	| ---	| LocTime
+    Name	| type	| VObj	| SQL	| Edit	| Show
+    ------|---------|------|------|-----|------
+    COMPLETED	| dt	| dtZ	| dtZ	| LocTime	| LocTime
+    CREATED	| dt	| dtZ	| dtZ	| ---	| LocTime
+    DTSTAMP	| dt	| dtZ	| ---	| ---	| LocTime
+    DTSTART	| date	| date	| date	| date	| date
+    	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
+    DUE	| date	| date	| date	| date	| date
+    	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
+    LAST-M…D	| dt	| dtZ	| dtZ	| ---	| LocTime
+
+- Sort (selectable, SQL):
+  - id
+  - Summary[>Due[>Prio]
+  - Prio>Due>Summary
+- Filters (Due|Status|Completed):
+  - Active/Complete
+  - All/Today/Tomorrow/Week
+- Datetimes:
+  - Created: like file ctime
+  - DTStamp: special:  mtime w/o METHOD / ctime or special w/ METHOD
+  - Last-Modified: like file mtime
 
 self.record(index.row()).value('active').toBool()
-
-- Datetimes changes:
-  - N>D: VALUE=DATE:20211217
-  - D>DT: VALUE=DATE:20211217T174522
-  - D>DTtz: TZID=MSK;VALUE=DATE:20211217T174623
-  - N>DTtz: TZID=MSK:20211217T174955
-  - DTtz>DT: TZID=MSK:20211217T174955
-  - DTtz>D: VALUE=DATE;X-VOBJ-ORIGINAL-TZID=MSK:20211217
-
-F\2 | N | D | DT| DTtz
-----|---|---|---|---
-N   | - | + |  |  
-D   |  | - | x |  
-DT  |  |  | - |  
-DTtz|  |  |  | - 
-
 
 ## vCard UML
 
