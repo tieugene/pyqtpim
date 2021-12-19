@@ -1,13 +1,11 @@
 """GUI representation of ToDo things"""
 # 1. std
 import datetime
-import os
 from typing import Any
 # 2. PySide
-import vobject
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryView, EntryListView, StoreListView, exc, MySettings, SetGroup
+from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2rec
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
@@ -166,7 +164,7 @@ class TodoStoreListView(StoreListView):
         if not (indexes := self.selectedIndexes()):
             return
         rec = self.model().record(indexes[0].row())
-        syncStore(self._list.model().sourceModel(), rec.value('id'), rec.value('connection'))
+        self._list.model().sourceModel().reloadAll(rec.value('id'), rec.value('connection'))
 
 
 class TodoView(EntryView):
@@ -241,7 +239,7 @@ class TodoView(EntryView):
         self.details.clear()
 
 
-class TodoSortWidget(QtWidgets.QWidget):
+class TodoSortWidget(QtWidgets.QGroupBox):
     by_id: QtWidgets.QRadioButton
     by_name: QtWidgets.QRadioButton
     by_pdn: QtWidgets.QRadioButton
@@ -249,7 +247,7 @@ class TodoSortWidget(QtWidgets.QWidget):
 
     def __init__(self, parent):
         super().__init__(parent)
-        # self.setTitle("Sort")
+        self.setTitle("Sort")
         # widgets
         self.by_id = QtWidgets.QRadioButton("ID", self)
         self.by_name = QtWidgets.QRadioButton("Name", self)
@@ -270,30 +268,31 @@ class TodoSortWidget(QtWidgets.QWidget):
         self.by_id.setChecked(True)
 
 
-class TodoFilterWidget(QtWidgets.QWidget):
+class TodoFilterWidget(QtWidgets.QGroupBox):
     f_All: QtWidgets.QRadioButton
-    f_Done: QtWidgets.QRadioButton
+    f_Closed: QtWidgets.QRadioButton
     f_Today: QtWidgets.QRadioButton
     f_Tomorrow: QtWidgets.QRadioButton
     bg: QtWidgets.QButtonGroup
 
     def __init__(self, parent):
         super().__init__(parent)
+        self.setTitle("Filter")
         # widgets
         self.f_All = QtWidgets.QRadioButton("All", self)
-        self.f_Done = QtWidgets.QRadioButton("Done", self)
+        self.f_Closed = QtWidgets.QRadioButton("Closed", self)
         self.f_Today = QtWidgets.QRadioButton("Today", self)
         self.f_Tomorrow = QtWidgets.QRadioButton("Tomorrow", self)
         # logic
         self.bg = QtWidgets.QButtonGroup(self)
         self.bg.addButton(self.f_All, enums.EFiltBy.All)
-        self.bg.addButton(self.f_Done, enums.EFiltBy.Done)
+        self.bg.addButton(self.f_Closed, enums.EFiltBy.Closed)
         self.bg.addButton(self.f_Today, enums.EFiltBy.Today)
         self.bg.addButton(self.f_Tomorrow, enums.EFiltBy.Tomorrow)
         # layout
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.f_All)
-        layout.addWidget(self.f_Done)
+        layout.addWidget(self.f_Closed)
         layout.addWidget(self.f_Today)
         layout.addWidget(self.f_Tomorrow)
         # layout.addStretch(1);
@@ -345,25 +344,3 @@ class TodosWidget(QtWidgets.QWidget):
         self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
         self.l_sort.bg.idClicked.connect(self.list.model().sortChanged)
         self.l_filt.bg.idClicked.connect(self.list.model().filtChanged)
-
-
-def syncStore(model: TodoModel, store_id: int, path: str):
-    """Sync VTODO records with file dir
-    :todo: hide into model
-    """
-    with os.scandir(path) as itr:
-        for entry in itr:
-            if not entry.is_file():
-                continue
-            with open(entry.path, 'rt') as stream:
-                if ventry := vobject.readOne(stream):
-                    if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        obj = VObjTodo(ventry)
-                        rec = model.record()
-                        obj2rec(obj, rec, store_id)
-                        # rec.setValue('store_id', store_id)
-                        if not model.insertRecord(-1, rec):
-                            print(obj.getSummary(), "Something wrong with adding record")
-                else:
-                    raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
-    model.select()

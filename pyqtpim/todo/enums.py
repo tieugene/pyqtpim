@@ -158,11 +158,12 @@ class ESortBy(IntEnum):
     Name = auto()
     PrioDueName = auto()
 
-# --- Sorting
+
+# --- Filtering
 @unique
 class EFiltBy(IntEnum):
     """List filter rules"""
     All = auto()
-    Done = auto()
+    Closed = auto()
     Today = auto()
     Tomorrow = auto()

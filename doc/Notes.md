@@ -106,6 +106,7 @@
     DUE	| date	| date	| date	| date	| date
     	| dt	| dt[tz]	| dt[Z]	| dt[tz]	| LocTime
     LAST-M…D	| dt	| dtZ	| dtZ	| ---	| LocTime
+
 - Sort (selectable, SQL):
   - id
   - Summary[>Due[>Prio]
@@ -113,6 +114,10 @@
 - Filters (Due|Status|Completed):
   - Active/Complete
   - All/Today/Tomorrow/Week
+- Datetimes:
+  - Created: like file ctime
+  - DTStamp: special:  mtime w/o METHOD / ctime or special w/ METHOD
+  - Last-Modified: like file mtime
 
 self.record(index.row()).value('active').toBool()
 

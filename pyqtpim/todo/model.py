@@ -1,12 +1,14 @@
 # 1. system
 # 2. PySide
 import datetime
+import os
 from typing import Any, Callable
-
-import vobject
+# 2. PySide2
 from PySide2 import QtCore, QtSql
-# 3. local
-from common import SetGroup, EntryModel, EntryProxyModel, StoreModel
+# 3. 3rd
+import vobject
+# 4. local
+from common import SetGroup, EntryModel, EntryProxyModel, StoreModel, exc
 from .data import VObjTodo
 from . import enums
 
@@ -119,6 +121,11 @@ class TodoModel(EntryModel):
             filt = 'FALSE'  # nothing to show
         self.setFilter(filt)
 
+    def reloadAll(self, store_id: int, store_path: str):
+        self.beginResetModel()
+        syncStore(self, store_id, store_path)
+        self.endResetModel()
+
 
 class TodoProxyModel(EntryProxyModel):
     _own_model = TodoModel
@@ -131,6 +138,35 @@ class TodoProxyModel(EntryProxyModel):
         self.__currentFilter = self.__accept_All
         self.setDynamicSortFilter(True)
         # TODO: self.resizeColumntToContent(*)
+
+    # Inherit
+    def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
+        """:todo: combine per-column built-in sort with complex one"""
+        return self.__currentSort(source_left, source_right)
+
+    def filterAcceptsRow(self, source_row: int, source_parent: QtCore.QModelIndex) -> bool:
+        """Default: all; Today: Due <= today [todo: and not completed]"""
+        return self.__currentFilter(source_row)
+
+    # Hand-made
+    def sortChanged(self, sort_id: enums.ESortBy):
+        self.beginResetModel()
+        self.__currentSort = {
+            enums.ESortBy.ID: self.__lessThen_ID,
+            enums.ESortBy.Name: self.__lessThen_Name,
+            enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
+        }[sort_id]
+        self.endResetModel()
+
+    def filtChanged(self, filt_id: enums.EFiltBy):
+        self.__currentFilter = {
+            enums.EFiltBy.All: self.__accept_All,
+            enums.EFiltBy.Closed: self.__accept_Closed,
+            enums.EFiltBy.Today: self.__accept_Today,
+            enums.EFiltBy.Tomorrow: self.__accept_Tomorrow
+        }[filt_id]
+        # print("Filter changed:", filt_id)
+        self.invalidateFilter()
 
     def __lessThen_ID(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()
@@ -176,44 +212,28 @@ class TodoProxyModel(EntryProxyModel):
         # 3. Summary
         return obj_right.getSummary() < obj_left.getSummary()
 
-    def __accept_All(self, _: int) -> bool:
+    @staticmethod
+    def __accept_All(_: int) -> bool:
+        """Enable all ToDos"""
         return True
 
-    # Inherit
-    def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
-        """:todo: combine per-column built-in sort with complex one"""
-        return self.__currentSort(source_left, source_right)
-        # return False
+    def __accept_Closed(self, source_row: int) -> bool:
+        """Show only Status=Complete[|Cancelled]"""
+        return self.sourceModel().getObj(source_row).getStatus() in {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
-    def filterAcceptsRow(self, source_row: int, source_parent: QtCore.QModelIndex) -> bool:
-        """Default: all; Today: Due <= today [todo: and not completed]"""
-        return True
+    def __accept_Today(self, source_row: int) -> bool:
+        """Show only ~(Complete|Cancelled) & Due & Due <= today"""
+        closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
         today = datetime.date.today()
-        due: str = self.sourceModel().data(self.sourceModel().index(source_row, self.sourceModel().fieldIndex('due')))
-        if due:
-            return datetime.date.fromisoformat(due) <= today
-        else:
-            return False
+        vobj: VObjTodo = self.sourceModel().getObj(source_row)
+        return (vobj.getStatus() not in closed) and (due := vobj.getDue_as_date()) is not None and due <= today
 
-    # Hand-made
-    def sortChanged(self, sort_id: enums.ESortBy):
-        self.beginResetModel()
-        self.__currentSort = {
-            enums.ESortBy.ID: self.__lessThen_ID,
-            enums.ESortBy.Name: self.__lessThen_Name,
-            enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
-        }[sort_id]
-        self.endResetModel()
-
-    def filtChanged(self, filt_id: enums.EFiltBy):
-        self.__currentFilter = {
-            enums.EFiltBy.All: self.__accept_All,
-            enums.EFiltBy.Done: self.__accept_All,
-            enums.EFiltBy.Today: self.__accept_All,
-            enums.EFiltBy.Tomorrow: self.__accept_All
-        }[filt_id]
-        print("Filter changed:", filt_id)
-        self.invalidateFilter()
+    def __accept_Tomorrow(self, source_row: int) -> bool:
+        """Like today but tomorrow"""
+        closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
+        tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+        vobj: VObjTodo = self.sourceModel().getObj(source_row)
+        return (vobj.getStatus() not in closed) and (due := vobj.getDue_as_date()) is not None and due <= tomorrow
 
 
 class TodoStoreModel(StoreModel):
@@ -244,3 +264,25 @@ def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord, store_id: int):
         rec.setValue('location', v)
     body = obj.serialize()
     rec.setValue('body', body)
+
+
+def syncStore(model: TodoModel, store_id: int, path: str):
+    """Sync VTODO records with file dir
+    :todo: hide into model
+    """
+    with os.scandir(path) as itr:
+        for entry in itr:
+            if not entry.is_file():
+                continue
+            with open(entry.path, 'rt') as stream:
+                if ventry := vobject.readOne(stream):
+                    if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
+                        obj = VObjTodo(ventry)
+                        rec = model.record()
+                        obj2rec(obj, rec, store_id)
+                        # rec.setValue('store_id', store_id)
+                        if not model.insertRecord(-1, rec):
+                            print(obj.getSummary(), "Something wrong with adding record")
+                else:
+                    raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
+    model.select()

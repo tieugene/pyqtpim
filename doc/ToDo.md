@@ -3,16 +3,23 @@
 ## 0. Now
 
 ### 0.0. Idea
+- [ ] SQL and File as uninfied backend
 - [ ] Back to file-based
   - [ ] QSFPM
   - [ ] All entries in one container
+  - [ ] ? tmp SQLite in-mem DB
 
 ### 0.1. Job
-- [ ] TodoList (proxy):
-  - [ ] multifilter
+- [ ] Teach: dtstamp vs last-modified
 - [ ] Sync
+- [ ] TodoList: multifilter (SQL)
 
 ### 0.2. Fixme
+- [ ] `store` adds new rec with `id=0`
+- [ ] `ti.Job` not loadable:  
+   *pyqtpim/todo/model.py:248, obj2rec:
+   obj.getCreated()==None*
+- [ ] List sync => List reload
 - [ ] TodoForm:
   - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'
