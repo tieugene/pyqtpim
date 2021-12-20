@@ -250,4 +250,6 @@ class VObjTodo(VObj):
     def updateStamps(self):
         seq = 0 if (seq := self.getSequence()) is None else seq + 1
         self.__setFldByName('sequence', str(seq))
-        self.__setFldByName('last-modified', _utcnow())
+        now = _utcnow()
+        self.__setFldByName('last-modified', now)
+        self.__setFldByName('dtstamp', now)

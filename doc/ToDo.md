@@ -23,16 +23,17 @@
   - [ ] Filters
 
 ### 0.2. Fixme
-- [ ] `store` adds new rec with `id=0`
-- [ ] TodoForm:
-  - [ ] rework/fix Prio edit
-  - [ ] default tz - 'file...'
 - [ ] TodoForm save errors:
   - [ ] C prio
   - [ ] U % (form:495)
-- [ ] rollback on serialize() error (save())
+  - [ ] rollback on serialize() error
+- [ ] TodoForm:
+  - [ ] rework/fix Prio edit
+  - [ ] default tz - 'file...'
+- [ ] `store` adds new rec with `id=0`
 
 ### 0.3. Tuning
+- [ ] todo.data.VTodoObj.getX - @prop w/ decorator
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
