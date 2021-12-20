@@ -16,11 +16,11 @@ class MainWindow(QtWidgets.QMainWindow):
     actExit: QtWidgets.QAction
     actAbout: QtWidgets.QAction
     actSettings: QtWidgets.QAction
-    actEntryListAdd: QtWidgets.QAction
-    actEntryListEdit: QtWidgets.QAction
-    actEntryListDel: QtWidgets.QAction
-    actEntryListInfo: QtWidgets.QAction
-    actEntryListSync: QtWidgets.QAction
+    actStoreAdd: QtWidgets.QAction
+    actStoreEdit: QtWidgets.QAction
+    actStoreDel: QtWidgets.QAction
+    actStoreInfo: QtWidgets.QAction
+    actStoreReload: QtWidgets.QAction
     actEntryCat: QtWidgets.QAction
     actEntryInside: QtWidgets.QAction
     actEntryAdd: QtWidgets.QAction
@@ -66,32 +66,32 @@ class MainWindow(QtWidgets.QMainWindow):
                                              statusTip="Define settings",
                                              triggered=self.settings)
         # noinspection PyArgumentList
-        self.actEntryListAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
-                                                 "&New List", self,
-                                                 statusTip="Add new List",
-                                                 triggered=self.listAdd)
+        self.actStoreAdd = QtWidgets.QAction(QtGui.QIcon(':/icons/plus.svg'),
+                                             "&New Store", self,
+                                             statusTip="Add new Store",
+                                             triggered=self.storeAdd)
         # noinspection PyArgumentList
-        self.actEntryListEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
-                                                  "&Edit List", self,
-                                                  statusTip="Edit current List",
-                                                  triggered=self.listEdit)
+        self.actStoreEdit = QtWidgets.QAction(QtGui.QIcon(':/icons/pencil.svg'),
+                                              "&Edit Store", self,
+                                              statusTip="Edit current Store",
+                                              triggered=self.storeEdit)
         # noinspection PyArgumentList
-        self.actEntryListDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
-                                                 "&Del List", self,
-                                                 statusTip="Delete current List",
-                                                 triggered=self.listDel)
+        self.actStoreDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
+                                             "&Del Store", self,
+                                             statusTip="Delete current Store",
+                                             triggered=self.storeDel)
         # noinspection PyArgumentList
-        self.actEntryListInfo = QtWidgets.QAction(QtGui.QIcon(':/icons/info.svg'),
-                                                  "List &Info", self,
-                                                  shortcut="Ctrl+I",
-                                                  statusTip="Info about current List",
-                                                  triggered=self.listInfo)
+        self.actStoreInfo = QtWidgets.QAction(QtGui.QIcon(':/icons/info.svg'),
+                                              "Store &Info", self,
+                                              shortcut="Ctrl+I",
+                                              statusTip="Info about current Store",
+                                              triggered=self.storeInfo)
         # noinspection PyArgumentList
-        self.actEntryListSync = QtWidgets.QAction(QtGui.QIcon(':/icons/info.svg'),
-                                                  "List &Sync", self,
-                                                  shortcut="Ctrl+S",
-                                                  statusTip="Sync current List",
-                                                  triggered=self.listSync)
+        self.actStoreReload = QtWidgets.QAction(QtGui.QIcon(':/icons/cloud-download.svg'),
+                                                "Re&load Store", self,
+                                                shortcut="Ctrl+L",
+                                                statusTip="Reload current Store",
+                                                triggered=self.storeReload)
         # noinspection PyArgumentList
         self.actEntryCat = QtWidgets.QAction(QtGui.QIcon(':/icons/eye.svg'),
                                              "Entry &File", self,
@@ -124,20 +124,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
-        menu_file.addAction(self.actEntryListSync)
+        menu_file.addAction(self.actStoreReload)
         menu_file.addSeparator()
         menu_file.addAction(self.actSettings)
         menu_file.addAction(self.actExit)
         menu_edit = self.menuBar().addMenu("&Edit")
-        menu_edit.addAction(self.actEntryListAdd)
-        menu_edit.addAction(self.actEntryListEdit)
-        menu_edit.addAction(self.actEntryListDel)
+        menu_edit.addAction(self.actStoreAdd)
+        menu_edit.addAction(self.actStoreEdit)
+        menu_edit.addAction(self.actStoreDel)
         menu_edit.addSeparator()
         menu_edit.addAction(self.actEntryAdd)
         menu_edit.addAction(self.actEntryEdit)
         menu_edit.addAction(self.actEntryDel)
         menu_view = self.menuBar().addMenu("&View")
-        menu_view.addAction(self.actEntryListInfo)
+        menu_view.addAction(self.actStoreInfo)
         menu_view.addSeparator()
         menu_view.addAction(self.actEntryCat)
         menu_view.addAction(self.actEntryInside)
@@ -160,20 +160,20 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.settings_view.exec_():
             self.todo.list.loadCol2Show()
 
-    def listAdd(self):
+    def storeAdd(self):
         (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
 
-    def listEdit(self):
+    def storeEdit(self):
         (self.todo.stores.storeEdit, self.contacts.sources.storeEdit)[self.tabs.currentIndex()]()
 
-    def listDel(self):
+    def storeDel(self):
         (self.todo.stores.storeDel, self.contacts.sources.storeDel)[self.tabs.currentIndex()]()
 
-    def listInfo(self):
+    def storeInfo(self):
         (self.todo.stores.storeInfo, self.contacts.sources.storeInfo)[self.tabs.currentIndex()]()
 
-    def listSync(self):
-        self.todo.stores.storeSync()
+    def storeReload(self):
+        self.todo.stores.storeReload()
 
     def entryCat(self):
         """Show file content"""

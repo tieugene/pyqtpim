@@ -20,7 +20,7 @@ ENTRY_SQL = '''
     CREATE TABLE IF NOT EXISTS entry (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         store_id REFERENCES store(id) NOT NULL,
-        created DATETIME NOT NULL,
+        created DATETIME NULL,
         dtstamp DATETIME NOT NULL,
         modified DATETIME NOT NULL,
         dtstart ANY NULL,

@@ -3,24 +3,27 @@
 ## 0. Now
 
 ### 0.0. Idea
-- [ ] SQL and File as uninfied backend
+- [ ] SQL and File as unified backend
 - [ ] Back to file-based
   - [ ] QSFPM
-  - [ ] All entries in one container
-  - [ ] ? tmp SQLite in-mem DB
+  - [ ] All entries in one container:
+    - _list(Entry(store_id, body)_
+    - ~~list[store_id, Entry(body)]~~
+    - ~~list[Entry]+dict[entry:store_id]~~
+  - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] Teach: dtstamp vs created vs last-modified
-  (dtstamp *mostly* == last-modified)
-- [ ] Sync
-- [ ] TodoList: multifilter (SQL)
+- [ ] Sync:
+  - Store L-del
+  - Store R-modified last sync
+  - Settings: [del R-del,] Who win
+- [ ] TodoList: QSqlQueryModel
+  - [ ] CRUD
+  - [ ] Sort
+  - [ ] Filters
 
 ### 0.2. Fixme
 - [ ] `store` adds new rec with `id=0`
-- [ ] `ti.Job` not loadable:  
-   *pyqtpim/todo/model.py:248, obj2rec:
-   obj.getCreated()==None*
-- [ ] List sync => List reload
 - [ ] TodoForm:
   - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'

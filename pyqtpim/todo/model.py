@@ -125,7 +125,10 @@ class TodoModel(EntryModel):
 
     def reloadAll(self, store_id: int, store_path: str):
         self.beginResetModel()
-        syncStore(self, store_id, store_path)
+        if QtSql.QSqlQuery('DELETE FROM entry WHERE store_id = %d;' % store_id):
+            load_store(self, store_id, store_path)
+        else:
+            print("Query oops")
         self.endResetModel()
 
 
@@ -244,12 +247,34 @@ class TodoStoreModel(StoreModel):
         self._set_group = SetGroup.ToDo
 
 
-def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord, store_id: int):
+def load_store(model: TodoModel, store_id: int, path: str):
+    """Sync VTODO records with file dir
+    :todo: hide into model
+    """
+    with os.scandir(path) as itr:
+        for entry in itr:
+            if not entry.is_file():
+                continue
+            with open(entry.path, 'rt') as stream:
+                if ventry := vobject.readOne(stream):
+                    if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
+                        obj = VObjTodo(ventry)
+                        rec = model.record()
+                        obj2rec(obj, rec)
+                        rec.setValue('store_id', store_id)
+                        if not model.insertRecord(-1, rec):
+                            print(obj.getSummary(), "Something wrong with adding record")
+                else:
+                    raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
+    model.select()
+
+
+def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord):
     """Create new record and fill it with ventry content"""
-    rec.setValue('store_id', store_id)
-    rec.setValue('created', obj.getCreated().replace(tzinfo=datetime.timezone.utc).isoformat())
     rec.setValue('dtstamp', obj.getDTStamp().replace(tzinfo=datetime.timezone.utc).isoformat())
     rec.setValue('modified', obj.getLastModified().replace(tzinfo=datetime.timezone.utc).isoformat())
+    if v := obj.getCreated():
+        rec.setValue('created', v.replace(tzinfo=datetime.timezone.utc).isoformat())
     if v := obj.getDTStart():
         rec.setValue('dtstart', v.isoformat())
     if v := obj.getDue():
@@ -267,25 +292,3 @@ def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord, store_id: int):
         rec.setValue('location', v)
     body = obj.serialize()
     rec.setValue('body', body)
-
-
-def syncStore(model: TodoModel, store_id: int, path: str):
-    """Sync VTODO records with file dir
-    :todo: hide into model
-    """
-    with os.scandir(path) as itr:
-        for entry in itr:
-            if not entry.is_file():
-                continue
-            with open(entry.path, 'rt') as stream:
-                if ventry := vobject.readOne(stream):
-                    if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        obj = VObjTodo(ventry)
-                        rec = model.record()
-                        obj2rec(obj, rec, store_id)
-                        # rec.setValue('store_id', store_id)
-                        if not model.insertRecord(-1, rec):
-                            print(obj.getSummary(), "Something wrong with adding record")
-                else:
-                    raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
-    model.select()
