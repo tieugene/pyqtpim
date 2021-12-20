@@ -72,7 +72,8 @@ class TodoListView(EntryListView):
             obj, store_id = form2obj(f)
             realmodel = self.model().sourceModel()
             rec = realmodel.record()  # new empty
-            obj2rec(obj, rec, store_id)
+            obj2rec(obj, rec)
+            rec.setValue('store_id', store_id)
             if not realmodel.insertRecord(-1, rec):
                 print("Something wrong with adding record")
             realmodel.select()  # FIXME: update the row only
@@ -159,7 +160,7 @@ class TodoStoreListView(StoreListView):
         super().__init__(parent, dependant)
         # self.model().activeChanged.connect(self._list.model().updateFilterByStore)
 
-    def storeSync(self):
+    def storeReload(self):
         """Sync Store with its connection"""
         if not (indexes := self.selectedIndexes()):
             return
@@ -220,9 +221,10 @@ class TodoView(EntryView):
         text += __mk_row("Status", enums.Enum2Raw_Status.get(data.getStatus()))
         text += __mk_row("Location", data.getLocation())
         text += __mk_row("URL", data.getURL())
+        text += '<tr><th>Description:</th><td/></tr>'
         if desc := data.getDescription():
             desc = '<br/>'.join(desc.splitlines())
-        text += __mk_row("Description", desc)
+            text += f"<tr><td colspan=2>{desc}:</td></tr>"
         text += '</table>'
         self.details.setText(text)
 

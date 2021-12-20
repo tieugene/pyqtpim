@@ -49,6 +49,14 @@
 - [x] Teach: Closed todo = Status=Completed, %=100, Completed=datetime
 - [x] TodoList: multisort (proxy; ID|Summary|Prio>Due>Summary)
 - [x] TodoList: multifilter (QSFPM)
+- [x] Teach: created/dtstamp/last-modified:
+  - created: fixed
+  - dtstamp: TB: == lastmodified, Evo: not touched
+  - last-modified: updated
+  - sequence: TB: increments, Evo: not touch (if big)
+- [x] Fixed obj.getCreated()==None (TB feature)
+- [x] List sync => List reload
+- [x] TodoForm save errors: prio, % (the must be str in vobj)
 
 ## Contacts.File-based
 - [ ] CLM:

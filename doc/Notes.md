@@ -10,6 +10,8 @@
   - [Custom QSFPM example](https://doc.qt.io/qt-5/qtwidgets-itemviews-customsortfiltermodel-example.html)
   - [Sorting and filtering table data with QSFPM](https://www.walletfox.com/course/qsortfilterproxymodelexample.php)
   - [Сортировка и фильтрация ... через Custom QSFPM](https://evileg.com/en/forum/topic/1421/)
+  - [RTFM2](https://pretagteam.com/question/sort-by-multiple-columns-in-pyqt-model)
+  - [RTFM1](https://github.com/dimkanovikov/MultisortTableView)
 
 ## RTFM:
 - Sync:
@@ -76,9 +78,6 @@
     - get Obj from File
     - new Rec from Obj
     - upd Rec from Obj | Form/Obj
-- QSortFilterProxyModel:
-  - [RTFM2](https://pretagteam.com/question/sort-by-multiple-columns-in-pyqt-model)
-  - [RTFM1](https://github.com/dimkanovikov/MultisortTableView)
 - Datetimes:
   - current:
      - datetime.datetime.now() # 
@@ -118,6 +117,14 @@
   - Created: like file ctime
   - DTStamp: special:  mtime w/o METHOD / ctime or special w/ METHOD
   - Last-Modified: like file mtime
+- Sync:
+  - Load left (my) and right (files)
+  - L+:R- => L>R
+  - L-:R+ => L<R (**del**)
+  - L+:R+ => chk Updated (=> required Updated after las sync or 'chg' flag)
+  - Conflicts:
+    - L del
+    - 
 
 self.record(index.row()).value('active').toBool()
 

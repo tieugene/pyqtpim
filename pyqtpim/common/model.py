@@ -1,9 +1,8 @@
 """vCard/iCal models parents"""
 
 # 1. system
-# 2. PySide
 from typing import Any
-
+# 2. PySide
 from PySide2 import QtCore, QtSql
 # 3. local
 from .settings import SetGroup

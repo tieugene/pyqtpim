@@ -8,7 +8,7 @@
 ### Want:
 - Max RFC-5545 support:
   - Fileds: Status (4), Prio (4), Class (4), URL, Attach, Contact, Comment
-  - DTStatart/Due: date/datetime
+  - DTStatart/Due: date | datetime
   - Subtasks/Linked
 - Off-line
 - Sync w/ self-hosted CalDAV (e.g. Radicale)
@@ -42,17 +42,20 @@ Why not: ~~Filter~~, ~~Multisort~~, Due, ~~URL~~
 
 ### [Rainlendar2](http://www.rainlendar.net/)
 - &ominus; (&euro;5..10)
+- &ominus; Buy via PayPal only
 - &ominus; страшный шоппц
 
 ### [Evolution](https://wiki.gnome.org/Apps/Evolution)
+- &oplus; DTStart/Due date/datetime
+- &oplus; Custom sort
 - &ominus; Громоздкие *.ics
 - &ominus; innormous uid
-- &oplus; DTStart/Due date/datetime
-- &ominus; But both only
-- &oplus; Custom sort
+- &ominus; DTStart/Due date/datetime both only
 - &ominus; ~~Class=None~~
 - &ominus; Wide `Prio`
 - &ominus; Attach: files only
+- &ominus; Нет "Все задачи"
+- &ominus; Нет "Today"
 
 Why not: Linux only
 
@@ -60,8 +63,24 @@ Why not: Linux only
 - &ominus; Cannot Status=None (bug [#807](https://github.com/dmfs/opentasks/issues/807))
 - &oplus; Subtasks?
 
+Why not: Status=~~None~~Need-Action
+
 ### Apple Reminder
 
 ## Alltogether
 
 ### Fields
+
+## Android:
+- [x] OpenTasks: Need-Actions
+- [x] ~~Мои Дела~~ (My Tasks): unmovable, ничего нет
+- [x] ~~Мой Ежедневник~~ 1.8.1.2 (): ~~CalDAV~~
+- [x] ~~Tasks~~ (): ~~CalDAV~~
+- [x] ~~To-do~~ List (): глючная хрень
+- [x] ~~Список задач~~ (Splend Apps): unmovable, ~~CalDAV~~
+- [x] ~~OpenSync~~ unmovable
+- […] CalDAV TaskSync: nice &hellip;
+- […] DavX5: слетают настройки после каждого обновления
+- [x] ~~CalendarSync~~: cannot connect
+- [x] ~~aCalendar~~ (Tapir Apps): CalDAV not found
+- [x] Простой календарь: CalDAV settings not found, Calendar (not todolist)

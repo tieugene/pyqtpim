@@ -138,6 +138,7 @@ ColHeader = (
     "ID",
     "Store",
     "Created",
+    "DTStamp",
     "Modified",
     "DTStart",
     "Due",

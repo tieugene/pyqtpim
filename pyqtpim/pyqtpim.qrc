@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+    <file>icons/cloud-download.svg</file>
     <file>icons/code.svg</file>
     <file>icons/cog.svg</file>
     <file>icons/eye.svg</file>
