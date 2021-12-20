@@ -22,14 +22,16 @@
   - [ ] Sort
   - [ ] Filters
 
-### 0.2. Fixme
+### 0.2. Fixme (critical)
+
+### 0.3. Fixme (soft)
 - [ ] Filter fault after add/del entry (id==None)
 - [ ] TodoForm:
   - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'
 - [ ] `store` adds new rec with `id=0`
 
-### 0.3. Tuning
+### 0.4. Tuning
 - [ ] todo.data.VTodoObj.getX - @prop w/ decorator
 - [ ] Settings save/restore:
   - [ ] sort

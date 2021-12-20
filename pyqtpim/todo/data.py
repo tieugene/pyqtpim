@@ -27,7 +27,6 @@ class VObjTodo(VObj):
             data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
             data.add('vtodo')
             data.vtodo.add('uid').value = str(uid)
-            data.vtodo.add('dtstamp').value = stamp
             data.vtodo.add('created').value = stamp
         super().__init__(data)
         self._name2func = {  # FIXME: static
