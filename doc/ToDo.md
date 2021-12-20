@@ -23,10 +23,7 @@
   - [ ] Filters
 
 ### 0.2. Fixme
-- [ ] TodoForm save errors:
-  - [ ] C prio
-  - [ ] U % (form:495)
-  - [ ] rollback on serialize() error
+- [ ] Filter fault after add/del entry (id==None)
 - [ ] TodoForm:
   - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'

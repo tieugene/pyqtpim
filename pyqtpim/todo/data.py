@@ -232,10 +232,10 @@ class VObjTodo(VObj):
         self.__setFldByName('location', data)
 
     def setPercent(self, data: Optional[int]):
-        self.__setFldByName('percent-complete', data)
+        self.__setFldByName('percent-complete', str(data))  # https://github.com/eventable/vobject/issues/178
 
     def setPriority(self, data: Optional[int]):
-        self.__setFldByName('priority', data)
+        self.__setFldByName('priority', str(data))  # https://github.com/eventable/vobject/issues/178
 
     def setStatus(self, data: Optional[enums.EStatus]):
         self.__setFldByName('status', enums.Enum2Raw_Status.get(data))
@@ -249,7 +249,7 @@ class VObjTodo(VObj):
     # specials
     def updateStamps(self):
         seq = 0 if (seq := self.getSequence()) is None else seq + 1
-        self.__setFldByName('sequence', str(seq))
+        self.__setFldByName('sequence', str(seq))  # https://github.com/eventable/vobject/issues/178
         now = _utcnow()
         self.__setFldByName('last-modified', now)
         self.__setFldByName('dtstamp', now)
