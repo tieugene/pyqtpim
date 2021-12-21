@@ -21,6 +21,7 @@ class MainWindow(QtWidgets.QMainWindow):
     actStoreDel: QtWidgets.QAction
     actStoreInfo: QtWidgets.QAction
     actStoreReload: QtWidgets.QAction
+    actStoreSync: QtWidgets.QAction
     actEntryCat: QtWidgets.QAction
     actEntryInside: QtWidgets.QAction
     actEntryAdd: QtWidgets.QAction
@@ -93,6 +94,12 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 statusTip="Reload current Store",
                                                 triggered=self.storeReload)
         # noinspection PyArgumentList
+        self.actStoreSync = QtWidgets.QAction(QtGui.QIcon(':/icons/transfer.svg'),
+                                                "&Sync Store", self,
+                                                shortcut="Ctrl+S",
+                                                statusTip="Sync current Store",
+                                                triggered=self.storeSync)
+        # noinspection PyArgumentList
         self.actEntryCat = QtWidgets.QAction(QtGui.QIcon(':/icons/eye.svg'),
                                              "Entry &File", self,
                                              shortcut="Ctrl+F",
@@ -125,6 +132,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
         menu_file.addAction(self.actStoreReload)
+        menu_file.addAction(self.actStoreSync)
         menu_file.addSeparator()
         menu_file.addAction(self.actSettings)
         menu_file.addAction(self.actExit)
@@ -174,6 +182,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def storeReload(self):
         self.todo.stores.storeReload()
+
+    def storeSync(self):
+        self.todo.stores.storeSync()
 
     def entryCat(self):
         """Show file content"""

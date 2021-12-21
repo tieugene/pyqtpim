@@ -4,10 +4,12 @@
 
 ### 0.0. Idea
 - [ ] SQL and File as unified backend
-- [ ] Back to file-based
+- [ ] Back to file-based:
+  - [ ] or QStandardItemModel>QStandardItem
+  - [ ] or QAbstractTableModel
   - [ ] QSFPM
   - [ ] All entries in one container:
-    - _list(Entry(store_id, body)_
+    - _list(Entry(body, store_id)_
     - ~~list[store_id, Entry(body)]~~
     - ~~list[Entry]+dict[entry:store_id]~~
   - [ ] ? + in-mem SQLite

@@ -9,6 +9,7 @@
     <file>icons/plus.svg</file>
     <file>icons/power-standby.svg</file>
     <file>icons/question-mark.svg</file>
+    <file>icons/transfer.svg</file>
     <file>icons/trash.svg</file>
 </qresource>
 </RCC>

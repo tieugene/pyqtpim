@@ -31,6 +31,7 @@ ENTRY_SQL = '''
         status TINYINT NULL,
         summary VARCHAR NOT NULL,
         location VARCHAR NULL,
+        trash BOOLEAN DEFAULT FALSE,
         body TEXT NOT NULL
     )
     '''

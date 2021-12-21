@@ -134,7 +134,7 @@ TColor_Prio = (
 )
 
 # --- Columns
-ColHeader = (
+ColHeader = (   # Header
     "ID",
     "Store",
     "Created",
@@ -146,8 +146,9 @@ ColHeader = (
     '%',
     '!',
     "Status",
-    "Sumamry",
-    "Location"
+    "Summary",
+    "Location",
+    "✗"
 )
 
 

@@ -4,7 +4,7 @@ import datetime
 import os
 from typing import Any, Callable
 # 2. PySide2
-from PySide2 import QtCore, QtSql
+from PySide2 import QtCore, QtSql, QtGui
 # 3. 3rd
 import vobject
 # 4. local
@@ -72,6 +72,8 @@ class TodoModel(EntryModel):
                 return __vardatime2disp(rec.value('dtstart'))
             elif col == self.fieldIndex('due'):
                 return __vardatime2disp(rec.value('due'))
+            elif col == self.fieldIndex('trash'):
+                return '✗' if rec.value('trash') else None
             else:
                 return super().data(idx, role)
         elif role == QtCore.Qt.ForegroundRole:
@@ -83,6 +85,9 @@ class TodoModel(EntryModel):
             if col == self.fieldIndex('status'):
                 if v := rec.value('status'):
                     return enums.TColor_Status[v]
+            if col == self.fieldIndex('trash'):
+                if rec.value('trash'):
+                    return QtGui.QBrush(QtCore.Qt.red)
             return super().data(idx, role)
         else:
             return super().data(idx, role)

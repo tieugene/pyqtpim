@@ -3,13 +3,13 @@
 import datetime
 from typing import Any
 # 2. PySide
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2rec
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
-from . import enums
+from . import enums, sync, query
 
 
 class TodoListView(EntryListView):
@@ -25,7 +25,7 @@ class TodoListView(EntryListView):
         hh = self.horizontalHeader()
         hh.sectionMoved.connect(self.sectionMoved)
         hh.setSectionsMovable(True)
-        for c in ('id', 'progress', 'priority', 'status'):
+        for c in ('id', 'progress', 'priority', 'status', 'trash'):
             hh.setSectionResizeMode(
                 hh.visualIndex(self.model().sourceModel().fieldIndex(c)),
                 hh.ResizeMode.ResizeToContents
@@ -101,11 +101,13 @@ class TodoListView(EntryListView):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        row = self.model().mapToSource(idx).row()
+        src_row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
-        realmodel.delObj(row)
-        if not realmodel.removeRow(row):
-            print("Something wrong with deleting")
+        realmodel.delObj(src_row)
+        entry_id = realmodel.record(src_row).value('id')
+        # if not realmodel.removeRow(src_row):
+        if not QtSql.QSqlQuery(query.entry_mark_del % entry_id).exec_():
+            print(f"Something wrong with deleting {entry_id}")
         realmodel.select()  # FIXME: update the record only
 
     def entryCat(self):
@@ -161,11 +163,19 @@ class TodoStoreListView(StoreListView):
         # self.model().activeChanged.connect(self._list.model().updateFilterByStore)
 
     def storeReload(self):
-        """Sync Store with its connection"""
+        """Reload Store from its connection"""
         if not (indexes := self.selectedIndexes()):
             return
         rec = self.model().record(indexes[0].row())
         self._list.model().sourceModel().reloadAll(rec.value('id'), rec.value('connection'))
+
+    def storeSync(self):
+        """Sync Store with its connection
+        :todo: reset self._list.model().sourceModel(), reset its cache
+        """
+        if not (indexes := self.selectedIndexes()):
+            return
+        sync.Sync(self.model().record(indexes[0].row().value('id')))
 
 
 class TodoView(EntryView):
