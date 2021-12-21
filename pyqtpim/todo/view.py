@@ -25,7 +25,7 @@ class TodoListView(EntryListView):
         hh = self.horizontalHeader()
         hh.sectionMoved.connect(self.sectionMoved)
         hh.setSectionsMovable(True)
-        for c in ('id', 'progress', 'priority', 'status', 'trash'):
+        for c in ('id', 'progress', 'priority', 'status', 'syn'):
             hh.setSectionResizeMode(
                 hh.visualIndex(self.model().sourceModel().fieldIndex(c)),
                 hh.ResizeMode.ResizeToContents
@@ -74,6 +74,7 @@ class TodoListView(EntryListView):
             rec = realmodel.record()  # new empty
             obj2rec(obj, rec)
             rec.setValue('store_id', store_id)
+            rec.setValue('syn', enums.ESyn.New.value)
             if not realmodel.insertRecord(-1, rec):
                 print("Something wrong with adding record")
             realmodel.select()  # FIXME: update the row only
@@ -175,7 +176,7 @@ class TodoStoreListView(StoreListView):
         """
         if not (indexes := self.selectedIndexes()):
             return
-        sync.Sync(self.model().record(indexes[0].row().value('id')))
+        sync.Sync(self.model().record(indexes[0].row()).value('id'))
 
 
 class TodoView(EntryView):

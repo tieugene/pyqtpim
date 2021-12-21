@@ -1,1 +1,1 @@
-entry_mark_del = "UPDATE entry SET trash=TRUE WHERE id = %s"
+entry_mark_del = "UPDATE entry SET syn=3 WHERE id = %d"

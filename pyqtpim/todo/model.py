@@ -54,10 +54,10 @@ class TodoModel(EntryModel):
             rec = self.record(idx.row())
             if col == self.fieldIndex('priority'):
                 if v := rec.value('priority'):
-                    return enums.TDecor_Prio[v]
+                    return enums.TDecor_Prio[v-1]
             elif col == self.fieldIndex('status'):
                 if v := rec.value('status'):
-                    return enums.TDecor_Status[v]
+                    return enums.TDecor_Status[v-1]
             elif col == self.fieldIndex('store_id'):
                 return self.store_name[rec.value('store_id')]
             elif col == self.fieldIndex('created'):
@@ -72,8 +72,9 @@ class TodoModel(EntryModel):
                 return __vardatime2disp(rec.value('dtstart'))
             elif col == self.fieldIndex('due'):
                 return __vardatime2disp(rec.value('due'))
-            elif col == self.fieldIndex('trash'):
-                return '✗' if rec.value('trash') else None
+            elif col == self.fieldIndex('syn'):
+                if v := rec.value('syn'):
+                    return enums.TDecor_Syn[v-1]
             else:
                 return super().data(idx, role)
         elif role == QtCore.Qt.ForegroundRole:
@@ -81,13 +82,13 @@ class TodoModel(EntryModel):
             rec = self.record(idx.row())
             if col == self.fieldIndex('priority'):
                 if v := rec.value('priority'):
-                    return enums.TColor_Prio[v]
+                    return enums.TColor_Prio[v-1]
             if col == self.fieldIndex('status'):
                 if v := rec.value('status'):
-                    return enums.TColor_Status[v]
-            if col == self.fieldIndex('trash'):
-                if rec.value('trash'):
-                    return QtGui.QBrush(QtCore.Qt.red)
+                    return enums.TColor_Status[v-1]
+            if col == self.fieldIndex('syn'):
+                if v := rec.value('syn'):
+                    return enums.TColor_Syn[v-1]
             return super().data(idx, role)
         else:
             return super().data(idx, role)
@@ -267,6 +268,7 @@ def load_store(model: TodoModel, store_id: int, path: str):
                         rec = model.record()
                         obj2rec(obj, rec)
                         rec.setValue('store_id', store_id)
+                        rec.setValue('syn', enums.ESyn.Synced.value)
                         if not model.insertRecord(-1, rec):
                             print(obj.getSummary(), "Something wrong with adding record")
                 else:

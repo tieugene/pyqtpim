@@ -34,6 +34,7 @@
 - [ ] `store` adds new rec with `id=0`
 
 ### 0.4. Tuning
+- [ ] Instant settings
 - [ ] todo.data.VTodoObj.getX - @prop w/ decorator
 - [ ] Settings save/restore:
   - [ ] sort

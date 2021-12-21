@@ -93,9 +93,8 @@ Enum2Raw_Status: dict[EStatus, str] = {
     EStatus.Completed: 'COMPLETED',
     EStatus.Cancelled: 'CANCELLED'
 }
-TDecor_Status = ' ?…✓✗'
+TDecor_Status = '?…✓✗'
 TColor_Status = (
-    None,
     QtGui.QBrush(QtCore.Qt.blue),
     QtGui.QBrush(QtCore.Qt.yellow),
     QtGui.QBrush(QtCore.Qt.green),
@@ -125,16 +124,32 @@ Raw2Enum_Prio: tuple = (
     EPrio.Low.value
 )
 
-TDecor_Prio = ' ↓-!'
+TDecor_Prio = '↓-!'
 TColor_Prio = (
-    None,
     QtGui.QBrush(QtCore.Qt.blue),
     QtGui.QBrush(QtCore.Qt.green),
     QtGui.QBrush(QtCore.Qt.red)
 )
 
+
+# --- Syn
+@unique
+class ESyn(IntEnum):
+    """SYN property values"""
+    New = auto()
+    Synced = auto()
+    Del = auto()
+
+
+TDecor_Syn = '*✓✗'
+TColor_Syn = (
+    QtGui.QBrush(QtCore.Qt.yellow),
+    QtGui.QBrush(QtCore.Qt.green),
+    QtGui.QBrush(QtCore.Qt.red)
+)
+
 # --- Columns
-ColHeader = (   # Header
+ColHeader = (  # Header
     "ID",
     "Store",
     "Created",
@@ -148,7 +163,7 @@ ColHeader = (   # Header
     "Status",
     "Summary",
     "Location",
-    "✗"
+    "syn"
 )
 
 

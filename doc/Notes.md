@@ -1,5 +1,5 @@
 # Notes
-
+&check;
 ## Tips
 - [CheckBox in QListView using QSqlTableModel](https://stackoverflow.com/questions/48193325/checkbox-in-qlistview-using-qsqltablemodel)
 - [PyQt Layouts](https://realpython.com/python-pyqt-layout/)
