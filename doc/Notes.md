@@ -118,13 +118,16 @@
   - DTStamp: special:  mtime w/o METHOD / ctime or special w/ METHOD
   - Last-Modified: like file mtime
 - Sync:
-  - Load left (my) and right (files)
-  - L+:R- => L>R
-  - L-:R+ => L<R (**del**)
-  - L+:R+ => chk Updated (=> required Updated after las sync or 'chg' flag)
-  - Conflicts:
-    - L del
-    - 
+
+ L | R | Case  | Act | Note
+---|---|-------|-----|-----
+ 1 | 0 | L_new | L>R | +syn=2
+ 1 | 0 | R_del | L_x |
+ 0 | 1 | R_new | L<R | ---
+ 0 | 1 | L_del | R_x | store deleted
+ 1 | 1 | L_chg | L>R | ---
+ 1 | 1 | R_chg | L<R | ---
+ 1 | 1 | *_chg | ?win| ...
 
 self.record(index.row()).value('active').toBool()
 

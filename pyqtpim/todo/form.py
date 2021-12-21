@@ -18,7 +18,7 @@ def _tz_local():
 
 
 def _tz_utc():
-    return vobject.iCalendar.utc
+    return vobject.icalendar.utc
 
 
 class ListEdit(QtWidgets.QComboBox):

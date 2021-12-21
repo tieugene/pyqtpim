@@ -15,10 +15,6 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] Sync:
-  - Store L-del
-  - Store R-modified last sync
-  - Settings: [del R-del,] Who win
 - [ ] TodoList: QSqlQueryModel
   - [ ] CRUD
   - [ ] Sort
@@ -27,6 +23,7 @@
 ### 0.2. Fixme (critical)
 
 ### 0.3. Fixme (soft)
+- [ ] Check uid on Reload
 - [ ] Filter fault after add/del entry (id==None)
 - [ ] TodoForm:
   - [ ] rework/fix Prio edit
@@ -34,6 +31,8 @@
 - [ ] `store` adds new rec with `id=0`
 
 ### 0.4. Tuning
+- [ ] `findIndex('fieldname')` => `enum EColNumFieldname`
+- [ ] Color `due today` (yellow) and `overdue` (red)
 - [ ] Instant settings
 - [ ] todo.data.VTodoObj.getX - @prop w/ decorator
 - [ ] Settings save/restore:

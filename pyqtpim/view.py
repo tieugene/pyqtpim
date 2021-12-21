@@ -1,8 +1,8 @@
 """Main GUI"""
 
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtGui
 from contact import ContactsWidget
-from todo import TodosWidget, ColHeader
+from todo import TodosWidget
 from form import SettingsView
 
 
@@ -21,6 +21,7 @@ class MainWindow(QtWidgets.QMainWindow):
     actStoreDel: QtWidgets.QAction
     actStoreInfo: QtWidgets.QAction
     actStoreReload: QtWidgets.QAction
+    actStoreFakeSync: QtWidgets.QAction
     actStoreSync: QtWidgets.QAction
     actEntryCat: QtWidgets.QAction
     actEntryInside: QtWidgets.QAction
@@ -89,16 +90,21 @@ class MainWindow(QtWidgets.QMainWindow):
                                               triggered=self.storeInfo)
         # noinspection PyArgumentList
         self.actStoreReload = QtWidgets.QAction(QtGui.QIcon(':/icons/cloud-download.svg'),
-                                                "Re&load Store", self,
-                                                shortcut="Ctrl+L",
+                                                "&Reload Store", self,
+                                                shortcut="Ctrl+R",
                                                 statusTip="Reload current Store",
                                                 triggered=self.storeReload)
         # noinspection PyArgumentList
+        self.actStoreFakeSync = QtWidgets.QAction(QtGui.QIcon(':/icons/transfer.svg'),
+                                              "&Sync Store (fake)", self,
+                                              shortcut="Ctrl+S",
+                                              statusTip="Sync current Store (dry run)",
+                                              triggered=self.storeFakeSync)
+        # noinspection PyArgumentList
         self.actStoreSync = QtWidgets.QAction(QtGui.QIcon(':/icons/transfer.svg'),
-                                                "&Sync Store", self,
-                                                shortcut="Ctrl+S",
-                                                statusTip="Sync current Store",
-                                                triggered=self.storeSync)
+                                              "Sync Store", self,
+                                              statusTip="Sync current Store (real)",
+                                              triggered=self.storeSync)
         # noinspection PyArgumentList
         self.actEntryCat = QtWidgets.QAction(QtGui.QIcon(':/icons/eye.svg'),
                                              "Entry &File", self,
@@ -132,6 +138,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
         menu_file.addAction(self.actStoreReload)
+        menu_file.addAction(self.actStoreFakeSync)
         menu_file.addAction(self.actStoreSync)
         menu_file.addSeparator()
         menu_file.addAction(self.actSettings)
@@ -183,8 +190,11 @@ class MainWindow(QtWidgets.QMainWindow):
     def storeReload(self):
         self.todo.stores.storeReload()
 
+    def storeFakeSync(self):
+        self.todo.stores.storeSync(True)
+
     def storeSync(self):
-        self.todo.stores.storeSync()
+        self.todo.stores.storeSync(False)
 
     def entryCat(self):
         """Show file content"""

@@ -105,10 +105,18 @@ class TodoListView(EntryListView):
         src_row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
         realmodel.delObj(src_row)
-        entry_id = realmodel.record(src_row).value('id')
+        src_rec = realmodel.record(src_row)
+        entry_id = src_rec.value('id')
+        syn = src_rec.value('syn')
         # if not realmodel.removeRow(src_row):
-        if not QtSql.QSqlQuery(query.entry_mark_del % entry_id).exec_():
-            print(f"Something wrong with deleting {entry_id}")
+        if syn == enums.ESyn.New.value:
+            if not QtSql.QSqlQuery(query.entry_del % entry_id).exec_():
+                print(f"Something wrong with deleting {entry_id}")
+        elif syn == enums.ESyn.Synced.value:
+            if not QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Del.value, entry_id)).exec_():
+                print(f"Something wrong with mark deleted {entry_id}")
+        else:
+            print(f"Entry already deleted: {entry_id}")
         realmodel.select()  # FIXME: update the record only
 
     def entryCat(self):
@@ -170,13 +178,13 @@ class TodoStoreListView(StoreListView):
         rec = self.model().record(indexes[0].row())
         self._list.model().sourceModel().reloadAll(rec.value('id'), rec.value('connection'))
 
-    def storeSync(self):
+    def storeSync(self, dry_run: bool = True):
         """Sync Store with its connection
         :todo: reset self._list.model().sourceModel(), reset its cache
         """
         if not (indexes := self.selectedIndexes()):
             return
-        sync.Sync(self.model().record(indexes[0].row()).value('id'))
+        sync.Sync(self.model().record(indexes[0].row()).value('id'), dry_run=dry_run)
 
 
 class TodoView(EntryView):
