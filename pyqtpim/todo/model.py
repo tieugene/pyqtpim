@@ -10,7 +10,7 @@ import vobject
 # 4. local
 from common import SetGroup, EntryModel, EntryProxyModel, StoreModel, exc
 from .data import VObjTodo
-from . import enums
+from . import enums, query
 
 
 class TodoModel(EntryModel):
@@ -21,12 +21,9 @@ class TodoModel(EntryModel):
         super().__init__(*args, **kwargs)
         self.__entry_cache = dict()
         self.setTable("entry")
-        # self.setRelation(self.fieldIndex('store_id'), QtSql.QSqlRelation('store', 'id', 'name'))
         for i in range(len(enums.ColHeader)):
             self.setHeaderData(i, QtCore.Qt.Horizontal, enums.ColHeader[i])
-        self.setHeaderData(self.fieldIndex('body'), QtCore.Qt.Horizontal, "Body")
         self.updateFilterByStore()
-        # self.setSort(self.fieldIndex('priority'), QtCore.Qt.SortOrder.AscendingOrder)
         self.select()
 
     # Inherit
@@ -52,27 +49,27 @@ class TodoModel(EntryModel):
         if role == QtCore.Qt.DisplayRole:
             col = idx.column()
             rec = self.record(idx.row())
-            if col == self.fieldIndex('priority'):
+            if col == enums.EColNo.Prio.value:
                 if v := rec.value('priority'):
                     return enums.TDecor_Prio[v-1]
-            elif col == self.fieldIndex('status'):
+            elif col == enums.EColNo.Status.value:
                 if v := rec.value('status'):
                     return enums.TDecor_Status[v-1]
-            elif col == self.fieldIndex('store_id'):
+            elif col == enums.EColNo.Store.value:
                 return self.store_name[rec.value('store_id')]
-            elif col == self.fieldIndex('created'):
+            elif col == enums.EColNo.Created.value:
                 return __utc2disp(rec.value('created'))
-            elif col == self.fieldIndex('dtstamp'):
+            elif col == enums.EColNo.DTStamp.value:
                 return __utc2disp(rec.value('dtstamp'))
-            elif col == self.fieldIndex('modified'):
+            elif col == enums.EColNo.Modified.value:
                 return __utc2disp(rec.value('modified'))
-            elif col == self.fieldIndex('completed'):
+            elif col == enums.EColNo.Completed.value:
                 return __utc2disp(rec.value('completed'))
-            elif col == self.fieldIndex('dtstart'):
+            elif col == enums.EColNo.DTStart.value:
                 return __vardatime2disp(rec.value('dtstart'))
-            elif col == self.fieldIndex('due'):
+            elif col == enums.EColNo.Due.value:
                 return __vardatime2disp(rec.value('due'))
-            elif col == self.fieldIndex('syn'):
+            elif col == enums.EColNo.Syn.value:
                 if v := rec.value('syn'):
                     return enums.TDecor_Syn[v-1]
             else:
@@ -80,13 +77,13 @@ class TodoModel(EntryModel):
         elif role == QtCore.Qt.ForegroundRole:
             col = idx.column()
             rec = self.record(idx.row())
-            if col == self.fieldIndex('priority'):
+            if col == enums.EColNo.Prio.value:
                 if v := rec.value('priority'):
                     return enums.TColor_Prio[v-1]
-            if col == self.fieldIndex('status'):
+            if col == enums.EColNo.Status.value:
                 if v := rec.value('status'):
                     return enums.TColor_Status[v-1]
-            if col == self.fieldIndex('syn'):
+            if col == enums.EColNo.Syn.value:
                 if v := rec.value('syn'):
                     return enums.TColor_Syn[v-1]
             return super().data(idx, role)
@@ -117,9 +114,9 @@ class TodoModel(EntryModel):
     def updateFilterByStore(self):
         """"""
         active = set()
-        query: QtSql.QSqlQuery = QtSql.QSqlQuery('SELECT id FROM store WHERE active IS TRUE')
-        while query.next():
-            active.add(query.value(0))
+        q: QtSql.QSqlQuery = QtSql.QSqlQuery('SELECT id FROM store WHERE active IS TRUE')
+        while q.next():
+            active.add(q.value(0))
         if active:
             if len(active) == 1:
                 filt = 'store_id = %d' % active.pop()
@@ -181,14 +178,14 @@ class TodoProxyModel(EntryProxyModel):
 
     def __lessThen_ID(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()
-        data_left = realmodel.data(realmodel.index(source_left.row(), realmodel.fieldIndex('id')))
-        data_right = realmodel.data(realmodel.index(source_right.row(), realmodel.fieldIndex('id')))
+        data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.ID.value))
+        data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.ID.value))
         return data_right < data_left
 
     def __lessThen_Name(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()
-        data_left = realmodel.data(realmodel.index(source_left.row(), realmodel.fieldIndex('summary')))
-        data_right = realmodel.data(realmodel.index(source_right.row(), realmodel.fieldIndex('summary')))
+        data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.Summary.value))
+        data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.Summary.value))
         return data_right < data_left
 
     def __lessThen_PrioDueName(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
@@ -265,12 +262,18 @@ def load_store(model: TodoModel, store_id: int, path: str):
                 if ventry := vobject.readOne(stream):
                     if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
                         obj = VObjTodo(ventry)
+                        # <query>
+                        # q = obj2sql(query.entry_add, obj)
+                        # q.bindValue('store_id', store_id)
+                        # q.bindValue('syn', enums.ESyn.Synced.value)
+                        # if not q.exec_():
+                        # <record>
                         rec = model.record()
                         obj2rec(obj, rec)
                         rec.setValue('store_id', store_id)
                         rec.setValue('syn', enums.ESyn.Synced.value)
                         if not model.insertRecord(-1, rec):
-                            print(obj.getSummary(), "Something wrong with adding record")
+                            print(f"Something wrong with adding record '{obj.getSummary()}'")
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()
@@ -299,3 +302,21 @@ def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord):
         rec.setValue('location', v)
     body = obj.serialize()
     rec.setValue('body', body)
+
+
+def obj2sql(q_str: str, vobj: VObjTodo) -> QtSql.QSqlQuery:
+    q = QtSql.QSqlQuery()
+    q.prepare(q_str)
+    q.bindValue(':created', vobj.getCreated())
+    q.bindValue(':dtstamp', vobj.getDTStamp())
+    q.bindValue(':modified', vobj.getLastModified())
+    q.bindValue(':dtstart', vobj.getDTStart())
+    q.bindValue(':due', vobj.getDue())
+    q.bindValue(':completed', vobj.getCompleted())
+    q.bindValue(':progress', vobj.getPercent())
+    q.bindValue(':priority', v if (v := vobj.getPriority()) else None)
+    q.bindValue(':status', vobj.getStatus())
+    q.bindValue(':summary', vobj.getSummary())
+    q.bindValue(':location', vobj.getLocation())
+    q.bindValue(':body', vobj.serialize())
+    return q

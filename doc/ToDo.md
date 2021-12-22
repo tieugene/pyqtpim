@@ -15,8 +15,10 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] TodoList: QSqlQueryModel
+- [ ] Store: QSql:
   - [ ] CRUD
+- [ ] TodoList: QSqlQueryModel
+  - [ ] CRU~D~
   - [ ] Sort
   - [ ] Filters
 
@@ -24,21 +26,24 @@
 
 ### 0.3. Fixme (soft)
 - [ ] Check uid on Reload
+- [ ] `store` adds new rec with `id=0`
+- [ ] Strict SQLite tables
 - [ ] Filter fault after add/del entry (id==None)
 - [ ] TodoForm:
   - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'
-- [ ] `store` adds new rec with `id=0`
 
 ### 0.4. Tuning
 - [ ] `findIndex('fieldname')` => `enum EColNumFieldname`
+- [ ] todo.data.VTodoObj.getX - @prop w/ decorator
+- [ ] SQLite indexes
 - [ ] Color `due today` (yellow) and `overdue` (red)
 - [ ] Instant settings
-- [ ] todo.data.VTodoObj.getX - @prop w/ decorator
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
 - [ ] 'Percent' => 'Progress'
+- [ ] Prio: x5
 - [ ] Shrink widget groups
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]

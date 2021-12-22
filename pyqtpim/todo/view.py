@@ -20,18 +20,18 @@ class TodoListView(EntryListView):
         self._details.setModel(self.model().sourceModel())
         # addons
         self.loadCol2Show()
-        self.setColumnHidden(self.model().sourceModel().fieldIndex('body'), True)
+        self.setColumnHidden(enums.EColNo.Body.value, True)
         self.loadColOrder()
         hh = self.horizontalHeader()
         hh.sectionMoved.connect(self.sectionMoved)
         hh.setSectionsMovable(True)
-        for c in ('id', 'progress', 'priority', 'status', 'syn'):
+        for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value, enums.EColNo.Status.value, enums.EColNo.Syn.value):
             hh.setSectionResizeMode(
-                hh.visualIndex(self.model().sourceModel().fieldIndex(c)),
+                hh.visualIndex(c),
                 hh.ResizeMode.ResizeToContents
             )
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
-        self.sortByColumn(self.model().sourceModel().fieldIndex('id'))
+        self.sortByColumn(enums.EColNo.ID.value)
         # signals
         # # self.activated.connect(self.rowChanged)
         self.selectionModel().currentRowChanged.connect(self.rowChanged)
@@ -252,7 +252,7 @@ class TodoView(EntryView):
         :todo: indexOf
         """
         super().setModel(model)
-        self.mapper.addMapping(self.summary, model.fieldIndex('summary'))
+        self.mapper.addMapping(self.summary, enums.EColNo.Summary.value)
         self.mapper.currentIndexChanged.connect(self.__idxChgd)
 
     def clean(self):

@@ -48,6 +48,45 @@ class EDBFld(Enum):
     ID = 'id'
 
 
+# --- Model
+@unique
+class EColNo(IntEnum):
+    ID = 0
+    Store = 1
+    Created = 2
+    DTStamp = 3
+    Modified = 4
+    DTStart = 5
+    Due = 6
+    Completed = 7
+    Progress = 8
+    Prio = 9
+    Status = 10
+    Summary = 11
+    Location = 12
+    Syn = 13
+    Body = 14
+
+
+ColHeader = (  # Header
+    "ID",
+    "Store",
+    "Created",
+    "DTStamp",
+    "Modified",
+    "DTStart",
+    "Due",
+    "Completed",
+    '%',
+    '!',
+    "Status",
+    "Summary",
+    "Location",
+    "Syn"
+    "Body"
+)
+
+
 # --- Class
 @unique
 class EClass(IntEnum):
@@ -146,24 +185,6 @@ TColor_Syn = (
     QtGui.QBrush(QtCore.Qt.yellow),
     QtGui.QBrush(QtCore.Qt.green),
     QtGui.QBrush(QtCore.Qt.red)
-)
-
-# --- Columns
-ColHeader = (  # Header
-    "ID",
-    "Store",
-    "Created",
-    "DTStamp",
-    "Modified",
-    "DTStart",
-    "Due",
-    "Completed",
-    '%',
-    '!',
-    "Status",
-    "Summary",
-    "Location",
-    "syn"
 )
 
 

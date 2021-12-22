@@ -7,7 +7,7 @@ from typing import Optional, Any
 import vobject
 from PySide2 import QtSql
 
-from . import enums, query
+from . import enums, query, model
 from .data import VObjTodo
 
 
@@ -55,33 +55,17 @@ def load_remote(store_id: int) -> (dict[uuid.UUID, (str, VObjTodo)], str):
     return retvalue, path
 
 
-def set_my(q_str: str, vobj: VObjTodo, store_id: int, esyn: enums.ESyn) -> QtSql.QSqlQuery:
-    q = QtSql.QSqlQuery()
-    q.prepare(q_str)
-    q.bindValue(':store_id', store_id)
-    q.bindValue(':created', vobj.getCreated())
-    q.bindValue(':dtstamp', vobj.getDTStamp())
-    q.bindValue(':modified', vobj.getLastModified())
-    q.bindValue(':dtstart', vobj.getDTStart())
-    q.bindValue(':due', vobj.getDue())
-    q.bindValue(':completed', vobj.getCompleted())
-    q.bindValue(':progress', vobj.getPercent())
-    q.bindValue(':priority', vobj.getPriority())
-    q.bindValue(':status', vobj.getStatus())
-    q.bindValue(':summary', vobj.getSummary())
-    q.bindValue(':location', vobj.getLocation())
-    q.bindValue(':syn', esyn.value)
-    q.bindValue(':body', vobj.serialize())
-    return q
-
-
 def add_my(vobj: VObjTodo, store_id: int, esyn: enums.ESyn) -> bool:
-    q = set_my(query.entry_add, vobj, store_id, esyn)
+    q = model.obj2sql(query.entry_add, vobj)
+    q.bindValue(':store_id', store_id)
+    q.bindValue(':syn', esyn.value)
     return q.exec_()
 
 
 def upd_my(entry_id: int, vobj: VObjTodo, store_id: int, esyn: enums.ESyn) -> bool:
-    q = set_my(query.entry_upd, vobj, store_id, esyn)
+    q = model.obj2sql(query.entry_upd, vobj)
+    q.bindValue(':store_id', store_id)
+    q.bindValue(':syn', esyn.value)
     q.bindValue(':id', entry_id)
     return q.exec_()
 

@@ -57,6 +57,7 @@
 - [x] Fixed obj.getCreated()==None (TB feature)
 - [x] List sync => List reload
 - [x] TodoForm save errors: prio, % (the must be str in vobj)
+- [x] 2-way Sync
 
 ## Contacts.File-based
 - [ ] CLM:
