@@ -4,7 +4,7 @@ import datetime
 import os
 from typing import Any, Callable
 # 2. PySide2
-from PySide2 import QtCore, QtSql, QtGui
+from PySide2 import QtCore, QtSql
 # 3. 3rd
 import vobject
 # 4. local
@@ -47,44 +47,44 @@ class TodoModel(EntryModel):
         if not idx.isValid():
             return None
         if role == QtCore.Qt.DisplayRole:
+            v = super().data(idx, role)
             col = idx.column()
-            rec = self.record(idx.row())
             if col == enums.EColNo.Prio.value:
-                if v := rec.value('priority'):
+                if v:  # :str()|int
                     return enums.TDecor_Prio[v-1]
             elif col == enums.EColNo.Status.value:
-                if v := rec.value('status'):
+                if v:  # :str()|int
                     return enums.TDecor_Status[v-1]
             elif col == enums.EColNo.Store.value:
-                return self.store_name[rec.value('store_id')]
+                return self.store_name[v]  # v:int
             elif col == enums.EColNo.Created.value:
-                return __utc2disp(rec.value('created'))
+                return __utc2disp(v)  # v:str
             elif col == enums.EColNo.DTStamp.value:
-                return __utc2disp(rec.value('dtstamp'))
+                return __utc2disp(v)  # v:str
             elif col == enums.EColNo.Modified.value:
-                return __utc2disp(rec.value('modified'))
+                return __utc2disp(v)  # v:str
             elif col == enums.EColNo.Completed.value:
-                return __utc2disp(rec.value('completed'))
+                return __utc2disp(v)  # v:str
             elif col == enums.EColNo.DTStart.value:
-                return __vardatime2disp(rec.value('dtstart'))
+                return __vardatime2disp(v)  # v:str
             elif col == enums.EColNo.Due.value:
-                return __vardatime2disp(rec.value('due'))
+                return __vardatime2disp(v)  # v:str
             elif col == enums.EColNo.Syn.value:
-                if v := rec.value('syn'):
-                    return enums.TDecor_Syn[v-1]
+                return enums.TDecor_Syn[v-1]
             else:
-                return super().data(idx, role)
+                # print("v:", v, type(v))
+                return v
         elif role == QtCore.Qt.ForegroundRole:
+            v = super().data(idx, QtCore.Qt.DisplayRole)
             col = idx.column()
-            rec = self.record(idx.row())
             if col == enums.EColNo.Prio.value:
-                if v := rec.value('priority'):
+                if v:
                     return enums.TColor_Prio[v-1]
             if col == enums.EColNo.Status.value:
-                if v := rec.value('status'):
+                if v:
                     return enums.TColor_Status[v-1]
             if col == enums.EColNo.Syn.value:
-                if v := rec.value('syn'):
+                if v:
                     return enums.TColor_Syn[v-1]
             return super().data(idx, role)
         else:
@@ -128,10 +128,10 @@ class TodoModel(EntryModel):
 
     def reloadAll(self, store_id: int, store_path: str):
         self.beginResetModel()
-        if QtSql.QSqlQuery('DELETE FROM entry WHERE store_id = %d;' % store_id):
+        if QtSql.QSqlQuery(query.entry_drop_all % store_id):
             load_store(self, store_id, store_path)
         else:
-            print("Query oops")
+            print("Error clean store's entries")
         self.endResetModel()
 
 

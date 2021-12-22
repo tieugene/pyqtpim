@@ -82,7 +82,7 @@ ColHeader = (  # Header
     "Status",
     "Summary",
     "Location",
-    "Syn"
+    "Syn",
     "Body"
 )
 
