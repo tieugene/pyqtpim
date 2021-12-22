@@ -6,6 +6,7 @@ from typing import Any
 from PySide2 import QtCore, QtSql
 # 3. local
 from .settings import SetGroup
+from . import enums
 
 
 class EntryModel(QtSql.QSqlTableModel):
@@ -30,25 +31,21 @@ class StoreModel(QtSql.QSqlTableModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setTable("store")
-        self.setSort(self.fieldIndex('id'), QtCore.Qt.SortOrder.AscendingOrder)
-        self.setHeaderData(self.fieldIndex('id'), QtCore.Qt.Horizontal, 'ID')
-        self.setHeaderData(self.fieldIndex('active'), QtCore.Qt.Horizontal, '✓')
-        self.setHeaderData(self.fieldIndex('name'), QtCore.Qt.Horizontal, "Name")
-        self.setHeaderData(self.fieldIndex('connection'), QtCore.Qt.Horizontal, "Connection")
+        self.setSort(enums.EColNo.ID.value, QtCore.Qt.SortOrder.AscendingOrder)
         self.select()
         self.updataChildCache()
 
     # Inherit
     def flags(self, index):
         fl = QtSql.QSqlTableModel.flags(self, index)
-        if index.column() == self.fieldIndex('name'):
+        if index.column() == enums.EColNo.Name:
             fl |= QtCore.Qt.ItemIsUserCheckable
         return fl
 
     def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
         if role == QtCore.Qt.CheckStateRole \
                 and ((self.flags(index) & QtCore.Qt.ItemIsUserCheckable) != QtCore.Qt.NoItemFlags):
-            return QtCore.Qt.Checked if bool(self.data(index.siblingAtColumn(self.fieldIndex('active')))) \
+            return QtCore.Qt.Checked if bool(self.data(index.siblingAtColumn(enums.EColNo.Active.value))) \
                     else QtCore.Qt.Unchecked
         else:
             return QtSql.QSqlTableModel.data(self, index, role)
@@ -56,7 +53,7 @@ class StoreModel(QtSql.QSqlTableModel):
     def setData(self, index: QtCore.QModelIndex, value: Any, role: int = QtCore.Qt.EditRole) -> bool:
         if role == QtCore.Qt.CheckStateRole and \
                 (self.flags(index) & QtCore.Qt.ItemIsUserCheckable != QtCore.Qt.NoItemFlags):
-            self.setData(index.siblingAtColumn(self.fieldIndex('active')), 1 if value == QtCore.Qt.Checked else 0)
+            self.setData(index.siblingAtColumn(enums.EColNo.Active.value), 1 if value == QtCore.Qt.Checked else 0)
             self.submit()
             # self.dataChanged.emit(index, index, (role,))
             self.activeChanged.emit()
@@ -68,5 +65,5 @@ class StoreModel(QtSql.QSqlTableModel):
         """Update child model's cache"""
         EntryModel.store_name.clear()
         for i in range(self.rowCount()):
-            EntryModel.store_name[self.record(i).value(self.fieldIndex('id'))] =\
-                self.record(i).value(self.fieldIndex('name'))
+            EntryModel.store_name[self.record(i).value(enums.EColNo.ID.value)] =\
+                self.record(i).value(enums.EColNo.Name.value)
