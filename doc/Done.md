@@ -58,6 +58,9 @@
 - [x] List sync => List reload
 - [x] TodoForm save errors: prio, % (the must be str in vobj)
 - [x] 2-way Sync
+- [x] `findIndex('fieldname')` => `enum EColNumFieldname`
+- [x] `store` adds new rec with `id=0`
+- [ ] Store: QSqlQueryModel: CD
 
 ## Contacts.File-based
 - [ ] CLM:

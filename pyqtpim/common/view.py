@@ -3,7 +3,7 @@
 import inspect
 from PySide2 import QtCore, QtWidgets, QtSql
 from .model import EntryModel, StoreModel
-from . import enums
+from . import enums, query
 
 
 class EntryView(QtWidgets.QGroupBox):
@@ -146,16 +146,16 @@ class StoreListView(QtWidgets.QListView):
         """Add new Store"""
         self.__form.setIdx()
         if self.__form.exec_():
-            rec = self.model().record()
-            rec.setValue('name', self.__form.name)
-            rec.setValue('connection', self.__form.connection)
-            rec.setValue('active', int(self.__form.active))
-            ok = self.model().insertRecord(self.model().rowCount(), rec)
-            if not ok:
-                print("Oops")
+            q = QtSql.QSqlQuery()
+            q.prepare(query.store_add)
+            q.bindValue(':name', self.__form.name)
+            q.bindValue(':connection', self.__form.connection)
+            q.bindValue(':active', int(self.__form.active))
+            if not q.exec_():
+                print(f"Something bad with adding '{self.__form.name}'")
             else:
                 self.model().updataChildCache()
-                self.model().select()   # FIXME: refresh view or model
+                self.model().select()
 
     def storeEdit(self):
         """Edit Store"""
