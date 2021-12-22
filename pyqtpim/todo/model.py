@@ -146,6 +146,8 @@ class TodoProxyModel(EntryProxyModel):
         self.__currentFilter = self.__accept_All
         self.setDynamicSortFilter(True)
         # TODO: self.resizeColumntToContent(*)
+        self.__today = datetime.date.today()
+        self.__tomorrow = self.__today + datetime.timedelta(days=1)
 
     # Inherit
     def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
@@ -232,16 +234,15 @@ class TodoProxyModel(EntryProxyModel):
     def __accept_Today(self, source_row: int) -> bool:
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
-        today = datetime.date.today()
+
         vobj: VObjTodo = self.sourceModel().getObj(source_row)
-        return (vobj.getStatus() not in closed) and (due := vobj.getDue_as_date()) is not None and due <= today
+        return (vobj.getStatus() not in closed) and (due := vobj.getDue_as_date()) is not None and due <= self.__today
 
     def __accept_Tomorrow(self, source_row: int) -> bool:
         """Like today but tomorrow"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
-        tomorrow = datetime.date.today() + datetime.timedelta(days=1)
         vobj: VObjTodo = self.sourceModel().getObj(source_row)
-        return (vobj.getStatus() not in closed) and (due := vobj.getDue_as_date()) is not None and due <= tomorrow
+        return (vobj.getStatus() not in closed) and (due := vobj.getDue_as_date()) is not None and due <= self.__tomorrow
 
 
 class TodoStoreModel(StoreModel):
