@@ -16,7 +16,7 @@
 
 ### 0.1. Job
 - [ ] TodoList: QSqlQueryModel
-  - [ ] CRU~D~
+  - [ ] ~C~RU~D~
   - [ ] Sort
   - [ ] Filters
 

@@ -266,38 +266,12 @@ def load_store(model: TodoModel, store_id: int, path: str):
                         q.bindValue(':store_id', store_id)
                         q.bindValue(':syn', enums.ESyn.Synced.value)
                         if not q.exec_():
-                            print(f"Something bad with adding record '{obj.getSummary()}'")
-                            print(q.lastError().text())
+                            print(f"Something bad with adding record '{obj.getSummary()}': {q.lastError().text()}")
                         # else:
                         #     print(f"Record #{q.lastInsertId()} added")
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()
-
-
-def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord):
-    """Create new record and fill it with ventry content"""
-    rec.setValue('dtstamp', obj.getDTStamp().replace(tzinfo=datetime.timezone.utc).isoformat())
-    rec.setValue('modified', obj.getLastModified().replace(tzinfo=datetime.timezone.utc).isoformat())
-    if v := obj.getCreated():
-        rec.setValue('created', v.replace(tzinfo=datetime.timezone.utc).isoformat())
-    if v := obj.getDTStart():
-        rec.setValue('dtstart', v.isoformat())
-    if v := obj.getDue():
-        rec.setValue('due', v.isoformat())
-    if v := obj.getCompleted():
-        rec.setValue('completed', v.isoformat())
-    if not (v := obj.getPercent()) is None:
-        rec.setValue('progress', v)
-    if v := obj.getPriority():
-        rec.setValue('priority', enums.Raw2Enum_Prio[v])
-    if v := obj.getStatus():
-        rec.setValue('status', v.value)
-    rec.setValue('summary', obj.getSummary())
-    if v := obj.getLocation():
-        rec.setValue('location', v)
-    body = obj.serialize()
-    rec.setValue('body', body)
 
 
 def obj2sql(q_str: str, vobj: VObjTodo) -> QtSql.QSqlQuery:

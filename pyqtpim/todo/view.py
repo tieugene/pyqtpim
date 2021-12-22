@@ -6,7 +6,7 @@ from typing import Any
 from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
-from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2rec
+from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql
 from .data import VObjTodo
 from .form import TodoForm, form2rec_upd, form2obj
 from . import enums, sync, query
@@ -70,14 +70,12 @@ class TodoListView(EntryListView):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
             obj, store_id = form2obj(f)
-            realmodel = self.model().sourceModel()
-            rec = realmodel.record()  # new empty
-            obj2rec(obj, rec)
-            rec.setValue('store_id', store_id)
-            rec.setValue('syn', enums.ESyn.New.value)
-            if not realmodel.insertRecord(-1, rec):
-                print("Something wrong with adding record")
-            realmodel.select()  # FIXME: update the row only
+            q = obj2sql(query.entry_add, obj)
+            q.bindValue(':store_id', store_id)
+            q.bindValue(':syn', enums.ESyn.New.value)
+            if not q.exec_():
+                print(f"Something bad with adding record '{obj.getSummary()}': {q.lastError().text()}")
+            self.model().sourceModel().select()
             # adding obj to cache unavailable
 
     def entryEdit(self):
@@ -110,11 +108,11 @@ class TodoListView(EntryListView):
         syn = src_rec.value('syn')
         # if not realmodel.removeRow(src_row):
         if syn == enums.ESyn.New.value:
-            if not QtSql.QSqlQuery(query.entry_del % entry_id).exec_():
-                print(f"Something wrong with deleting {entry_id}")
+            if not (q := QtSql.QSqlQuery(query.entry_del % entry_id)).exec_():
+                print(f"Something wrong with deleting {entry_id}: {q.lastError().text()}")
         elif syn == enums.ESyn.Synced.value:
-            if not QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Del.value, entry_id)).exec_():
-                print(f"Something wrong with mark deleted {entry_id}")
+            if not (q := QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Del.value, entry_id))).exec_():
+                print(f"Something wrong with mark deleted {entry_id}: {q.lastError().text()}")
         else:
             print(f"Entry already deleted: {entry_id}")
         realmodel.select()  # FIXME: update the record only
