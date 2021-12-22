@@ -2,7 +2,7 @@
 # 2. PySide
 import datetime
 import os
-from typing import Any, Callable
+from typing import Any, Callable, Optional, Union
 # 2. PySide2
 from PySide2 import QtCore, QtSql
 # 3. 3rd
@@ -51,10 +51,10 @@ class TodoModel(EntryModel):
             col = idx.column()
             if col == enums.EColNo.Prio.value:
                 if v:  # :str()|int
-                    return enums.TDecor_Prio[v-1]
+                    return enums.TDecor_Prio[v - 1]
             elif col == enums.EColNo.Status.value:
                 if v:  # :str()|int
-                    return enums.TDecor_Status[v-1]
+                    return enums.TDecor_Status[v - 1]
             elif col == enums.EColNo.Store.value:
                 return self.store_name[v]  # v:int
             elif col == enums.EColNo.Created.value:
@@ -70,7 +70,7 @@ class TodoModel(EntryModel):
             elif col == enums.EColNo.Due.value:
                 return __vardatime2disp(v)  # v:str
             elif col == enums.EColNo.Syn.value:
-                return enums.TDecor_Syn[v-1]
+                return enums.TDecor_Syn[v - 1]
             else:
                 # print("v:", v, type(v))
                 return v
@@ -79,13 +79,13 @@ class TodoModel(EntryModel):
             col = idx.column()
             if col == enums.EColNo.Prio.value:
                 if v:
-                    return enums.TColor_Prio[v-1]
+                    return enums.TColor_Prio[v - 1]
             if col == enums.EColNo.Status.value:
                 if v:
-                    return enums.TColor_Status[v-1]
+                    return enums.TColor_Status[v - 1]
             if col == enums.EColNo.Syn.value:
                 if v:
-                    return enums.TColor_Syn[v-1]
+                    return enums.TColor_Syn[v - 1]
             return super().data(idx, role)
         else:
             return super().data(idx, role)
@@ -262,18 +262,14 @@ def load_store(model: TodoModel, store_id: int, path: str):
                 if ventry := vobject.readOne(stream):
                     if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
                         obj = VObjTodo(ventry)
-                        # <query>
-                        # q = obj2sql(query.entry_add, obj)
-                        # q.bindValue('store_id', store_id)
-                        # q.bindValue('syn', enums.ESyn.Synced.value)
-                        # if not q.exec_():
-                        # <record>
-                        rec = model.record()
-                        obj2rec(obj, rec)
-                        rec.setValue('store_id', store_id)
-                        rec.setValue('syn', enums.ESyn.Synced.value)
-                        if not model.insertRecord(-1, rec):
-                            print(f"Something wrong with adding record '{obj.getSummary()}'")
+                        q = obj2sql(query.entry_add, obj)
+                        q.bindValue(':store_id', store_id)
+                        q.bindValue(':syn', enums.ESyn.Synced.value)
+                        if not q.exec_():
+                            print(f"Something bad with adding record '{obj.getSummary()}'")
+                            print(q.lastError().text())
+                        # else:
+                        #     print(f"Record #{q.lastInsertId()} added")
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()
@@ -305,16 +301,24 @@ def obj2rec(obj: VObjTodo, rec: QtSql.QSqlRecord):
 
 
 def obj2sql(q_str: str, vobj: VObjTodo) -> QtSql.QSqlQuery:
+    def __2Z(__v: Optional[datetime.datetime]) -> str:
+        if __v:
+            return __v.replace(tzinfo=datetime.timezone.utc).isoformat()
+
+    def __2iso(__v: Optional[Union[datetime.date, datetime.datetime]]) -> str:
+        if __v:
+            return __v.isoformat()
+
     q = QtSql.QSqlQuery()
     q.prepare(q_str)
-    q.bindValue(':created', vobj.getCreated())
-    q.bindValue(':dtstamp', vobj.getDTStamp())
-    q.bindValue(':modified', vobj.getLastModified())
-    q.bindValue(':dtstart', vobj.getDTStart())
-    q.bindValue(':due', vobj.getDue())
-    q.bindValue(':completed', vobj.getCompleted())
+    q.bindValue(':created', __2Z(vobj.getCreated()))
+    q.bindValue(':dtstamp', __2Z(vobj.getDTStamp()))
+    q.bindValue(':modified', __2Z(vobj.getLastModified()))
+    q.bindValue(':dtstart', __2iso(vobj.getDTStart()))
+    q.bindValue(':due', __2iso(vobj.getDue()))
+    q.bindValue(':completed', __2iso(vobj.getCompleted()))  # ?
     q.bindValue(':progress', vobj.getPercent())
-    q.bindValue(':priority', v if (v := vobj.getPriority()) else None)
+    q.bindValue(':priority', enums.Raw2Enum_Prio[v] if (v := vobj.getPriority()) else None)
     q.bindValue(':status', vobj.getStatus())
     q.bindValue(':summary', vobj.getSummary())
     q.bindValue(':location', vobj.getLocation())

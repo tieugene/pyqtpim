@@ -32,6 +32,7 @@
 - [ ] Store: QSqlQueryModel: RUD
 
 ### 0.4. Tuning
+- [ ] Start...stop msg
 - [ ] todo.data.VTodoObj.getX - @prop w/ decorator
 - [ ] SQLite indexes
 - [ ] Color `due today` (yellow) and `overdue` (red)
