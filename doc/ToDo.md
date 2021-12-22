@@ -29,7 +29,7 @@
 - [ ] TodoForm:
   - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'
-- [ ] Store: QSqlQueryModel: RU
+- [ ] Store: QSqlQueryModel: RUD
 
 ### 0.4. Tuning
 - [ ] todo.data.VTodoObj.getX - @prop w/ decorator

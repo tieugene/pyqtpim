@@ -8,9 +8,9 @@ from PySide2 import QtWidgets, QtCore, QtSql
 import dateutil
 import vobject
 # 4. local
+from common import query as query_common
 from .data import VObjTodo
 from . import enums
-
 
 def _tz_local():
     # return dateutil.tz.tz.tzlocal()     # 'MSK'
@@ -24,11 +24,10 @@ def _tz_utc():
 class ListEdit(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent)
-        model = QtSql.QSqlTableModel()
-        model.setTable("store")
-        model.select()
+        model = QtSql.QSqlQueryModel()
+        model.setQuery(query_common.store_ref)
         self.setModel(model)
-        self.setModelColumn(model.fieldIndex('name'))
+        self.setModelColumn(1)
 
     def setData(self, list_id: int):
         """FIXME: dirty"""
