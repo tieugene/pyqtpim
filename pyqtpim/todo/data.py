@@ -30,27 +30,27 @@ class VObjTodo(VObj):
             data.vtodo.add('created').value = stamp
         super().__init__(data)
         self._name2func = {  # FIXME: static
-            enums.EProp.Categories: self.getCategories,
-            enums.EProp.Class: self.getClass,
-            enums.EProp.Comment: self.getComment,
-            enums.EProp.Completed: self.getCompleted,
-            enums.EProp.Contact: self.getContact,
-            enums.EProp.Created: self.getCreated,
-            enums.EProp.Description: self.getDescription,
-            enums.EProp.DTStamp: self.getDTStamp,
-            enums.EProp.DTStart: self.getDTStart,
-            enums.EProp.Due: self.getDue,
-            enums.EProp.LastModified: self.getLastModified,
-            enums.EProp.Location: self.getLocation,
-            enums.EProp.Percent: self.getPercent,
-            enums.EProp.Priority: self.getPriority,
-            enums.EProp.RelatedTo: self.getRelatedTo,
-            enums.EProp.RRule: self.getRRule,
-            enums.EProp.Sequence: self.getSequence,
-            enums.EProp.Status: self.getStatus,
-            enums.EProp.Summary: self.getSummary,
-            enums.EProp.UID: self.getUID,
-            enums.EProp.URL: self.getURL,
+            enums.EProp.Categories: self.get_Categories,
+            enums.EProp.Class: self.get_Class,
+            enums.EProp.Comment: self.get_Comment,
+            enums.EProp.Completed: self.get_Completed,
+            enums.EProp.Contact: self.get_Contact,
+            enums.EProp.Created: self.get_Created,
+            enums.EProp.Description: self.get_Description,
+            enums.EProp.DTStamp: self.get_DTStamp,
+            enums.EProp.DTStart: self.get_DTStart,
+            enums.EProp.Due: self.get_Due,
+            enums.EProp.LastModified: self.get_LastModified,
+            enums.EProp.Location: self.get_Location,
+            enums.EProp.Percent: self.get_Progress,
+            enums.EProp.Priority: self.get_Priority,
+            enums.EProp.RelatedTo: self.get_RelatedTo,
+            enums.EProp.RRule: self.get_RRule,
+            enums.EProp.Sequence: self.get_Sequence,
+            enums.EProp.Status: self.get_Status,
+            enums.EProp.Summary: self.get_Summary,
+            enums.EProp.UID: self.get_UID,
+            enums.EProp.URL: self.get_URL,
         }
 
     def save(self):
@@ -94,22 +94,18 @@ class VObjTodo(VObj):
         else:
             if data is None:
                 if fld in self._data.vtodo.contents:
-                    # print("Del", fld, self._data.vtodo.contents[fld][0])
                     del self._data.vtodo.contents[fld]
             else:
                 if fld in self._data.vtodo.contents:
-                    # print("Set", fld, ':', self._data.vtodo.contents[fld][0].value, '=>', data)
-                    # self._data.vtodo.<fld>.value
                     self._data.vtodo.contents[fld][0].value = data
                 else:
-                    # print("Add", fld, data)
                     self._data.vtodo.add(fld).value = data
 
     # getters
-    def getAttach(self) -> Optional[list[str]]:
+    def get_Attach(self) -> Optional[list[str]]:
         return self.__getFldByName('attach')
 
-    def getCategories(self) -> Optional[Union[str, list[str]]]:
+    def get_Categories(self) -> Optional[Union[str, list[str]]]:
         """Categories.
         :return: list of str
         Can be:
@@ -124,84 +120,79 @@ class VObjTodo(VObj):
                 retvalue = [s[0] for s in retvalue]
         return retvalue
 
-    def getClass(self) -> Optional[enums.EClass]:
+    def get_Class(self) -> Optional[enums.EClass]:
         if v := self.__getFldByName('class'):
             return enums.Raw2Enum_Class.get(v)
 
-    def getComment(self) -> Optional[Union[str, list[str]]]:
+    def get_Comment(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('comment')
 
-    def getCompleted(self) -> Optional[datetime.datetime]:
+    def get_Completed(self) -> Optional[datetime.datetime]:
         return self.__getFldByName('completed')
 
-    def getContact(self) -> Optional[Union[str, list[str]]]:
+    def get_Contact(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('contact')
 
-    def getCreated(self) -> Optional[datetime.datetime]:
+    def get_Created(self) -> Optional[datetime.datetime]:
         return self.__getFldByName('created')
 
-    def getDescription(self) -> Optional[str]:
+    def get_Description(self) -> Optional[str]:
         return self.__getFldByName('description')
 
-    def getDTStamp(self) -> datetime.datetime:
+    def get_DTStamp(self) -> datetime.datetime:
         return self.__getFldByName('dtstamp')
 
-    def getDTStart(self) -> Optional[Union[datetime.date, datetime.datetime]]:
+    def get_DTStart(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         return self.__getFldByName('dtstart')
 
-    def getDue(self) -> Optional[Union[datetime.date, datetime.datetime]]:
+    def get_Due(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         return self.__getFldByName('due')
 
-    def getDue_as_date(self) -> Optional[datetime.date]:
-        return retvalue.date() if isinstance(retvalue := self.getDue(), datetime.datetime) else retvalue
+    def get_Due_as_date(self) -> Optional[datetime.date]:
+        return retvalue.date() if isinstance(retvalue := self.get_Due(), datetime.datetime) else retvalue
 
-    def getLastModified(self) -> Optional[datetime.datetime]:
+    def get_LastModified(self) -> Optional[datetime.datetime]:
         return self.__getFldByName('last-modified')
 
-    def getLocation(self) -> Optional[str]:
+    def get_Location(self) -> Optional[str]:
         return self.__getFldByName('location')
 
-    def getPercent(self) -> Optional[int]:
+    def get_Progress(self) -> Optional[int]:
         if v := self.__getFldByName('percent-complete'):
             return int(v)
 
-    def getPriority(self) -> Optional[int]:
+    def get_Priority(self) -> Optional[int]:
         """
         0=undef, 1[..4]=high, 5=mid, [6..]9=low
         :return: 1[/3]/5[/7]/9
 
-        cases: (164):
-        - 1=18
-        - 3=6
-        - 5=58
-        - 7=6
-        - 9=76
+        cases: (164): 1=18, 3=6, 5=58, 7=6, 9=76
         """
         if v := self.__getFldByName('priority'):
             return int(v)
 
-    def getRelatedTo(self) -> Optional[Union[str, list[str]]]:
+    def get_RelatedTo(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('related-to')
 
-    def getRRule(self) -> Optional[str]:
+    def get_RRule(self) -> Optional[str]:
         return self.__getFldByName('rrule')
 
-    def getSequence(self) -> Optional[int]:
+    def get_Sequence(self) -> Optional[int]:
         if v := self.__getFldByName('sequence'):
             return int(v)
 
-    def getStatus(self) -> Optional[enums.EStatus]:
+    def get_Status(self) -> Optional[enums.EStatus]:
         if v := self.__getFldByName('status'):
             return enums.Raw2Enum_Status.get(v)
 
-    def getSummary(self) -> Optional[str]:
+    def get_Summary(self) -> Optional[str]:
         # return self._data.vtodo.summary.value
         return self.__getFldByName('summary')
 
-    def getUID(self) -> str:
+    def get_UID(self) -> str:
         return self.__getFldByName('uid')
 
-    def getURL(self) -> Optional[Union[str, list[str]]]:
+    def get_URL(self) -> Optional[Union[str, list[str]]]:
         return self.__getFldByName('url')
 
     # setters (TODO: chg to 'tryupdate')
@@ -247,7 +238,7 @@ class VObjTodo(VObj):
 
     # specials
     def updateStamps(self):
-        seq = 0 if (seq := self.getSequence()) is None else seq + 1
+        seq = 0 if (seq := self.get_Sequence()) is None else seq + 1
         self.__setFldByName('sequence', str(seq))  # https://github.com/eventable/vobject/issues/178
         now = _utcnow()
         self.__setFldByName('last-modified', now)

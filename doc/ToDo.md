@@ -15,12 +15,20 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
+- [ ] TodoForm: accept(): ret True if chg only
+- [ ] VTodoObj: getter/setter/deleter:
+  - [ ] get_X: decorated
+  - [ ] set_X() -> bool: cmp and ret chg; del prop on None
+  - [ ] del_X() -> bool:
+- [ ] VTodoObj.dirty:bool - chg after last flush
+- [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
 - [ ] TodoList: QSqlQueryModel
-  - [ ] ~C~RU~D~
+  - [ ] ~C~RU*D*
   - [ ] Sort
   - [ ] Filters
 
 ### 0.2. Fixme (critical)
+- [ ] Sync not works
 
 ### 0.3. Fixme (soft)
 - [ ] Check uid on Reload
@@ -32,7 +40,8 @@
 - [ ] Store: QSqlQueryModel: RUD
 
 ### 0.4. Tuning
-- [ ] Start...stop msg
+- [ ] URL as URL
+- [ ] Start...stop sync msg
 - [ ] todo.data.VTodoObj.getX - @prop w/ decorator
 - [ ] SQLite indexes
 - [ ] Color `due today` (yellow) and `overdue` (red)

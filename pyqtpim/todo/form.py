@@ -390,22 +390,22 @@ class TodoForm(QtWidgets.QDialog):
     def load(self, data: VObjTodo, list_id: int):
         """Preload form with VTODO"""
         self.f_list.setData(list_id)
-        if v := data.getCategories():
+        if v := data.get_Categories():
             if isinstance(v, list):
                 self.f_category.setText(', '.join(v))
             else:
                 self.f_category.setText(v)
-        self.f_class.setData(data.getClass())
-        self.f_completed.setData(v.astimezone() if (v := data.getCompleted()) else None)
-        self.f_description.setPlainText(data.getDescription())
-        self.f_dtstart.setData(data.getDTStart())
-        self.f_due.setData(data.getDue())
-        self.f_location.setText(data.getLocation())
-        self.f_percent.setData(data.getPercent())
-        self.f_priority.setData(data.getPriority())
-        self.f_status.setData(data.getStatus())
-        self.f_summary.setText(data.getSummary())
-        self.f_url.setText(data.getURL())
+        self.f_class.setData(data.get_Class())
+        self.f_completed.setData(v.astimezone() if (v := data.get_Completed()) else None)
+        self.f_description.setPlainText(data.get_Description())
+        self.f_dtstart.setData(data.get_DTStart())
+        self.f_due.setData(data.get_Due())
+        self.f_location.setText(data.get_Location())
+        self.f_percent.setData(data.get_Progress())
+        self.f_priority.setData(data.get_Priority())
+        self.f_status.setData(data.get_Status())
+        self.f_summary.setText(data.get_Summary())
+        self.f_url.setText(data.get_URL())
 
 
 def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
@@ -425,14 +425,14 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         v_new.sort()
     else:   # empty list
         v_new = None
-    v_old = obj.getCategories()
+    v_old = obj.get_Categories()
     if v_old != v_new:  # compare 0/1/2+ x 0/1/2+
         obj.setCategories(v_new)
         # TODO: db cats
         obj_chgd = True
     # - class (combo)
     v_new = form.f_class.getData()
-    if obj.getClass() != v_new:
+    if obj.get_Class() != v_new:
         obj.setClass(v_new)
         # no db
         obj_chgd = True
@@ -440,7 +440,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     v_new = form.f_completed.getData()
     if v_new:
         v_new = v_new.astimezone(_tz_utc())
-    if obj.getCompleted() != v_new:
+    if obj.get_Completed() != v_new:
         obj.setCompleted(v_new)
         if v_new:
             rec.setValue('completed', v_new.isoformat())
@@ -449,13 +449,13 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - description
     v_new = form.f_description.toPlainText() or None
-    if obj.getDescription() != v_new:
+    if obj.get_Description() != v_new:
         obj.setDescription(v_new)
         # no db
         obj_chgd = True
     # - dtstart
     v_new = form.f_dtstart.getData()
-    v_old = obj.getDTStart()
+    v_old = obj.get_DTStart()
     if v_old != v_new:
         obj.setDTStart(v_new)
         if v_new:
@@ -465,7 +465,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - due
     v_new = form.f_due.getData()
-    if obj.getDue() != v_new:
+    if obj.get_Due() != v_new:
         obj.setDue(v_new)
         if v_new:
             rec.setValue('due', v_new.isoformat())
@@ -474,7 +474,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - location
     v_new = form.f_location.text() or None
-    if obj.getLocation() != v_new:
+    if obj.get_Location() != v_new:
         obj.setLocation(v_new)
         if v_new:
             rec.setValue('location', v_new)
@@ -483,7 +483,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - percent
     v_new = form.f_percent.getData()
-    v_old = obj.getPercent()    # 0+
+    v_old = obj.get_Progress()    # 0+
     if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
         # print("v_new:", v_new, type(v_new))
         obj.setPercent(v_new)
@@ -494,7 +494,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - priority
     v_new = form.f_priority.getData()
-    v_old = obj.getPriority()
+    v_old = obj.get_Priority()
     if v_old != v_new and not (v_new == 0 and v_old is None):
         obj.setPriority(v_new)
         if v_new:
@@ -504,7 +504,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - status (combo)
     v_new = form.f_status.getData()
-    if obj.getStatus() != v_new:
+    if obj.get_Status() != v_new:
         obj.setStatus(v_new)
         if v_new:
             rec.setValue('status', v_new.value)
@@ -513,7 +513,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - summary
     v_new = form.f_summary.text() or None
-    if obj.getSummary() != v_new:
+    if obj.get_Summary() != v_new:
         obj.setSummary(v_new)
         if v_new:
             rec.setValue('summary', v_new)
@@ -522,14 +522,14 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - url
     v_new = form.f_url.text() or None
-    if obj.getURL() != v_new:
+    if obj.get_URL() != v_new:
         obj.setURL(v_new)
         # no db
         obj_chgd = True
     # final
     if obj_chgd:
         obj.updateStamps()
-        rec.setValue('modified', obj.getLastModified().isoformat())
+        rec.setValue('modified', obj.get_LastModified().isoformat())
         body = obj.serialize()
         rec.setValue('body', body)
         rec_chgd = True
@@ -537,6 +537,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
 
 
 def form2obj(form: TodoForm) -> (VObjTodo, int):
+    """Callers: TodoListView.entryAdd()"""
     obj = VObjTodo()
     if v_new := form.f_category.text():
         v_new = [s.strip() for s in v_new.split(',')]

@@ -129,6 +129,10 @@
  1 | 1 | R_chg | L<R | ---
  1 | 1 | *_chg | ?win| ...
 
+- get/set/del:
+  - `var = property(get_var, set_var, del_var)`
+  - `@property\ndef var(... | @var.setter\ndef var(...`
+
 self.record(index.row()).value('active').toBool()
 
 ## vCard UML

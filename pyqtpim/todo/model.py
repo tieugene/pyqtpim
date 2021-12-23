@@ -128,7 +128,7 @@ class TodoModel(EntryModel):
 
     def reloadAll(self, store_id: int, store_path: str):
         self.beginResetModel()
-        if QtSql.QSqlQuery(query.entry_drop_all % store_id):
+        if QtSql.QSqlQuery(query.entry_drop_all % store_id):  # FIXME: clean obj cache
             load_store(self, store_id, store_path)
         else:
             print("Error clean store's entries")
@@ -194,13 +194,13 @@ class TodoProxyModel(EntryProxyModel):
         """Sorting Prio>Due>Summary"""
 
         def __get_prio(vobj: VObjTodo) -> int:
-            if v := vobj.getPriority():
+            if v := vobj.get_Priority():
                 return enums.Raw2Enum_Prio[v]
             else:
                 return 0
 
         def __get_due_date(vobj: VObjTodo) -> datetime.date:
-            if v := vobj.getDue():
+            if v := vobj.get_Due():
                 if isinstance(v, datetime.datetime):
                     return v.date()
                 return v
@@ -220,7 +220,7 @@ class TodoProxyModel(EntryProxyModel):
         if due_left != due_right:
             return due_left < due_right
         # 3. Summary
-        return obj_right.getSummary() < obj_left.getSummary()
+        return obj_right.get_Summary() < obj_left.get_Summary()
 
     @staticmethod
     def __accept_All(_: int) -> bool:
@@ -229,20 +229,20 @@ class TodoProxyModel(EntryProxyModel):
 
     def __accept_Closed(self, source_row: int) -> bool:
         """Show only Status=Complete[|Cancelled]"""
-        return self.sourceModel().getObj(source_row).getStatus() in {enums.EStatus.Completed, enums.EStatus.Cancelled}
+        return self.sourceModel().getObj(source_row).get_Status() in {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
     def __accept_Today(self, source_row: int) -> bool:
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
         vobj: VObjTodo = self.sourceModel().getObj(source_row)
-        return (vobj.getStatus() not in closed) and (due := vobj.getDue_as_date()) is not None and due <= self.__today
+        return (vobj.get_Status() not in closed) and (due := vobj.get_Due_as_date()) is not None and due <= self.__today
 
     def __accept_Tomorrow(self, source_row: int) -> bool:
         """Like today but tomorrow"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
         vobj: VObjTodo = self.sourceModel().getObj(source_row)
-        return (vobj.getStatus() not in closed) and (due := vobj.getDue_as_date()) is not None and due <= self.__tomorrow
+        return (vobj.get_Status() not in closed) and (due := vobj.get_Due_as_date()) is not None and due <= self.__tomorrow
 
 
 class TodoStoreModel(StoreModel):
@@ -267,9 +267,10 @@ def load_store(model: TodoModel, store_id: int, path: str):
                         q.bindValue(':store_id', store_id)
                         q.bindValue(':syn', enums.ESyn.Synced.value)
                         if not q.exec_():
-                            print(f"Something bad with adding record '{obj.getSummary()}': {q.lastError().text()}")
+                            print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
                         # else:
                         #     print(f"Record #{q.lastInsertId()} added")
+                        #     model.addObj(q.lastInsertId(), obj)
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()
@@ -286,16 +287,16 @@ def obj2sql(q_str: str, vobj: VObjTodo) -> QtSql.QSqlQuery:
 
     q = QtSql.QSqlQuery()
     q.prepare(q_str)
-    q.bindValue(':created', __2Z(vobj.getCreated()))
-    q.bindValue(':dtstamp', __2Z(vobj.getDTStamp()))
-    q.bindValue(':modified', __2Z(vobj.getLastModified()))
-    q.bindValue(':dtstart', __2iso(vobj.getDTStart()))
-    q.bindValue(':due', __2iso(vobj.getDue()))
-    q.bindValue(':completed', __2iso(vobj.getCompleted()))  # ?
-    q.bindValue(':progress', vobj.getPercent())
-    q.bindValue(':priority', enums.Raw2Enum_Prio[v] if (v := vobj.getPriority()) else None)
-    q.bindValue(':status', vobj.getStatus())
-    q.bindValue(':summary', vobj.getSummary())
-    q.bindValue(':location', vobj.getLocation())
+    q.bindValue(':created', __2Z(vobj.get_Created()))
+    q.bindValue(':dtstamp', __2Z(vobj.get_DTStamp()))
+    q.bindValue(':modified', __2Z(vobj.get_LastModified()))
+    q.bindValue(':dtstart', __2iso(vobj.get_DTStart()))
+    q.bindValue(':due', __2iso(vobj.get_Due()))
+    q.bindValue(':completed', __2iso(vobj.get_Completed()))  # ?
+    q.bindValue(':progress', vobj.get_Progress())
+    q.bindValue(':priority', enums.Raw2Enum_Prio[v] if (v := vobj.get_Priority()) else None)
+    q.bindValue(':status', vobj.get_Status())
+    q.bindValue(':summary', vobj.get_Summary())
+    q.bindValue(':location', vobj.get_Location())
     q.bindValue(':body', vobj.serialize())
     return q

@@ -69,12 +69,15 @@ class TodoListView(EntryListView):
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
+            # TODO: move to model
             obj, store_id = form2obj(f)
             q = obj2sql(query.entry_add, obj)
             q.bindValue(':store_id', store_id)
             q.bindValue(':syn', enums.ESyn.New.value)
             if not q.exec_():
-                print(f"Something bad with adding record '{obj.getSummary()}': {q.lastError().text()}")
+                print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
+            # else:
+            #     model.addObj(q.lastInsertId(), obj)
             self.model().sourceModel().select()
             # adding obj to cache unavailable
 
@@ -84,13 +87,15 @@ class TodoListView(EntryListView):
             return
         row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
+        # TODO: by id
         obj: VObjTodo = realmodel.getObj(row)
         rec = realmodel.record(row)
         store_id = rec.value('store_id')
         f = TodoForm(self)  # TODO: cache creation
-        f.load(obj, store_id)    # model.relation(col).indexColumn()
+        f.load(obj, store_id)    # TODO: f.from_obj(); model.relation(col).indexColumn()
         if f.exec_():
-            if form2rec_upd(f, obj, rec):
+            # TODO: move to model
+            if form2rec_upd(f, obj, rec):  # TODO: f.to_obj()
                 if not realmodel.setRecord(row, rec):
                     print("Something wrong with updating record")
                 realmodel.setObj(rec, obj)
@@ -102,20 +107,25 @@ class TodoListView(EntryListView):
             return
         src_row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
-        realmodel.delObj(src_row)
+        # TODO: by id
         src_rec = realmodel.record(src_row)
         entry_id = src_rec.value('id')
         syn = src_rec.value('syn')
         # if not realmodel.removeRow(src_row):
-        if syn == enums.ESyn.New.value:
-            if not (q := QtSql.QSqlQuery(query.entry_del % entry_id)).exec_():
-                print(f"Something wrong with deleting {entry_id}: {q.lastError().text()}")
-        elif syn == enums.ESyn.Synced.value:
-            if not (q := QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Del.value, entry_id))).exec_():
-                print(f"Something wrong with mark deleted {entry_id}: {q.lastError().text()}")
-        else:
-            print(f"Entry already deleted: {entry_id}")
-        realmodel.select()  # FIXME: update the record only
+        if QtWidgets.QMessageBox.question(self, f"Deleting {entry_id}",
+                                          f"Are you sure to delete '{entry_id}'") \
+                == QtWidgets.QMessageBox.StandardButton.Yes:
+            # TODO: move to model
+            if syn == enums.ESyn.New.value:
+                realmodel.delObj(src_row)
+                if not (q := QtSql.QSqlQuery(query.entry_del % entry_id)).exec_():
+                    print(f"Something wrong with deleting {entry_id}: {q.lastError().text()}")
+            elif syn == enums.ESyn.Synced.value:
+                if not (q := QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Del.value, entry_id))).exec_():
+                    print(f"Something wrong with mark deleted {entry_id}: {q.lastError().text()}")
+            else:
+                print(f"Entry already deleted: {entry_id}")
+            realmodel.select()
 
     def entryCat(self):
         """Show raw Entry content"""
@@ -123,7 +133,9 @@ class TodoListView(EntryListView):
         if not idx.isValid():
             return
         realmodel = self.model().sourceModel()
+        # TODO: by id
         row = self.model().mapToSource(idx).row()
+        # TODO: move to model
         rec = realmodel.record(row)
         body = rec.value('body')
         msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", rec.value('summary'))
@@ -143,8 +155,10 @@ class TodoListView(EntryListView):
         idx = self.selectionModel().currentIndex()
         if not idx.isValid():
             return
+        # TODO: by id
         realmodel = self.model().sourceModel()
         row = self.model().mapToSource(idx).row()
+        # TODO: move to model
         raw = realmodel.getObj(row).RawContent()
         # icon, title, text
         msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
@@ -225,23 +239,23 @@ class TodoView(EntryView):
         text = '<table>'
         # text += __mk_row("Created", data.getCreated().isoformat())
         # text += __mk_row("DTSTamp", data.getDTStamp().isoformat())
-        text += __mk_row("Modified", data.getLastModified().isoformat())
-        text += __mk_row("Priority", data.getPriority())
-        text += __mk_row("Categories", data.getCategories())
-        text += __mk_row("Class", enums.Enum2Raw_Class.get(data.getClass()))
+        text += __mk_row("Modified", data.get_LastModified().isoformat())
+        text += __mk_row("Priority", data.get_Priority())
+        text += __mk_row("Categories", data.get_Categories())
+        text += __mk_row("Class", enums.Enum2Raw_Class.get(data.get_Class()))
         # v = data.getDTStart()
         # print("Print DTSTart:", v, type(v))
-        text += __mk_row("DTStart", v.isoformat() if (v := data.getDTStart()) else '---')
-        text += __mk_row("Due", v.isoformat() if (v := data.getDue()) else '---')
-        text += __mk_row("Progress", data.getPercent())
-        text += __mk_row("Completed", v.isoformat() if (v := data.getCompleted()) else '---')
-        text += __mk_row("Status", enums.Enum2Raw_Status.get(data.getStatus()))
-        text += __mk_row("Location", data.getLocation())
-        text += __mk_row("URL", data.getURL())
+        text += __mk_row("DTStart", v.isoformat() if (v := data.get_DTStart()) else '---')
+        text += __mk_row("Due", v.isoformat() if (v := data.get_Due()) else '---')
+        text += __mk_row("Progress", data.get_Progress())
+        text += __mk_row("Completed", v.isoformat() if (v := data.get_Completed()) else '---')
+        text += __mk_row("Status", enums.Enum2Raw_Status.get(data.get_Status()))
+        text += __mk_row("Location", data.get_Location())
+        text += __mk_row("URL", data.get_URL())
         text += '<tr><th>Description:</th><td/></tr>'
-        if desc := data.getDescription():
+        if desc := data.get_Description():
             desc = '<br/>'.join(desc.splitlines())
-            text += f"<tr><td colspan=2>{desc}:</td></tr>"
+            text += f"<tr><td colspan=2>{desc}</td></tr>"
         text += '</table>'
         self.details.setText(text)
 

@@ -33,7 +33,7 @@ def load_my(store_id: int) -> dict[uuid.UUID, (int, bool, VObjTodo)]:
     q = QtSql.QSqlQuery(f"SELECT id, syn, body FROM entry WHERE store_id={store_id}")
     while q.next():
         if vobj := load_vobj(q.value(2)):
-            retvalue[uuid.UUID(vobj.getUID())] = (q.value(0), q.value(1), vobj)
+            retvalue[uuid.UUID(vobj.get_UID())] = (q.value(0), q.value(1), vobj)
     return retvalue
 
 
@@ -49,7 +49,7 @@ def load_remote(store_id: int) -> (dict[uuid.UUID, (str, VObjTodo)], str):
                     continue
                 with open(entry.path, 'rt') as stream:
                     if vobj := load_vobj(stream):
-                        retvalue[uuid.UUID(vobj.getUID())] = (entry.path, vobj)
+                        retvalue[uuid.UUID(vobj.get_UID())] = (entry.path, vobj)
     else:
         eprint(f"Cannot get path of {store_id}")
     return retvalue, path
@@ -90,32 +90,32 @@ def Sync(store_id: int, dry_run=True):
         # print(uid, my_id, my_syn, my_vobj.getSummary())
         if r_tuple := r_side.get(uid):  # both exist
             if my_syn == enums.ESyn.New.value:
-                eprint(f"Impossible - both new: {uid} {my_vobj.getSummary()}")
+                eprint(f"Impossible - both new: {uid} {my_vobj.get_Summary()}")
                 del r_side[uid]
             elif my_syn == enums.ESyn.Del.value:  # R-
                 if dry_run:
-                    print(f"R-: {uid} {my_vobj.getSummary()}")
+                    print(f"R-: {uid} {my_vobj.get_Summary()}")
                     del r_side[uid]
                     continue
                 os.remove(r_side[uid][0])
                 del r_side[uid]
                 if not QtSql.QSqlQuery(query.entry_del % my_id):
-                    eprint(f"Something bad with L-: {uid} {my_vobj.getSummary()}")
+                    eprint(f"Something bad with L-: {uid} {my_vobj.get_Summary()}")
                 # TODO: del cached
             else:  # Synced => cmp last-modified
                 r_path, r_obj = r_tuple
-                l_modified = my_vobj.getLastModified()
-                r_modified = r_obj.getLastModified()
+                l_modified = my_vobj.get_LastModified()
+                r_modified = r_obj.get_LastModified()
                 if l_modified < r_modified:  # L<R
                     if dry_run:
-                        print(f"L<R: {uid} {my_vobj.getSummary()}")
+                        print(f"L<R: {uid} {my_vobj.get_Summary()}")
                         del r_side[uid]
                         continue
                     if not upd_my(my_id, r_obj, store_id, enums.ESyn.Synced):
-                        eprint(f"Something bad with L<R: {uid} {r_obj.getSummary()}")
+                        eprint(f"Something bad with L<R: {uid} {r_obj.get_Summary()}")
                 elif l_modified > r_modified:  # L>R
                     if dry_run:
-                        print(f"L>R: {uid} {my_vobj.getSummary()}")
+                        print(f"L>R: {uid} {my_vobj.get_Summary()}")
                         del r_side[uid]
                         continue
                     data = my_vobj.serialize()
@@ -127,25 +127,25 @@ def Sync(store_id: int, dry_run=True):
         else:  # my side only
             if my_syn == enums.ESyn.New.value:    # 3.1. L- => L>R
                 if dry_run:
-                    print(f"R+: {uid} {my_vobj.getSummary()}")
+                    print(f"R+: {uid} {my_vobj.get_Summary()}")
                     continue
-                data = my_vobj.seriailze()
+                data = my_vobj.serialize()
                 with open(os.path.join(r_path, str(uid)+'.ics'), 'wt') as o_f:
                     o_f.write(data)
                     if not QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Synced.value, my_id)):
-                        eprint(f"Something bad with R+: {uid} {my_vobj.getSummary()}")
+                        eprint(f"Something bad with R+: {uid} {my_vobj.get_Summary()}")
             else:    # Del, Synced == 3.2. R-[L-] => L-
                 if dry_run:
-                    print(f"L-: {uid} {my_vobj.getSummary()}")
+                    print(f"L-: {uid} {my_vobj.get_Summary()}")
                     continue
                 else:
                     if not QtSql.QSqlQuery(query.entry_del % my_id):
-                        eprint(f"Something bad with L-: {uid} {my_vobj.getSummary()}")
+                        eprint(f"Something bad with L-: {uid} {my_vobj.get_Summary()}")
                     # TODO: del cached
     # 3.3. Add L<R
     for uid, (path, vobj) in r_side.items():
         if dry_run:
-            print(f"L+: {uid} {vobj.getSummary()}")
+            print(f"L+: {uid} {vobj.get_Summary()}")
             continue
         if not add_my(vobj, store_id, enums.ESyn.Synced):
-            eprint(f"Something bad with L+: {uid} {vobj.getSummary()}")
+            eprint(f"Something bad with L+: {uid} {vobj.get_Summary()}")
