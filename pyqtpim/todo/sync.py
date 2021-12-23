@@ -37,7 +37,10 @@ def load_my(store_id: int) -> dict[uuid.UUID, (int, bool, VObjTodo)]:
     return retvalue
 
 
-def load_remote(store_id: int) -> (dict[uuid.UUID, (str, VObjTodo)], str):
+def load_remote(store_id: int) -> (dict[uuid.UUID, (str, VObjTodo)], Optional[str]):
+    """
+    :return: dict of uid: (file_path, vobj), connection
+    """
     retvalue = dict()
     path = None
     q = QtSql.QSqlQuery(f"SELECT DISTINCT connection FROM store WHERE id={store_id}")
@@ -80,8 +83,8 @@ def Sync(store_id: int, dry_run=True):
         return
     # pprint.pprint(my_side)
     # 2. load all from connections into [uid: (path, body)]
-    r_side, r_path = load_remote(store_id)
-    if not (r_side and r_path):
+    r_side, r_dir = load_remote(store_id)
+    if not (r_side and r_dir):
         eprint("Remote side is empty")
         return
     # pprint.pprint(remote_side)
@@ -103,7 +106,7 @@ def Sync(store_id: int, dry_run=True):
                     eprint(f"Something bad with L-: {uid} {my_vobj.get_Summary()}")
                 # TODO: del cached
             else:  # Synced => cmp last-modified
-                r_path, r_obj = r_tuple
+                r_file, r_obj = r_tuple
                 l_modified = my_vobj.get_LastModified()
                 r_modified = r_obj.get_LastModified()
                 if l_modified < r_modified:  # L<R
@@ -119,7 +122,7 @@ def Sync(store_id: int, dry_run=True):
                         del r_side[uid]
                         continue
                     data = my_vobj.serialize()
-                    with open(r_path, 'wt') as o_f:
+                    with open(r_file, 'wt') as o_f:
                         o_f.write(data)
                 else:  # L==R; TODO: cmp whole of vobjs
                     pass
@@ -130,7 +133,7 @@ def Sync(store_id: int, dry_run=True):
                     print(f"R+: {uid} {my_vobj.get_Summary()}")
                     continue
                 data = my_vobj.serialize()
-                with open(os.path.join(r_path, str(uid)+'.ics'), 'wt') as o_f:
+                with open(os.path.join(r_dir, str(uid)+'.ics'), 'wt') as o_f:
                     o_f.write(data)
                     if not QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Synced.value, my_id)):
                         eprint(f"Something bad with R+: {uid} {my_vobj.get_Summary()}")
@@ -143,9 +146,9 @@ def Sync(store_id: int, dry_run=True):
                         eprint(f"Something bad with L-: {uid} {my_vobj.get_Summary()}")
                     # TODO: del cached
     # 3.3. Add L<R
-    for uid, (path, vobj) in r_side.items():
+    for uid, (r_file, vobj) in r_side.items():
         if dry_run:
-            print(f"L+: {uid} {vobj.get_Summary()}")
+            print(f"L+: {uid} {vobj.get_Summary()} < {r_file}")
             continue
         if not add_my(vobj, store_id, enums.ESyn.Synced):
             eprint(f"Something bad with L+: {uid} {vobj.get_Summary()}")

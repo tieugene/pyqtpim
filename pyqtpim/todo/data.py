@@ -196,47 +196,47 @@ class VObjTodo(VObj):
         return self.__getFldByName('url')
 
     # setters (TODO: chg to 'tryupdate')
-    def setCategories(self, data: Optional[list[str]]):
+    def set_Categories(self, data: Optional[list[str]]):
         # print("setCategories:", data)
         self.__setFldByName('categories', data)
 
-    def setClass(self, data: Optional[enums.EClass]):
+    def set_Class(self, data: Optional[enums.EClass]):
         self.__setFldByName('class', enums.Enum2Raw_Class.get(data))
 
-    def setCompleted(self, data: Optional[Union[datetime.date, datetime.datetime]]):
+    def set_Completed(self, data: Optional[Union[datetime.date, datetime.datetime]]):
         self.__setFldByName('completed', data)
 
-    def setDescription(self, data: Optional[str]):
+    def set_Description(self, data: Optional[str]):
         self.__setFldByName('description', data)
 
-    def setDTStart(self, data: Optional[Union[datetime.date, datetime.datetime]]):
+    def set_DTStart(self, data: Optional[Union[datetime.date, datetime.datetime]]):
         # Workaround https://github.com/eventable/vobject/issues/180
         # print("setDTStart:", data, type(data))
         self.__setFldByName('dtstart', data, force=True)
 
-    def setDue(self, data: Optional[Union[datetime.date, datetime.datetime]]):
+    def set_Due(self, data: Optional[Union[datetime.date, datetime.datetime]]):
         # Workaround
         self.__setFldByName('due', data, force=True)
 
-    def setLocation(self, data: Optional[str]):
+    def set_Location(self, data: Optional[str]):
         self.__setFldByName('location', data)
 
-    def setPercent(self, data: Optional[int]):
+    def set_Progress(self, data: Optional[int]):
         self.__setFldByName('percent-complete', str(data))  # https://github.com/eventable/vobject/issues/178
 
-    def setPriority(self, data: Optional[int]):
+    def set_Priority(self, data: Optional[int]):
         self.__setFldByName('priority', str(data))  # https://github.com/eventable/vobject/issues/178
 
-    def setStatus(self, data: Optional[enums.EStatus]):
+    def set_Status(self, data: Optional[enums.EStatus]):
         self.__setFldByName('status', enums.Enum2Raw_Status.get(data))
 
-    def setSummary(self, data: Optional[str]):
+    def set_Summary(self, data: Optional[str]):
         self.__setFldByName('summary', data)
 
-    def setURL(self, data: Optional[str]):
+    def set_URL(self, data: Optional[str]):
         self.__setFldByName('url', data)
 
-    # specials
+    # misc
     def updateStamps(self):
         seq = 0 if (seq := self.get_Sequence()) is None else seq + 1
         self.__setFldByName('sequence', str(seq))  # https://github.com/eventable/vobject/issues/178

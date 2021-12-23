@@ -15,22 +15,22 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] TodoForm: accept(): ret True if chg only
 - [ ] VTodoObj: getter/setter/deleter:
   - [ ] get_X: decorated
   - [ ] set_X() -> bool: cmp and ret chg; del prop on None
-  - [ ] del_X() -> bool:
-- [ ] VTodoObj.dirty:bool - chg after last flush
-- [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
+  - [ ] set_X(): decorated
 - [ ] TodoList: QSqlQueryModel
   - [ ] ~C~RU*D*
   - [ ] Sort
   - [ ] Filters
+- [ ] TodoForm: accept(): ret True if chg only
+- [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
 
 ### 0.2. Fixme (critical)
 - [ ] Sync not works
 
 ### 0.3. Fixme (soft)
+- [ ] Something strange with Details after Edit
 - [ ] Check uid on Reload
 - [ ] Strict SQLite tables
 - [ ] Filter fault after add/del entry (id==None)
@@ -56,6 +56,7 @@
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox
 - [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
+- [ ] Settings: Sort by name: case sensivity
 
 ## 1. Common
 - [ ] Docs:

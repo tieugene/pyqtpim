@@ -427,13 +427,13 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         v_new = None
     v_old = obj.get_Categories()
     if v_old != v_new:  # compare 0/1/2+ x 0/1/2+
-        obj.setCategories(v_new)
+        obj.set_Categories(v_new)
         # TODO: db cats
         obj_chgd = True
     # - class (combo)
     v_new = form.f_class.getData()
     if obj.get_Class() != v_new:
-        obj.setClass(v_new)
+        obj.set_Class(v_new)
         # no db
         obj_chgd = True
     # - completed
@@ -441,7 +441,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     if v_new:
         v_new = v_new.astimezone(_tz_utc())
     if obj.get_Completed() != v_new:
-        obj.setCompleted(v_new)
+        obj.set_Completed(v_new)
         if v_new:
             rec.setValue('completed', v_new.isoformat())
         else:
@@ -450,14 +450,14 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     # - description
     v_new = form.f_description.toPlainText() or None
     if obj.get_Description() != v_new:
-        obj.setDescription(v_new)
+        obj.set_Description(v_new)
         # no db
         obj_chgd = True
     # - dtstart
     v_new = form.f_dtstart.getData()
     v_old = obj.get_DTStart()
     if v_old != v_new:
-        obj.setDTStart(v_new)
+        obj.set_DTStart(v_new)
         if v_new:
             rec.setValue('dtstart', v_new.isoformat())
         else:
@@ -466,7 +466,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     # - due
     v_new = form.f_due.getData()
     if obj.get_Due() != v_new:
-        obj.setDue(v_new)
+        obj.set_Due(v_new)
         if v_new:
             rec.setValue('due', v_new.isoformat())
         else:
@@ -475,7 +475,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     # - location
     v_new = form.f_location.text() or None
     if obj.get_Location() != v_new:
-        obj.setLocation(v_new)
+        obj.set_Location(v_new)
         if v_new:
             rec.setValue('location', v_new)
         else:
@@ -486,7 +486,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     v_old = obj.get_Progress()    # 0+
     if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
         # print("v_new:", v_new, type(v_new))
-        obj.setPercent(v_new)
+        obj.set_Progress(v_new)
         if v_new is not None:
             rec.setValue('progress', v_new)
         else:
@@ -496,7 +496,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     v_new = form.f_priority.getData()
     v_old = obj.get_Priority()
     if v_old != v_new and not (v_new == 0 and v_old is None):
-        obj.setPriority(v_new)
+        obj.set_Priority(v_new)
         if v_new:
             rec.setValue('priority', enums.Raw2Enum_Prio[v_new])
         else:
@@ -505,7 +505,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     # - status (combo)
     v_new = form.f_status.getData()
     if obj.get_Status() != v_new:
-        obj.setStatus(v_new)
+        obj.set_Status(v_new)
         if v_new:
             rec.setValue('status', v_new.value)
         else:
@@ -514,7 +514,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     # - summary
     v_new = form.f_summary.text() or None
     if obj.get_Summary() != v_new:
-        obj.setSummary(v_new)
+        obj.set_Summary(v_new)
         if v_new:
             rec.setValue('summary', v_new)
         else:
@@ -523,7 +523,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     # - url
     v_new = form.f_url.text() or None
     if obj.get_URL() != v_new:
-        obj.setURL(v_new)
+        obj.set_URL(v_new)
         # no db
         obj_chgd = True
     # final
@@ -542,28 +542,28 @@ def form2obj(form: TodoForm) -> (VObjTodo, int):
     if v_new := form.f_category.text():
         v_new = [s.strip() for s in v_new.split(',')]
         v_new.sort()
-        obj.setCategories(v_new)
+        obj.set_Categories(v_new)
     if v_new := form.f_class.getData():
-        obj.setClass(v_new)
+        obj.set_Class(v_new)
     if v_new := form.f_completed.getData():
-        obj.setCompleted(v_new.astimezone(_tz_utc()))
+        obj.set_Completed(v_new.astimezone(_tz_utc()))
     if v_new := form.f_description.toPlainText():
-        obj.setDescription(v_new)
+        obj.set_Description(v_new)
     if v_new := form.f_dtstart.getData():
-        obj.setDTStart(v_new)
+        obj.set_DTStart(v_new)
     if v_new := form.f_due.getData():
-        obj.setDue(v_new)
+        obj.set_Due(v_new)
     if v_new := form.f_location.text():
-        obj.setLocation(v_new)
+        obj.set_Location(v_new)
     if v_new := form.f_percent.getData():
-        obj.setPercent(v_new)
+        obj.set_Progress(v_new)
     if v_new := form.f_priority.getData():
-        obj.setPriority(v_new)
+        obj.set_Priority(v_new)
     if v_new := form.f_status.getData():
-        obj.setStatus(v_new)
+        obj.set_Status(v_new)
     if v_new := form.f_summary.text():
-        obj.setSummary(v_new)
+        obj.set_Summary(v_new)
     if v_new := form.f_url.text():
-        obj.setURL(v_new)
+        obj.set_URL(v_new)
     obj.updateStamps()
     return obj, form.f_list.getData()
