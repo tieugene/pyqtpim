@@ -9,19 +9,21 @@
   - [ ] or QAbstractTableModel
   - [ ] QSFPM
   - [ ] All entries in one container:
-    - _list(Entry(body, store_id)_
+    - *list(Entry(body, store_id)*
     - ~~list[store_id, Entry(body)]~~
     - ~~list[Entry]+dict[entry:store_id]~~
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
+- [ ] TodoForm:
+  - [ ] exec_(VTodoObj)
+  - [ ] rework/fix Prio edit
+  - [ ] default tz - 'file...'
 - [ ] TodoList: QSqlQueryModel
-  - [ ] *CRUD* SQL only ()
+  - [ ] CRUD
+- [ ] ~~TodoPRoxyModel~~
   - [ ] Sort
   - [ ] Filters
-- [ ] TodoForm.exec_(VTodoObj)
-- [ ] Move synced between stores
-- [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
 
 ### 0.2. Fixme (critical)
 
@@ -30,16 +32,12 @@
 - [ ] Check uid on Reload
 - [ ] Strict SQLite tables
 - [ ] Filter fault after add/del entry (id==None)
-- [ ] TodoForm:
-  - [ ] rework/fix Prio edit
-  - [ ] default tz - 'file...'
 - [ ] Store: QSqlQueryModel: RUD
 
 ### 0.4. Tuning
 - [ ] TodoForm: accept(): ret True if chg only
 - [ ] URL as URL
 - [ ] Start...stop sync msg
-- [ ] todo.data.VTodoObj.getX - @prop w/ decorator
 - [ ] SQLite indexes
 - [ ] Color `due today` (yellow) and `overdue` (red)
 - [ ] Instant settings
@@ -67,8 +65,11 @@
   - [ ] filter
 
 ## 2. ToDo
+
+- [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
 - [ ] Categories
 - [ ] E:
+  - [ ] Move synced between stores
   - […] Extend
   - […] CRUD[^2]
   - [ ] TodoForm: interim logic:
