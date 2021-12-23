@@ -24,7 +24,6 @@
 
 ### 0.2. Fixme (critical)
 - [ ] 2+ cat
-- [ ] Sync not works
 
 ### 0.3. Fixme (non-critical)
 - [ ] Something strange with Details after Edit
