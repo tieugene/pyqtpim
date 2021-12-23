@@ -107,6 +107,15 @@ class VObjTodo(VObj):
         """Return inner item content as structure.
         :todo: generator
         """
+        def __getFldByName(fld: str) -> Any:
+            """Get field value by its name."""
+            if v_list := self._data.vtodo.contents.get(fld):
+                if len(v_list) == 1:  # usual
+                    __v = v_list[0].value
+                else:  # multivalues (unwrap; attach, categories etc)
+                    __v = [i.value for i in v_list]
+                return __v
+
         retvalue: OrderedDict = OrderedDict()
         cnt = self._data.vtodo.contents
         keys = list(cnt.keys())
@@ -114,39 +123,9 @@ class VObjTodo(VObj):
         for k in keys:  # v: list allways
             if k == 'valarm':   # hack
                 continue
-            if v := self.__getFldByName(k):
+            if v := __getFldByName(k):
                 retvalue[k] = v
         return retvalue
-
-    def __getFldByName(self, fld: str) -> Any:
-        """Get field value by its name."""
-        if v_list := self._data.vtodo.contents.get(fld):
-            if len(v_list) == 1:  # usual
-                v = v_list[0].value
-            else:  # multivalues (unwrap; attach, categories etc)
-                v = [i.value for i in v_list]
-            return v
-
-    def __setFldByName(self, fld: str, data: Any, force=False):
-        """Create/update standalone [optional] field
-        :param force: recreate field
-        """
-        if force and fld in self._data.vtodo.contents:
-            del self._data.vtodo.contents[fld]
-        if isinstance(data, list):
-            if fld in self._data.vtodo.contents:
-                del self._data.vtodo.contents[fld]
-            for v in data:
-                self._data.vtodo.add(fld).value = [v]   # one cat per property recommended
-        else:
-            if data is None:
-                if fld in self._data.vtodo.contents:
-                    del self._data.vtodo.contents[fld]
-            else:
-                if fld in self._data.vtodo.contents:
-                    self._data.vtodo.contents[fld][0].value = data
-                else:
-                    self._data.vtodo.add(fld).value = data
 
     # getters
     @get_X('attach')
@@ -287,7 +266,6 @@ class VObjTodo(VObj):
     @set_X('due', get_Due)
     def set_Due(self, data: Union[datetime.date, datetime.datetime]):
         # Workaround https://github.com/eventable/vobject/issues/180
-        # self.__setFldByName('due', data, force=True)
         del self._data.vtodo.due
         self._data.vtodo.add('due').value = data
 
@@ -305,7 +283,6 @@ class VObjTodo(VObj):
 
     @set_X('status', get_Status, enums.Enum2Raw_Status)
     def set_Status(self, data: enums.EStatus):
-        # self.__setFldByName('status', enums.Enum2Raw_Status.get(data))
         self._data.vtodo.status.value = enums.Enum2Raw_Status[data]
 
     @set_X('summary', get_Summary)
