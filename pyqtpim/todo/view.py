@@ -3,13 +3,13 @@
 import datetime
 from typing import Any
 # 2. PySide
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
-from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2rec
+from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql
 from .data import VObjTodo
-from .form import TodoForm, form2rec_upd, form2obj
-from . import enums
+from .form import TodoForm
+from . import enums, sync, query
 
 
 class TodoListView(EntryListView):
@@ -20,18 +20,19 @@ class TodoListView(EntryListView):
         self._details.setModel(self.model().sourceModel())
         # addons
         self.loadCol2Show()
-        self.setColumnHidden(self.model().sourceModel().fieldIndex('body'), True)
+        self.setColumnHidden(enums.EColNo.Body.value, True)
         self.loadColOrder()
         hh = self.horizontalHeader()
         hh.sectionMoved.connect(self.sectionMoved)
         hh.setSectionsMovable(True)
-        for c in ('id', 'progress', 'priority', 'status'):
+        for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value,
+                  enums.EColNo.Status.value, enums.EColNo.Syn.value):
             hh.setSectionResizeMode(
-                hh.visualIndex(self.model().sourceModel().fieldIndex(c)),
+                hh.visualIndex(c),
                 hh.ResizeMode.ResizeToContents
             )
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
-        self.sortByColumn(self.model().sourceModel().fieldIndex('id'))
+        self.sortByColumn(enums.EColNo.ID.value)
         # signals
         # # self.activated.connect(self.rowChanged)
         self.selectionModel().currentRowChanged.connect(self.rowChanged)
@@ -69,44 +70,78 @@ class TodoListView(EntryListView):
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
-            obj, store_id = form2obj(f)
-            realmodel = self.model().sourceModel()
-            rec = realmodel.record()  # new empty
-            obj2rec(obj, rec)
-            rec.setValue('store_id', store_id)
-            if not realmodel.insertRecord(-1, rec):
-                print("Something wrong with adding record")
-            realmodel.select()  # FIXME: update the row only
-            # adding obj to cache unavailable
+            # TODO: move to model
+            obj = VObjTodo()
+            _, store_id = f.to_obj(obj)
+            q = obj2sql(query.entry_add, obj)
+            q.bindValue(':store_id', store_id)
+            q.bindValue(':syn', enums.ESyn.New.value)
+            if not q.exec_():
+                print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
+            else:
+                self.model().sourceModel().setObj(q.lastInsertId(), obj)
+                self.model().sourceModel().select()
 
     def entryEdit(self):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
-        obj: VObjTodo = realmodel.getObj(row)
+        row = self.model().mapToSource(idx).row()
         rec = realmodel.record(row)
+        syn = rec.value('syn')
+        if syn == enums.ESyn.Del.value:
+            QtWidgets.QMessageBox.warning(self, "Edit deleted", "You cannot edit deleted entry")
+            return
+        entry_id = rec.value('id')
         store_id = rec.value('store_id')
+        # TODO: by id
+        obj: VObjTodo = realmodel.getObjByRow(row)
         f = TodoForm(self)  # TODO: cache creation
-        f.load(obj, store_id)    # model.relation(col).indexColumn()
+        f.from_obj(obj, store_id, can_move=(syn == enums.ESyn.New.value))
         if f.exec_():
-            if form2rec_upd(f, obj, rec):
-                if not realmodel.setRecord(row, rec):
-                    print("Something wrong with updating record")
-                realmodel.setObj(rec, obj)
+            # TODO: move to model
+            obj_chg, store_id_new = f.to_obj(obj)
+            store_chg = (store_id_new != store_id)
+            if obj_chg or store_chg:
+                if obj_chg:  # FIXME: obj chg AND moved
+                    q = obj2sql(query.entry_upd, obj)
+                    q.bindValue(':store_id', store_id_new)
+                    q.bindValue(':id', entry_id)
+                    if not q.exec_():
+                        print(f"Something bad with updating record '{obj.get_Summary()}': {q.lastError().text()}")
+                else:  # just move to other store
+                    if not (q := QtSql.QSqlQuery(query.entry_mov % (store_id_new, entry_id))).exec_():
+                        print(f"Something wrong with moving {entry_id}: {q.lastError().text()}")
+                # realmodel.setObj(rec, obj)
                 realmodel.select()  # FIXME: update the record only
 
     def entryDel(self):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        row = self.model().mapToSource(idx).row()
+        src_row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
-        realmodel.delObj(row)
-        if not realmodel.removeRow(row):
-            print("Something wrong with deleting")
-        realmodel.select()  # FIXME: update the record only
+        # TODO: by id
+        src_rec = realmodel.record(src_row)
+        entry_id = src_rec.value('id')
+        syn = src_rec.value('syn')
+        # if not realmodel.removeRow(src_row):
+        if QtWidgets.QMessageBox.question(self, f"Deleting {entry_id}",
+                                          f"Are you sure to delete '{entry_id}'") \
+                == QtWidgets.QMessageBox.StandardButton.Yes:
+            # TODO: move to model
+            if syn == enums.ESyn.New.value:
+                if not (q := QtSql.QSqlQuery(query.entry_del % entry_id)).exec_():
+                    print(f"Something wrong with deleting {entry_id}: {q.lastError().text()}")
+                else:
+                    realmodel.delObj(entry_id)
+            elif syn == enums.ESyn.Synced.value:
+                if not (q := QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Del.value, entry_id))).exec_():
+                    print(f"Something wrong with mark deleted {entry_id}: {q.lastError().text()}")
+            else:
+                print(f"Entry already deleted: {entry_id}")
+            realmodel.select()
 
     def entryCat(self):
         """Show raw Entry content"""
@@ -114,7 +149,9 @@ class TodoListView(EntryListView):
         if not idx.isValid():
             return
         realmodel = self.model().sourceModel()
+        # TODO: by id
         row = self.model().mapToSource(idx).row()
+        # TODO: move to model
         rec = realmodel.record(row)
         body = rec.value('body')
         msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", rec.value('summary'))
@@ -134,9 +171,11 @@ class TodoListView(EntryListView):
         idx = self.selectionModel().currentIndex()
         if not idx.isValid():
             return
+        # TODO: by id
         realmodel = self.model().sourceModel()
         row = self.model().mapToSource(idx).row()
-        raw = realmodel.getObj(row).RawContent()
+        # TODO: move to model
+        raw = realmodel.getObjByRow(row).RawContent()
         # icon, title, text
         msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
         # richtext
@@ -161,11 +200,19 @@ class TodoStoreListView(StoreListView):
         # self.model().activeChanged.connect(self._list.model().updateFilterByStore)
 
     def storeReload(self):
-        """Sync Store with its connection"""
+        """Reload Store from its connection"""
         if not (indexes := self.selectedIndexes()):
             return
         rec = self.model().record(indexes[0].row())
         self._list.model().sourceModel().reloadAll(rec.value('id'), rec.value('connection'))
+
+    def storeSync(self, dry_run: bool = True):
+        """Sync Store with its connection
+        :todo: reset self._list.model().sourceModel(), reset its cache
+        """
+        if not (indexes := self.selectedIndexes()):
+            return
+        sync.Sync(self.model().record(indexes[0].row()).value('id'), dry_run=dry_run)
 
 
 class TodoView(EntryView):
@@ -192,7 +239,7 @@ class TodoView(EntryView):
 
     def __idxChgd(self, row: int):
         """Only for selection; not calling on deselection"""
-        self.__fill_details(self.mapper.model().getObj(row))
+        self.__fill_details(self.mapper.model().getObjByRow(row))
 
     def __fill_details(self, data: VObjTodo = None):    # TODO: clear on None
         def __mk_row(title: str, value: Any):
@@ -208,23 +255,23 @@ class TodoView(EntryView):
         text = '<table>'
         # text += __mk_row("Created", data.getCreated().isoformat())
         # text += __mk_row("DTSTamp", data.getDTStamp().isoformat())
-        text += __mk_row("Modified", data.getLastModified().isoformat())
-        text += __mk_row("Priority", data.getPriority())
-        text += __mk_row("Categories", data.getCategories())
-        text += __mk_row("Class", enums.Enum2Raw_Class.get(data.getClass()))
+        text += __mk_row("Modified", data.get_LastModified().isoformat())
+        text += __mk_row("Priority", data.get_Priority())
+        text += __mk_row("Categories", data.get_Categories())
+        text += __mk_row("Class", enums.Enum2Raw_Class.get(data.get_Class()))
         # v = data.getDTStart()
         # print("Print DTSTart:", v, type(v))
-        text += __mk_row("DTStart", v.isoformat() if (v := data.getDTStart()) else '---')
-        text += __mk_row("Due", v.isoformat() if (v := data.getDue()) else '---')
-        text += __mk_row("Progress", data.getPercent())
-        text += __mk_row("Completed", v.isoformat() if (v := data.getCompleted()) else '---')
-        text += __mk_row("Status", enums.Enum2Raw_Status.get(data.getStatus()))
-        text += __mk_row("Location", data.getLocation())
-        text += __mk_row("URL", data.getURL())
+        text += __mk_row("DTStart", v.isoformat() if (v := data.get_DTStart()) else '---')
+        text += __mk_row("Due", v.isoformat() if (v := data.get_Due()) else '---')
+        text += __mk_row("Progress", data.get_Progress())
+        text += __mk_row("Completed", v.isoformat() if (v := data.get_Completed()) else '---')
+        text += __mk_row("Status", enums.Enum2Raw_Status.get(data.get_Status()))
+        text += __mk_row("Location", data.get_Location())
+        text += __mk_row("URL", data.get_URL())
         text += '<tr><th>Description:</th><td/></tr>'
-        if desc := data.getDescription():
+        if desc := data.get_Description():
             desc = '<br/>'.join(desc.splitlines())
-            text += f"<tr><td colspan=2>{desc}:</td></tr>"
+            text += f"<tr><td colspan=2>{desc}</td></tr>"
         text += '</table>'
         self.details.setText(text)
 
@@ -233,7 +280,7 @@ class TodoView(EntryView):
         :todo: indexOf
         """
         super().setModel(model)
-        self.mapper.addMapping(self.summary, model.fieldIndex('summary'))
+        self.mapper.addMapping(self.summary, enums.EColNo.Summary.value)
         self.mapper.currentIndexChanged.connect(self.__idxChgd)
 
     def clean(self):

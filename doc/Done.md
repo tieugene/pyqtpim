@@ -57,6 +57,18 @@
 - [x] Fixed obj.getCreated()==None (TB feature)
 - [x] List sync => List reload
 - [x] TodoForm save errors: prio, % (the must be str in vobj)
+- [x] 2-way Sync
+- [x] `findIndex('fieldname')` => `enum EColNumFieldname`
+- [x] `store` adds new rec with `id=0`
+- [x] Store: QSqlQueryModel: C*D*
+- [x] VTodoObj.get_X(): decorated
+- [x] VTodoObj: set_X() -> bool:
+- [x] VTodoObj: set_X(): decorated
+- [x] forms.form2obj() shorter
+- [x] forms.form2rec_upd(): removed
+- [x] Deleted not editable; Synced not movable
+- [x] 2+ cat
+- [x] setObj(id), delObj(id), getObj(row)
 
 ## Contacts.File-based
 - [ ] CLM:

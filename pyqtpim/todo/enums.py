@@ -48,6 +48,45 @@ class EDBFld(Enum):
     ID = 'id'
 
 
+# --- Model
+@unique
+class EColNo(IntEnum):
+    ID = 0
+    Store = 1
+    Created = 2
+    DTStamp = 3
+    Modified = 4
+    DTStart = 5
+    Due = 6
+    Completed = 7
+    Progress = 8
+    Prio = 9
+    Status = 10
+    Summary = 11
+    Location = 12
+    Syn = 13
+    Body = 14
+
+
+ColHeader = (  # Header
+    "ID",
+    "Store",
+    "Created",
+    "DTStamp",
+    "Modified",
+    "DTStart",
+    "Due",
+    "Completed",
+    '%',
+    '!',
+    "Status",
+    "Summary",
+    "Location",
+    "Syn",
+    "Body"
+)
+
+
 # --- Class
 @unique
 class EClass(IntEnum):
@@ -93,9 +132,8 @@ Enum2Raw_Status: dict[EStatus, str] = {
     EStatus.Completed: 'COMPLETED',
     EStatus.Cancelled: 'CANCELLED'
 }
-TDecor_Status = ' ?…✓✗'
+TDecor_Status = '?…✓✗'
 TColor_Status = (
-    None,
     QtGui.QBrush(QtCore.Qt.blue),
     QtGui.QBrush(QtCore.Qt.yellow),
     QtGui.QBrush(QtCore.Qt.green),
@@ -125,29 +163,28 @@ Raw2Enum_Prio: tuple = (
     EPrio.Low.value
 )
 
-TDecor_Prio = ' ↓-!'
+TDecor_Prio = '↓-!'
 TColor_Prio = (
-    None,
     QtGui.QBrush(QtCore.Qt.blue),
     QtGui.QBrush(QtCore.Qt.green),
     QtGui.QBrush(QtCore.Qt.red)
 )
 
-# --- Columns
-ColHeader = (
-    "ID",
-    "Store",
-    "Created",
-    "DTStamp",
-    "Modified",
-    "DTStart",
-    "Due",
-    "Completed",
-    '%',
-    '!',
-    "Status",
-    "Sumamry",
-    "Location"
+
+# --- Syn
+@unique
+class ESyn(IntEnum):
+    """SYN property values"""
+    New = auto()
+    Synced = auto()
+    Del = auto()
+
+
+TDecor_Syn = '*✓✗'
+TColor_Syn = (
+    QtGui.QBrush(QtCore.Qt.yellow),
+    QtGui.QBrush(QtCore.Qt.green),
+    QtGui.QBrush(QtCore.Qt.red)
 )
 
 
