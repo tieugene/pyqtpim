@@ -3,6 +3,7 @@
 import inspect
 from PySide2 import QtCore, QtWidgets, QtSql
 from .model import EntryModel, StoreModel
+from . import enums, query
 
 
 class EntryView(QtWidgets.QGroupBox):
@@ -87,9 +88,9 @@ class StoreForm(QtWidgets.QDialog):
         # 4. mapping
         self.__mapper = QtWidgets.QDataWidgetMapper()
         self.__mapper.setModel(model)
-        self.__mapper.addMapping(self.f_name, model.fieldIndex('name'))
-        self.__mapper.addMapping(self.f_connection, model.fieldIndex('connection'))
-        self.__mapper.addMapping(self.f_active, model.fieldIndex('active'))  # FIXME: not writes
+        self.__mapper.addMapping(self.f_name, enums.EColNo.Name.value)
+        self.__mapper.addMapping(self.f_connection, enums.EColNo.Connection.value)
+        self.__mapper.addMapping(self.f_active, enums.EColNo.Active.value)  # FIXME: not writes
 
     def setIdx(self, idx: QtCore.QModelIndex = None):
         if idx:
@@ -137,7 +138,7 @@ class StoreListView(QtWidgets.QListView):
         self._list = dependant
         # self.setSelectionMode(self.SingleSelection)
         self.setModel(self._own_model())
-        self.setModelColumn(self.model().fieldIndex('name'))
+        self.setModelColumn(enums.EColNo.Name.value)
         self.setEditTriggers(self.NoEditTriggers)
         self.__form = StoreForm(self._title, self.model())
 
@@ -145,16 +146,16 @@ class StoreListView(QtWidgets.QListView):
         """Add new Store"""
         self.__form.setIdx()
         if self.__form.exec_():
-            rec = self.model().record()
-            rec.setValue('name', self.__form.name)
-            rec.setValue('connection', self.__form.connection)
-            rec.setValue('active', int(self.__form.active))
-            ok = self.model().insertRecord(self.model().rowCount(), rec)
-            if not ok:
-                print("Oops")
+            q = QtSql.QSqlQuery()
+            q.prepare(query.store_add)
+            q.bindValue(':name', self.__form.name)
+            q.bindValue(':connection', self.__form.connection)
+            q.bindValue(':active', int(self.__form.active))
+            if not q.exec_():
+                print(f"Something bad with adding '{self.__form.name}'")
             else:
                 self.model().updataChildCache()
-                self.model().select()   # FIXME: refresh view or model
+                self.model().select()
 
     def storeEdit(self):
         """Edit Store"""

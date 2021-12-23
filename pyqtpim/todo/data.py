@@ -3,9 +3,10 @@
 """
 # 1. std
 import uuid
-from _collections import OrderedDict
 import datetime
-from typing import Optional, Union, Any
+from _collections import OrderedDict
+from typing import Optional, Union, Any, Callable
+from functools import wraps
 # 2. 3rd
 import vobject
 # 3. local
@@ -15,6 +16,55 @@ from . import enums
 
 def _utcnow():
     return datetime.datetime.now(tz=vobject.icalendar.utc).replace(microsecond=0)
+
+
+def get_X(name: str):
+    """Decorate getter
+    :param name: Attribute name in vobject
+    """
+    def get_decorator(func: Callable):
+        @wraps(func)
+        def wrapper(self):
+            if name in self._data.vtodo.contents:
+                return func(self)
+        return wrapper
+    return get_decorator
+
+
+def set_X(name: str, getter: Callable, cvt=None):
+    """Decorate setter
+    :param name: Attribute name in vobject
+    :param getter: get_X name to get old value
+    :param cvt: store new as str(new) (hack for `int` end `enums.Enum2Raw_*`)
+    :return: True if value changed, False if not
+    """
+    def set_decorator(func: Callable):
+        @wraps(func)
+        def wrapper(self, new: Any):
+            old = getter(self)
+            if old == new:
+                return False
+            else:
+                if old is None:
+                    # print("+", name, '=', new)
+                    if cvt is None:
+                        self._data.vtodo.add(name).value = new
+                    elif isinstance(cvt, dict):
+                        self._data.vtodo.add(name).value = cvt[new]
+                    elif isinstance(cvt, Callable):
+                        self._data.vtodo.add(name).value = cvt(new)
+                    else:
+                        print(f"Strange cvt '{cvt}' for '{name}'")
+                        return False
+                elif new is None:
+                    # print("-", name, '=', old)
+                    del self._data.vtodo.contents[name]
+                else:
+                    # print("=", name, ':', old, '>', new)
+                    func(self, new)
+                return True
+        return wrapper
+    return set_decorator
 
 
 class VObjTodo(VObj):
@@ -30,36 +80,42 @@ class VObjTodo(VObj):
             data.vtodo.add('created').value = stamp
         super().__init__(data)
         self._name2func = {  # FIXME: static
-            enums.EProp.Categories: self.getCategories,
-            enums.EProp.Class: self.getClass,
-            enums.EProp.Comment: self.getComment,
-            enums.EProp.Completed: self.getCompleted,
-            enums.EProp.Contact: self.getContact,
-            enums.EProp.Created: self.getCreated,
-            enums.EProp.Description: self.getDescription,
-            enums.EProp.DTStamp: self.getDTStamp,
-            enums.EProp.DTStart: self.getDTStart,
-            enums.EProp.Due: self.getDue,
-            enums.EProp.LastModified: self.getLastModified,
-            enums.EProp.Location: self.getLocation,
-            enums.EProp.Percent: self.getPercent,
-            enums.EProp.Priority: self.getPriority,
-            enums.EProp.RelatedTo: self.getRelatedTo,
-            enums.EProp.RRule: self.getRRule,
-            enums.EProp.Sequence: self.getSequence,
-            enums.EProp.Status: self.getStatus,
-            enums.EProp.Summary: self.getSummary,
-            enums.EProp.UID: self.getUID,
-            enums.EProp.URL: self.getURL,
+            enums.EProp.Categories: self.get_Categories,
+            enums.EProp.Class: self.get_Class,
+            enums.EProp.Comment: self.get_Comment,
+            enums.EProp.Completed: self.get_Completed,
+            enums.EProp.Contact: self.get_Contact,
+            enums.EProp.Created: self.get_Created,
+            enums.EProp.Description: self.get_Description,
+            enums.EProp.DTStamp: self.get_DTStamp,
+            enums.EProp.DTStart: self.get_DTStart,
+            enums.EProp.Due: self.get_Due,
+            enums.EProp.LastModified: self.get_LastModified,
+            enums.EProp.Location: self.get_Location,
+            enums.EProp.Percent: self.get_Progress,
+            enums.EProp.Priority: self.get_Priority,
+            enums.EProp.RelatedTo: self.get_RelatedTo,
+            enums.EProp.RRule: self.get_RRule,
+            enums.EProp.Sequence: self.get_Sequence,
+            enums.EProp.Status: self.get_Status,
+            enums.EProp.Summary: self.get_Summary,
+            enums.EProp.UID: self.get_UID,
+            enums.EProp.URL: self.get_URL,
         }
-
-    def save(self):
-        self.updateStamps()
-        # super().save()
 
     def RawContent(self) -> Optional[OrderedDict]:
         """Return inner item content as structure.
+        :todo: generator
         """
+        def __getFldByName(fld: str) -> Any:
+            """Get field value by its name."""
+            if v_list := self._data.vtodo.contents.get(fld):
+                if len(v_list) == 1:  # usual
+                    __v = v_list[0].value
+                else:  # multivalues (unwrap; attach, categories etc)
+                    __v = [i.value for i in v_list]
+                return __v
+
         retvalue: OrderedDict = OrderedDict()
         cnt = self._data.vtodo.contents
         keys = list(cnt.keys())
@@ -67,49 +123,17 @@ class VObjTodo(VObj):
         for k in keys:  # v: list allways
             if k == 'valarm':   # hack
                 continue
-            if v := self.__getFldByName(k):
+            if v := __getFldByName(k):
                 retvalue[k] = v
         return retvalue
 
-    def __getFldByName(self, fld: str) -> Any:
-        """Get field value by its name."""
-        if v_list := self._data.vtodo.contents.get(fld):
-            if len(v_list) == 1:  # usual
-                v = v_list[0].value
-            else:  # multivalues (unwrap; attach, categories etc)
-                v = [i.value for i in v_list]
-            return v
-
-    def __setFldByName(self, fld: str, data: Any, force=False):
-        """Create/update standalone [optional] field
-        :param force: recreate field
-        """
-        if force and fld in self._data.vtodo.contents:
-            del self._data.vtodo.contents[fld]
-        if isinstance(data, list):
-            if fld in self._data.vtodo.contents:
-                del self._data.vtodo.contents[fld]
-            for v in data:
-                self._data.vtodo.add(fld).value = [v]   # one cat per property recommended
-        else:
-            if data is None:
-                if fld in self._data.vtodo.contents:
-                    # print("Del", fld, self._data.vtodo.contents[fld][0])
-                    del self._data.vtodo.contents[fld]
-            else:
-                if fld in self._data.vtodo.contents:
-                    # print("Set", fld, ':', self._data.vtodo.contents[fld][0].value, '=>', data)
-                    # self._data.vtodo.<fld>.value
-                    self._data.vtodo.contents[fld][0].value = data
-                else:
-                    # print("Add", fld, data)
-                    self._data.vtodo.add(fld).value = data
-
     # getters
-    def getAttach(self) -> Optional[list[str]]:
-        return self.__getFldByName('attach')
+    @get_X('attach')
+    def get_Attach(self) -> list[str]:
+        return self._data.vtodo.attach.value   # attach_list?
 
-    def getCategories(self) -> Optional[Union[str, list[str]]]:
+    @get_X('categories')
+    def get_Categories(self) -> list[str]:
         """Categories.
         :return: list of str
         Can be:
@@ -117,138 +141,184 @@ class VObjTodo(VObj):
         - ['Cat1']
         - ['Cat1', 'Cat2', ...] (TB, not advised)
         - [['Cat1'], ['Cat2'], ...] (Evolution)
+        :todo: return set()
         """
-        retvalue = self.__getFldByName('categories')
-        if retvalue:
-            if isinstance(retvalue[0], list):   # additional unwrap
-                retvalue = [s[0] for s in retvalue]
+        retvalue = [c.value for c in self._data.vtodo.categories_list]  # unpack #1
+        if isinstance(retvalue[0], list):
+            retvalue = [c[0] for c in retvalue]  # unpack #2
         return retvalue
 
-    def getClass(self) -> Optional[enums.EClass]:
-        if v := self.__getFldByName('class'):
-            return enums.Raw2Enum_Class.get(v)
+    @get_X('class')
+    def get_Class(self) -> enums.EClass:
+        return enums.Raw2Enum_Class.get(self._data.vtodo.contents['class'][0].value)    # FIXME:
 
-    def getComment(self) -> Optional[Union[str, list[str]]]:
-        return self.__getFldByName('comment')
+    @get_X('comment')
+    def get_Comment(self) -> list[str]:
+        return self._data.vtodo.comment.value   # comment_list?
 
-    def getCompleted(self) -> Optional[datetime.datetime]:
-        return self.__getFldByName('completed')
+    @get_X('completed')
+    def get_Completed(self) -> datetime.datetime:
+        return self._data.vtodo.completed.value
 
-    def getContact(self) -> Optional[Union[str, list[str]]]:
-        return self.__getFldByName('contact')
+    @get_X('contact')
+    def get_Contact(self) -> list[str]:
+        return self._data.vtodo.contact.value   # contact_list?
 
-    def getCreated(self) -> Optional[datetime.datetime]:
-        return self.__getFldByName('created')
+    @get_X('created')
+    def get_Created(self) -> datetime.datetime:
+        return self._data.vtodo.created.value
 
-    def getDescription(self) -> Optional[str]:
-        return self.__getFldByName('description')
+    @get_X('description')
+    def get_Description(self) -> str:
+        return self._data.vtodo.description.value
 
-    def getDTStamp(self) -> datetime.datetime:
-        return self.__getFldByName('dtstamp')
+    @get_X('dtstamp')
+    def get_DTStamp(self) -> datetime.datetime:
+        return self._data.vtodo.dtstamp.value
 
-    def getDTStart(self) -> Optional[Union[datetime.date, datetime.datetime]]:
-        return self.__getFldByName('dtstart')
+    @get_X('dtstart')
+    def get_DTStart(self) -> Union[datetime.date, datetime.datetime]:
+        return self._data.vtodo.dtstart.value
 
-    def getDue(self) -> Optional[Union[datetime.date, datetime.datetime]]:
-        return self.__getFldByName('due')
+    @get_X('due')
+    def get_Due(self) -> Union[datetime.date, datetime.datetime]:
+        return self._data.vtodo.due.value
 
-    def getDue_as_date(self) -> Optional[datetime.date]:
-        return retvalue.date() if isinstance(retvalue := self.getDue(), datetime.datetime) else retvalue
+    @get_X('due')
+    def get_Due_as_date(self) -> datetime.date:
+        return v.date() if isinstance(v := self._data.vtodo.due.value, datetime.datetime) else v
 
-    def getLastModified(self) -> Optional[datetime.datetime]:
-        return self.__getFldByName('last-modified')
+    @get_X('last-modified')
+    def get_LastModified(self) -> datetime.datetime:
+        return self._data.vtodo.last_modified.value
 
-    def getLocation(self) -> Optional[str]:
-        return self.__getFldByName('location')
+    @get_X('location')
+    def get_Location(self) -> str:
+        return self._data.vtodo.location.value
 
-    def getPercent(self) -> Optional[int]:
-        if v := self.__getFldByName('percent-complete'):
-            return int(v)
+    @get_X('percent-complete')
+    def get_Progress(self) -> int:
+        return int(self._data.vtodo.percent_complete.value)
 
-    def getPriority(self) -> Optional[int]:
+    @get_X('priority')
+    def get_Priority(self) -> int:
         """
         0=undef, 1[..4]=high, 5=mid, [6..]9=low
         :return: 1[/3]/5[/7]/9
 
-        cases: (164):
-        - 1=18
-        - 3=6
-        - 5=58
-        - 7=6
-        - 9=76
+        cases: (164): 1=18, 3=6, 5=58, 7=6, 9=76
         """
-        if v := self.__getFldByName('priority'):
-            return int(v)
+        return int(self._data.vtodo.priority.value)
 
-    def getRelatedTo(self) -> Optional[Union[str, list[str]]]:
-        return self.__getFldByName('related-to')
+    @get_X('related-to')
+    def get_RelatedTo(self) -> Union[str, list[str]]:
+        return self._data.vtodo.related_to_list.value
 
-    def getRRule(self) -> Optional[str]:
-        return self.__getFldByName('rrule')
+    @get_X('rrule')
+    def get_RRule(self) -> str:
+        return self._data.vtodo.rrule.value
 
-    def getSequence(self) -> Optional[int]:
-        if v := self.__getFldByName('sequence'):
-            return int(v)
+    @get_X('sequence')
+    def get_Sequence(self) -> int:
+        return int(self._data.vtodo.sequence.value)
 
-    def getStatus(self) -> Optional[enums.EStatus]:
-        if v := self.__getFldByName('status'):
-            return enums.Raw2Enum_Status.get(v)
+    @get_X('status')
+    def get_Status(self) -> enums.EStatus:
+        return enums.Raw2Enum_Status.get(self._data.vtodo.status.value)
 
-    def getSummary(self) -> Optional[str]:
-        # return self._data.vtodo.summary.value
-        return self.__getFldByName('summary')
+    @get_X('summary')
+    def get_Summary(self) -> str:
+        return self._data.vtodo.summary.value
 
-    def getUID(self) -> str:
-        return self.__getFldByName('uid')
+    @get_X('uid')
+    def get_UID(self) -> str:
+        return self._data.vtodo.uid.value
 
-    def getURL(self) -> Optional[Union[str, list[str]]]:
-        return self.__getFldByName('url')
+    @get_X('url')
+    def get_URL(self) -> str:
+        # return self._data.vtodo.url.value if 'url' in self._data.vtodo.contents else None
+        return self._data.vtodo.url.value
 
-    # setters (TODO: chg to 'tryupdate')
-    def setCategories(self, data: Optional[list[str]]):
-        # print("setCategories:", data)
-        self.__setFldByName('categories', data)
+    # setters
+    def set_Categories(self, data: Optional[list[str]]) -> bool:
+        old = self.get_Categories()
+        if old is None and data is None:
+            return False
+        if data is None:
+            del self._data.vtodo.contents['categories']
+            return True
+        if old is not None:
+            if set(old) == set(data):
+                return False
+            else:
+                del self._data.vtodo.contents['categories']
+        for v in data:  # FIXME: add 2+ cats
+            self._data.vtodo.add('categories').value = [v]  # one cat per property recommended
+        return True
 
-    def setClass(self, data: Optional[enums.EClass]):
-        self.__setFldByName('class', enums.Enum2Raw_Class.get(data))
+    @set_X('class', get_Class, enums.Enum2Raw_Class)
+    def set_Class(self, data: enums.EClass):
+        self._data.vtodo.contents['class'][0].value = enums.Enum2Raw_Class[data]
 
-    def setCompleted(self, data: Optional[Union[datetime.date, datetime.datetime]]):
-        self.__setFldByName('completed', data)
+    @set_X('completed', get_Completed)
+    def set_Completed(self, data: datetime.datetime):
+        self._data.vtodo.completed.value = data
 
-    def setDescription(self, data: Optional[str]):
-        self.__setFldByName('description', data)
+    @set_X('description', get_Description)
+    def set_Description(self, data: str):
+        self._data.vtodo.description.value = data
 
-    def setDTStart(self, data: Optional[Union[datetime.date, datetime.datetime]]):
+    @set_X('dtstart', get_DTStart)
+    def set_DTStart(self, data: Union[datetime.date, datetime.datetime]):
         # Workaround https://github.com/eventable/vobject/issues/180
-        # print("setDTStart:", data, type(data))
-        self.__setFldByName('dtstart', data, force=True)
+        del self._data.vtodo.dtstart
+        self._data.vtodo.add('dtstart').value = data
 
-    def setDue(self, data: Optional[Union[datetime.date, datetime.datetime]]):
-        # Workaround
-        self.__setFldByName('due', data, force=True)
+    @set_X('due', get_Due)
+    def set_Due(self, data: Union[datetime.date, datetime.datetime]):
+        # Workaround https://github.com/eventable/vobject/issues/180
+        del self._data.vtodo.due
+        self._data.vtodo.add('due').value = data
 
-    def setLocation(self, data: Optional[str]):
-        self.__setFldByName('location', data)
+    @set_X('location', get_Location)
+    def set_Location(self, data: str):
+        self._data.vtodo.location.value = data
 
-    def setPercent(self, data: Optional[int]):
-        self.__setFldByName('percent-complete', str(data))  # https://github.com/eventable/vobject/issues/178
+    @set_X('percent-complete', get_Progress, str)
+    def set_Progress(self, data: int):
+        self._data.vtodo.percent_complete.value = str(data)  # https://github.com/eventable/vobject/issues/178
 
-    def setPriority(self, data: Optional[int]):
-        self.__setFldByName('priority', str(data))  # https://github.com/eventable/vobject/issues/178
+    @set_X('priority', get_Priority, str)
+    def set_Priority(self, data: int):
+        self._data.vtodo.priority.value = str(data)  # https://github.com/eventable/vobject/issues/178
 
-    def setStatus(self, data: Optional[enums.EStatus]):
-        self.__setFldByName('status', enums.Enum2Raw_Status.get(data))
+    @set_X('status', get_Status, enums.Enum2Raw_Status)
+    def set_Status(self, data: enums.EStatus):
+        self._data.vtodo.status.value = enums.Enum2Raw_Status[data]
 
-    def setSummary(self, data: Optional[str]):
-        self.__setFldByName('summary', data)
+    @set_X('summary', get_Summary)
+    def set_Summary(self, data: str):
+        self._data.vtodo.summary.value = data
 
-    def setURL(self, data: Optional[str]):
-        self.__setFldByName('url', data)
+    @set_X('url', get_URL)
+    def set_URL(self, data: str):
+        self._data.vtodo.url.value = data
 
-    # specials
+    @set_X('sequence', get_Sequence, str)
+    def __set_Sequence(self, data: int):
+        self._data.vtodo.sequence.value = str(data)  # https://github.com/eventable/vobject/issues/178
+
+    @set_X('dtstamp', get_DTStamp)
+    def __set_DTStamp(self, data: datetime.datetime):
+        self._data.vtodo.dtstamp.value = data
+
+    @set_X('last-modified', get_LastModified)
+    def __set_LastModified(self, data: datetime.datetime):
+        self._data.vtodo.last_modified.value = data
+
+    # misc
     def updateStamps(self):
-        seq = 0 if (seq := self.getSequence()) is None else seq + 1
-        self.__setFldByName('sequence', str(seq))  # https://github.com/eventable/vobject/issues/178
         now = _utcnow()
-        self.__setFldByName('last-modified', now)
-        self.__setFldByName('dtstamp', now)
+        self.__set_Sequence(0 if (seq := self.get_Sequence()) is None else seq + 1)
+        self.__set_DTStamp(now)
+        self.__set_LastModified(now)

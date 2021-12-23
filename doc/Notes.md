@@ -1,5 +1,5 @@
 # Notes
-
+&check;
 ## Tips
 - [CheckBox in QListView using QSqlTableModel](https://stackoverflow.com/questions/48193325/checkbox-in-qlistview-using-qsqltablemodel)
 - [PyQt Layouts](https://realpython.com/python-pyqt-layout/)
@@ -118,15 +118,45 @@
   - DTStamp: special:  mtime w/o METHOD / ctime or special w/ METHOD
   - Last-Modified: like file mtime
 - Sync:
-  - Load left (my) and right (files)
-  - L+:R- => L>R
-  - L-:R+ => L<R (**del**)
-  - L+:R+ => chk Updated (=> required Updated after las sync or 'chg' flag)
-  - Conflicts:
-    - L del
-    - 
 
-self.record(index.row()).value('active').toBool()
+ L | R | Case  | Act | Note
+---|---|-------|-----|-----
+ 1 | 0 | L_new | L>R | +syn=2
+ 1 | 0 | R_del | L_x |
+ 0 | 1 | R_new | L<R | ---
+ 0 | 1 | L_del | R_x | store deleted
+ 1 | 1 | L_chg | L>R | ---
+ 1 | 1 | R_chg | L<R | ---
+ 1 | 1 | *_chg | ?win| ...
+
+- get/set/del:
+  - `var = property(get_var, set_var, del_var)`
+  - `@property\ndef var(... | @var.setter\ndef var(...`
+
+- set_X(v) -> bool:
+
+   ```python
+   def set_X(new):
+     old = get_X()
+     if new == old:
+       return False
+     if new == Any & old == None:
+       vtodo.add('X').value = new
+       return True
+     if new == None & old != None:
+       del vtodo['X']
+       return True
+     if new != None and old != None:
+       vtodo.X.value = new  # but date/datetime: drop/add
+     return True
+  - test:
+    - [x] .>N: F
+    - [x] N>N: F
+    - [x] N>A: T
+    - [x] A>A: F
+    - [x] A>B: T
+    - [x] B>N: T
+    - [ ] .>A: T
 
 ## vCard UML
 
@@ -250,10 +280,10 @@ knownChildren = {
 ```
 
 ## Date, Time:
+- Date: 19970714
 - Datime local: 19980118T230000
 - Datime UTC: 19980119T070000Z
 - Datime TZ: TZID=Europe/Moscow:19980119T020000
-- Date: 19970714
 
 ## Rsync
 ### Remote:

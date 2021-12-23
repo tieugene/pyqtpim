@@ -8,6 +8,7 @@ from PySide2 import QtWidgets, QtCore, QtSql
 import dateutil
 import vobject
 # 4. local
+from common import query as query_common
 from .data import VObjTodo
 from . import enums
 
@@ -18,17 +19,16 @@ def _tz_local():
 
 
 def _tz_utc():
-    return vobject.iCalendar.utc
+    return vobject.icalendar.utc
 
 
 class ListEdit(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent)
-        model = QtSql.QSqlTableModel()
-        model.setTable("store")
-        model.select()
+        model = QtSql.QSqlQueryModel()
+        model.setQuery(query_common.store_ref)
         self.setModel(model)
-        self.setModelColumn(model.fieldIndex('name'))
+        self.setModelColumn(1)
 
     def setData(self, list_id: int):
         """FIXME: dirty"""
@@ -93,7 +93,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
     is_tzed: QtWidgets.QCheckBox
     f_date: QtWidgets.QDateEdit
     f_time: QtWidgets.QTimeEdit
-    t_tz: datetime.tzinfo   # TODO: handle tz
+    t_tz: datetime.tzinfo  # TODO: handle tz
     l_tz: QtWidgets.QLabel
 
     def __init__(self, parent=None):
@@ -136,7 +136,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_time.setTime(now.time())
         self.is_tzed.setChecked(False)
         self.is_tzed.setEnabled(False)
-        self.l_tz.setText(str(self.t_tz))   # FIXME:
+        self.l_tz.setText(str(self.t_tz))  # FIXME:
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """
@@ -164,7 +164,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                 self.f_time.setTime(data.time())
                 if data.tzinfo:
                     self.is_tzed.setChecked(True)
-                    self.t_tz = data.tzinfo     # real/None (naive); type=dateutil.tz.tz._tzicalvtz
+                    self.t_tz = data.tzinfo  # real/None (naive); type=dateutil.tz.tz._tzicalvtz
                     self.l_tz.setText(self.t_tz._tzid)
             else:  # date
                 self.f_date.setDate(data)
@@ -324,7 +324,7 @@ class TodoForm(QtWidgets.QDialog):
     f_dtstart: CheckableDateAndTimeEdit
     f_due: CheckableDateAndTimeEdit
     f_location: QtWidgets.QLineEdit
-    f_percent: SlidedSpinBox   # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
+    f_percent: SlidedSpinBox  # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
     f_priority: PrioWidget
     f_status: StatusCombo
     f_summary: QtWidgets.QLineEdit
@@ -341,9 +341,9 @@ class TodoForm(QtWidgets.QDialog):
         # = Widgets: =
         self.f_list = ListEdit(self)
         # attach[]
-        self.f_category = QtWidgets.QLineEdit(self)         # TODO: checkable combobox
+        self.f_category = QtWidgets.QLineEdit(self)  # TODO: checkable combobox
         self.f_category.setClearButtonEnabled(True)
-        self.f_class = ClassCombo(self)                     # TODO: radio/slider?
+        self.f_class = ClassCombo(self)  # TODO: radio/slider?
         # comment[]
         self.f_completed = CheckableDateTimeEdit(self)
         # contact[]
@@ -356,7 +356,7 @@ class TodoForm(QtWidgets.QDialog):
         self.f_priority = PrioWidget(self)
         # relatedto
         # rrule
-        self.f_status = StatusCombo(self)                   # TODO: radio?
+        self.f_status = StatusCombo(self)  # TODO: radio?
         self.f_summary = QtWidgets.QLineEdit(self)
         self.f_url = QtWidgets.QLineEdit(self)
         self.f_url.setClearButtonEnabled(True)
@@ -367,203 +367,75 @@ class TodoForm(QtWidgets.QDialog):
 
     def __setLayout(self):
         """Bests: Evolution, RTM"""
-        layout = QtWidgets.QFormLayout(self)    # FIME: not h-stretchable
+        layout = QtWidgets.QFormLayout(self)  # FIME: not h-stretchable
         layout.addRow("List", self.f_list)
         layout.addRow("Summary", self.f_summary)
         layout.addRow("Category", self.f_category)
-        layout.addRow("Class", self.f_class)        # on demand
+        layout.addRow("Class", self.f_class)  # on demand
         layout.addRow("Priority", self.f_priority)
-        layout.addRow("DTStart", self.f_dtstart)    # on demand
+        layout.addRow("DTStart", self.f_dtstart)  # on demand
         layout.addRow("Due", self.f_due)
         layout.addRow("Status", self.f_status)
         layout.addRow("% complete", self.f_percent)
         layout.addRow("Completed", self.f_completed)
         layout.addRow("Location", self.f_location)  # on demand
-        layout.addRow("URL", self.f_url)            # on demand
+        layout.addRow("URL", self.f_url)  # on demand
         layout.addRow("Description", self.f_description)
         # the end
         layout.addRow(self.button_box)
         self.setLayout(layout)
 
-    def clear(self):    # TODO: clear old values for newly creating entry
+    def clear(self):  # TODO: clear old values for newly creating entry
         ...
 
-    def load(self, data: VObjTodo, list_id: int):
+    def from_obj(self, data: VObjTodo, store_id: int, can_move=False):
         """Preload form with VTODO"""
-        self.f_list.setData(list_id)
-        if v := data.getCategories():
+        self.f_list.setData(store_id)
+        if not can_move:
+            self.f_list.setEnabled(False)
+        if v := data.get_Categories():
             if isinstance(v, list):
                 self.f_category.setText(', '.join(v))
-            else:
+            else:  # ?
                 self.f_category.setText(v)
-        self.f_class.setData(data.getClass())
-        self.f_completed.setData(v.astimezone() if (v := data.getCompleted()) else None)
-        self.f_description.setPlainText(data.getDescription())
-        self.f_dtstart.setData(data.getDTStart())
-        self.f_due.setData(data.getDue())
-        self.f_location.setText(data.getLocation())
-        self.f_percent.setData(data.getPercent())
-        self.f_priority.setData(data.getPriority())
-        self.f_status.setData(data.getStatus())
-        self.f_summary.setText(data.getSummary())
-        self.f_url.setText(data.getURL())
+        self.f_class.setData(data.get_Class())
+        self.f_completed.setData(v.astimezone() if (v := data.get_Completed()) else None)
+        self.f_description.setPlainText(data.get_Description())
+        self.f_dtstart.setData(data.get_DTStart())
+        self.f_due.setData(data.get_Due())
+        self.f_location.setText(data.get_Location())
+        self.f_percent.setData(data.get_Progress())
+        self.f_priority.setData(data.get_Priority())
+        self.f_status.setData(data.get_Status())
+        self.f_summary.setText(data.get_Summary())
+        self.f_url.setText(data.get_URL())
 
-
-def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
-    """*Update* Todo object and record from form.
-    :return: True if anythong changed and record must be saved.
-
-    :todo: unify and/or hide into Entry setX()
-    """
-    obj_chgd = rec_chgd = False
-    v_new = form.f_list.getData()
-    if v_new != rec.value('store_id'):
-        rec.setValue('store_id', v_new)
-        rec_chgd = True
-    # - cat
-    if v_new := form.f_category.text():
-        v_new = [s.strip() for s in v_new.split(',')]
-        v_new.sort()
-    else:   # empty list
-        v_new = None
-    v_old = obj.getCategories()
-    if v_old != v_new:  # compare 0/1/2+ x 0/1/2+
-        obj.setCategories(v_new)
-        # TODO: db cats
-        obj_chgd = True
-    # - class (combo)
-    v_new = form.f_class.getData()
-    if obj.getClass() != v_new:
-        obj.setClass(v_new)
-        # no db
-        obj_chgd = True
-    # - completed
-    v_new = form.f_completed.getData()
-    if v_new:
-        v_new = v_new.astimezone(_tz_utc())
-    if obj.getCompleted() != v_new:
-        obj.setCompleted(v_new)
-        if v_new:
-            rec.setValue('completed', v_new.isoformat())
-        else:
-            rec.setNull('completed')
-        obj_chgd = rec_chgd = True
-    # - description
-    v_new = form.f_description.toPlainText() or None
-    if obj.getDescription() != v_new:
-        obj.setDescription(v_new)
-        # no db
-        obj_chgd = True
-    # - dtstart
-    v_new = form.f_dtstart.getData()
-    v_old = obj.getDTStart()
-    if v_old != v_new:
-        obj.setDTStart(v_new)
-        if v_new:
-            rec.setValue('dtstart', v_new.isoformat())
-        else:
-            rec.setNull('dtstart')
-        obj_chgd = rec_chgd = True
-    # - due
-    v_new = form.f_due.getData()
-    if obj.getDue() != v_new:
-        obj.setDue(v_new)
-        if v_new:
-            rec.setValue('due', v_new.isoformat())
-        else:
-            rec.setNull('due')
-        obj_chgd = rec_chgd = True
-    # - location
-    v_new = form.f_location.text() or None
-    if obj.getLocation() != v_new:
-        obj.setLocation(v_new)
-        if v_new:
-            rec.setValue('location', v_new)
-        else:
-            rec.setNull('location')
-        obj_chgd = rec_chgd = True
-    # - percent
-    v_new = form.f_percent.getData()
-    v_old = obj.getPercent()    # 0+
-    if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
-        # print("v_new:", v_new, type(v_new))
-        obj.setPercent(v_new)
-        if v_new is not None:
-            rec.setValue('progress', v_new)
-        else:
-            rec.setNull('progress')
-        obj_chgd = rec_chgd = True
-    # - priority
-    v_new = form.f_priority.getData()
-    v_old = obj.getPriority()
-    if v_old != v_new and not (v_new == 0 and v_old is None):
-        obj.setPriority(v_new)
-        if v_new:
-            rec.setValue('priority', enums.Raw2Enum_Prio[v_new])
-        else:
-            rec.setNull('priority')
-        obj_chgd = rec_chgd = True
-    # - status (combo)
-    v_new = form.f_status.getData()
-    if obj.getStatus() != v_new:
-        obj.setStatus(v_new)
-        if v_new:
-            rec.setValue('status', v_new.value)
-        else:
-            rec.setNull('status')
-        obj_chgd = rec_chgd = True
-    # - summary
-    v_new = form.f_summary.text() or None
-    if obj.getSummary() != v_new:
-        obj.setSummary(v_new)
-        if v_new:
-            rec.setValue('summary', v_new)
-        else:
-            rec.setNull('summary')
-        obj_chgd = rec_chgd = True
-    # - url
-    v_new = form.f_url.text() or None
-    if obj.getURL() != v_new:
-        obj.setURL(v_new)
-        # no db
-        obj_chgd = True
-    # final
-    if obj_chgd:
-        obj.updateStamps()
-        rec.setValue('modified', obj.getLastModified().isoformat())
-        body = obj.serialize()
-        rec.setValue('body', body)
-        rec_chgd = True
-    return rec_chgd
-
-
-def form2obj(form: TodoForm) -> (VObjTodo, int):
-    obj = VObjTodo()
-    if v_new := form.f_category.text():
-        v_new = [s.strip() for s in v_new.split(',')]
-        v_new.sort()
-        obj.setCategories(v_new)
-    if v_new := form.f_class.getData():
-        obj.setClass(v_new)
-    if v_new := form.f_completed.getData():
-        obj.setCompleted(v_new.astimezone(_tz_utc()))
-    if v_new := form.f_description.toPlainText():
-        obj.setDescription(v_new)
-    if v_new := form.f_dtstart.getData():
-        obj.setDTStart(v_new)
-    if v_new := form.f_due.getData():
-        obj.setDue(v_new)
-    if v_new := form.f_location.text():
-        obj.setLocation(v_new)
-    if v_new := form.f_percent.getData():
-        obj.setPercent(v_new)
-    if v_new := form.f_priority.getData():
-        obj.setPriority(v_new)
-    if v_new := form.f_status.getData():
-        obj.setStatus(v_new)
-    if v_new := form.f_summary.text():
-        obj.setSummary(v_new)
-    if v_new := form.f_url.text():
-        obj.setURL(v_new)
-    obj.updateStamps()
-    return obj, form.f_list.getData()
+    def to_obj(self, obj: VObjTodo) -> (bool, int):
+        """Create VTodoObj form TodoForm data.
+        Callers: TodoListView.entryAdd()
+        :param obj: VTodoObj to update
+        :return: newly created VTodoObject, source_id
+        """
+        obj_chgd = False
+        # - cat
+        if v_new := self.f_category.text():
+            v_new = [s.strip() for s in v_new.split(',')]
+            v_new.sort()
+        else:  # empty list
+            v_new = None
+        obj_chgd |= obj.set_Categories(v_new)
+        obj_chgd |= obj.set_Class(self.f_class.getData())
+        if v_new := self.f_completed.getData():
+            obj_chgd |= obj.set_Completed(v_new.astimezone(_tz_utc()))
+        obj_chgd |= obj.set_Description(self.f_description.toPlainText() or None)
+        obj_chgd |= obj.set_DTStart(self.f_dtstart.getData())
+        obj_chgd |= obj.set_Due(self.f_due.getData())
+        obj_chgd |= obj.set_Location(self.f_location.text() or None)
+        obj_chgd |= obj.set_Progress(self.f_percent.getData())
+        obj_chgd |= obj.set_Priority(self.f_priority.getData())
+        obj_chgd |= obj.set_Status(self.f_status.getData())
+        obj_chgd |= obj.set_Summary(self.f_summary.text() or None)
+        obj_chgd |= obj.set_URL(self.f_url.text() or None)
+        if obj_chgd:
+            obj.updateStamps()
+        return obj_chgd, self.f_list.getData()

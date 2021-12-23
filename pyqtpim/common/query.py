@@ -1,0 +1,6 @@
+# store_lst = "SELECT id, active, name, connection FROM store"
+# store_cat = "SELECT active, name, connection FROM store WHERE id=%d"
+# store_del = "DELETE store WHERE id=%d"
+store_add = "INSERT INTO store (active, name, connection) VALUES (:active, :name, :connection)"
+# store_upd = "UPDATE store SET active = :active, name = :name, connection = :connection WHERE id = :id"
+store_ref = "SELECT id, name FROM store ORDER BY name"
