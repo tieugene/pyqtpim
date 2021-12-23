@@ -143,10 +143,9 @@ class VObjTodo(VObj):
         - [['Cat1'], ['Cat2'], ...] (Evolution)
         :todo: return set()
         """
-        retvalue = self._data.vtodo.categories.value  # :list
-        # print("Cat:", retvalue, type(retvalue))
-        if isinstance(retvalue[0], list):   # additional unwrap
-            retvalue = [s[0] for s in retvalue]
+        retvalue = [c.value for c in self._data.vtodo.categories_list]  # unpack #1
+        if isinstance(retvalue[0], list):
+            retvalue = [c[0] for c in retvalue]  # unpack #2
         return retvalue
 
     @get_X('class')

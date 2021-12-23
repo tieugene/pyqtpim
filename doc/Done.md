@@ -67,6 +67,7 @@
 - [x] forms.form2obj() shorter
 - [x] forms.form2rec_upd(): removed
 - [x] Deleted not editable; Synced not movable
+- [x] 2+ cat
 
 ## Contacts.File-based
 - [ ] CLM:

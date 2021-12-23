@@ -19,11 +19,11 @@
   - [ ] *CRUD* SQL only (setObj(id)/getObj(id)/delObj(id))
   - [ ] Sort
   - [ ] Filters
+- [ ] TodoForm.exec_(VTodoObj)
 - [ ] Move synced between stores
 - [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
 
 ### 0.2. Fixme (critical)
-- [ ] 2+ cat
 
 ### 0.3. Fixme (non-critical)
 - [ ] Something strange with Details after Edit
@@ -74,6 +74,8 @@
   - [ ] TodoForm: interim logic:
     - [ ] Summary != empty
     - [ ] Status & Completed & Progress
+  - [ ] RRule
+  - [ ] Alarm
   - [ ] multivalues: (QLineEdit[]/QListView/QPlainTextEdit)
      - [ ] attach: (url)
      - [ ] comment: (str)
