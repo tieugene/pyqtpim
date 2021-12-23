@@ -241,9 +241,21 @@ class VObjTodo(VObj):
         return self._data.vtodo.url.value
 
     # setters
-    def set_Categories(self, data: list[str]):
-        for v in data:
+    def set_Categories(self, data: Optional[list[str]]) -> bool:
+        old = self.get_Categories()
+        if old is None and data is None:
+            return False
+        if data is None:
+            del self._data.vtodo.contents['categories']
+            return True
+        if old is not None:
+            if set(old) == set(data):
+                return False
+            else:
+                del self._data.vtodo.contents['categories']
+        for v in data:  # FIXME: add 2+ cats
             self._data.vtodo.add('categories').value = [v]  # one cat per property recommended
+        return True
 
     @set_X('class', get_Class, enums.Enum2Raw_Class)
     def set_Class(self, data: enums.EClass):

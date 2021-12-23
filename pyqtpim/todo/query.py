@@ -1,5 +1,6 @@
 entry_drop_all = "DELETE FROM entry WHERE store_id = %d"
 entry_set_syn = "UPDATE entry SET syn = %d WHERE id = %d"
+entry_mov = "UPDATE entry SET store_id = %d WHERE id = %d"
 entry_del = "DELETE FROM entry WHERE id = %d"
 entry_add = "INSERT INTO entry (" \
             "store_id, created, dtstamp, modified, dtstart, due, completed, progress, priority, status, " \
@@ -9,4 +10,4 @@ entry_add = "INSERT INTO entry (" \
 entry_upd = "UPDATE entry SET " \
             "store_id = :store_id, created = :created, dtstamp = :dtstamp, modified = :modified, dtstart = :dtstart," \
             "due = :due, completed = :completed, progress = :progress, priority = :priority, status = :status, " \
-            "summary = :summary, location = :location, syn = :syn, body = :body WHERE id = :id"
+            "summary = :summary, location = :location, body = :body WHERE id = :id"

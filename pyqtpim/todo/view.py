@@ -8,7 +8,7 @@ from PySide2 import QtCore, QtWidgets, QtSql
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql
 from .data import VObjTodo
-from .form import TodoForm, form2rec_upd, form2obj
+from .form import TodoForm
 from . import enums, sync, query
 
 
@@ -25,7 +25,8 @@ class TodoListView(EntryListView):
         hh = self.horizontalHeader()
         hh.sectionMoved.connect(self.sectionMoved)
         hh.setSectionsMovable(True)
-        for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value, enums.EColNo.Status.value, enums.EColNo.Syn.value):
+        for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value,
+                  enums.EColNo.Status.value, enums.EColNo.Syn.value):
             hh.setSectionResizeMode(
                 hh.visualIndex(c),
                 hh.ResizeMode.ResizeToContents
@@ -70,7 +71,8 @@ class TodoListView(EntryListView):
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_():
             # TODO: move to model
-            obj, store_id = form2obj(f)
+            obj = VObjTodo()
+            _, store_id = f.to_obj(obj)
             q = obj2sql(query.entry_add, obj)
             q.bindValue(':store_id', store_id)
             q.bindValue(':syn', enums.ESyn.New.value)
@@ -85,20 +87,29 @@ class TodoListView(EntryListView):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
+        row = self.model().mapToSource(idx).row()
+        rec = realmodel.record(row)
+        entry_id = rec.value('id')
+        store_id = rec.value('store_id')
         # TODO: by id
         obj: VObjTodo = realmodel.getObj(row)
-        rec = realmodel.record(row)
-        store_id = rec.value('store_id')
         f = TodoForm(self)  # TODO: cache creation
-        f.load(obj, store_id)    # TODO: f.from_obj(); model.relation(col).indexColumn()
+        f.from_obj(obj, store_id)
         if f.exec_():
             # TODO: move to model
-            if form2rec_upd(f, obj, rec):  # TODO: f.to_obj()
-                if not realmodel.setRecord(row, rec):
-                    print("Something wrong with updating record")
-                realmodel.setObj(rec, obj)
+            obj_chg, store_id_new = f.to_obj(obj)
+            if obj_chg or (store_id_new != store_id):
+                if obj_chg:  # FIXME: obj chg AND moved
+                    q = obj2sql(query.entry_upd, obj)
+                    q.bindValue(':store_id', store_id_new)
+                    q.bindValue(':id', entry_id)
+                    if not q.exec_():
+                        print(f"Something bad with updating record '{obj.get_Summary()}': {q.lastError().text()}")
+                else:  # just move to other store
+                    if not (q := QtSql.QSqlQuery(query.entry_mov % (store_id_new, entry_id))).exec_():
+                        print(f"Something wrong with moving {entry_id}: {q.lastError().text()}")
+                # realmodel.setObj(rec, obj)
                 realmodel.select()  # FIXME: update the record only
 
     def entryDel(self):

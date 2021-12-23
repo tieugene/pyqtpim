@@ -15,15 +15,15 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] forms.form2rec_upd(): shorter (due set_X():bool)
 - [ ] TodoList: QSqlQueryModel
-  - [ ] ~C~RU*D*
+  - [ ] *CRUD* SQL only (setObj(id)/getObj(id)/delObj(id))
   - [ ] Sort
   - [ ] Filters
-- [ ] TodoForm: accept(): ret True if chg only
+- [ ] Move Todo between stores
 - [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
 
 ### 0.2. Fixme (critical)
+- [ ] 2+ cat
 - [ ] Sync not works
 
 ### 0.3. Fixme (soft)
@@ -37,6 +37,7 @@
 - [ ] Store: QSqlQueryModel: RUD
 
 ### 0.4. Tuning
+- [ ] TodoForm: accept(): ret True if chg only
 - [ ] URL as URL
 - [ ] Start...stop sync msg
 - [ ] todo.data.VTodoObj.getX - @prop w/ decorator
