@@ -78,10 +78,9 @@ class TodoListView(EntryListView):
             q.bindValue(':syn', enums.ESyn.New.value)
             if not q.exec_():
                 print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
-            # else:
-            #     model.addObj(q.lastInsertId(), obj)
-            self.model().sourceModel().select()
-            # adding obj to cache unavailable
+            else:
+                self.model().sourceModel().setObj(q.lastInsertId(), obj)
+                self.model().sourceModel().select()
 
     def entryEdit(self):
         idx = self.currentIndex()
@@ -97,7 +96,7 @@ class TodoListView(EntryListView):
         entry_id = rec.value('id')
         store_id = rec.value('store_id')
         # TODO: by id
-        obj: VObjTodo = realmodel.getObj(row)
+        obj: VObjTodo = realmodel.getObjByRow(row)
         f = TodoForm(self)  # TODO: cache creation
         f.from_obj(obj, store_id, can_move=(syn == enums.ESyn.New.value))
         if f.exec_():
@@ -133,9 +132,10 @@ class TodoListView(EntryListView):
                 == QtWidgets.QMessageBox.StandardButton.Yes:
             # TODO: move to model
             if syn == enums.ESyn.New.value:
-                realmodel.delObj(src_row)
                 if not (q := QtSql.QSqlQuery(query.entry_del % entry_id)).exec_():
                     print(f"Something wrong with deleting {entry_id}: {q.lastError().text()}")
+                else:
+                    realmodel.delObj(entry_id)
             elif syn == enums.ESyn.Synced.value:
                 if not (q := QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Del.value, entry_id))).exec_():
                     print(f"Something wrong with mark deleted {entry_id}: {q.lastError().text()}")
@@ -175,7 +175,7 @@ class TodoListView(EntryListView):
         realmodel = self.model().sourceModel()
         row = self.model().mapToSource(idx).row()
         # TODO: move to model
-        raw = realmodel.getObj(row).RawContent()
+        raw = realmodel.getObjByRow(row).RawContent()
         # icon, title, text
         msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
         # richtext
@@ -239,7 +239,7 @@ class TodoView(EntryView):
 
     def __idxChgd(self, row: int):
         """Only for selection; not calling on deselection"""
-        self.__fill_details(self.mapper.model().getObj(row))
+        self.__fill_details(self.mapper.model().getObjByRow(row))
 
     def __fill_details(self, data: VObjTodo = None):    # TODO: clear on None
         def __mk_row(title: str, value: Any):

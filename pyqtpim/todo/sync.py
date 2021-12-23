@@ -1,12 +1,13 @@
+# 1. std
 import os
-# import pprint
 import sys
 import uuid
 from typing import Optional, Any
-
-import vobject
+# 2. PySide2
 from PySide2 import QtSql
-
+# 3. 3rd
+import vobject
+# 4. local
 from . import enums, query, model
 from .data import VObjTodo
 

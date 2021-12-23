@@ -68,6 +68,7 @@
 - [x] forms.form2rec_upd(): removed
 - [x] Deleted not editable; Synced not movable
 - [x] 2+ cat
+- [x] setObj(id), delObj(id), getObj(row)
 
 ## Contacts.File-based
 - [ ] CLM:

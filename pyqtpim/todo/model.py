@@ -91,25 +91,30 @@ class TodoModel(EntryModel):
             return super().data(idx, role)
 
     # Hand-made
-    def setObj(self, rec: QtSql.QSqlRecord, obj: VObjTodo):
-        """Add entry body to cache"""
-        self.__entry_cache[rec.value('id')] = obj
+    def setObj(self, entry_id: int, obj: VObjTodo):
+        """Add entry body to cache.
+        Callers: None
+        """
+        self.__entry_cache[entry_id] = obj
 
-    def getObj(self, row: int):
-        """Get [cached] entry body"""
+    def getObjByRow(self, row: int):
+        """Get [cached] entry body.
+        Callers: TodoListView.entryEdit(), .entryInside()
+        """
+        entry_id = self.data(self.index(row, enums.EColNo.ID))
         if rec := self.record(row):
             _id = rec.value('id')
-            if (v := self.__entry_cache.get(_id)) is None:
-                v = VObjTodo(vobject.readOne(rec.value('body')))
-                self.__entry_cache[_id] = v
+            if (v := self.__entry_cache.get(entry_id)) is None:
+                v = VObjTodo(vobject.readOne(self.data(self.index(row, enums.EColNo.Body))))
+                self.__entry_cache[entry_id] = v
             return v
 
-    def delObj(self, row: int):
-        """Del entry body from cache"""
-        if rec := self.record(row):
-            _id = rec.value('_id')
-            if _id in self.__entry_cache:
-                del self.__entry_cache[_id]
+    def delObj(self, entry_id: int):
+        """Del entry body from cache.
+        Callers: TodoListView.entryDel()
+        """
+        if entry_id in self.__entry_cache:
+            del self.__entry_cache[entry_id]
 
     def updateFilterByStore(self):
         """"""
@@ -207,8 +212,8 @@ class TodoProxyModel(EntryProxyModel):
             return datetime.date(9999, 12, 31)
 
         realmodel = self.sourceModel()
-        obj_left: VObjTodo = realmodel.getObj(source_left.row())
-        obj_right: VObjTodo = realmodel.getObj(source_right.row())
+        obj_left: VObjTodo = realmodel.getObjByRow(source_left.row())
+        obj_right: VObjTodo = realmodel.getObjByRow(source_right.row())
         # 1. Prio
         prio_left = __get_prio(obj_left)
         prio_right = __get_prio(obj_right)
@@ -229,22 +234,23 @@ class TodoProxyModel(EntryProxyModel):
 
     def __accept_Closed(self, source_row: int) -> bool:
         """Show only Status=Complete[|Cancelled]"""
-        return self.sourceModel().getObj(source_row).get_Status() in {enums.EStatus.Completed, enums.EStatus.Cancelled}
+        return self.sourceModel().getObjByRow(source_row).get_Status() in {enums.EStatus.Completed,
+                                                                           enums.EStatus.Cancelled}
 
     def __accept_Today(self, source_row: int) -> bool:
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
-        vobj: VObjTodo = self.sourceModel().getObj(source_row)
+        vobj: VObjTodo = self.sourceModel().getObjByRow(source_row)
         return (vobj.get_Status() not in closed) and (due := vobj.get_Due_as_date()) is not None and due <= self.__today
 
     def __accept_Tomorrow(self, source_row: int) -> bool:
         """Like today but tomorrow"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
-        vobj: VObjTodo = self.sourceModel().getObj(source_row)
-        return\
-            (vobj.get_Status() not in closed)\
-            and (due := vobj.get_Due_as_date()) is not None\
+        vobj: VObjTodo = self.sourceModel().getObjByRow(source_row)
+        return \
+            (vobj.get_Status() not in closed) \
+            and (due := vobj.get_Due_as_date()) is not None \
             and due <= self.__tomorrow
 
 
@@ -271,9 +277,8 @@ def load_store(model: TodoModel, store_id: int, path: str):
                         q.bindValue(':syn', enums.ESyn.Synced.value)
                         if not q.exec_():
                             print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
-                        # else:
-                        #     print(f"Record #{q.lastInsertId()} added")
-                        #     model.addObj(q.lastInsertId(), obj)
+                        else:
+                            model.setObj(q.lastInsertId(), obj)
                 else:
                     raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
     model.select()

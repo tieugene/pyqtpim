@@ -396,7 +396,7 @@ class TodoForm(QtWidgets.QDialog):
         if v := data.get_Categories():
             if isinstance(v, list):
                 self.f_category.setText(', '.join(v))
-            else:
+            else:  # ?
                 self.f_category.setText(v)
         self.f_class.setData(data.get_Class())
         self.f_completed.setData(v.astimezone() if (v := data.get_Completed()) else None)

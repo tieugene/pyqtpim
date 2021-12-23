@@ -16,7 +16,7 @@
 
 ### 0.1. Job
 - [ ] TodoList: QSqlQueryModel
-  - [ ] *CRUD* SQL only (setObj(id)/getObj(id)/delObj(id))
+  - [ ] *CRUD* SQL only ()
   - [ ] Sort
   - [ ] Filters
 - [ ] TodoForm.exec_(VTodoObj)
