@@ -15,8 +15,7 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] VTodoObj: getter/setter/deleter:
-  - [ ] get_X: decorated
+- [ ] VTodoObj: getter/setter[/deleter]:
   - [ ] set_X() -> bool: cmp and ret chg; del prop on None
   - [ ] set_X(): decorated
 - [ ] TodoList: QSqlQueryModel

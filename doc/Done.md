@@ -60,7 +60,8 @@
 - [x] 2-way Sync
 - [x] `findIndex('fieldname')` => `enum EColNumFieldname`
 - [x] `store` adds new rec with `id=0`
-- [ ] Store: QSqlQueryModel: CD
+- [x] Store: QSqlQueryModel: C*D*
+- [x] VTodoObj.get_X(): decorated
 
 ## Contacts.File-based
 - [ ] CLM:
