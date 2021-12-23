@@ -521,11 +521,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
             rec.setNull('summary')
         obj_chgd = rec_chgd = True
     # - url
-    v_new = form.f_url.text() or None
-    if obj.get_URL() != v_new:
-        obj.set_URL(v_new)
-        # no db
-        obj_chgd = True
+    obj_chgd |= obj.set_URL(form.f_url.text() or None)
     # final
     if obj_chgd:
         obj.updateStamps()
@@ -563,7 +559,7 @@ def form2obj(form: TodoForm) -> (VObjTodo, int):
         obj.set_Status(v_new)
     if v_new := form.f_summary.text():
         obj.set_Summary(v_new)
-    if v_new := form.f_url.text():
-        obj.set_URL(v_new)
+    # if v_new := form.f_url.text():
+    obj.set_URL(form.f_url.text() or None)
     obj.updateStamps()
     return obj, form.f_list.getData()

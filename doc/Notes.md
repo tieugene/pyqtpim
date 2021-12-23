@@ -133,7 +133,30 @@
   - `var = property(get_var, set_var, del_var)`
   - `@property\ndef var(... | @var.setter\ndef var(...`
 
-self.record(index.row()).value('active').toBool()
+- set_X(v) -> bool:
+
+   ```python
+   def set_X(new):
+     old = get_X()
+     if new == old:
+       return False
+     if new == Any & old == None:
+       vtodo.add('X').value = new
+       return True
+     if new == None & old != None:
+       del vtodo['X']
+       return True
+     if new != None and old != None:
+       vtodo.X.value = new  # but date/datetime: drop/add
+     return True
+  - test:
+    - [x] .>N: F
+    - [x] N>N: F
+    - [x] N>A: T
+    - [x] A>A: F
+    - [x] A>B: T
+    - [x] B>N: T
+    - [ ] .>A: T
 
 ## vCard UML
 
@@ -257,10 +280,10 @@ knownChildren = {
 ```
 
 ## Date, Time:
+- Date: 19970714
 - Datime local: 19980118T230000
 - Datime UTC: 19980119T070000Z
 - Datime TZ: TZID=Europe/Moscow:19980119T020000
-- Date: 19970714
 
 ## Rsync
 ### Remote:

@@ -15,9 +15,6 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] VTodoObj: getter/setter[/deleter]:
-  - [ ] set_X() -> bool: cmp and ret chg; del prop on None
-  - [ ] set_X(): decorated
 - [ ] TodoList: QSqlQueryModel
   - [ ] ~C~RU*D*
   - [ ] Sort
@@ -56,6 +53,7 @@
 - [ ] Expandable 'View File' messagebox
 - [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
 - [ ] Settings: Sort by name: case sensivity
+- [ ] `import vobject` exact in `*/data.py`
 
 ## 1. Common
 - [ ] Docs:

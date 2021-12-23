@@ -62,6 +62,8 @@
 - [x] `store` adds new rec with `id=0`
 - [x] Store: QSqlQueryModel: C*D*
 - [x] VTodoObj.get_X(): decorated
+- [x] VTodoObj: set_X() -> bool:
+- [x] VTodoObj: set_X(): decorated
 
 ## Contacts.File-based
 - [ ] CLM:
