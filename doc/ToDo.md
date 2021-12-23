@@ -15,6 +15,7 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
+- [ ] forms.form2rec_upd(): shorter (due set_X():bool)
 - [ ] TodoList: QSqlQueryModel
   - [ ] ~C~RU*D*
   - [ ] Sort

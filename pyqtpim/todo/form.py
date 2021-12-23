@@ -12,6 +12,7 @@ from common import query as query_common
 from .data import VObjTodo
 from . import enums
 
+
 def _tz_local():
     # return dateutil.tz.tz.tzlocal()     # 'MSK'
     return dateutil.tz.gettz()
@@ -92,7 +93,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
     is_tzed: QtWidgets.QCheckBox
     f_date: QtWidgets.QDateEdit
     f_time: QtWidgets.QTimeEdit
-    t_tz: datetime.tzinfo   # TODO: handle tz
+    t_tz: datetime.tzinfo  # TODO: handle tz
     l_tz: QtWidgets.QLabel
 
     def __init__(self, parent=None):
@@ -135,7 +136,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_time.setTime(now.time())
         self.is_tzed.setChecked(False)
         self.is_tzed.setEnabled(False)
-        self.l_tz.setText(str(self.t_tz))   # FIXME:
+        self.l_tz.setText(str(self.t_tz))  # FIXME:
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """
@@ -163,7 +164,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                 self.f_time.setTime(data.time())
                 if data.tzinfo:
                     self.is_tzed.setChecked(True)
-                    self.t_tz = data.tzinfo     # real/None (naive); type=dateutil.tz.tz._tzicalvtz
+                    self.t_tz = data.tzinfo  # real/None (naive); type=dateutil.tz.tz._tzicalvtz
                     self.l_tz.setText(self.t_tz._tzid)
             else:  # date
                 self.f_date.setDate(data)
@@ -323,7 +324,7 @@ class TodoForm(QtWidgets.QDialog):
     f_dtstart: CheckableDateAndTimeEdit
     f_due: CheckableDateAndTimeEdit
     f_location: QtWidgets.QLineEdit
-    f_percent: SlidedSpinBox   # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
+    f_percent: SlidedSpinBox  # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
     f_priority: PrioWidget
     f_status: StatusCombo
     f_summary: QtWidgets.QLineEdit
@@ -340,9 +341,9 @@ class TodoForm(QtWidgets.QDialog):
         # = Widgets: =
         self.f_list = ListEdit(self)
         # attach[]
-        self.f_category = QtWidgets.QLineEdit(self)         # TODO: checkable combobox
+        self.f_category = QtWidgets.QLineEdit(self)  # TODO: checkable combobox
         self.f_category.setClearButtonEnabled(True)
-        self.f_class = ClassCombo(self)                     # TODO: radio/slider?
+        self.f_class = ClassCombo(self)  # TODO: radio/slider?
         # comment[]
         self.f_completed = CheckableDateTimeEdit(self)
         # contact[]
@@ -355,7 +356,7 @@ class TodoForm(QtWidgets.QDialog):
         self.f_priority = PrioWidget(self)
         # relatedto
         # rrule
-        self.f_status = StatusCombo(self)                   # TODO: radio?
+        self.f_status = StatusCombo(self)  # TODO: radio?
         self.f_summary = QtWidgets.QLineEdit(self)
         self.f_url = QtWidgets.QLineEdit(self)
         self.f_url.setClearButtonEnabled(True)
@@ -366,25 +367,25 @@ class TodoForm(QtWidgets.QDialog):
 
     def __setLayout(self):
         """Bests: Evolution, RTM"""
-        layout = QtWidgets.QFormLayout(self)    # FIME: not h-stretchable
+        layout = QtWidgets.QFormLayout(self)  # FIME: not h-stretchable
         layout.addRow("List", self.f_list)
         layout.addRow("Summary", self.f_summary)
         layout.addRow("Category", self.f_category)
-        layout.addRow("Class", self.f_class)        # on demand
+        layout.addRow("Class", self.f_class)  # on demand
         layout.addRow("Priority", self.f_priority)
-        layout.addRow("DTStart", self.f_dtstart)    # on demand
+        layout.addRow("DTStart", self.f_dtstart)  # on demand
         layout.addRow("Due", self.f_due)
         layout.addRow("Status", self.f_status)
         layout.addRow("% complete", self.f_percent)
         layout.addRow("Completed", self.f_completed)
         layout.addRow("Location", self.f_location)  # on demand
-        layout.addRow("URL", self.f_url)            # on demand
+        layout.addRow("URL", self.f_url)  # on demand
         layout.addRow("Description", self.f_description)
         # the end
         layout.addRow(self.button_box)
         self.setLayout(layout)
 
-    def clear(self):    # TODO: clear old values for newly creating entry
+    def clear(self):  # TODO: clear old values for newly creating entry
         ...
 
     def load(self, data: VObjTodo, list_id: int):
@@ -423,7 +424,7 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
     if v_new := form.f_category.text():
         v_new = [s.strip() for s in v_new.split(',')]
         v_new.sort()
-    else:   # empty list
+    else:  # empty list
         v_new = None
     v_old = obj.get_Categories()
     if v_old != v_new:  # compare 0/1/2+ x 0/1/2+
@@ -483,8 +484,8 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
         obj_chgd = rec_chgd = True
     # - percent
     v_new = form.f_percent.getData()
-    v_old = obj.get_Progress()    # 0+
-    if v_old != v_new and not (v_new == 0 and v_old is None):   # FIXME: dirty hack
+    v_old = obj.get_Progress()  # 0+
+    if v_old != v_new and not (v_new == 0 and v_old is None):  # FIXME: dirty hack
         # print("v_new:", v_new, type(v_new))
         obj.set_Progress(v_new)
         if v_new is not None:
@@ -533,33 +534,27 @@ def form2rec_upd(form: TodoForm, obj: VObjTodo, rec: QtSql.QSqlRecord) -> bool:
 
 
 def form2obj(form: TodoForm) -> (VObjTodo, int):
-    """Callers: TodoListView.entryAdd()"""
+    """Create VTodoObj form TodoForm data.
+    Callers: TodoListView.entryAdd()
+    :param form: form with data
+    :return: newly created VTodoObject, source_id
+    """
     obj = VObjTodo()
     if v_new := form.f_category.text():
         v_new = [s.strip() for s in v_new.split(',')]
         v_new.sort()
         obj.set_Categories(v_new)
-    if v_new := form.f_class.getData():
-        obj.set_Class(v_new)
+    obj.set_Class(form.f_class.getData())
     if v_new := form.f_completed.getData():
         obj.set_Completed(v_new.astimezone(_tz_utc()))
-    if v_new := form.f_description.toPlainText():
-        obj.set_Description(v_new)
-    if v_new := form.f_dtstart.getData():
-        obj.set_DTStart(v_new)
-    if v_new := form.f_due.getData():
-        obj.set_Due(v_new)
-    if v_new := form.f_location.text():
-        obj.set_Location(v_new)
-    if v_new := form.f_percent.getData():
-        obj.set_Progress(v_new)
-    if v_new := form.f_priority.getData():
-        obj.set_Priority(v_new)
-    if v_new := form.f_status.getData():
-        obj.set_Status(v_new)
-    if v_new := form.f_summary.text():
-        obj.set_Summary(v_new)
-    # if v_new := form.f_url.text():
+    obj.set_Description(form.f_description.toPlainText() or None)
+    obj.set_DTStart(form.f_dtstart.getData())
+    obj.set_Due(form.f_due.getData())
+    obj.set_Location(form.f_location.text() or None)
+    obj.set_Progress(form.f_percent.getData() or None)
+    obj.set_Priority(form.f_priority.getData())
+    obj.set_Status(form.f_status.getData())
+    obj.set_Summary(form.f_summary.text())
     obj.set_URL(form.f_url.text() or None)
     obj.updateStamps()
     return obj, form.f_list.getData()

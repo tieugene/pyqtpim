@@ -64,6 +64,7 @@
 - [x] VTodoObj.get_X(): decorated
 - [x] VTodoObj: set_X() -> bool:
 - [x] VTodoObj: set_X(): decorated
+- [x] forms.form2obj() shorter
 
 ## Contacts.File-based
 - [ ] CLM:

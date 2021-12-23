@@ -242,7 +242,10 @@ class TodoProxyModel(EntryProxyModel):
         """Like today but tomorrow"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
         vobj: VObjTodo = self.sourceModel().getObj(source_row)
-        return (vobj.get_Status() not in closed) and (due := vobj.get_Due_as_date()) is not None and due <= self.__tomorrow
+        return\
+            (vobj.get_Status() not in closed)\
+            and (due := vobj.get_Due_as_date()) is not None\
+            and due <= self.__tomorrow
 
 
 class TodoStoreModel(StoreModel):
