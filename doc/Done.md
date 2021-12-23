@@ -66,6 +66,7 @@
 - [x] VTodoObj: set_X(): decorated
 - [x] forms.form2obj() shorter
 - [x] forms.form2rec_upd(): removed
+- [x] Deleted not editable; Synced not movable
 
 ## Contacts.File-based
 - [ ] CLM:

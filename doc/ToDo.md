@@ -19,14 +19,14 @@
   - [ ] *CRUD* SQL only (setObj(id)/getObj(id)/delObj(id))
   - [ ] Sort
   - [ ] Filters
-- [ ] Move Todo between stores
+- [ ] Move synced between stores
 - [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
 
 ### 0.2. Fixme (critical)
 - [ ] 2+ cat
 - [ ] Sync not works
 
-### 0.3. Fixme (soft)
+### 0.3. Fixme (non-critical)
 - [ ] Something strange with Details after Edit
 - [ ] Check uid on Reload
 - [ ] Strict SQLite tables

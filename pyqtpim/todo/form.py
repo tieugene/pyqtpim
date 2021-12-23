@@ -388,9 +388,11 @@ class TodoForm(QtWidgets.QDialog):
     def clear(self):  # TODO: clear old values for newly creating entry
         ...
 
-    def from_obj(self, data: VObjTodo, store_id: int):
+    def from_obj(self, data: VObjTodo, store_id: int, can_move=False):
         """Preload form with VTODO"""
         self.f_list.setData(store_id)
+        if not can_move:
+            self.f_list.setEnabled(False)
         if v := data.get_Categories():
             if isinstance(v, list):
                 self.f_category.setText(', '.join(v))

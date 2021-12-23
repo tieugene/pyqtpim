@@ -90,16 +90,21 @@ class TodoListView(EntryListView):
         realmodel: TodoModel = self.model().sourceModel()
         row = self.model().mapToSource(idx).row()
         rec = realmodel.record(row)
+        syn = rec.value('syn')
+        if syn == enums.ESyn.Del.value:
+            QtWidgets.QMessageBox.warning(self, "Edit deleted", "You cannot edit deleted entry")
+            return
         entry_id = rec.value('id')
         store_id = rec.value('store_id')
         # TODO: by id
         obj: VObjTodo = realmodel.getObj(row)
         f = TodoForm(self)  # TODO: cache creation
-        f.from_obj(obj, store_id)
+        f.from_obj(obj, store_id, can_move=(syn == enums.ESyn.New.value))
         if f.exec_():
             # TODO: move to model
             obj_chg, store_id_new = f.to_obj(obj)
-            if obj_chg or (store_id_new != store_id):
+            store_chg = (store_id_new != store_id)
+            if obj_chg or store_chg:
                 if obj_chg:  # FIXME: obj chg AND moved
                     q = obj2sql(query.entry_upd, obj)
                     q.bindValue(':store_id', store_id_new)
