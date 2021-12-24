@@ -93,14 +93,13 @@ class TodoListView(EntryListView):
             QtWidgets.QMessageBox.warning(self, "Edit deleted", "You cannot edit deleted entry")
             return
         entry_id = rec.value('id')
-        store_id = rec.value('store_id')
+        store_id = rec.value('store_id')  # ??? returns model.data()
         # TODO: by id
         obj: VObjTodo = realmodel.getObjByRow(row)
         f = TodoForm(self)  # TODO: cache creation
-        f.from_obj(obj, store_id, can_move=(syn == enums.ESyn.New.value))
-        if f.exec_():
+        if pair := f.exec_edit(obj, store_id, can_move=(syn == enums.ESyn.New.value)):
             # TODO: move to model
-            obj_chg, store_id_new = f.to_obj(obj)
+            obj_chg, store_id_new = pair
             store_chg = (store_id_new != store_id)
             if obj_chg or store_chg:
                 if obj_chg:  # FIXME: obj chg AND moved

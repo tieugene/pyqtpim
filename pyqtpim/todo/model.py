@@ -77,7 +77,8 @@ class TodoModel(EntryModel):
                 return v
         elif role == QtCore.Qt.EditRole:
             col = idx.column()
-            if col in {enums.EColNo.Store.value, enums.EColNo.Completed.value}:
+            # if col in {enums.EColNo.Store.value, enums.EColNo.Completed.value}:
+            if col == enums.EColNo.Completed.value:
                 return self.data(idx, QtCore.Qt.DisplayRole)
             else:
                 return super().data(idx, role)

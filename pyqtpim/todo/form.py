@@ -383,16 +383,30 @@ class TodoForm(QtWidgets.QDialog):
         self.setLayout(layout)
 
     def exec_new(self) -> Optional[tuple[VObjTodo, int]]:
+        """Create new entry.
+        :return: created obj and store_id
+        """
         self.clear()
-        if (self.exec_()) == self.Accepted:
+        if self.exec_():
             obj = VObjTodo()
             _, store_id = self.to_obj(obj)
             return obj, store_id
 
+    def exec_edit(self, obj: VObjTodo, store_id: int, can_move: bool) -> Optional[tuple[bool, int]]:
+        """Edit entry exists.
+        :param obj: obj to edit
+        :param store_id: source store
+        :param can_move: whether obj can be moved to other store
+        :return: object was changed flag and [new] store_id
+        """
+        self.from_obj(obj, store_id, can_move)
+        if self.exec_():
+            return self.to_obj(obj)
+
     def clear(self):  # TODO: clear old values for newly creating entry
         ...
 
-    def from_obj(self, data: VObjTodo, store_id: int, can_move=False):
+    def from_obj(self, data: VObjTodo, store_id: int, can_move: bool):
         """Preload form with VTODO"""
         self.f_list.setData(store_id)
         if not can_move:

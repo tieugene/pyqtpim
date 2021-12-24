@@ -15,7 +15,6 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] TodoForm: exec_(VTodoObj)
 - [ ] TodoList: QSqlQueryModel
 - [ ] ~~TodoProxyModel~~
   - [ ] Sort

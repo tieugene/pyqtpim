@@ -74,6 +74,7 @@
 - [x] TodoForm: fixed 'default tz: file...'
 - [x] TodoDetails: extend
 - [x] ~~Something strange with Details after Edit~~
+- [x] TodoForm: exec_(VTodoObj)
 
 ## Contacts.File-based
 - [ ] CLM:
