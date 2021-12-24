@@ -69,6 +69,8 @@
 - [x] Deleted not editable; Synced not movable
 - [x] 2+ cat
 - [x] setObj(id), delObj(id), getObj(row)
+- [x] TodoForm.Progress: checked
+- [x] TodoForm.Prio: checked, 5x
 
 ## Contacts.File-based
 - [ ] CLM:

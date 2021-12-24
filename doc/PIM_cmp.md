@@ -38,12 +38,17 @@
 - &ominus; ~~Multisort~~
 - &ominus; Cancelled are active
 
-Why not: ~~Filter~~, ~~Multisort~~, Due, ~~URL~~
+Why not: ~~Filter~~, ~~Multisort~~, ~~Due:date~~, ~~URL~~
 
 ### [Rainlendar2](http://www.rainlendar.net/)
 - &ominus; (&euro;5..10)
 - &ominus; Buy via PayPal only
+- &ominus; Bug: Cannot Status=None
+- &ominus; Strange 'Sensivity' field ('Class'?)
+- &ominus; System-wide modal windows
 - &ominus; страшный шоппц
+
+Why not: ~~Status=None~~
 
 ### [Evolution](https://wiki.gnome.org/Apps/Evolution)
 - &oplus; DTStart/Due date/datetime
@@ -79,8 +84,8 @@ Why not: Status=~~None~~Need-Action
 - [x] ~~To-do~~ List (): глючная хрень
 - [x] ~~Список задач~~ (Splend Apps): unmovable, ~~CalDAV~~
 - [x] ~~OpenSync~~ unmovable
-- […] CalDAV TaskSync: nice &hellip;
+- […] CalDAV TaskSync: nice &hellip;, but unmaintained
 - […] DavX5: слетают настройки после каждого обновления
 - [x] ~~CalendarSync~~: cannot connect
-- [x] ~~aCalendar~~ (Tapir Apps): CalDAV not found
-- [x] Простой календарь: CalDAV settings not found, Calendar (not todolist)
+- [x] ~~aCalendar~~: (Tapir Apps): CalDAV not found
+- [x] ~~Простой календарь~~: CalDAV settings not found, Calendar (not todolist)

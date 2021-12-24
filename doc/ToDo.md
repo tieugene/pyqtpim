@@ -17,7 +17,6 @@
 ### 0.1. Job
 - [ ] TodoForm:
   - [ ] exec_(VTodoObj)
-  - [ ] rework/fix Prio edit
   - [ ] default tz - 'file...'
 - [ ] TodoList: QSqlQueryModel
   - [ ] CRUD
@@ -32,7 +31,6 @@
 - [ ] Check uid on Reload
 - [ ] Strict SQLite tables
 - [ ] Filter fault after add/del entry (id==None)
-- [ ] Store: QSqlQueryModel: RUD
 
 ### 0.4. Tuning
 - [ ] TodoForm: accept(): ret True if chg only
