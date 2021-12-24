@@ -311,7 +311,7 @@ def obj2sql(q_str: str, vobj: VObjTodo) -> QtSql.QSqlQuery:
     q.bindValue(':completed', __2iso(vobj.get_Completed()))  # ?
     q.bindValue(':progress', vobj.get_Progress())
     q.bindValue(':priority', enums.Raw2Enum_Prio[v] if (v := vobj.get_Priority()) else None)
-    q.bindValue(':status', vobj.get_Status())
+    q.bindValue(':status', v.value if (v := vobj.get_Status()) else None)
     q.bindValue(':summary', vobj.get_Summary())
     q.bindValue(':location', vobj.get_Location())
     q.bindValue(':body', vobj.serialize())

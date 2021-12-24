@@ -75,6 +75,7 @@
 - [x] TodoDetails: extend
 - [x] ~~Something strange with Details after Edit~~
 - [x] TodoForm: exec_(VTodoObj)
+- [x] ~~Status not loaded into DB~~
 
 ## Contacts.File-based
 - [ ] CLM:

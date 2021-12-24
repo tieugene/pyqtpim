@@ -21,7 +21,6 @@
   - [ ] Filters
 
 ### 0.2. Fixme (critical)
-- [ ] Status not loaded into DB
 
 ### 0.3. Fixme (non-critical)
 - [ ] Check uid on Reload
@@ -29,11 +28,11 @@
 - [ ] Filter fault after add/del entry (id==None)
 
 ### 0.4. Tuning
+- [ ] SQLite indexes
 - [ ] TodoView: compact
 - [ ] TodoView: URL as URL
 - [ ] TodoForm: accept(): ret True if chg only
 - [ ] Start...stop sync msg
-- [ ] SQLite indexes
 - [ ] Color `due today` (yellow) and `overdue` (red)
 - [ ] Instant settings
 - [ ] Settings save/restore:
