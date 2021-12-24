@@ -33,6 +33,7 @@ class TodoListView(EntryListView):
             )
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
         self.sortByColumn(enums.EColNo.ID.value)
+        # self.resizeRowsToContents()
         # signals
         # # self.activated.connect(self.rowChanged)
         self.selectionModel().currentRowChanged.connect(self.rowChanged)

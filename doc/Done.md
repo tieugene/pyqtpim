@@ -77,6 +77,7 @@
 - [x] TodoForm: exec_(VTodoObj)
 - [x] ~~Status not loaded into DB~~
 - [x] TodoForm.exec_edit(): ret True if chg only
+- [x] TodoListView: case-insensivity sort by name
 
 ## Contacts.File-based
 - [ ] CLM:

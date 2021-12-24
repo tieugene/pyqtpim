@@ -14,38 +14,40 @@
     - ~~list[Entry]+dict[entry:store_id]~~
   - [ ] ? + in-mem SQLite
 
-### 0.1. Job
+### 0.1. Now
 - [ ] TodoList: QSqlQueryModel
 - [ ] ~~TodoProxyModel~~
   - [ ] Sort
   - [ ] Filters
 
-### 0.2. Fixme (critical)
+### 0.2. Bugs
 
-### 0.3. Fixme (non-critical)
+### 0.3. Issues
 - [ ] Check uid on Reload
 - [ ] Strict SQLite tables
 - [ ] Filter fault after add/del entry (id==None)
 
-### 0.4. Tuning
-- [ ] Shrink widget groups
+### 0.4. Features
 - [ ] SQLite indexes
-- [ ] TodoView: compact
-- [ ] TodoView: URL as URL
-- [ ] Start...stop sync msg
-- [ ] Color `due today` (yellow) and `overdue` (red)
 - [ ] Instant settings
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
 - [ ] 'Percent' => 'Progress'
 - [ ] Prio: x5
+- [ ] Settings: Sort by name: case sensivity
+- [ ] `import vobject` exact in `*/data.py`
+
+### 0.5. UI/UX
+- [ ] Shrink widget groups
+- [ ] TodoView: compact
+- [ ] TodoView: URL as URL
+- [ ] Start...stop sync msg
+- [ ] Color `due today` (yellow) and `overdue` (red)
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox
 - [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
-- [ ] Settings: Sort by name: case sensivity
-- [ ] `import vobject` exact in `*/data.py`
 
 ## 1. Common
 - [ ] Docs:

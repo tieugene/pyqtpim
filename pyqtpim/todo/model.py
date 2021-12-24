@@ -201,7 +201,7 @@ class TodoProxyModel(EntryProxyModel):
         realmodel = self.sourceModel()
         data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.Summary.value))
         data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.Summary.value))
-        return data_right < data_left
+        return data_right.casefold() < data_left.casefold()
 
     def __lessThen_PrioDueName(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         """Sorting Prio>Due>Summary"""
