@@ -52,10 +52,10 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
         # self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        self.is_enabled = QtWidgets.QCheckBox()
-        self.f_datetime = QtWidgets.QDateTimeEdit()
+        self.is_enabled = QtWidgets.QCheckBox(self)
+        self.f_datetime = QtWidgets.QDateTimeEdit(self)
         self.f_datetime.setCalendarPopup(True)
-        layout = QtWidgets.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_datetime)
         self.setLayout(layout)
@@ -100,15 +100,15 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
         # self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        self.is_enabled = QtWidgets.QCheckBox()
-        self.is_timed = QtWidgets.QCheckBox()
-        self.is_tzed = QtWidgets.QCheckBox()
-        self.f_date = QtWidgets.QDateEdit()
+        self.is_enabled = QtWidgets.QCheckBox(self)
+        self.is_timed = QtWidgets.QCheckBox(self)
+        self.is_tzed = QtWidgets.QCheckBox(self)
+        self.f_date = QtWidgets.QDateEdit(self)
+        self.f_time = QtWidgets.QTimeEdit(self)
+        self.l_tz = QtWidgets.QLabel(self)
         self.f_date.setCalendarPopup(True)
-        self.f_time = QtWidgets.QTimeEdit()
-        self.l_tz = QtWidgets.QLabel()
         self.t_tz = datetime.timezone.utc
-        layout = QtWidgets.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_date)
         layout.addWidget(self.is_timed)
@@ -190,16 +190,16 @@ class SlidedSpinBox(QtWidgets.QWidget):
     def __init__(self, v_max: int, parent=None):
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
-        self.is_enabled = QtWidgets.QCheckBox()
-        self.f_slider = QtWidgets.QSlider()
-        self.f_slider.setOrientation(QtCore.Qt.Horizontal)
-        self.f_spinbox = QtWidgets.QSpinBox()
-        self.f_spinbox.setMaximum(v_max)
-        layout = QtWidgets.QHBoxLayout()
+        self.is_enabled = QtWidgets.QCheckBox(self)
+        self.f_slider = QtWidgets.QSlider(self)
+        self.f_spinbox = QtWidgets.QSpinBox(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_slider)
         layout.addWidget(self.f_spinbox)
         self.setLayout(layout)
+        self.f_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.f_spinbox.setMaximum(v_max)
         # signals
         self.is_enabled.stateChanged[int].connect(self.__chg_enabled)
 
@@ -339,7 +339,6 @@ class TodoForm(QtWidgets.QDialog):
         self.f_list = ListEdit(self)
         # attach[]
         self.f_category = QtWidgets.QLineEdit(self)  # TODO: checkable combobox
-        self.f_category.setClearButtonEnabled(True)
         self.f_class = ClassCombo(self)  # TODO: radio/slider?
         # comment[]
         self.f_completed = CheckableDateTimeEdit(self)
@@ -348,7 +347,6 @@ class TodoForm(QtWidgets.QDialog):
         self.f_dtstart = CheckableDateAndTimeEdit(self)
         self.f_due = CheckableDateAndTimeEdit(self)
         self.f_location = QtWidgets.QLineEdit(self)
-        self.f_location.setClearButtonEnabled(True)
         self.f_progress = ProgressWidget(self)
         self.f_priority = PrioWidget(self)
         # relatedto
@@ -356,7 +354,9 @@ class TodoForm(QtWidgets.QDialog):
         self.f_status = StatusCombo(self)  # TODO: radio?
         self.f_summary = QtWidgets.QLineEdit(self)
         self.f_url = QtWidgets.QLineEdit(self)
+        self.f_category.setClearButtonEnabled(True)
         self.f_url.setClearButtonEnabled(True)
+        self.f_location.setClearButtonEnabled(True)
         # the end
         self.button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         self.button_box.accepted.connect(self.accept)
@@ -380,6 +380,7 @@ class TodoForm(QtWidgets.QDialog):
         layout.addRow("Description", self.f_description)
         # the end
         layout.addRow(self.button_box)
+        layout.setVerticalSpacing(0)
         self.setLayout(layout)
 
     def exec_new(self) -> Optional[tuple[VObjTodo, int]]:

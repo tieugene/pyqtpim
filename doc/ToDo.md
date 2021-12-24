@@ -28,6 +28,7 @@
 - [ ] Filter fault after add/del entry (id==None)
 
 ### 0.4. Tuning
+- [ ] Shrink widget groups
 - [ ] SQLite indexes
 - [ ] TodoView: compact
 - [ ] TodoView: URL as URL
@@ -39,7 +40,6 @@
   - [ ] filter
 - [ ] 'Percent' => 'Progress'
 - [ ] Prio: x5
-- [ ] Shrink widget groups
 - [ ] ELM.View: auto-h/w
 - [ ] EL.View: auto-h/w[^1]
 - [ ] Expandable 'View File' messagebox

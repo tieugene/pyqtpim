@@ -273,7 +273,10 @@ class TodoView(EntryView):
         layout.addRow("Class:", self.class_)
         layout.addRow("Modified:", self.modified)
         layout.addRow(self.description)
+        layout.setVerticalSpacing(0)    # default=-1
         self.setLayout(layout)
+        # print("vSpace:", layout.verticalSpacing())
+        # print("hSpace:", layout.horizontalSpacing())
 
     def __idxChgd(self, row: int):
         """Only for selection; not calling on deselection"""
