@@ -399,9 +399,12 @@ class TodoForm(QtWidgets.QDialog):
         :param can_move: whether obj can be moved to other store
         :return: object was changed flag and [new] store_id
         """
+        store_id_old = store_id
         self.from_obj(obj, store_id, can_move)
         if self.exec_():
-            return self.to_obj(obj)
+            obj_chg, store_id_new = self.to_obj(obj)
+            if obj_chg or (store_id_new != store_id_old):
+                return obj_chg, store_id_new
 
     def clear(self):  # TODO: clear old values for newly creating entry
         ...

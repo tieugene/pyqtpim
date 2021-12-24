@@ -76,6 +76,7 @@
 - [x] ~~Something strange with Details after Edit~~
 - [x] TodoForm: exec_(VTodoObj)
 - [x] ~~Status not loaded into DB~~
+- [x] TodoForm.exec_edit(): ret True if chg only
 
 ## Contacts.File-based
 - [ ] CLM:

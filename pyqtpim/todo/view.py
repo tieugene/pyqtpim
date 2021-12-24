@@ -100,19 +100,17 @@ class TodoListView(EntryListView):
         if pair := f.exec_edit(obj, store_id, can_move=(syn == enums.ESyn.New.value)):
             # TODO: move to model
             obj_chg, store_id_new = pair
-            store_chg = (store_id_new != store_id)
-            if obj_chg or store_chg:
-                if obj_chg:  # FIXME: obj chg AND moved
-                    q = obj2sql(query.entry_upd, obj)
-                    q.bindValue(':store_id', store_id_new)
-                    q.bindValue(':id', entry_id)
-                    if not q.exec_():
-                        print(f"Something bad with updating record '{obj.get_Summary()}': {q.lastError().text()}")
-                else:  # just move to other store
-                    if not (q := QtSql.QSqlQuery(query.entry_mov % (store_id_new, entry_id))).exec_():
-                        print(f"Something wrong with moving {entry_id}: {q.lastError().text()}")
-                # realmodel.setObj(rec, obj)
-                realmodel.select()  # FIXME: update the record only
+            if obj_chg:  # FIXME: obj chg AND moved
+                q = obj2sql(query.entry_upd, obj)
+                q.bindValue(':store_id', store_id_new)
+                q.bindValue(':id', entry_id)
+                if not q.exec_():
+                    print(f"Something bad with updating record '{obj.get_Summary()}': {q.lastError().text()}")
+            else:  # just move to other store
+                if not (q := QtSql.QSqlQuery(query.entry_mov % (store_id_new, entry_id))).exec_():
+                    print(f"Something wrong with moving {entry_id}: {q.lastError().text()}")
+            # realmodel.setObj(rec, obj)
+            realmodel.select()  # FIXME: update the record only
 
     def entryDel(self):
         idx = self.currentIndex()

@@ -31,7 +31,6 @@
 - [ ] SQLite indexes
 - [ ] TodoView: compact
 - [ ] TodoView: URL as URL
-- [ ] TodoForm: accept(): ret True if chg only
 - [ ] Start...stop sync msg
 - [ ] Color `due today` (yellow) and `overdue` (red)
 - [ ] Instant settings
