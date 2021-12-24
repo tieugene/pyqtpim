@@ -1,7 +1,6 @@
 """Form to create/update VTODO item"""
 # 1. std
 import datetime
-import inspect
 from typing import Optional, Union, Any
 # 2. PySide
 from PySide2 import QtWidgets, QtCore, QtSql
@@ -108,7 +107,7 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_date.setCalendarPopup(True)
         self.f_time = QtWidgets.QTimeEdit()
         self.l_tz = QtWidgets.QLabel()
-        self.t_tz = None
+        self.t_tz = datetime.timezone.utc
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_date)
@@ -383,6 +382,13 @@ class TodoForm(QtWidgets.QDialog):
         layout.addRow(self.button_box)
         self.setLayout(layout)
 
+    def exec_new(self) -> Optional[tuple[VObjTodo, int]]:
+        self.clear()
+        if (self.exec_()) == self.Accepted:
+            obj = VObjTodo()
+            _, store_id = self.to_obj(obj)
+            return obj, store_id
+
     def clear(self):  # TODO: clear old values for newly creating entry
         ...
 
@@ -392,10 +398,7 @@ class TodoForm(QtWidgets.QDialog):
         if not can_move:
             self.f_list.setEnabled(False)
         if v := data.get_Categories():
-            if isinstance(v, list):
-                self.f_category.setText(', '.join(v))
-            else:  # ?
-                self.f_category.setText(v)
+            self.f_category.setText(', '.join(v))
         self.f_class.setData(data.get_Class())
         self.f_completed.setData(v.astimezone() if (v := data.get_Completed()) else None)
         self.f_description.setPlainText(data.get_Description())

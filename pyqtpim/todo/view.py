@@ -69,10 +69,9 @@ class TodoListView(EntryListView):
 
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
-        if f.exec_():
+        if pair := f.exec_new():
+            obj, store_id = pair
             # TODO: move to model
-            obj = VObjTodo()
-            _, store_id = f.to_obj(obj)
             q = obj2sql(query.entry_add, obj)
             q.bindValue(':store_id', store_id)
             q.bindValue(':syn', enums.ESyn.New.value)
