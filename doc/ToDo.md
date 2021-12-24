@@ -17,7 +17,6 @@
 ### 0.1. Job
 - [ ] TodoForm:
   - [ ] exec_(VTodoObj)
-  - [ ] default tz - 'file...'
 - [ ] TodoList: QSqlQueryModel
   - [ ] CRUD
 - [ ] ~~TodoPRoxyModel~~

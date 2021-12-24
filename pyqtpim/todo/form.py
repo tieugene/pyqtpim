@@ -6,8 +6,8 @@ from typing import Optional, Union, Any
 # 2. PySide
 from PySide2 import QtWidgets, QtCore, QtSql
 # 3. 3rds
-import dateutil
 import vobject
+import dateutil
 # 4. local
 from common import query as query_common
 from .data import VObjTodo
@@ -137,7 +137,8 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_time.setTime(now.time())
         self.is_tzed.setChecked(False)
         self.is_tzed.setEnabled(False)
-        self.l_tz.setText(str(self.t_tz))  # FIXME:
+        # self.l_tz.setText(str(self.t_tz))  # FIXME:
+        self.l_tz.setText(self.t_tz._ttinfo_std.abbr)
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """

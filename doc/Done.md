@@ -70,7 +70,8 @@
 - [x] 2+ cat
 - [x] setObj(id), delObj(id), getObj(row)
 - [x] TodoForm.Progress: checked
-- [x] TodoForm.Prio: checked, 5x
+- [x] TodoForm.Prio: checked, 5x, fixed
+- [x] TodoForm: fixed 'default tz: file...'
 
 ## Contacts.File-based
 - [ ] CLM:
