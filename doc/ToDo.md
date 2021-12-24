@@ -15,25 +15,24 @@
   - [ ] ? + in-mem SQLite
 
 ### 0.1. Job
-- [ ] TodoForm:
-  - [ ] exec_(VTodoObj)
+- [ ] TodoForm: exec_(VTodoObj)
 - [ ] TodoList: QSqlQueryModel
-  - [ ] CRUD
-- [ ] ~~TodoPRoxyModel~~
+- [ ] ~~TodoProxyModel~~
   - [ ] Sort
   - [ ] Filters
 
 ### 0.2. Fixme (critical)
+- [ ] Status not loaded into DB
 
 ### 0.3. Fixme (non-critical)
-- [ ] Something strange with Details after Edit
 - [ ] Check uid on Reload
 - [ ] Strict SQLite tables
 - [ ] Filter fault after add/del entry (id==None)
 
 ### 0.4. Tuning
+- [ ] TodoView: compact
+- [ ] TodoView: URL as URL
 - [ ] TodoForm: accept(): ret True if chg only
-- [ ] URL as URL
 - [ ] Start...stop sync msg
 - [ ] SQLite indexes
 - [ ] Color `due today` (yellow) and `overdue` (red)

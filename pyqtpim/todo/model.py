@@ -53,6 +53,7 @@ class TodoModel(EntryModel):
                 if v:  # :str()|int
                     return enums.TDecor_Prio[v - 1]
             elif col == enums.EColNo.Status.value:
+                # print("Status:", v)
                 if v:  # :str()|int
                     return enums.TDecor_Status[v - 1]
             elif col == enums.EColNo.Store.value:
@@ -74,6 +75,12 @@ class TodoModel(EntryModel):
             else:
                 # print("v:", v, type(v))
                 return v
+        elif role == QtCore.Qt.EditRole:
+            col = idx.column()
+            if col in {enums.EColNo.Store.value, enums.EColNo.Completed.value}:
+                return self.data(idx, QtCore.Qt.DisplayRole)
+            else:
+                return super().data(idx, role)
         elif role == QtCore.Qt.ForegroundRole:
             v = super().data(idx, QtCore.Qt.DisplayRole)
             col = idx.column()

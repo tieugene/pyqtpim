@@ -72,6 +72,8 @@
 - [x] TodoForm.Progress: checked
 - [x] TodoForm.Prio: checked, 5x, fixed
 - [x] TodoForm: fixed 'default tz: file...'
+- [x] TodoDetails: extend
+- [x] ~~Something strange with Details after Edit~~
 
 ## Contacts.File-based
 - [ ] CLM:
