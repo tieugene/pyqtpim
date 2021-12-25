@@ -40,7 +40,7 @@ class TodoListView(EntryListView):
         self.selectionModel().currentRowChanged.connect(self.rowChanged)
 
     def requery(self):
-        self.model().sourceModel().select()
+        self.model().sourceModel().reload()
         self.resizeRowsToContents()
 
     def rowChanged(self, idx):

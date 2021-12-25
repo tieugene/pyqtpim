@@ -15,14 +15,14 @@
   - [ ] ? + in-mem SQLite &check;
 
 ### 0.1. Now
-- [ ] TodoList: QSqlQueryModel
+*None*
 
 ### 0.2. Bugs
+*None*
 
 ### 0.3. Issues
 - [ ] TodoListView:
-  - [ ] disable wrap
-  - [ ] Autowidth works not right
+  - [ ] Autowidth
 - [ ] TodoView:
   - [ ] Status: str
   - [ ] Prio: orig
@@ -40,6 +40,7 @@
 
 ### 0.5. UI/UX
 - [ ] TodoForm:
+  - [ ] Save previous selectd store for (exec_new())
   - [ ] Shrink widget groups
   - [ ] Categories: special combobox (as RTM/Evolution)
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):

@@ -79,6 +79,8 @@
 - [x] TodoForm.exec_edit(): ret True if chg only
 - [x] TodoListView: case-insensivity sort by name
 - [x] TodoForm.reset()
+- [x] TodoList: QSqlQueryModel
+- [x] TodoList: disable wrap
 
 ## Contacts.File-based
 - [ ] CLM:

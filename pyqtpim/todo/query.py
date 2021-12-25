@@ -1,3 +1,4 @@
+entry_all = "SELECT entry.* FROM entry JOIN store ON entry.store_id=store.id WHERE store.active=1"
 entry_drop_all = "DELETE FROM entry WHERE store_id = %d"
 entry_set_syn = "UPDATE entry SET syn = %d WHERE id = %d"
 entry_mov = "UPDATE entry SET store_id = %d WHERE id = %d"

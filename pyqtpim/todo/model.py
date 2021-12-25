@@ -16,15 +16,15 @@ from . import enums, query
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
     __entry_cache: dict[int, VObjTodo]  # entry.id: VObj
+    _own_query = query.entry_all
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.setQuery(self._own_query)
         self.__entry_cache = dict()
-        self.setTable("entry")
         for i in range(len(enums.ColHeader)):
             self.setHeaderData(i, QtCore.Qt.Horizontal, enums.ColHeader[i])
         self.updateFilterByStore()
-        self.select()
 
     # Inherit
     def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
@@ -99,6 +99,11 @@ class TodoModel(EntryModel):
             return super().data(idx, role)
 
     # Hand-made
+    def reload(self):
+        self.beginResetModel()
+        self.setQuery(self._own_query)  # FIXME: dirty hack
+        self.endResetModel()
+
     def setObj(self, entry_id: int, obj: VObjTodo):
         """Add entry body to cache.
         Callers: None
@@ -126,18 +131,7 @@ class TodoModel(EntryModel):
 
     def updateFilterByStore(self):
         """"""
-        active = set()
-        q: QtSql.QSqlQuery = QtSql.QSqlQuery('SELECT id FROM store WHERE active IS TRUE')
-        while q.next():
-            active.add(q.value(0))
-        if active:
-            if len(active) == 1:
-                filt = 'store_id = %d' % active.pop()
-            else:
-                filt = 'store_id IN %s' % str(tuple(active))
-        else:
-            filt = 'FALSE'  # nothing to show
-        self.setFilter(filt)
+        self.reload()
 
     def reloadAll(self, store_id: int, store_path: str):
         self.beginResetModel()
@@ -197,7 +191,10 @@ class TodoProxyModel(EntryProxyModel):
         realmodel = self.sourceModel()
         data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.ID.value))
         data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.ID.value))
-        return data_right < data_left
+        if data_right and data_left:
+            return data_right < data_left
+        else:
+            return False
 
     def __lessThen_Name(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()
