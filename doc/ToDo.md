@@ -20,7 +20,6 @@
 ### 0.2. Bugs
 
 ### 0.3. Issues
-- [ ] Prio: slider works on start
 - [ ] TodoListView:
   - [ ] disable wrap
   - [ ] Autowidth works not right

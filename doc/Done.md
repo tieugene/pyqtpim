@@ -78,6 +78,7 @@
 - [x] ~~Status not loaded into DB~~
 - [x] TodoForm.exec_edit(): ret True if chg only
 - [x] TodoListView: case-insensivity sort by name
+- [x] TodoForm.reset()
 
 ## Contacts.File-based
 - [ ] CLM:
