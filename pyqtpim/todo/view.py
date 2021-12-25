@@ -25,18 +25,23 @@ class TodoListView(EntryListView):
         hh = self.horizontalHeader()
         hh.sectionMoved.connect(self.sectionMoved)
         hh.setSectionsMovable(True)
-        for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value,
-                  enums.EColNo.Status.value, enums.EColNo.Syn.value):
-            hh.setSectionResizeMode(
-                hh.visualIndex(c),
-                hh.ResizeMode.ResizeToContents
-            )
+        # vvv Works not right
+        # for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value,
+        #           enums.EColNo.Status.value, enums.EColNo.Syn.value):
+        #     hh.setSectionResizeMode(
+        #         hh.visualIndex(c),
+        #         hh.ResizeMode.ResizeToContents
+        #     )
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
         self.sortByColumn(enums.EColNo.ID.value)
         # self.resizeRowsToContents()
         # signals
         # # self.activated.connect(self.rowChanged)
         self.selectionModel().currentRowChanged.connect(self.rowChanged)
+
+    def requery(self):
+        self.model().sourceModel().select()
+        self.resizeRowsToContents()
 
     def rowChanged(self, idx):
         """:todo: find sourceModel row"""
@@ -80,7 +85,7 @@ class TodoListView(EntryListView):
                 print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
             else:
                 self.model().sourceModel().setObj(q.lastInsertId(), obj)
-                self.model().sourceModel().select()
+                self.requery()
 
     def entryEdit(self):
         idx = self.currentIndex()
@@ -111,7 +116,7 @@ class TodoListView(EntryListView):
                 if not (q := QtSql.QSqlQuery(query.entry_mov % (store_id_new, entry_id))).exec_():
                     print(f"Something wrong with moving {entry_id}: {q.lastError().text()}")
             # realmodel.setObj(rec, obj)
-            realmodel.select()  # FIXME: update the record only
+            self.requery()  # FIXME: update the record only
 
     def entryDel(self):
         idx = self.currentIndex()
@@ -138,7 +143,7 @@ class TodoListView(EntryListView):
                     print(f"Something wrong with mark deleted {entry_id}: {q.lastError().text()}")
             else:
                 print(f"Entry already deleted: {entry_id}")
-            realmodel.select()
+            self.requery()
 
     def entryCat(self):
         """Show raw Entry content"""

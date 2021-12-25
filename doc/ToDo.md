@@ -12,42 +12,48 @@
     - *list(Entry(body, store_id)*
     - ~~list[store_id, Entry(body)]~~
     - ~~list[Entry]+dict[entry:store_id]~~
-  - [ ] ? + in-mem SQLite
+  - [ ] ? + in-mem SQLite &check;
 
 ### 0.1. Now
 - [ ] TodoList: QSqlQueryModel
-- [ ] ~~TodoProxyModel~~
-  - [ ] Sort
-  - [ ] Filters
 
 ### 0.2. Bugs
 
 ### 0.3. Issues
+- [ ] Prio: slider works on start
+- [ ] TodoListView:
+  - [ ] disable wrap
+  - [ ] Autowidth works not right
+- [ ] TodoView:
+  - [ ] Status: str
+  - [ ] Prio: orig
 - [ ] Check uid on Reload
-- [ ] Strict SQLite tables
 - [ ] Filter fault after add/del entry (id==None)
 
 ### 0.4. Features
-- [ ] SQLite indexes
+- [ ] 'Percent' => 'Progress'
 - [ ] Instant settings
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
-- [ ] 'Percent' => 'Progress'
 - [ ] Prio: x5
-- [ ] Settings: Sort by name: case sensivity
 - [ ] `import vobject` exact in `*/data.py`
 
 ### 0.5. UI/UX
-- [ ] Shrink widget groups
-- [ ] TodoView: compact
-- [ ] TodoView: URL as URL
-- [ ] Start...stop sync msg
-- [ ] Color `due today` (yellow) and `overdue` (red)
-- [ ] ELM.View: auto-h/w
-- [ ] EL.View: auto-h/w[^1]
-- [ ] Expandable 'View File' messagebox
-- [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
+- [ ] TodoForm:
+  - [ ] Shrink widget groups
+  - [ ] Categories: special combobox (as RTM/Evolution)
+  - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
+- [ ] TodoView:
+  - [ ] compact
+  - [ ] autowidth
+  - [ ] URL as URL
+- [ ] TodoListView:
+  - [ ] Show currently show tasks
+  - [ ] Color `due today` (yellow) and `overdue` (red)
+  - [ ] auto-h/w[^1]
+  - [ ] Expandable 'View File' messagebox
+- [ ] StoreListView: auto-h/w
 
 ## 1. Common
 - [ ] Docs:
@@ -58,6 +64,14 @@
 - [ ] EL: View:
   - [ ] sort
   - [ ] filter
+
+### SQL
+- [ ] Start...stop sync msg
+- [ ] ~~TodoProxyModel~~
+  - [ ] Sort
+  - [ ] Filters
+- [ ] Strict SQLite tables
+- [ ] SQLite indexes
 
 ## 2. ToDo
 

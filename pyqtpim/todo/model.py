@@ -180,6 +180,7 @@ class TodoProxyModel(EntryProxyModel):
             enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
         }[sort_id]
         self.endResetModel()
+        self.parent().requery()
 
     def filtChanged(self, filt_id: enums.EFiltBy):
         self.__currentFilter = {
@@ -190,6 +191,7 @@ class TodoProxyModel(EntryProxyModel):
         }[filt_id]
         # print("Filter changed:", filt_id)
         self.invalidateFilter()
+        # self.parent().requery()
 
     def __lessThen_ID(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()

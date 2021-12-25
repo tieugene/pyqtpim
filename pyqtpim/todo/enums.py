@@ -1,7 +1,16 @@
 """Misc VTODO utility enums and mappings.
 :todo: add vobjects field names"""
 from enum import IntEnum, unique, auto, Enum
-from PySide2 import QtCore, QtGui
+from PySide2 import QtGui
+
+# local constants
+ColorRed = QtGui.QColorConstants.Red  # QtGui.QColorConstants.Svg.red
+# ColorOrange = QtGui.QColorConstants.Svg.orange
+ColorYellow = QtGui.QColorConstants.Yellow
+ColorGreen = QtGui.QColorConstants.Svg.lime
+# ColorGreen = QtGui.QColorConstants.Green
+ColorBlue = QtGui.QColorConstants.Blue
+ColorLightBlue = QtGui.QColorConstants.Svg.dodgerblue
 
 
 @unique
@@ -134,10 +143,10 @@ Enum2Raw_Status: dict[EStatus, str] = {
 }
 TDecor_Status = '?…✓✗'
 TColor_Status = (
-    QtGui.QBrush(QtCore.Qt.blue),
-    QtGui.QBrush(QtCore.Qt.yellow),
-    QtGui.QBrush(QtCore.Qt.green),
-    QtGui.QBrush(QtCore.Qt.red)
+    ColorBlue,
+    ColorYellow,
+    ColorGreen,
+    ColorRed
 )
 
 
@@ -165,9 +174,9 @@ Raw2Enum_Prio: tuple = (
 
 TDecor_Prio = '↓-!'
 TColor_Prio = (
-    QtGui.QBrush(QtCore.Qt.blue),
-    QtGui.QBrush(QtCore.Qt.green),
-    QtGui.QBrush(QtCore.Qt.red)
+    ColorLightBlue,
+    ColorGreen,
+    ColorRed
 )
 
 
@@ -182,9 +191,9 @@ class ESyn(IntEnum):
 
 TDecor_Syn = '*✓✗'
 TColor_Syn = (
-    QtGui.QBrush(QtCore.Qt.yellow),
-    QtGui.QBrush(QtCore.Qt.green),
-    QtGui.QBrush(QtCore.Qt.red)
+    ColorYellow,
+    ColorGreen,
+    ColorRed
 )
 
 

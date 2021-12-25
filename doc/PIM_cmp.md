@@ -20,10 +20,10 @@
 ### [RTM](https://www.rememberthemilk.com)
 - &odot; RAM=200MB (Linux)
 - &odot; Subtasks (Pro)
-- &ominus; $40/y
-- &ominus; Off-line - Pro only
-- &ominus; ~~Self WebDAV~~
-- &ominus; Attaches: GDrive/Dropbox/MyComp (Pro)
+- &ominus; Pro = $40/y
+- &ominus; ~~Off-line~~ (Pro only) &rArr; *нет инета - нет todo*
+- &ominus; ~~Self CebDAV~~
+- &ominus; ~~Attaches~~ (Pro - GDrive/Dropbox/MyComp)
 - &ominus; ~~Multifilter~~ (e.g. Today & List1 & Cat1)
 - &ominus; ~~List on/off~~
 - &ominus; Status: Active/Done (maybe 'in progress')
