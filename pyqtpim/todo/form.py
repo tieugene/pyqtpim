@@ -81,6 +81,8 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
             self.is_enabled.setChecked(True)
             self.f_datetime.setEnabled(True)
             self.f_datetime.setDateTime(data)
+        else:
+            self.__reset()
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
@@ -169,6 +171,8 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                     self.l_tz.setText(self.t_tz._tzid)
             else:  # date
                 self.f_date.setDate(data)
+        else:
+            self.__reset()
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
@@ -203,15 +207,23 @@ class SlidedSpinBox(QtWidgets.QWidget):
         # signals
         self.is_enabled.stateChanged[int].connect(self.__chg_enabled)
 
+    def __reset(self):
+        self.f_slider.setValue(0)
+        self.f_spinbox.setValue(0)
+        self.is_enabled.setChecked(False)
+        self.__chg_enabled(QtCore.Qt.CheckState.Unchecked)
+
     def __chg_enabled(self, state: QtCore.Qt.CheckState):
         self.f_slider.setEnabled(bool(state))
         self.f_spinbox.setEnabled(bool(state))
 
-    def setData(self, data: Optional[int]):
+    def setData(self, data: Optional[int] = None):
         if data is not None:
             self.f_spinbox.setValue(data)
-        self.is_enabled.setChecked(data is not None)
-        self.__chg_enabled(self.is_enabled.checkState())
+            self.is_enabled.setChecked(True)
+            self.__chg_enabled(QtCore.Qt.CheckState.Checked)
+        else:
+            self.__reset()
 
     def getData(self) -> Optional[int]:
         if self.is_enabled.isChecked():
@@ -225,7 +237,7 @@ class ProgressWidget(SlidedSpinBox):
         self.f_slider.valueChanged[int].connect(self.f_spinbox.setValue)
         self.f_spinbox.valueChanged[int].connect(self.f_slider.setValue)
 
-    def setData(self, data: int):
+    def setData(self, data: Optional[int] = None):
         super().setData(data)
         if data is not None:
             self.f_slider.setValue(data)
@@ -243,10 +255,10 @@ class PrioWidget(SlidedSpinBox):
         self.f_slider.setTickInterval(1)
         self.f_slider.valueChanged[int].connect(self._chg_slider)
 
-    def _chg_slider(self, data: int):
+    def _chg_slider(self, data: Optional[int] = None):
         self.f_spinbox.setValue(self.__slide2spin[data])
 
-    def setData(self, data: int):
+    def setData(self, data: Optional[int] = None):
         if data is not None:
             self.f_slider.setValue(self.__spin2slide[data])
         super().setData(data)  # avoid spinbox reset
@@ -260,8 +272,9 @@ class SpecialCombo(QtWidgets.QComboBox):
         super().__init__(parent)
         self.addItems(items)
 
-    def setData(self, data):
-        self.setCurrentIndex(self._data2idx[data])
+    def setData(self, data=None):
+        if data is not None:
+            self.setCurrentIndex(self._data2idx[data])
 
     def getData(self) -> Any:
         return self._idx2data[self.currentIndex()]
@@ -387,7 +400,7 @@ class TodoForm(QtWidgets.QDialog):
         """Create new entry.
         :return: created obj and store_id
         """
-        self.clear()
+        self.__reset()
         if self.exec_():
             obj = VObjTodo()
             _, store_id = self.to_obj(obj)
@@ -395,10 +408,11 @@ class TodoForm(QtWidgets.QDialog):
 
     def exec_edit(self, obj: VObjTodo, store_id: int, can_move: bool) -> Optional[tuple[bool, int]]:
         """Edit entry exists.
+
         :param obj: obj to edit
         :param store_id: source store
         :param can_move: whether obj can be moved to other store
-        :return: object was changed flag and [new] store_id
+        :return: object was changed flag and [new] store_id.
         """
         store_id_old = store_id
         self.from_obj(obj, store_id, can_move)
@@ -407,8 +421,18 @@ class TodoForm(QtWidgets.QDialog):
             if obj_chg or (store_id_new != store_id_old):
                 return obj_chg, store_id_new
 
-    def clear(self):  # TODO: clear old values for newly creating entry
-        ...
+    def __reset(self):  # TODO: clear old values for newly creating entry
+        self.f_class.setData()
+        self.f_completed.setData()
+        self.f_description.clear()
+        self.f_dtstart.setData()
+        self.f_due.setData()
+        self.f_location.clear()
+        self.f_progress.setData()
+        self.f_priority.setData()
+        self.f_status.setData()
+        self.f_summary.clear()
+        self.f_url.clear()
 
     def from_obj(self, data: VObjTodo, store_id: int, can_move: bool):
         """Preload form with VTODO"""

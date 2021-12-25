@@ -315,10 +315,6 @@ class TodoView(EntryView):
         # description
         self.mapper.currentIndexChanged.connect(self.__idxChgd)
 
-    def clean(self):
-        self.summary.clear()
-        self.details.clear()
-
 
 class TodoSortWidget(QtWidgets.QGroupBox):
     by_id: QtWidgets.QRadioButton
