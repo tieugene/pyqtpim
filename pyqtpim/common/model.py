@@ -9,8 +9,9 @@ from .settings import SetGroup
 from . import enums
 
 
-class EntryModel(QtSql.QSqlTableModel):
+class EntryModel(QtSql.QSqlQueryModel):
     store_name = dict()  # class-wide cache of Store names (id:name)
+    _own_query: str
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

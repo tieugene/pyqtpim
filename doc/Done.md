@@ -69,6 +69,18 @@
 - [x] Deleted not editable; Synced not movable
 - [x] 2+ cat
 - [x] setObj(id), delObj(id), getObj(row)
+- [x] TodoForm.Progress: checked
+- [x] TodoForm.Prio: checked, 5x, fixed
+- [x] TodoForm: fixed 'default tz: file...'
+- [x] TodoDetails: extend
+- [x] ~~Something strange with Details after Edit~~
+- [x] TodoForm: exec_(VTodoObj)
+- [x] ~~Status not loaded into DB~~
+- [x] TodoForm.exec_edit(): ret True if chg only
+- [x] TodoListView: case-insensivity sort by name
+- [x] TodoForm.reset()
+- [x] TodoList: QSqlQueryModel
+- [x] TodoList: disable wrap
 
 ## Contacts.File-based
 - [ ] CLM:

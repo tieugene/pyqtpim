@@ -12,47 +12,48 @@
     - *list(Entry(body, store_id)*
     - ~~list[store_id, Entry(body)]~~
     - ~~list[Entry]+dict[entry:store_id]~~
-  - [ ] ? + in-mem SQLite
+  - [ ] ? + in-mem SQLite &check;
 
-### 0.1. Job
-- [ ] TodoForm:
-  - [ ] exec_(VTodoObj)
-  - [ ] rework/fix Prio edit
-  - [ ] default tz - 'file...'
-- [ ] TodoList: QSqlQueryModel
-  - [ ] CRUD
-- [ ] ~~TodoPRoxyModel~~
-  - [ ] Sort
-  - [ ] Filters
+### 0.1. Now
+*None*
 
-### 0.2. Fixme (critical)
+### 0.2. Bugs
+*None*
 
-### 0.3. Fixme (non-critical)
-- [ ] Something strange with Details after Edit
+### 0.3. Issues
+- [ ] TodoListView:
+  - [ ] Autowidth
+- [ ] TodoView:
+  - [ ] Status: str
+  - [ ] Prio: orig
 - [ ] Check uid on Reload
-- [ ] Strict SQLite tables
 - [ ] Filter fault after add/del entry (id==None)
-- [ ] Store: QSqlQueryModel: RUD
 
-### 0.4. Tuning
-- [ ] TodoForm: accept(): ret True if chg only
-- [ ] URL as URL
-- [ ] Start...stop sync msg
-- [ ] SQLite indexes
-- [ ] Color `due today` (yellow) and `overdue` (red)
+### 0.4. Features
+- [ ] 'Percent' => 'Progress'
 - [ ] Instant settings
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
-- [ ] 'Percent' => 'Progress'
 - [ ] Prio: x5
-- [ ] Shrink widget groups
-- [ ] ELM.View: auto-h/w
-- [ ] EL.View: auto-h/w[^1]
-- [ ] Expandable 'View File' messagebox
-- [ ] TodoForm.Categories: special combobox (as RTM/Evolution)
-- [ ] Settings: Sort by name: case sensivity
 - [ ] `import vobject` exact in `*/data.py`
+
+### 0.5. UI/UX
+- [ ] TodoForm:
+  - [ ] Save previous selectd store for (exec_new())
+  - [ ] Shrink widget groups
+  - [ ] Categories: special combobox (as RTM/Evolution)
+  - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
+- [ ] TodoView:
+  - [ ] compact
+  - [ ] autowidth
+  - [ ] URL as URL
+- [ ] TodoListView:
+  - [ ] Show currently show tasks
+  - [ ] Color `due today` (yellow) and `overdue` (red)
+  - [ ] auto-h/w[^1]
+  - [ ] Expandable 'View File' messagebox
+- [ ] StoreListView: auto-h/w
 
 ## 1. Common
 - [ ] Docs:
@@ -63,6 +64,14 @@
 - [ ] EL: View:
   - [ ] sort
   - [ ] filter
+
+### SQL
+- [ ] Start...stop sync msg
+- [ ] ~~TodoProxyModel~~
+  - [ ] Sort
+  - [ ] Filters
+- [ ] Strict SQLite tables
+- [ ] SQLite indexes
 
 ## 2. ToDo
 

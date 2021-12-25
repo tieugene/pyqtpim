@@ -76,18 +76,15 @@ def upd_my(entry_id: int, vobj: VObjTodo, store_id: int, esyn: enums.ESyn) -> bo
 
 def Sync(store_id: int, dry_run=True):
     """Standalone syncer DB<>source"""
+    if not dry_run:
+        print("Syncing", end='…')
     my_side: dict[uuid.UUID, (int, bool, VObjTodo)]
     remote_side: dict[uuid.UUID, (str, VObjTodo)]
     # 1. load all entry[store_id] into dict[uid: (id, body)]
-    if not (my_side := load_my(store_id)):
-        eprint("My side is empty")
-        return
+    my_side = load_my(store_id)
     # pprint.pprint(my_side)
     # 2. load all from connections into [uid: (path, body)]
     r_side, r_dir = load_remote(store_id)
-    if not (r_side and r_dir):
-        eprint("Remote side is empty")
-        return
     # pprint.pprint(remote_side)
     # 3. Compare
     for uid, (my_id, my_syn, my_vobj) in my_side.items():
@@ -153,3 +150,4 @@ def Sync(store_id: int, dry_run=True):
             continue
         if not add_my(vobj, store_id, enums.ESyn.Synced):
             eprint(f"Something bad with L+: {uid} {vobj.get_Summary()}")
+    print('✓')

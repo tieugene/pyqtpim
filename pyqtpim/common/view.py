@@ -34,6 +34,7 @@ class EntryListView(QtWidgets.QTableView):
         # self.setSortingEnabled(True) # requires sorting itself
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().hide()
+        self.setWordWrap(False)
         __model = self._own_model(self)
         self.setModel(__model)
 

@@ -25,17 +25,23 @@ class TodoListView(EntryListView):
         hh = self.horizontalHeader()
         hh.sectionMoved.connect(self.sectionMoved)
         hh.setSectionsMovable(True)
-        for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value,
-                  enums.EColNo.Status.value, enums.EColNo.Syn.value):
-            hh.setSectionResizeMode(
-                hh.visualIndex(c),
-                hh.ResizeMode.ResizeToContents
-            )
+        # vvv Works not right
+        # for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value,
+        #           enums.EColNo.Status.value, enums.EColNo.Syn.value):
+        #     hh.setSectionResizeMode(
+        #         hh.visualIndex(c),
+        #         hh.ResizeMode.ResizeToContents
+        #     )
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
         self.sortByColumn(enums.EColNo.ID.value)
+        # self.resizeRowsToContents()
         # signals
         # # self.activated.connect(self.rowChanged)
         self.selectionModel().currentRowChanged.connect(self.rowChanged)
+
+    def requery(self):
+        self.model().sourceModel().reload()
+        self.resizeRowsToContents()
 
     def rowChanged(self, idx):
         """:todo: find sourceModel row"""
@@ -69,10 +75,9 @@ class TodoListView(EntryListView):
 
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
-        if f.exec_():
+        if pair := f.exec_new():
+            obj, store_id = pair
             # TODO: move to model
-            obj = VObjTodo()
-            _, store_id = f.to_obj(obj)
             q = obj2sql(query.entry_add, obj)
             q.bindValue(':store_id', store_id)
             q.bindValue(':syn', enums.ESyn.New.value)
@@ -80,7 +85,7 @@ class TodoListView(EntryListView):
                 print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
             else:
                 self.model().sourceModel().setObj(q.lastInsertId(), obj)
-                self.model().sourceModel().select()
+                self.requery()
 
     def entryEdit(self):
         idx = self.currentIndex()
@@ -94,27 +99,24 @@ class TodoListView(EntryListView):
             QtWidgets.QMessageBox.warning(self, "Edit deleted", "You cannot edit deleted entry")
             return
         entry_id = rec.value('id')
-        store_id = rec.value('store_id')
+        store_id = rec.value('store_id')  # ??? returns model.data()
         # TODO: by id
         obj: VObjTodo = realmodel.getObjByRow(row)
         f = TodoForm(self)  # TODO: cache creation
-        f.from_obj(obj, store_id, can_move=(syn == enums.ESyn.New.value))
-        if f.exec_():
+        if pair := f.exec_edit(obj, store_id, can_move=(syn == enums.ESyn.New.value)):
             # TODO: move to model
-            obj_chg, store_id_new = f.to_obj(obj)
-            store_chg = (store_id_new != store_id)
-            if obj_chg or store_chg:
-                if obj_chg:  # FIXME: obj chg AND moved
-                    q = obj2sql(query.entry_upd, obj)
-                    q.bindValue(':store_id', store_id_new)
-                    q.bindValue(':id', entry_id)
-                    if not q.exec_():
-                        print(f"Something bad with updating record '{obj.get_Summary()}': {q.lastError().text()}")
-                else:  # just move to other store
-                    if not (q := QtSql.QSqlQuery(query.entry_mov % (store_id_new, entry_id))).exec_():
-                        print(f"Something wrong with moving {entry_id}: {q.lastError().text()}")
-                # realmodel.setObj(rec, obj)
-                realmodel.select()  # FIXME: update the record only
+            obj_chg, store_id_new = pair
+            if obj_chg:  # FIXME: obj chg AND moved
+                q = obj2sql(query.entry_upd, obj)
+                q.bindValue(':store_id', store_id_new)
+                q.bindValue(':id', entry_id)
+                if not q.exec_():
+                    print(f"Something bad with updating record '{obj.get_Summary()}': {q.lastError().text()}")
+            else:  # just move to other store
+                if not (q := QtSql.QSqlQuery(query.entry_mov % (store_id_new, entry_id))).exec_():
+                    print(f"Something wrong with moving {entry_id}: {q.lastError().text()}")
+            # realmodel.setObj(rec, obj)
+            self.requery()  # FIXME: update the record only
 
     def entryDel(self):
         idx = self.currentIndex()
@@ -141,7 +143,7 @@ class TodoListView(EntryListView):
                     print(f"Something wrong with mark deleted {entry_id}: {q.lastError().text()}")
             else:
                 print(f"Entry already deleted: {entry_id}")
-            realmodel.select()
+            self.requery()
 
     def entryCat(self):
         """Show raw Entry content"""
@@ -216,76 +218,102 @@ class TodoStoreListView(StoreListView):
 
 
 class TodoView(EntryView):
+    id_: QtWidgets.QSpinBox
+    store: QtWidgets.QLineEdit
     summary: QtWidgets.QLineEdit
-    details: QtWidgets.QTextEdit
+    category: QtWidgets.QLineEdit
+    priority: QtWidgets.QLineEdit
+    dtstart: QtWidgets.QLineEdit
+    due: QtWidgets.QLineEdit
+    status: QtWidgets.QLineEdit
+    progress: QtWidgets.QLineEdit
+    completed: QtWidgets.QLineEdit
+    url: QtWidgets.QLineEdit
+    location: QtWidgets.QLineEdit
+    class_: QtWidgets.QLineEdit
+    modified: QtWidgets.QDateTimeEdit
+    description: QtWidgets.QTextEdit
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.setTitle("Details")
         self.__createWidgets()
 
     def __createWidgets(self):
         # widgets
+        self.id_ = QtWidgets.QSpinBox(self)
+        self.store = QtWidgets.QLineEdit(self)
         self.summary = QtWidgets.QLineEdit(self)
-        self.details = QtWidgets.QTextEdit(self)
+        self.category = QtWidgets.QLineEdit(self)
+        self.priority = QtWidgets.QLineEdit(self)
+        self.dtstart = QtWidgets.QLineEdit(self)
+        self.due = QtWidgets.QLineEdit(self)
+        self.status = QtWidgets.QLineEdit(self)
+        self.progress = QtWidgets.QLineEdit(self)
+        self.completed = QtWidgets.QLineEdit(self)
+        self.url = QtWidgets.QLineEdit(self)
+        self.location = QtWidgets.QLineEdit(self)
+        self.class_ = QtWidgets.QLineEdit(self)
+        self.modified = QtWidgets.QDateTimeEdit(self)
+        self.description = QtWidgets.QTextEdit(self)
         # attributes
-        self.summary.setReadOnly(True)
-        self.details.setReadOnly(True)
+        for i in (self.id_, self.store, self.summary, self.category, self.priority, self.dtstart, self.due, self.status,
+                  self.progress, self.completed, self.url, self.location, self.class_, self.modified, self.description):
+            i.setReadOnly(True)
+        for i in (self.id_, self.modified):
+            i.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
+        self.id_.setMaximum(1 << 30)
         # layout
-        layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(self.summary)
-        layout.addWidget(self.details)
+        layout = QtWidgets.QFormLayout()
+        layout.addRow("ID", self.id_)
+        layout.addRow("Store", self.store)
+        layout.addRow("Summary:", self.summary)
+        layout.addRow("Category:", self.category)
+        layout.addRow("Priority:", self.priority)
+        layout.addRow("DTStart:", self.dtstart)
+        layout.addRow("Due:", self.due)
+        layout.addRow("Status:", self.status)
+        layout.addRow("Progress:", self.progress)
+        layout.addRow("Completed:", self.completed)
+        layout.addRow("URL:", self.url)
+        layout.addRow("Location:", self.location)
+        layout.addRow("Class:", self.class_)
+        layout.addRow("Modified:", self.modified)
+        layout.addRow(self.description)
+        layout.setVerticalSpacing(0)    # default=-1
         self.setLayout(layout)
+        # print("vSpace:", layout.verticalSpacing())
+        # print("hSpace:", layout.horizontalSpacing())
 
     def __idxChgd(self, row: int):
         """Only for selection; not calling on deselection"""
-        self.__fill_details(self.mapper.model().getObjByRow(row))
-
-    def __fill_details(self, data: VObjTodo = None):    # TODO: clear on None
-        def __mk_row(title: str, value: Any):
-            if value is None:
-                value = ''
-            elif isinstance(value, list):
-                value = '<ul><li>' + '</li><li>'.join(value) + '</li></ul>'
-            elif isinstance(value, datetime.datetime):
-                value = value.strftime('%y.%m.%d %H:%M')
-            elif isinstance(value, datetime.date):
-                value = value.strftime('%y.%m.%d')
-            return f"<tr><th>{title}:</th><td>{value}</td></tr>"
-        text = '<table>'
-        # text += __mk_row("Created", data.getCreated().isoformat())
-        # text += __mk_row("DTSTamp", data.getDTStamp().isoformat())
-        text += __mk_row("Modified", data.get_LastModified().isoformat())
-        text += __mk_row("Priority", data.get_Priority())
-        text += __mk_row("Categories", data.get_Categories())
-        text += __mk_row("Class", enums.Enum2Raw_Class.get(data.get_Class()))
-        # v = data.getDTStart()
-        # print("Print DTSTart:", v, type(v))
-        text += __mk_row("DTStart", v.isoformat() if (v := data.get_DTStart()) else '---')
-        text += __mk_row("Due", v.isoformat() if (v := data.get_Due()) else '---')
-        text += __mk_row("Progress", data.get_Progress())
-        text += __mk_row("Completed", v.isoformat() if (v := data.get_Completed()) else '---')
-        text += __mk_row("Status", enums.Enum2Raw_Status.get(data.get_Status()))
-        text += __mk_row("Location", data.get_Location())
-        text += __mk_row("URL", data.get_URL())
-        text += '<tr><th>Description:</th><td/></tr>'
-        if desc := data.get_Description():
-            desc = '<br/>'.join(desc.splitlines())
-            text += f"<tr><td colspan=2>{desc}</td></tr>"
-        text += '</table>'
-        self.details.setText(text)
+        # FIXME: clean prio, progress, completed
+        data = self.mapper.model().getObjByRow(row)
+        self.category.setText(', '.join(v) if (v := data.get_Categories()) else None)
+        self.url.setText(data.get_URL())
+        self.class_.setText(enums.Enum2Raw_Class.get(data.get_Class()))
+        self.description.setText(data.get_Description())
 
     def setModel(self, model: TodoModel):
         """Setup mapper
         :todo: indexOf
         """
         super().setModel(model)
+        self.mapper.addMapping(self.id_, enums.EColNo.ID.value)
+        self.mapper.addMapping(self.store, enums.EColNo.Store.value)
         self.mapper.addMapping(self.summary, enums.EColNo.Summary.value)
+        # category
+        self.mapper.addMapping(self.priority, enums.EColNo.Prio.value)
+        self.mapper.addMapping(self.dtstart, enums.EColNo.DTStart.value)
+        self.mapper.addMapping(self.due, enums.EColNo.Due.value)
+        self.mapper.addMapping(self.status, enums.EColNo.Status.value)
+        self.mapper.addMapping(self.progress, enums.EColNo.Progress.value)
+        self.mapper.addMapping(self.completed, enums.EColNo.Completed.value)
+        # URL
+        self.mapper.addMapping(self.location, enums.EColNo.Location.value)
+        # class
+        self.mapper.addMapping(self.modified, enums.EColNo.Modified.value)
+        # description
         self.mapper.currentIndexChanged.connect(self.__idxChgd)
-
-    def clean(self):
-        self.summary.clear()
-        self.details.clear()
 
 
 class TodoSortWidget(QtWidgets.QGroupBox):

@@ -5,8 +5,8 @@ from typing import Optional, Union, Any
 # 2. PySide
 from PySide2 import QtWidgets, QtCore, QtSql
 # 3. 3rds
-import dateutil
 import vobject
+import dateutil
 # 4. local
 from common import query as query_common
 from .data import VObjTodo
@@ -52,10 +52,10 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
         # self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        self.is_enabled = QtWidgets.QCheckBox()
-        self.f_datetime = QtWidgets.QDateTimeEdit()
+        self.is_enabled = QtWidgets.QCheckBox(self)
+        self.f_datetime = QtWidgets.QDateTimeEdit(self)
         self.f_datetime.setCalendarPopup(True)
-        layout = QtWidgets.QHBoxLayout()
+        layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_datetime)
         self.setLayout(layout)
@@ -81,6 +81,8 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
             self.is_enabled.setChecked(True)
             self.f_datetime.setEnabled(True)
             self.f_datetime.setDateTime(data)
+        else:
+            self.__reset()
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
@@ -100,15 +102,15 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
         # self.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
-        self.is_enabled = QtWidgets.QCheckBox()
-        self.is_timed = QtWidgets.QCheckBox()
-        self.is_tzed = QtWidgets.QCheckBox()
-        self.f_date = QtWidgets.QDateEdit()
+        self.is_enabled = QtWidgets.QCheckBox(self)
+        self.is_timed = QtWidgets.QCheckBox(self)
+        self.is_tzed = QtWidgets.QCheckBox(self)
+        self.f_date = QtWidgets.QDateEdit(self)
+        self.f_time = QtWidgets.QTimeEdit(self)
+        self.l_tz = QtWidgets.QLabel(self)
         self.f_date.setCalendarPopup(True)
-        self.f_time = QtWidgets.QTimeEdit()
-        self.l_tz = QtWidgets.QLabel()
-        self.t_tz = None
-        layout = QtWidgets.QHBoxLayout()
+        self.t_tz = datetime.timezone.utc
+        layout = QtWidgets.QHBoxLayout(self)
         layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_date)
         layout.addWidget(self.is_timed)
@@ -136,7 +138,8 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_time.setTime(now.time())
         self.is_tzed.setChecked(False)
         self.is_tzed.setEnabled(False)
-        self.l_tz.setText(str(self.t_tz))  # FIXME:
+        # self.l_tz.setText(str(self.t_tz))  # FIXME:
+        self.l_tz.setText(self.t_tz._ttinfo_std.abbr)
 
     def __switch_all(self, state: QtCore.Qt.CheckState):
         """
@@ -168,6 +171,8 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
                     self.l_tz.setText(self.t_tz._tzid)
             else:  # date
                 self.f_date.setDate(data)
+        else:
+            self.__reset()
 
     def getData(self) -> Optional[Union[datetime.date, datetime.datetime]]:
         if self.is_enabled.isChecked():
@@ -182,77 +187,81 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
 
 
 class SlidedSpinBox(QtWidgets.QWidget):
+    is_enabled: QtWidgets.QCheckBox
     f_slider: QtWidgets.QSlider
     f_spinbox: QtWidgets.QSpinBox
 
     def __init__(self, v_max: int, parent=None):
         super().__init__(parent)
         self.setContentsMargins(0, 0, 0, 0)
-        self.f_slider = QtWidgets.QSlider()
-        self.f_slider.setOrientation(QtCore.Qt.Horizontal)
-        self.f_slider.setMaximum(v_max)
-        self.f_spinbox = QtWidgets.QSpinBox()
-        self.f_spinbox.setMaximum(v_max)
-        layout = QtWidgets.QHBoxLayout()
+        self.is_enabled = QtWidgets.QCheckBox(self)
+        self.f_slider = QtWidgets.QSlider(self)
+        self.f_spinbox = QtWidgets.QSpinBox(self)
+        layout = QtWidgets.QHBoxLayout(self)
+        layout.addWidget(self.is_enabled)
         layout.addWidget(self.f_slider)
         layout.addWidget(self.f_spinbox)
         self.setLayout(layout)
+        self.f_slider.setOrientation(QtCore.Qt.Horizontal)
+        self.f_spinbox.setMaximum(v_max)
         # signals
-        self.f_slider.valueChanged[int].connect(self._chg_slider)
-        self.f_spinbox.valueChanged[int].connect(self._chg_spinbox)
+        self.is_enabled.stateChanged[int].connect(self.__chg_enabled)
 
-    # @QtCore.Slot(int)
-    def _chg_slider(self, v: int):
-        self.f_spinbox.setValue(v)
+    def __reset(self):
+        self.f_slider.setValue(0)
+        self.f_spinbox.setValue(0)
+        self.is_enabled.setChecked(False)
+        self.__chg_enabled(QtCore.Qt.CheckState.Unchecked)
 
-    def _chg_spinbox(self, v: int):
-        self.f_slider.setValue(v)
+    def __chg_enabled(self, state: QtCore.Qt.CheckState):
+        self.f_slider.setEnabled(bool(state))
+        self.f_spinbox.setEnabled(bool(state))
 
-    def setData(self, data: int):
+    def setData(self, data: Optional[int] = None):
+        if data is not None:
+            self.f_spinbox.setValue(data)
+            self.is_enabled.setChecked(True)
+            self.__chg_enabled(QtCore.Qt.CheckState.Checked)
+        else:
+            self.__reset()
+
+    def getData(self) -> Optional[int]:
+        if self.is_enabled.isChecked():
+            return self.f_spinbox.value()
+
+
+class ProgressWidget(SlidedSpinBox):
+    def __init__(self, parent=None):
+        super().__init__(100, parent)
+        self.f_slider.setMaximum(100)
+        self.f_slider.valueChanged[int].connect(self.f_spinbox.setValue)
+        self.f_spinbox.valueChanged[int].connect(self.f_slider.setValue)
+
+    def setData(self, data: Optional[int] = None):
+        super().setData(data)
         if data is not None:
             self.f_slider.setValue(data)
-            self.f_spinbox.setValue(data)
-
-    def getData(self) -> int:
-        return self.f_spinbox.value()
 
 
 class PrioWidget(SlidedSpinBox):
+    __spin2slide = (0, 5, 4, 4, 4, 3, 2, 2, 2, 1)
+    __slide2spin = (0, 9, 7, 5, 3, 1)
+
     def __init__(self, parent=None):
         super().__init__(9, parent)
-        self.f_slider.setMaximum(3)
+        self.f_spinbox.setReadOnly(True)
+        self.f_slider.setMaximum(5)
         self.f_slider.setTickPosition(QtWidgets.QSlider.TickPosition.TicksAbove)
         self.f_slider.setTickInterval(1)
+        self.f_slider.valueChanged[int].connect(self._chg_slider)
 
-    @staticmethod
-    def __spin2slide(v: int):
-        return (0, 1, 1, 1, 1, 2, 3, 3, 3, 3)[v]
+    def _chg_slider(self, data: Optional[int] = None):
+        self.f_spinbox.setValue(self.__slide2spin[data])
 
-    def _chg_slider(self, v: int):
-        # print("slider")
-        if v == 0:
-            self.f_spinbox.setValue(0)
-        elif v == 1:
-            if not (0 < self.f_spinbox.value() < 5):
-                self.f_spinbox.setValue(1)
-        elif v == 2:
-            self.f_spinbox.setValue(5)
-        elif v == 3:
-            if not (5 < self.f_spinbox.value() < 9):
-                self.f_spinbox.setValue(9)
-
-    def _chg_spinbox(self, v: int):
-        new_slide_v = self.__spin2slide(v)
-        if self.f_slider.value() != new_slide_v:
-            self.f_slider.setValue(new_slide_v)
-
-    def setData(self, data: int):
+    def setData(self, data: Optional[int] = None):
         if data is not None:
-            self.f_slider.setValue(self.__spin2slide(data))
-            self.f_spinbox.setValue(data)
-
-    def getData(self) -> int:
-        return self.f_spinbox.value()
+            self.f_slider.setValue(self.__spin2slide[data])
+        super().setData(data)  # avoid spinbox reset
 
 
 class SpecialCombo(QtWidgets.QComboBox):
@@ -263,8 +272,9 @@ class SpecialCombo(QtWidgets.QComboBox):
         super().__init__(parent)
         self.addItems(items)
 
-    def setData(self, data):
-        self.setCurrentIndex(self._data2idx[data])
+    def setData(self, data=None):
+        if data is not None:
+            self.setCurrentIndex(self._data2idx[data])
 
     def getData(self) -> Any:
         return self._idx2data[self.currentIndex()]
@@ -324,7 +334,7 @@ class TodoForm(QtWidgets.QDialog):
     f_dtstart: CheckableDateAndTimeEdit
     f_due: CheckableDateAndTimeEdit
     f_location: QtWidgets.QLineEdit
-    f_percent: SlidedSpinBox  # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
+    f_progress: ProgressWidget  # Steps: TB/Evolution=1, Rainlendar=10, Reminder=x, OpenTodo=5
     f_priority: PrioWidget
     f_status: StatusCombo
     f_summary: QtWidgets.QLineEdit
@@ -342,7 +352,6 @@ class TodoForm(QtWidgets.QDialog):
         self.f_list = ListEdit(self)
         # attach[]
         self.f_category = QtWidgets.QLineEdit(self)  # TODO: checkable combobox
-        self.f_category.setClearButtonEnabled(True)
         self.f_class = ClassCombo(self)  # TODO: radio/slider?
         # comment[]
         self.f_completed = CheckableDateTimeEdit(self)
@@ -351,15 +360,16 @@ class TodoForm(QtWidgets.QDialog):
         self.f_dtstart = CheckableDateAndTimeEdit(self)
         self.f_due = CheckableDateAndTimeEdit(self)
         self.f_location = QtWidgets.QLineEdit(self)
-        self.f_location.setClearButtonEnabled(True)
-        self.f_percent = SlidedSpinBox(100, self)
+        self.f_progress = ProgressWidget(self)
         self.f_priority = PrioWidget(self)
         # relatedto
         # rrule
         self.f_status = StatusCombo(self)  # TODO: radio?
         self.f_summary = QtWidgets.QLineEdit(self)
         self.f_url = QtWidgets.QLineEdit(self)
+        self.f_category.setClearButtonEnabled(True)
         self.f_url.setClearButtonEnabled(True)
+        self.f_location.setClearButtonEnabled(True)
         # the end
         self.button_box = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         self.button_box.accepted.connect(self.accept)
@@ -376,35 +386,68 @@ class TodoForm(QtWidgets.QDialog):
         layout.addRow("DTStart", self.f_dtstart)  # on demand
         layout.addRow("Due", self.f_due)
         layout.addRow("Status", self.f_status)
-        layout.addRow("% complete", self.f_percent)
+        layout.addRow("% complete", self.f_progress)
         layout.addRow("Completed", self.f_completed)
         layout.addRow("Location", self.f_location)  # on demand
         layout.addRow("URL", self.f_url)  # on demand
         layout.addRow("Description", self.f_description)
         # the end
         layout.addRow(self.button_box)
+        layout.setVerticalSpacing(0)
         self.setLayout(layout)
 
-    def clear(self):  # TODO: clear old values for newly creating entry
-        ...
+    def exec_new(self) -> Optional[tuple[VObjTodo, int]]:
+        """Create new entry.
+        :return: created obj and store_id
+        """
+        self.__reset()
+        if self.exec_():
+            obj = VObjTodo()
+            _, store_id = self.to_obj(obj)
+            return obj, store_id
 
-    def from_obj(self, data: VObjTodo, store_id: int, can_move=False):
+    def exec_edit(self, obj: VObjTodo, store_id: int, can_move: bool) -> Optional[tuple[bool, int]]:
+        """Edit entry exists.
+
+        :param obj: obj to edit
+        :param store_id: source store
+        :param can_move: whether obj can be moved to other store
+        :return: object was changed flag and [new] store_id.
+        """
+        store_id_old = store_id
+        self.from_obj(obj, store_id, can_move)
+        if self.exec_():
+            obj_chg, store_id_new = self.to_obj(obj)
+            if obj_chg or (store_id_new != store_id_old):
+                return obj_chg, store_id_new
+
+    def __reset(self):  # TODO: clear old values for newly creating entry
+        self.f_class.setData()
+        self.f_completed.setData()
+        self.f_description.clear()
+        self.f_dtstart.setData()
+        self.f_due.setData()
+        self.f_location.clear()
+        self.f_progress.setData()
+        self.f_priority.setData()
+        self.f_status.setData()
+        self.f_summary.clear()
+        self.f_url.clear()
+
+    def from_obj(self, data: VObjTodo, store_id: int, can_move: bool):
         """Preload form with VTODO"""
         self.f_list.setData(store_id)
         if not can_move:
             self.f_list.setEnabled(False)
         if v := data.get_Categories():
-            if isinstance(v, list):
-                self.f_category.setText(', '.join(v))
-            else:  # ?
-                self.f_category.setText(v)
+            self.f_category.setText(', '.join(v))
         self.f_class.setData(data.get_Class())
         self.f_completed.setData(v.astimezone() if (v := data.get_Completed()) else None)
         self.f_description.setPlainText(data.get_Description())
         self.f_dtstart.setData(data.get_DTStart())
         self.f_due.setData(data.get_Due())
         self.f_location.setText(data.get_Location())
-        self.f_percent.setData(data.get_Progress())
+        self.f_progress.setData(data.get_Progress())
         self.f_priority.setData(data.get_Priority())
         self.f_status.setData(data.get_Status())
         self.f_summary.setText(data.get_Summary())
@@ -431,7 +474,7 @@ class TodoForm(QtWidgets.QDialog):
         obj_chgd |= obj.set_DTStart(self.f_dtstart.getData())
         obj_chgd |= obj.set_Due(self.f_due.getData())
         obj_chgd |= obj.set_Location(self.f_location.text() or None)
-        obj_chgd |= obj.set_Progress(self.f_percent.getData())
+        obj_chgd |= obj.set_Progress(self.f_progress.getData())
         obj_chgd |= obj.set_Priority(self.f_priority.getData())
         obj_chgd |= obj.set_Status(self.f_status.getData())
         obj_chgd |= obj.set_Summary(self.f_summary.text() or None)
