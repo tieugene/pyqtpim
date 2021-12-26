@@ -9,18 +9,18 @@ from PySide2 import QtSql
 import vobject
 # 4. local
 from . import enums, query, model
-from .data import VObjTodo
+from .data import TodoVObj
 
 
 def eprint(s: Any):
     print(s, file=sys.stderr)
 
 
-def load_vobj(stream) -> Optional[VObjTodo]:
+def load_vobj(stream) -> Optional[TodoVObj]:
     if ventry := vobject.readOne(stream):
         if ventry.name == 'VCALENDAR':
             if 'vtodo' in ventry.contents:
-                return VObjTodo(ventry)
+                return TodoVObj(ventry)
             else:
                 eprint("VCALENDAR have no VTODO")
         else:
@@ -29,7 +29,7 @@ def load_vobj(stream) -> Optional[VObjTodo]:
         eprint("Cannot read vobject")
 
 
-def load_my(store_id: int) -> dict[uuid.UUID, (int, bool, VObjTodo)]:
+def load_my(store_id: int) -> dict[uuid.UUID, (int, bool, TodoVObj)]:
     retvalue = dict()
     q = QtSql.QSqlQuery(f"SELECT id, syn, body FROM entry WHERE store_id={store_id}")
     while q.next():
@@ -38,7 +38,7 @@ def load_my(store_id: int) -> dict[uuid.UUID, (int, bool, VObjTodo)]:
     return retvalue
 
 
-def load_remote(store_id: int) -> (dict[uuid.UUID, (str, VObjTodo)], Optional[str]):
+def load_remote(store_id: int) -> (dict[uuid.UUID, (str, TodoVObj)], Optional[str]):
     """
     :return: dict of uid: (file_path, vobj), connection
     """
@@ -59,14 +59,14 @@ def load_remote(store_id: int) -> (dict[uuid.UUID, (str, VObjTodo)], Optional[st
     return retvalue, path
 
 
-def add_my(vobj: VObjTodo, store_id: int, esyn: enums.ESyn) -> bool:
+def add_my(vobj: TodoVObj, store_id: int, esyn: enums.ESyn) -> bool:
     q = model.obj2sql(query.entry_add, vobj)
     q.bindValue(':store_id', store_id)
     q.bindValue(':syn', esyn.value)
     return q.exec_()
 
 
-def upd_my(entry_id: int, vobj: VObjTodo, store_id: int, esyn: enums.ESyn) -> bool:
+def upd_my(entry_id: int, vobj: TodoVObj, store_id: int, esyn: enums.ESyn) -> bool:
     q = model.obj2sql(query.entry_upd, vobj)
     q.bindValue(':store_id', store_id)
     q.bindValue(':syn', esyn.value)
@@ -78,8 +78,8 @@ def Sync(store_id: int, dry_run=True):
     """Standalone syncer DB<>source"""
     if not dry_run:
         print("Syncing", end='…')
-    my_side: dict[uuid.UUID, (int, bool, VObjTodo)]
-    remote_side: dict[uuid.UUID, (str, VObjTodo)]
+    my_side: dict[uuid.UUID, (int, bool, TodoVObj)]
+    remote_side: dict[uuid.UUID, (str, TodoVObj)]
     # 1. load all entry[store_id] into dict[uid: (id, body)]
     my_side = load_my(store_id)
     # pprint.pprint(my_side)

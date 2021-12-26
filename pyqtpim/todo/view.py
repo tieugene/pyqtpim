@@ -7,7 +7,7 @@ from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql
-from .data import VObjTodo
+from .data import TodoVObj
 from .form import TodoForm
 from . import enums, sync, query
 
@@ -101,7 +101,7 @@ class TodoListView(EntryListView):
         entry_id = rec.value('id')
         store_id = rec.value('store_id')  # ??? returns model.data()
         # TODO: by id
-        obj: VObjTodo = realmodel.getObjByRow(row)
+        obj: TodoVObj = realmodel.getObjByRow(row)
         f = TodoForm(self)  # TODO: cache creation
         if pair := f.exec_edit(obj, store_id, can_move=(syn == enums.ESyn.New.value)):
             # TODO: move to model

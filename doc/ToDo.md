@@ -13,9 +13,12 @@
     - ~~list[store_id, Entry(body)]~~
     - ~~list[Entry]+dict[entry:store_id]~~
   - [ ] ? + in-mem SQLite &check;
+  - [ ] link by object id (like `uniq_ptr`)
 
 ### 0.1. Now
-*None*
+- [ ] Teach @classmethod
+- [ ] Store LCRUD
+- [ ] TodoList CRUD
 
 ### 0.2. Bugs
 *None*

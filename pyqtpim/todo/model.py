@@ -8,19 +8,17 @@ from PySide2 import QtCore, QtSql
 # 3. 3rd
 import vobject
 # 4. local
-from common import SetGroup, EntryModel, EntryProxyModel, StoreModel, exc
-from .data import VObjTodo
+from common import EntryModel, EntryProxyModel, StoreModel, exc
+from .data import TodoVObj, store_list
 from . import enums, query
 
 
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
-    __entry_cache: dict[int, VObjTodo]  # entry.id: VObj
-    _own_query = query.entry_all
+    __entry_cache: dict[int, TodoVObj]  # entry.id: VObj
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setQuery(self._own_query)
         self.__entry_cache = dict()
         for i in range(len(enums.ColHeader)):
             self.setHeaderData(i, QtCore.Qt.Horizontal, enums.ColHeader[i])
@@ -101,10 +99,9 @@ class TodoModel(EntryModel):
     # Hand-made
     def reload(self):
         self.beginResetModel()
-        self.setQuery(self._own_query)  # FIXME: dirty hack
         self.endResetModel()
 
-    def setObj(self, entry_id: int, obj: VObjTodo):
+    def setObj(self, entry_id: int, obj: TodoVObj):
         """Add entry body to cache.
         Callers: None
         """
@@ -118,7 +115,7 @@ class TodoModel(EntryModel):
         if rec := self.record(row):
             _id = rec.value('id')
             if (v := self.__entry_cache.get(entry_id)) is None:
-                v = VObjTodo(vobject.readOne(self.data(self.index(row, enums.EColNo.Body))))
+                v = TodoVObj(vobject.readOne(self.data(self.index(row, enums.EColNo.Body))))
                 self.__entry_cache[entry_id] = v
             return v
 
@@ -205,13 +202,13 @@ class TodoProxyModel(EntryProxyModel):
     def __lessThen_PrioDueName(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         """Sorting Prio>Due>Summary"""
 
-        def __get_prio(vobj: VObjTodo) -> int:
+        def __get_prio(vobj: TodoVObj) -> int:
             if v := vobj.get_Priority():
                 return enums.Raw2Enum_Prio[v]
             else:
                 return 0
 
-        def __get_due_date(vobj: VObjTodo) -> datetime.date:
+        def __get_due_date(vobj: TodoVObj) -> datetime.date:
             if v := vobj.get_Due():
                 if isinstance(v, datetime.datetime):
                     return v.date()
@@ -219,8 +216,8 @@ class TodoProxyModel(EntryProxyModel):
             return datetime.date(9999, 12, 31)
 
         realmodel = self.sourceModel()
-        obj_left: VObjTodo = realmodel.getObjByRow(source_left.row())
-        obj_right: VObjTodo = realmodel.getObjByRow(source_right.row())
+        obj_left: TodoVObj = realmodel.getObjByRow(source_left.row())
+        obj_right: TodoVObj = realmodel.getObjByRow(source_right.row())
         # 1. Prio
         prio_left = __get_prio(obj_left)
         prio_right = __get_prio(obj_right)
@@ -248,13 +245,13 @@ class TodoProxyModel(EntryProxyModel):
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
-        vobj: VObjTodo = self.sourceModel().getObjByRow(source_row)
+        vobj: TodoVObj = self.sourceModel().getObjByRow(source_row)
         return (vobj.get_Status() not in closed) and (due := vobj.get_Due_as_date()) is not None and due <= self.__today
 
     def __accept_Tomorrow(self, source_row: int) -> bool:
         """Like today but tomorrow"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
-        vobj: VObjTodo = self.sourceModel().getObjByRow(source_row)
+        vobj: TodoVObj = self.sourceModel().getObjByRow(source_row)
         return \
             (vobj.get_Status() not in closed) \
             and (due := vobj.get_Due_as_date()) is not None \
@@ -264,7 +261,7 @@ class TodoProxyModel(EntryProxyModel):
 class TodoStoreModel(StoreModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._set_group = SetGroup.ToDo
+        self._data = store_list
 
 
 def load_store(model: TodoModel, store_id: int, path: str):
@@ -278,7 +275,7 @@ def load_store(model: TodoModel, store_id: int, path: str):
             with open(entry.path, 'rt') as stream:
                 if ventry := vobject.readOne(stream):
                     if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        obj = VObjTodo(ventry)
+                        obj = TodoVObj(ventry)
                         q = obj2sql(query.entry_add, obj)
                         q.bindValue(':store_id', store_id)
                         q.bindValue(':syn', enums.ESyn.Synced.value)
@@ -291,7 +288,7 @@ def load_store(model: TodoModel, store_id: int, path: str):
     model.select()
 
 
-def obj2sql(q_str: str, vobj: VObjTodo) -> QtSql.QSqlQuery:
+def obj2sql(q_str: str, vobj: TodoVObj) -> QtSql.QSqlQuery:
     def __2Z(__v: Optional[datetime.datetime]) -> str:
         if __v:
             return __v.replace(tzinfo=datetime.timezone.utc).isoformat()

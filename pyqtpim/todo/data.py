@@ -10,7 +10,7 @@ from functools import wraps
 # 2. 3rd
 import vobject
 # 3. local
-from common import VObj
+from common import SetGroup, VObj, Entry, EntryList, Store, StoreList
 from . import enums
 
 
@@ -22,12 +22,15 @@ def get_X(name: str):
     """Decorate getter
     :param name: Attribute name in vobject
     """
+
     def get_decorator(func: Callable):
         @wraps(func)
         def wrapper(self):
             if name in self._data.vtodo.contents:
                 return func(self)
+
         return wrapper
+
     return get_decorator
 
 
@@ -38,6 +41,7 @@ def set_X(name: str, getter: Callable, cvt=None):
     :param cvt: store new as str(new) (hack for `int` end `enums.Enum2Raw_*`)
     :return: True if value changed, False if not
     """
+
     def set_decorator(func: Callable):
         @wraps(func)
         def wrapper(self, new: Any):
@@ -63,13 +67,16 @@ def set_X(name: str, getter: Callable, cvt=None):
                     # print("=", name, ':', old, '>', new)
                     func(self, new)
                 return True
+
         return wrapper
+
     return set_decorator
 
 
-class VObjTodo(VObj):
+class TodoVObj(VObj):
     """In-memory one-file VTODO"""
-    def __init__(self, data: vobject.base.Component = None):
+
+    def __init__(self, data: vobject.base.Component):
         if data is None:
             uid = uuid.uuid4()
             stamp = _utcnow()
@@ -107,6 +114,7 @@ class VObjTodo(VObj):
         """Return inner item content as structure.
         :todo: generator
         """
+
         def __getFldByName(fld: str) -> Any:
             """Get field value by its name."""
             if v_list := self._data.vtodo.contents.get(fld):
@@ -121,7 +129,7 @@ class VObjTodo(VObj):
         keys = list(cnt.keys())
         keys.sort()
         for k in keys:  # v: list allways
-            if k == 'valarm':   # hack
+            if k == 'valarm':  # hack
                 continue
             if v := __getFldByName(k):
                 retvalue[k] = v
@@ -130,7 +138,7 @@ class VObjTodo(VObj):
     # getters
     @get_X('attach')
     def get_Attach(self) -> list[str]:
-        return self._data.vtodo.attach.value   # attach_list?
+        return self._data.vtodo.attach.value  # attach_list?
 
     @get_X('categories')
     def get_Categories(self) -> list[str]:
@@ -150,11 +158,11 @@ class VObjTodo(VObj):
 
     @get_X('class')
     def get_Class(self) -> enums.EClass:
-        return enums.Raw2Enum_Class.get(self._data.vtodo.contents['class'][0].value)    # FIXME:
+        return enums.Raw2Enum_Class.get(self._data.vtodo.contents['class'][0].value)  # FIXME:
 
     @get_X('comment')
     def get_Comment(self) -> list[str]:
-        return self._data.vtodo.comment.value   # comment_list?
+        return self._data.vtodo.comment.value  # comment_list?
 
     @get_X('completed')
     def get_Completed(self) -> datetime.datetime:
@@ -162,7 +170,7 @@ class VObjTodo(VObj):
 
     @get_X('contact')
     def get_Contact(self) -> list[str]:
-        return self._data.vtodo.contact.value   # contact_list?
+        return self._data.vtodo.contact.value  # contact_list?
 
     @get_X('created')
     def get_Created(self) -> datetime.datetime:
@@ -322,3 +330,37 @@ class VObjTodo(VObj):
         self.__set_Sequence(0 if (seq := self.get_Sequence()) is None else seq + 1)
         self.__set_DTStamp(now)
         self.__set_LastModified(now)
+
+
+class TodoStore(Store):
+    def __init__(self, name: str, path: str, active: bool):
+        super().__init__(name, path, active)
+        # self.__type = EVObjType.VTodo
+
+    def _load_one(self, vobj_src: vobject.base.Component, fname: str):
+        if vobj_src.name == 'VCALENDAR' and 'vtodo' in vobj_src.contents:
+            EntryList.entry_add(TodoEntry(TodoVObj(vobj_src), self, fname))
+
+
+class TodoStoreList(StoreList):
+    def __init__(self):
+        super().__init__()
+        self._set_group = SetGroup.ToDo
+
+    def store_add(self, name: str, path: str, active: bool):
+        """Add new Store"""
+        self._data.append(TodoStore(name, path, active))
+
+
+class TodoEntry(Entry):
+    def __init__(self, data: TodoVObj, store: TodoStore, fname: str):
+        super().__init__(data, store, fname)
+
+
+class TodoEntryList(EntryList):
+    def __init__(self):
+        super().__init__()
+
+
+store_list = StoreList()
+entry_list = EntryList()

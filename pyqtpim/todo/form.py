@@ -9,7 +9,7 @@ import vobject
 import dateutil
 # 4. local
 from common import query as query_common
-from .data import VObjTodo
+from .data import TodoVObj
 from . import enums
 
 
@@ -396,17 +396,17 @@ class TodoForm(QtWidgets.QDialog):
         layout.setVerticalSpacing(0)
         self.setLayout(layout)
 
-    def exec_new(self) -> Optional[tuple[VObjTodo, int]]:
+    def exec_new(self) -> Optional[tuple[TodoVObj, int]]:
         """Create new entry.
         :return: created obj and store_id
         """
         self.__reset()
         if self.exec_():
-            obj = VObjTodo()
+            obj = TodoVObj()
             _, store_id = self.to_obj(obj)
             return obj, store_id
 
-    def exec_edit(self, obj: VObjTodo, store_id: int, can_move: bool) -> Optional[tuple[bool, int]]:
+    def exec_edit(self, obj: TodoVObj, store_id: int, can_move: bool) -> Optional[tuple[bool, int]]:
         """Edit entry exists.
 
         :param obj: obj to edit
@@ -434,7 +434,7 @@ class TodoForm(QtWidgets.QDialog):
         self.f_summary.clear()
         self.f_url.clear()
 
-    def from_obj(self, data: VObjTodo, store_id: int, can_move: bool):
+    def from_obj(self, data: TodoVObj, store_id: int, can_move: bool):
         """Preload form with VTODO"""
         self.f_list.setData(store_id)
         if not can_move:
@@ -453,7 +453,7 @@ class TodoForm(QtWidgets.QDialog):
         self.f_summary.setText(data.get_Summary())
         self.f_url.setText(data.get_URL())
 
-    def to_obj(self, obj: VObjTodo) -> (bool, int):
+    def to_obj(self, obj: TodoVObj) -> (bool, int):
         """Create VTodoObj form TodoForm data.
         Callers: TodoListView.entryAdd()
         :param obj: VTodoObj to update
