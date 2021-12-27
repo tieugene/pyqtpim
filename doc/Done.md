@@ -81,6 +81,8 @@
 - [x] TodoForm.reset()
 - [x] TodoList: QSqlQueryModel
 - [x] TodoList: disable wrap
+- [x] Switched back to file-based
+- [x] xStore LCRUD
 
 ## Contacts.File-based
 - [ ] CLM:

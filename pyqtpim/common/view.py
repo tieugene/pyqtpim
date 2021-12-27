@@ -4,7 +4,7 @@ import inspect
 from PySide2 import QtCore, QtWidgets
 from .model import EntryModel
 from . import enums, form
-from .data import StoreList, Store
+from .data import Store
 
 
 class EntryView(QtWidgets.QGroupBox):
@@ -65,9 +65,11 @@ class StoreListView(QtWidgets.QListView):
         """Add new Store"""
         if self.__form.exec_new():
             # FIXME: use model method; update model
-            s_list: StoreList = self.model()._data
-            store = s_list._item_cls(self.__form.name, self.__form.connection, self.__form.active)
-            s_list.store_add(store)
+            # s_list: StoreList = self.model()._data
+            # store = s_list._item_cls(self.__form.name, self.__form.connection, self.__form.active)
+            # s_list.store_add(store)
+            store = self.model().item_cls(self.__form.name, self.__form.connection, self.__form.active)
+            self.model().item_add(store)
             self.model().save()
 
     def storeEdit(self):
@@ -75,8 +77,9 @@ class StoreListView(QtWidgets.QListView):
         if not (indexes := self.selectedIndexes()):
             return
         row = indexes[0].row()
-        s_list: StoreList = self.model()._data
-        store: Store = s_list.store(row)
+        # s_list: StoreList = self.model()._data
+        # store: Store = s_list.store(row)
+        store = self.model().item_get(row)
         if self.__form.exec_edit(store):
             # FIXME: use model method; update model row
             self.model().save()
@@ -85,20 +88,23 @@ class StoreListView(QtWidgets.QListView):
         if not (indexes := self.selectedIndexes()):
             return
         row = indexes[0].row()
-        s_list: StoreList = self.model()._data
-        store: Store = s_list.store(row)
+        # s_list: StoreList = self.model()._data
+        # store: Store = s_list.store(row)
+        store = self.model().item_get(row)
         if QtWidgets.QMessageBox.question(self, f"Deleting {self._title}",
                                           f"Are you sure to delete '{store.name}'")\
                 == QtWidgets.QMessageBox.StandardButton.Yes:
             # FIXME: use model method; update model
-            s_list.store_del(row)
+            # s_list.store_del(row)
+            self.model().item_del(row)
             self.model().save()
 
     def storeInfo(self):
         if not (indexes := self.selectedIndexes()):
             return
-        store: Store = self.model()._data.store(indexes[0].row())
+        store: Store = self.model().item_get(indexes[0].row())
         QtWidgets.QMessageBox.information(self, f"{self._title} info",
                                           f"{self._title} info:\n"
                                           f"Name: {store.name}\n"
-                                          f"Path: {store.dpath}")
+                                          f"Path: {store.dpath}\n"
+                                          f"Active: {store.active}")

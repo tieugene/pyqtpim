@@ -1,7 +1,5 @@
 """GUI representation of ToDo things"""
 # 1. std
-import datetime
-from typing import Any
 # 2. PySide
 from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
@@ -195,7 +193,7 @@ class TodoListView(EntryListView):
 
 class TodoStoreListView(StoreListView):
     _model_cls = TodoStoreModel
-    _title = 'ToDo list'
+    _title = 'ToDo Store'
 
     def __init__(self, parent, dependant: TodoListView):
         super().__init__(parent, dependant)
@@ -209,12 +207,10 @@ class TodoStoreListView(StoreListView):
         rec = self.model().record(indexes[0].row())
         self._list.model().sourceModel().reloadAll(rec.value('id'), rec.value('connection'))
 
-    def storeSync(self, dry_run: bool = True):
+    def storeSync(self, _: bool = True):
         """Sync Store with its connection
-        :todo: reset self._list.model().sourceModel(), reset its cache
         """
-        if not (indexes := self.selectedIndexes()):
-            return
+        ...
 
 
 class TodoView(EntryView):

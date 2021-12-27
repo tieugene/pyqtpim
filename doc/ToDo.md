@@ -17,12 +17,11 @@
 
 ### 0.1. Now
 - [ ] Teach @classmethod
-- [ ] Store LCRUD:
-  - [ ] StoreModel:
+- [ ] TodoList CRUD
+  - [ ] EntryModel:
     - [ ] Add item
     - [ ] Edit item
-    - [ ] Del item 
-- [ ] TodoList CRUD
+    - [ ] Del item
 
 ### 0.2. Bugs
 - [ ] MySettings.store_X glithed

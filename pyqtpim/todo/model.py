@@ -9,7 +9,7 @@ from PySide2 import QtCore, QtSql
 import vobject
 # 4. local
 from common import EntryModel, EntryProxyModel, StoreModel, exc, SetGroup
-from .data import TodoVObj, store_list
+from .data import TodoVObj, TodoStore, store_list
 from . import enums, query
 
 
@@ -259,6 +259,8 @@ class TodoProxyModel(EntryProxyModel):
 
 
 class TodoStoreModel(StoreModel):
+    item_cls = TodoStore
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._set_group = SetGroup.ToDo

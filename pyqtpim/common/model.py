@@ -6,7 +6,7 @@ from typing import Any
 from PySide2 import QtCore
 # 3. local
 from . import enums
-from .data import StoreList
+from .data import Store, StoreList
 from .settings import MySettings
 
 
@@ -34,7 +34,7 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
 
 class StoreModel(QtCore.QStringListModel):
     _set_group: enums.SetGroup
-    # _data_cls: type
+    item_cls: type
     _data: StoreList
     activeChanged: QtCore.Signal = QtCore.Signal()
 
@@ -68,6 +68,22 @@ class StoreModel(QtCore.QStringListModel):
         return False
 
     # Hand-made
+    def item_get(self, i: int) -> Store:
+        return self._data.store(i)
+
+    def item_add(self, item: Store):
+        self.beginInsertRows(self.index(self._data.size(), 0), self._data.size(), self._data.size())
+        self._data.store_add(item)
+        self.endInsertRows()
+
+    # def item_upd(self, i: int, item: Store):
+    #    ...
+
+    def item_del(self, i: int):
+        self.beginRemoveRows(self.index(i, 0), i, i)
+        self._data.store_del(i)
+        self.endRemoveRows()
+
     def load(self):
         """Load _data from settings"""
         self._data.from_list(MySettings.get(self._set_group, 'store'))

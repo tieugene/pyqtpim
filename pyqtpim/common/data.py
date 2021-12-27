@@ -3,7 +3,6 @@
 # 1. std
 # from __future__ import annotations
 import inspect
-import json
 import os
 from _collections import OrderedDict
 from enum import IntEnum, auto
@@ -11,7 +10,7 @@ from typing import Any, Optional
 # 2. 3rd
 import vobject
 # 3. local
-from . import exc, enums
+from . import exc
 
 
 class EVObjType(IntEnum):
