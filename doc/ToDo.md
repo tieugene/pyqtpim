@@ -17,7 +17,11 @@
 
 ### 0.1. Now
 - [ ] Teach @classmethod
-- [ ] Store LCRUD
+- [ ] Store LCRUD:
+  - [ ] StoreModel:
+    - [ ] Add item
+    - [ ] Edit item
+    - [ ] Del item 
 - [ ] TodoList CRUD
 
 ### 0.2. Bugs

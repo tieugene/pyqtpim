@@ -10,7 +10,7 @@ from functools import wraps
 # 2. 3rd
 import vobject
 # 3. local
-from common import SetGroup, VObj, Entry, EntryList, Store, StoreList
+from common import VObj, Entry, EntryList, Store, StoreList
 from . import enums
 
 
@@ -343,14 +343,11 @@ class TodoStore(Store):
 
 
 class TodoStoreList(StoreList):
+    _item_cls = TodoStore
 
     def __init__(self):
         super().__init__()
-        self._item_cls = TodoStore
-
-    def store_create(self, name: str, path: str, active: bool):
-        self._list.append(TodoStore(name, path, active))
-        # print("TodoStoreList.store_create:", self._list)
+        # self._item_cls = TodoStore  # the same
 
 
 class TodoEntry(Entry):

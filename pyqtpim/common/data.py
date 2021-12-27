@@ -107,7 +107,7 @@ class Store(object):
 
 
 class StoreList(object):
-    _item_cls: type
+    _item_cls: type  # successor-defined Store successor
     _list: list[Store]
 
     def __init__(self):
@@ -122,14 +122,14 @@ class StoreList(object):
 
     def from_list(self, data: list[dict]):
         for store in data:
-            self.store_create(store['name'], store['path'], store['active'])
+            self.store_add(self._item_cls(store['name'], store['path'], store['active']))
 
     def store(self, i: int) -> Store:
         if i < self.size():
             return self._list[i]
 
-    def store_create(self, name: str, path: str, active: bool):
-        print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
+    def store_add(self, store: Store):
+        self._list.append(store)
 
     def store_del(self, i: int) -> bool:
         if 0 <= i < self.size():

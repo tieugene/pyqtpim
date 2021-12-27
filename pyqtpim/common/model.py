@@ -34,7 +34,7 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
 
 class StoreModel(QtCore.QStringListModel):
     _set_group: enums.SetGroup
-    _data_cls: type
+    # _data_cls: type
     _data: StoreList
     activeChanged: QtCore.Signal = QtCore.Signal()
 

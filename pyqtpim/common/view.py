@@ -4,7 +4,6 @@ import inspect
 from PySide2 import QtCore, QtWidgets
 from .model import EntryModel
 from . import enums, form
-from .settings import MySettings
 from .data import StoreList, Store
 
 
@@ -67,7 +66,8 @@ class StoreListView(QtWidgets.QListView):
         if self.__form.exec_new():
             # FIXME: use model method; update model
             s_list: StoreList = self.model()._data
-            s_list.store_create(self.__form.name, self.__form.connection, self.__form.active)
+            store = s_list._item_cls(self.__form.name, self.__form.connection, self.__form.active)
+            s_list.store_add(store)
             self.model().save()
 
     def storeEdit(self):
