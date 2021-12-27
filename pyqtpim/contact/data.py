@@ -78,7 +78,7 @@ class Contact(VObj):
 class ContactList(EntryList):
     def _load_one(self, fpath: str, data: vobject.base.Component):
         if data.name == 'VCARD':
-            self._data.append(Contact(fpath, data))
+            self._list.append(Contact(fpath, data))
         else:
             raise exc.EntryLoadError(f"It is not VCARD: {fpath}")
 

@@ -105,29 +105,30 @@ class Store(object):
 # static class
 class StoreList(object):
     _set_group: enums.SetGroup
-    _data: list[Store]
+    _item_cls: type
+    _list: list[Store]
 
     def __init__(self):
         super().__init__()
-        self._data = []
-        self._set_group = enums.SetGroup.ToDo  # FIXME: dirty
+        self._list = []
+        self._set_group = enums.SetGroup.ToDo  # FIXME: fast hack
 
     def size(self) -> int:
-        return len(self._data)
+        return len(self._list)
 
     def setgroup_name(self) -> str:
         return self._set_group.value
 
     def store(self, i: int) -> Store:
         if i < self.size():
-            return self._data[i]
+            return self._list[i]
 
-    def store_add(self, name: str, path: str, active: bool):
+    def store_create(self, name: str, path: str, active: bool):
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
     def store_del(self, i: int) -> bool:
         if 0 <= i < self.size():
-            del self._data[i]
+            del self._list[i]
             return True
         return False
 
@@ -135,7 +136,7 @@ class StoreList(object):
         """Find existent CL by name excluding i-th entry
         :return: True if found
         """
-        for j, store in enumerate(self._data):
+        for j, store in enumerate(self._list):
             if store.name == name and j != i:
                 return True
         return False
@@ -144,7 +145,7 @@ class StoreList(object):
         """Find existent CL by path [excluding i-th entry]
         :return: True if found
         """
-        for j, store in enumerate(self._data):
+        for j, store in enumerate(self._list):
             if store.dpath == dpath and j != i:
                 return True
         return False
@@ -166,25 +167,25 @@ class Entry(object):
 # static class
 class EntryList(object):
     """List of Entries, common for all Stores"""
-    _data: list[Entry]
+    _list: list[Entry]
     __ready: bool
 
     def __init__(self):
         super().__init__()
-        self._data = []
+        self._list = []
         self.__ready = False
 
     def size(self) -> int:
-        return len(self._data)
+        return len(self._list)
 
     def entry_add(self, entry: Entry):
-        self._data.append(entry)
+        self._list.append(entry)
 
     def entry_del(self, i: int):
         if i < self.size():
-            del self._data[i]
+            del self._list[i]
 
     def entry(self, i: int) -> Entry:
         """Get list item"""
         if i < self.size():
-            return self._data[i]
+            return self._list[i]

@@ -6,6 +6,7 @@ from typing import Any
 from PySide2 import QtCore
 # 3. local
 # from .settings import SetGroup
+from . import MySettings
 from .data import StoreList
 # from . import enums
 
@@ -34,12 +35,16 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
 
 class StoreModel(QtCore.QStringListModel):
     activeChanged: QtCore.Signal = QtCore.Signal()
+    _data_cls: type
     _data: StoreList
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     # Inherit
+    def rowCount(self, parent: QtCore.QModelIndex = None) -> int:
+        return self._data.size()
+
     def flags(self, index):
         fl = QtCore.QStringListModel.flags(self, index)
         fl |= QtCore.Qt.ItemIsUserCheckable
@@ -49,4 +54,15 @@ class StoreModel(QtCore.QStringListModel):
         if role == QtCore.Qt.DisplayRole:
             return self._data.store(index.row()).name
         elif role == QtCore.Qt.CheckStateRole:
-            return (QtCore.Qt.Unchecked, QtCore.Qt.Checked)[int(self._data.store(index.row()).active)]
+            return QtCore.Qt.Checked if self._data.store(index.row()).active else QtCore.Qt.Unchecked
+
+    def setData(self, index: QtCore.QModelIndex, value: Any, role: int = QtCore.Qt.EditRole) -> bool:
+        if role == QtCore.Qt.CheckStateRole:
+            row = index.row()
+            self._data.store(row).active = (value == QtCore.Qt.Checked)
+            MySettings.store_upd(self._data, row)
+            # TODO: refresh EntryList
+            # self.dataChanged.emit(index, index, (role,))
+            # self.activeChanged.emit()
+            return True
+        return False

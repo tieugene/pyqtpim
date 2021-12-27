@@ -9,7 +9,7 @@ from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql
 from .data import TodoVObj
 from .form import TodoForm
-from . import enums, sync, query
+from . import enums
 
 
 class TodoListView(EntryListView):
@@ -194,7 +194,7 @@ class TodoListView(EntryListView):
 
 
 class TodoStoreListView(StoreListView):
-    _own_model = TodoStoreModel
+    _model_cls = TodoStoreModel
     _title = 'ToDo list'
 
     def __init__(self, parent, dependant: TodoListView):
@@ -214,7 +214,6 @@ class TodoStoreListView(StoreListView):
         """
         if not (indexes := self.selectedIndexes()):
             return
-        sync.Sync(self.model().record(indexes[0].row()).value('id'), dry_run=dry_run)
 
 
 class TodoView(EntryView):

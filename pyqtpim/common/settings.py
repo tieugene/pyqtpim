@@ -1,8 +1,8 @@
 # from __future__ import annotations
-from typing import Any
+from typing import Any, Union
 
 from PySide2.QtCore import QCoreApplication, QSettings
-from .data import Store, StoreList
+from .data import StoreList
 from .enums import SetGroup
 
 
@@ -11,6 +11,10 @@ class MySettings:
     TODO: wrap 'set's into ','.join(set)
     """
     __settings: QSettings
+
+    @staticmethod
+    def valueToBool(value: Union[bool, str]) -> bool:
+        return value.lower() == 'true' if isinstance(value, str) else bool(value)
 
     @staticmethod
     def setup():
@@ -54,18 +58,23 @@ class MySettings:
             s.setArrayIndex(i)
             name = s.value('name')
             path = s.value('path')
-            active = s.value('active')
-            s_list.store_add(name, path, active)
+            active = MySettings.valueToBool(s.value('active'))
+            s_list.store_create(name, path, active)
         s.endArray()
         s.endGroup()
 
     @staticmethod
-    def store_add(s_list: StoreList, store: Store):
-        """Append Store array"""
+    def store_add(s_list: StoreList):
+        """Append Store array with last StoreList item"""
+        s_list_size = s_list.size()
+        if s_list_size < 1:
+            print("StoreList is empty")
+            return
+        store = s_list.store(s_list_size-1)
         s = MySettings.__settings
         s.beginGroup(s_list.setgroup_name())
         s.beginWriteArray('store')
-        s.setArrayIndex(s_list.size())
+        s.setArrayIndex(s_list_size-1)
         s.setValue('name', store.name)
         s.setValue('path', store.dpath)
         s.setValue('active', store.active)
@@ -73,8 +82,10 @@ class MySettings:
         s.endGroup()
 
     @staticmethod
-    def store_upd(s_list: StoreList, i: int, store: Store):
-        """:todo: check i on out of range"""
+    def store_upd(s_list: StoreList, i: int):
+        """Update setting from StoreList.
+        :todo: check i on out of range"""
+        store = s_list.store(i)
         s = MySettings.__settings
         s.beginGroup(s_list.setgroup_name())
         s.beginWriteArray('store')

@@ -21,7 +21,7 @@
 - [ ] TodoList CRUD
 
 ### 0.2. Bugs
-*None*
+- [ ] MySettings.store_X glithed
 
 ### 0.3. Issues
 - [ ] TodoListView:

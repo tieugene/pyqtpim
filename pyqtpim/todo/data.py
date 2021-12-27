@@ -26,7 +26,7 @@ def get_X(name: str):
     def get_decorator(func: Callable):
         @wraps(func)
         def wrapper(self):
-            if name in self._data.vtodo.contents:
+            if name in self._list.vtodo.contents:
                 return func(self)
 
         return wrapper
@@ -52,17 +52,17 @@ def set_X(name: str, getter: Callable, cvt=None):
                 if old is None:
                     # print("+", name, '=', new)
                     if cvt is None:
-                        self._data.vtodo.add(name).value = new
+                        self._list.vtodo.add(name).value = new
                     elif isinstance(cvt, dict):
-                        self._data.vtodo.add(name).value = cvt[new]
+                        self._list.vtodo.add(name).value = cvt[new]
                     elif isinstance(cvt, Callable):
-                        self._data.vtodo.add(name).value = cvt(new)
+                        self._list.vtodo.add(name).value = cvt(new)
                     else:
                         print(f"Strange cvt '{cvt}' for '{name}'")
                         return False
                 elif new is None:
                     # print("-", name, '=', old)
-                    del self._data.vtodo.contents[name]
+                    del self._list.vtodo.contents[name]
                 else:
                     # print("=", name, ':', old, '>', new)
                     func(self, new)
@@ -343,13 +343,15 @@ class TodoStore(Store):
 
 
 class TodoStoreList(StoreList):
+
     def __init__(self):
         super().__init__()
         self._set_group = SetGroup.ToDo
+        self._item_cls = Store
 
-    def store_add(self, name: str, path: str, active: bool):
-        """Add new Store"""
-        self._data.append(TodoStore(name, path, active))
+    def store_create(self, name: str, path: str, active: bool):
+        self._list.append(TodoStore(name, path, active))
+        # print("TodoStoreList.store_create:", self._list)
 
 
 class TodoEntry(Entry):
@@ -362,5 +364,5 @@ class TodoEntryList(EntryList):
         super().__init__()
 
 
-store_list = StoreList()
-entry_list = EntryList()
+store_list = TodoStoreList()
+entry_list = TodoEntryList()

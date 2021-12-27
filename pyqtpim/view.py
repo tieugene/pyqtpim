@@ -44,8 +44,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabs = QtWidgets.QTabWidget()
         self.todo = TodosWidget()
         self.tabs.addTab(self.todo, "ToDo")
-        self.contacts = ContactsWidget()
-        self.tabs.addTab(self.contacts, "Contacts")
+        # self.contacts = ContactsWidget()
+        # self.tabs.addTab(self.contacts, "Contacts")
         # that's all
         self.setCentralWidget(self.tabs)
         # attributes
@@ -176,16 +176,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.todo.list.loadCol2Show()
 
     def storeAdd(self):
-        (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
+        # (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
+        self.todo.stores.storeAdd()
 
     def storeEdit(self):
-        (self.todo.stores.storeEdit, self.contacts.sources.storeEdit)[self.tabs.currentIndex()]()
+        self.todo.stores.storeEdit()
 
     def storeDel(self):
-        (self.todo.stores.storeDel, self.contacts.sources.storeDel)[self.tabs.currentIndex()]()
+        self.todo.stores.storeDel()
 
     def storeInfo(self):
-        (self.todo.stores.storeInfo, self.contacts.sources.storeInfo)[self.tabs.currentIndex()]()
+        self.todo.stores.storeInfo()
 
     def storeReload(self):
         self.todo.stores.storeReload()
@@ -198,7 +199,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def entryCat(self):
         """Show file content"""
-        (self.todo.list.entryCat, self.contacts.list.entryCat)[self.tabs.currentIndex()]()
+        self.todo.list.entryCat()
 
     def entryInside(self):
         """Show entry structure"""
