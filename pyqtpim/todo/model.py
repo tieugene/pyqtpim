@@ -20,7 +20,6 @@ class TodoModel(EntryModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._data = entry_list
-        self.__entry_cache = dict()
         self.updateFilterByStore()
 
     # Inherit
@@ -106,12 +105,6 @@ class TodoModel(EntryModel):
         self.beginResetModel()
         self.endResetModel()
 
-    def setObj(self, entry_id: int, obj: TodoVObj):
-        """Add entry body to cache.
-        Callers: None
-        """
-        self.__entry_cache[entry_id] = obj
-
     def getObjByRow(self, row: int):
         """Get [cached] entry body.
         Callers: TodoListView.entryEdit(), .entryInside()
@@ -123,13 +116,6 @@ class TodoModel(EntryModel):
                 v = TodoVObj(vobject.readOne(self.data(self.index(row, enums.EColNo.Body))))
                 self.__entry_cache[entry_id] = v
             return v
-
-    def delObj(self, entry_id: int):
-        """Del entry body from cache.
-        Callers: TodoListView.entryDel()
-        """
-        if entry_id in self.__entry_cache:
-            del self.__entry_cache[entry_id]
 
     def updateFilterByStore(self):
         """"""

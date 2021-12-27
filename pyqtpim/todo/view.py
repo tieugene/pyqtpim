@@ -278,7 +278,8 @@ class TodoView(EntryView):
     def __idxChgd(self, row: int):
         """Only for selection; not calling on deselection"""
         # FIXME: clean prio, progress, completed
-        data = self.mapper.model().getObjByRow(row)
+        entry = self.mapper.model().item_get(row)
+        data: TodoVObj = entry.vobj
         self.category.setText(', '.join(v) if (v := data.get_Categories()) else None)
         self.url.setText(data.get_URL())
         self.class_.setText(enums.Enum2Raw_Class.get(data.get_Class()))
