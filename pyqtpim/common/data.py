@@ -3,6 +3,7 @@
 # 1. std
 # from __future__ import annotations
 import inspect
+import json
 import os
 from _collections import OrderedDict
 from enum import IntEnum, auto
@@ -67,6 +68,9 @@ class Store(object):
     def active(self):
         return self.__active
 
+    def as_dict(self):
+        return {'name': self.name, 'path': self.dpath, 'active': self.active}
+
     @name.setter
     def name(self, name: str):
         self.__name = name
@@ -102,22 +106,23 @@ class Store(object):
                             raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
 
 
-# static class
 class StoreList(object):
-    _set_group: enums.SetGroup
     _item_cls: type
     _list: list[Store]
 
     def __init__(self):
         super().__init__()
         self._list = []
-        self._set_group = enums.SetGroup.ToDo  # FIXME: fast hack
 
     def size(self) -> int:
         return len(self._list)
 
-    def setgroup_name(self) -> str:
-        return self._set_group.value
+    def to_list(self) -> list:
+        return [store.as_dict() for store in self._list]
+
+    def from_list(self, data: list[dict]):
+        for store in data:
+            self.store_create(store['name'], store['path'], store['active'])
 
     def store(self, i: int) -> Store:
         if i < self.size():

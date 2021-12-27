@@ -13,7 +13,6 @@ def main():
     QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     qInitResources()
     MySettings.setup()
-    MySettings.store_load(store_list)
     app = QApplication(sys.argv)
     mw = MainWindow()
     mw.show()

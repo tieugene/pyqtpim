@@ -199,6 +199,7 @@ class TodoStoreListView(StoreListView):
 
     def __init__(self, parent, dependant: TodoListView):
         super().__init__(parent, dependant)
+        self.model().load()
         # self.model().activeChanged.connect(self._list.model().updateFilterByStore)
 
     def storeReload(self):

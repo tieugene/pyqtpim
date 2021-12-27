@@ -1,5 +1,6 @@
 # from __future__ import annotations
-from typing import Any, Union
+import json
+from typing import Any, Union, Optional
 
 from PySide2.QtCore import QCoreApplication, QSettings
 from .data import StoreList
@@ -25,92 +26,32 @@ class MySettings:
         MySettings.__settings = QSettings()
 
     @staticmethod
-    def get(group: SetGroup, key: str) -> Any:
+    def get(group: SetGroup, key: str) -> Optional[list]:
         """Get setting for group"""
         retvalue = None
-        if key in {'col2show', 'colorder'}:
+        if key in {'col2show', 'colorder', 'store'}:
             s = MySettings.__settings
             s.beginGroup(group.value)
             if key == 'col2show':
-                retvalue = s.value('col2show', list(range(12)))  # len(ColHeader)
+                retvalue = tuple(map(int, s.value('col2show', list(range(12)))))  # len(ColHeader)
             elif key == 'colorder':
-                retvalue = s.value('colorder', list(range(13)))
+                retvalue = tuple(map(int, s.value('colorder', list(range(13)))))
+            elif key == 'store':
+                retvalue = json.loads(s.value('store', '[]'))
             s.endGroup()
-            retvalue = tuple(map(int, retvalue))
+            # retvalue = tuple(map(int, retvalue))
         return retvalue
 
     @staticmethod
     def set(group: SetGroup, key: str, val: Any):
         """Get setting for group"""
-        if key in {'col2show', 'colorder'}:
+        if key in {'col2show', 'colorder', 'store'}:
             # print("Save", key, type(val), val)
             s = MySettings.__settings
             s.beginGroup(group.value)
-            s.setValue(key, list(val))
+            if key == 'store':
+                to_save = json.dumps(val)
+            else:
+                to_save = list(val)
+            s.setValue(key, to_save)
             s.endGroup()
-
-    @staticmethod
-    def store_load(s_list: StoreList):
-        s = MySettings.__settings
-        s.beginGroup(s_list.setgroup_name())
-        size = s.beginReadArray('store')
-        for i in range(size):
-            s.setArrayIndex(i)
-            name = s.value('name')
-            path = s.value('path')
-            active = MySettings.valueToBool(s.value('active'))
-            s_list.store_create(name, path, active)
-        s.endArray()
-        s.endGroup()
-
-    @staticmethod
-    def store_add(s_list: StoreList):
-        """Append Store array with last StoreList item"""
-        s_list_size = s_list.size()
-        if s_list_size < 1:
-            print("StoreList is empty")
-            return
-        store = s_list.store(s_list_size-1)
-        s = MySettings.__settings
-        s.beginGroup(s_list.setgroup_name())
-        s.beginWriteArray('store')
-        s.setArrayIndex(s_list_size-1)
-        s.setValue('name', store.name)
-        s.setValue('path', store.dpath)
-        s.setValue('active', store.active)
-        s.endArray()
-        s.endGroup()
-
-    @staticmethod
-    def store_upd(s_list: StoreList, i: int):
-        """Update setting from StoreList.
-        :todo: check i on out of range"""
-        store = s_list.store(i)
-        s = MySettings.__settings
-        s.beginGroup(s_list.setgroup_name())
-        s.beginWriteArray('store')
-        s.setArrayIndex(i)
-        s.setValue('name', store.name)
-        s.setValue('path', store.dpath)
-        s.setValue('active', store.active)
-        s.setArrayIndex(s_list.size() - 1)
-        s.endArray()
-        s.endGroup()
-
-    @staticmethod
-    def store_del(s_list: StoreList, i: int):
-        s = MySettings.__settings
-        s.beginGroup(s_list.setgroup_name())
-        s.beginWriteArray('store')
-        while i < s_list.size():
-            store = s_list.store(i)
-            s.setArrayIndex(i)
-            s.setValue('name', store.name)
-            s.setValue('path', store.dpath)
-            s.setValue('active', store.active)
-            i += 1
-        s.setArrayIndex(i)
-        s.remove("")
-        s.endArray()
-        s.setValue('list' + '/size', i)  # hack, but...
-        s.endGroup()

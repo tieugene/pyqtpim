@@ -346,8 +346,7 @@ class TodoStoreList(StoreList):
 
     def __init__(self):
         super().__init__()
-        self._set_group = SetGroup.ToDo
-        self._item_cls = Store
+        self._item_cls = TodoStore
 
     def store_create(self, name: str, path: str, active: bool):
         self._list.append(TodoStore(name, path, active))

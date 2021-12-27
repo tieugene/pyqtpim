@@ -5,10 +5,9 @@ from typing import Any
 # 2. PySide
 from PySide2 import QtCore
 # 3. local
-# from .settings import SetGroup
-from . import MySettings
+from . import enums
 from .data import StoreList
-# from . import enums
+from .settings import MySettings
 
 
 class EntryModel(QtCore.QAbstractTableModel):
@@ -34,9 +33,10 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
 
 
 class StoreModel(QtCore.QStringListModel):
-    activeChanged: QtCore.Signal = QtCore.Signal()
+    _set_group: enums.SetGroup
     _data_cls: type
     _data: StoreList
+    activeChanged: QtCore.Signal = QtCore.Signal()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -60,9 +60,18 @@ class StoreModel(QtCore.QStringListModel):
         if role == QtCore.Qt.CheckStateRole:
             row = index.row()
             self._data.store(row).active = (value == QtCore.Qt.Checked)
-            MySettings.store_upd(self._data, row)
+            self.save()
             # TODO: refresh EntryList
             # self.dataChanged.emit(index, index, (role,))
             # self.activeChanged.emit()
             return True
         return False
+
+    # Hand-made
+    def load(self):
+        """Load _data from settings"""
+        self._data.from_list(MySettings.get(self._set_group, 'store'))
+
+    def save(self):
+        """Save _data to settings"""
+        MySettings.set(self._set_group, 'store', self._data.to_list())
