@@ -22,15 +22,12 @@ def get_X(name: str):
     """Decorate getter
     :param name: Attribute name in vobject
     """
-
     def get_decorator(func: Callable):
         @wraps(func)
         def wrapper(self):
-            if name in self._list.vtodo.contents:
+            if name in self._data.vtodo.contents:
                 return func(self)
-
         return wrapper
-
     return get_decorator
 
 
@@ -52,24 +49,22 @@ def set_X(name: str, getter: Callable, cvt=None):
                 if old is None:
                     # print("+", name, '=', new)
                     if cvt is None:
-                        self._list.vtodo.add(name).value = new
+                        self._data.vtodo.add(name).value = new
                     elif isinstance(cvt, dict):
-                        self._list.vtodo.add(name).value = cvt[new]
+                        self._data.vtodo.add(name).value = cvt[new]
                     elif isinstance(cvt, Callable):
-                        self._list.vtodo.add(name).value = cvt(new)
+                        self._data.vtodo.add(name).value = cvt(new)
                     else:
                         print(f"Strange cvt '{cvt}' for '{name}'")
                         return False
                 elif new is None:
                     # print("-", name, '=', old)
-                    del self._list.vtodo.contents[name]
+                    del self._data.vtodo.contents[name]
                 else:
                     # print("=", name, ':', old, '>', new)
                     func(self, new)
                 return True
-
         return wrapper
-
     return set_decorator
 
 
@@ -337,9 +332,10 @@ class TodoStore(Store):
         super().__init__(name, path, active)
         # self.__type = EVObjType.VTodo
 
-    def _load_one(self, vobj_src: vobject.base.Component, fname: str):
+    def _load_one(self, entries, vobj_src: vobject.base.Component, fname: str):
         if vobj_src.name == 'VCALENDAR' and 'vtodo' in vobj_src.contents:
-            EntryList.entry_add(TodoEntry(TodoVObj(vobj_src), self, fname))
+            vobj = TodoVObj(vobj_src)
+            entries.entry_add(TodoEntry(vobj, self, fname))
 
 
 class TodoStoreList(StoreList):
@@ -348,6 +344,7 @@ class TodoStoreList(StoreList):
     def __init__(self):
         super().__init__()
         # self._item_cls = TodoStore  # the same
+        self._entries = entry_list
 
 
 class TodoEntry(Entry):
@@ -360,5 +357,6 @@ class TodoEntryList(EntryList):
         super().__init__()
 
 
-store_list = TodoStoreList()
+# Warning: exactly in this order: entries > stores
 entry_list = TodoEntryList()
+store_list = TodoStoreList()

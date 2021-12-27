@@ -4,8 +4,8 @@ from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt, QCoreApplication
 # 3. local
 from common import MySettings
-from view import MainWindow
 from todo import store_list
+from view import MainWindow
 from pyqtpim_rc import qInitResources
 
 
@@ -15,6 +15,7 @@ def main():
     MySettings.setup()
     app = QApplication(sys.argv)
     mw = MainWindow()
+    store_list.load_entries()
     mw.show()
     sys.exit(app.exec_())
 

@@ -16,11 +16,16 @@
   - [ ] link by object id (like `uniq_ptr`)
 
 ### 0.1. Now
+- [ ] TodoList:
+  - [ ] LCRUD
+  - [ ] columns hide/show
+  - [ ] columns order
+  - [ ] decoration (color)
+  - [ ] sort
+  - [ ] filter
 - [ ] Teach @classmethod
-- [ ] TodoList LCRUD
 
 ### 0.2. Bugs
-- [ ] MySettings.store_X glithed
 
 ### 0.3. Issues
 - [ ] TodoListView:

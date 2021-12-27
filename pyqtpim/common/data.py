@@ -86,10 +86,10 @@ class Store(object):
         self.__active = active
         # TODO: refresh filter
 
-    def _load_one(self, vobj_src: vobject.base.Component, fname: str):
+    def _load_one(self, entries, vobj_src: vobject.base.Component, fname: str):
         print(f"Virtual: {__class__.__name__}.{inspect.currentframe().f_code.co_name}()")
 
-    def __load(self):
+    def load(self, entries):
         """Load entries from dir"""
         if self.__dpath:
             # print(f"{self.__name}: Loading from {self.__path}")
@@ -100,13 +100,62 @@ class Store(object):
                     with open(entry.path, 'rt') as stream:
                         # TODO: chk mimetype
                         if vobj_src := vobject.readOne(stream):
-                            self._load_one(vobj_src, entry.name)
+                            self._load_one(entries, vobj_src, entry.name)
                         else:
                             raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
 
 
+class Entry(object):
+    """Interim to link VObj, its source and Source"""
+    _vobj: VObj
+    _store: Store
+    _fname: str  # file name
+
+    def __init__(self, vobj: VObj, store: Store, fname: str):
+        super().__init__()
+        self._vobj = vobj
+        self._store = store
+        self._fname = fname
+
+    @property
+    def store(self):
+        return self._store
+
+    @property
+    def vobj(self):
+        return self._vobj
+
+
+# static class
+class EntryList(object):
+    """List of Entries, common for all Stores"""
+    _list: list[Entry]
+    __ready: bool
+
+    def __init__(self):
+        super().__init__()
+        self._list = []
+        self.__ready = False
+
+    def size(self) -> int:
+        return len(self._list)
+
+    def entry_get(self, i: int) -> Entry:
+        """Get list item"""
+        if 0 <= i < self.size():
+            return self._list[i]
+
+    def entry_add(self, entry: Entry):
+        self._list.append(entry)
+
+    def entry_del(self, i: int):
+        if 0 <= i < self.size():
+            del self._list[i]
+
+
 class StoreList(object):
     _item_cls: type  # successor-defined Store successor
+    _entries: EntryList
     _list: list[Store]
 
     def __init__(self):
@@ -116,18 +165,21 @@ class StoreList(object):
     def size(self) -> int:
         return len(self._list)
 
-    def to_list(self) -> list:
-        return [store.as_dict() for store in self._list]
-
     def from_list(self, data: list[dict]):
+        """:todo: error code"""
         for store in data:
             self.store_add(self._item_cls(store['name'], store['path'], store['active']))
 
-    def store_get(self, i: int) -> Store:
+    def to_list(self) -> list:
+        """:todo: error code"""
+        return [store.as_dict() for store in self._list]
+
+    def store_get(self, i: int) -> Optional[Store]:
         if i < self.size():
             return self._list[i]
 
     def store_add(self, store: Store):
+        """:todo: return something? e.g. index"""
         self._list.append(store)
 
     def store_del(self, i: int) -> bool:
@@ -154,42 +206,7 @@ class StoreList(object):
                 return True
         return False
 
-
-class Entry(object):
-    """Interim to link VObj, its source and Source"""
-    _vobj: VObj
-    _store: Store
-    _fname: str  # file name
-
-    def __init__(self, vobj: VObj, store: Store, fname: str):
-        super().__init__()
-        self._vobj = vobj
-        self._store = store
-        self._fname = fname
-
-
-# static class
-class EntryList(object):
-    """List of Entries, common for all Stores"""
-    _list: list[Entry]
-    __ready: bool
-
-    def __init__(self):
-        super().__init__()
-        self._list = []
-        self.__ready = False
-
-    def size(self) -> int:
-        return len(self._list)
-
-    def entry_add(self, entry: Entry):
-        self._list.append(entry)
-
-    def entry_del(self, i: int):
-        if i < self.size():
-            del self._list[i]
-
-    def entry(self, i: int) -> Entry:
-        """Get list item"""
-        if i < self.size():
-            return self._list[i]
+    def load_entries(self):
+        """Load entries from Stores paths"""
+        for store in self._list:
+            store.load(self._entries)

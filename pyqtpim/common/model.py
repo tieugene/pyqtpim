@@ -6,22 +6,19 @@ from typing import Any
 from PySide2 import QtCore
 # 3. local
 from . import enums
-from .data import Store, StoreList
+from .data import Store, StoreList, EntryList
 from .settings import MySettings
 
 
 class EntryModel(QtCore.QAbstractTableModel):
-    store_name = dict()  # class-wide cache of Store names (id:name)
+    _data: EntryList
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     # Inherit
     def rowCount(self, parent: QtCore.QModelIndex = None) -> int:
-        return 0  # FIXME: stub
-
-    def columnCount(self, parent: QtCore.QModelIndex = None) -> int:
-        return 0  # FIXME: stub
+        return self._data.size()
 
 
 class EntryProxyModel(QtCore.QSortFilterProxyModel):

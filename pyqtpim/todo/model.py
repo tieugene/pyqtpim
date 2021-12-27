@@ -9,7 +9,7 @@ from PySide2 import QtCore, QtSql
 import vobject
 # 4. local
 from common import EntryModel, EntryProxyModel, StoreModel, exc, SetGroup
-from .data import TodoVObj, TodoStore, store_list
+from .data import TodoVObj, TodoStore, store_list, entry_list
 from . import enums, query
 
 
@@ -19,69 +19,73 @@ class TodoModel(EntryModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._data = entry_list
         self.__entry_cache = dict()
-        for i in range(len(enums.ColHeader)):
-            self.setHeaderData(i, QtCore.Qt.Horizontal, enums.ColHeader[i])
         self.updateFilterByStore()
 
     # Inherit
+    def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = QtCore.Qt.DisplayRole) -> Any:
+        if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
+            return enums.ColHeader[section]
+
+    def columnCount(self, parent: QtCore.QModelIndex = None) -> int:
+        return len(enums.ColHeader)
+
     def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
-        def __utc2disp(data: str):
+        def __utc2disp(data: Optional[datetime.datetime]) -> str:
             """Convert UTC datetime into viewable localtime"""
             if data:
-                return datetime.datetime.fromisoformat(data).astimezone().replace(tzinfo=None).isoformat(sep=' ')
+                return data.replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
 
-        def __vardatime2disp(data: str):
+        def __vardatime2disp(data: Optional[Union[datetime.datetime, datetime.date]]) -> str:
             """Convert datetime (naive/tzed) into viewable localtime"""
             if data:
-                if isinstance(datime := datetime.datetime.fromisoformat(data), datetime.datetime):
-                    if datime.tzinfo:
-                        return datime.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
-                    else:  # naive => as is, w/o seconds
-                        return data.replace('T', ' ')[:16]
+                if isinstance(data, datetime.datetime):
+                    return data.replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
                 else:  # date => no convert
                     return data
 
         if not idx.isValid():
             return None
-        if role == QtCore.Qt.DisplayRole:
-            v = super().data(idx, role)
-            col = idx.column()
-            if col == enums.EColNo.Prio.value:
-                if v:  # :str()|int
+        entry = self._data.entry_get(idx.row())
+        vobj: TodoVObj = entry.vobj
+        col = idx.column()
+        if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:
+            if col == enums.EColNo.Store.value:
+                return entry.store.name
+            if col == enums.EColNo.Created.value:
+                return __utc2disp(vobj.get_Created())
+            elif col == enums.EColNo.DTStamp.value:
+                return __utc2disp(vobj.get_DTStamp())
+            elif col == enums.EColNo.Modified.value:
+                return __utc2disp(vobj.get_LastModified())
+            elif col == enums.EColNo.DTStart.value:
+                return __vardatime2disp(vobj.get_DTStart())
+            elif col == enums.EColNo.Due.value:
+                return __vardatime2disp(vobj.get_Due())
+            elif col == enums.EColNo.Completed.value:
+                return __utc2disp(vobj.get_Completed())
+            elif col == enums.EColNo.Progress.value:
+                return vobj.get_Progress()
+            elif col == enums.EColNo.Prio.value:
+                if v := vobj.get_Priority():
                     return enums.TDecor_Prio[v - 1]
             elif col == enums.EColNo.Status.value:
-                # print("Status:", v)
-                if v:  # :str()|int
+                if v := vobj.get_Status():
                     return enums.TDecor_Status[v - 1]
-            elif col == enums.EColNo.Store.value:
-                return self.store_name[v]  # v:int
-            elif col == enums.EColNo.Created.value:
-                return __utc2disp(v)  # v:str
-            elif col == enums.EColNo.DTStamp.value:
-                return __utc2disp(v)  # v:str
-            elif col == enums.EColNo.Modified.value:
-                return __utc2disp(v)  # v:str
-            elif col == enums.EColNo.Completed.value:
-                return __utc2disp(v)  # v:str
-            elif col == enums.EColNo.DTStart.value:
-                return __vardatime2disp(v)  # v:str
-            elif col == enums.EColNo.Due.value:
-                return __vardatime2disp(v)  # v:str
-            elif col == enums.EColNo.Syn.value:
-                return enums.TDecor_Syn[v - 1]
-            else:
-                # print("v:", v, type(v))
-                return v
+            elif col == enums.EColNo.Summary.value:
+                return vobj.get_Summary()
+            elif col == enums.EColNo.Location.value:
+                return vobj.get_Location()
+        '''
         elif role == QtCore.Qt.EditRole:
             col = idx.column()
-            # if col in {enums.EColNo.Store.value, enums.EColNo.Completed.value}:
             if col == enums.EColNo.Completed.value:
                 return self.data(idx, QtCore.Qt.DisplayRole)
             else:
                 return super().data(idx, role)
         elif role == QtCore.Qt.ForegroundRole:
-            v = super().data(idx, QtCore.Qt.DisplayRole)
+            # v = super().data(idx, QtCore.Qt.DisplayRole)
             col = idx.column()
             if col == enums.EColNo.Prio.value:
                 if v:
@@ -92,9 +96,10 @@ class TodoModel(EntryModel):
             if col == enums.EColNo.Syn.value:
                 if v:
                     return enums.TColor_Syn[v - 1]
-            return super().data(idx, role)
-        else:
-            return super().data(idx, role)
+            # return super().data(idx, role)
+        # else:
+            # return super().data(idx, role)
+        '''
 
     # Hand-made
     def reload(self):
@@ -146,7 +151,7 @@ class TodoProxyModel(EntryProxyModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__currentSort = self.__lessThen_ID
+        self.__currentSort = self.__lessThen_None
         self.__currentFilter = self.__accept_All
         self.setDynamicSortFilter(True)
         # TODO: self.resizeColumntToContent(*)
@@ -165,11 +170,11 @@ class TodoProxyModel(EntryProxyModel):
     # Hand-made
     def sortChanged(self, sort_id: enums.ESortBy):
         self.beginResetModel()
-        self.__currentSort = {
-            enums.ESortBy.ID: self.__lessThen_ID,
-            enums.ESortBy.Name: self.__lessThen_Name,
-            enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
-        }[sort_id]
+        # self.__currentSort = {
+        #    enums.ESortBy.ID: self.__lessThen_ID,
+        #    enums.ESortBy.Name: self.__lessThen_Name,
+        #    enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
+        #}[sort_id]
         self.endResetModel()
         self.parent().requery()
 
@@ -183,6 +188,9 @@ class TodoProxyModel(EntryProxyModel):
         # print("Filter changed:", filt_id)
         self.invalidateFilter()
         # self.parent().requery()
+
+    def __lessThen_None(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
+        return True
 
     def __lessThen_ID(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()

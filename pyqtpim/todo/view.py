@@ -18,7 +18,6 @@ class TodoListView(EntryListView):
         self._details.setModel(self.model().sourceModel())
         # addons
         self.loadCol2Show()
-        self.setColumnHidden(enums.EColNo.Body.value, True)
         self.loadColOrder()
         hh = self.horizontalHeader()
         hh.sectionMoved.connect(self.sectionMoved)
@@ -31,7 +30,7 @@ class TodoListView(EntryListView):
         #         hh.ResizeMode.ResizeToContents
         #     )
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
-        self.sortByColumn(enums.EColNo.ID.value)
+        # # self.sortByColumn(enums.EColNo.ID.value)
         # self.resizeRowsToContents()
         # signals
         # # self.activated.connect(self.rowChanged)
@@ -214,7 +213,6 @@ class TodoStoreListView(StoreListView):
 
 
 class TodoView(EntryView):
-    id_: QtWidgets.QSpinBox
     store: QtWidgets.QLineEdit
     summary: QtWidgets.QLineEdit
     category: QtWidgets.QLineEdit
@@ -236,7 +234,6 @@ class TodoView(EntryView):
 
     def __createWidgets(self):
         # widgets
-        self.id_ = QtWidgets.QSpinBox(self)
         self.store = QtWidgets.QLineEdit(self)
         self.summary = QtWidgets.QLineEdit(self)
         self.category = QtWidgets.QLineEdit(self)
@@ -252,15 +249,13 @@ class TodoView(EntryView):
         self.modified = QtWidgets.QDateTimeEdit(self)
         self.description = QtWidgets.QTextEdit(self)
         # attributes
-        for i in (self.id_, self.store, self.summary, self.category, self.priority, self.dtstart, self.due, self.status,
+        for i in (self.store, self.summary, self.category, self.priority, self.dtstart, self.due, self.status,
                   self.progress, self.completed, self.url, self.location, self.class_, self.modified, self.description):
             i.setReadOnly(True)
-        for i in (self.id_, self.modified):
+        for i in (self.modified,):
             i.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
-        self.id_.setMaximum(1 << 30)
         # layout
         layout = QtWidgets.QFormLayout()
-        layout.addRow("ID", self.id_)
         layout.addRow("Store", self.store)
         layout.addRow("Summary:", self.summary)
         layout.addRow("Category:", self.category)
@@ -294,7 +289,6 @@ class TodoView(EntryView):
         :todo: indexOf
         """
         super().setModel(model)
-        self.mapper.addMapping(self.id_, enums.EColNo.ID.value)
         self.mapper.addMapping(self.store, enums.EColNo.Store.value)
         self.mapper.addMapping(self.summary, enums.EColNo.Summary.value)
         # category
