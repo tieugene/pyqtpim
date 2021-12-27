@@ -123,7 +123,7 @@ class StoreList(object):
         for store in data:
             self.store_add(self._item_cls(store['name'], store['path'], store['active']))
 
-    def store(self, i: int) -> Store:
+    def store_get(self, i: int) -> Store:
         if i < self.size():
             return self._list[i]
 

@@ -17,11 +17,7 @@
 
 ### 0.1. Now
 - [ ] Teach @classmethod
-- [ ] TodoList CRUD
-  - [ ] EntryModel:
-    - [ ] Add item
-    - [ ] Edit item
-    - [ ] Del item
+- [ ] TodoList LCRUD
 
 ### 0.2. Bugs
 - [ ] MySettings.store_X glithed

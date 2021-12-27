@@ -64,10 +64,6 @@ class StoreListView(QtWidgets.QListView):
     def storeAdd(self):
         """Add new Store"""
         if self.__form.exec_new():
-            # FIXME: use model method; update model
-            # s_list: StoreList = self.model()._data
-            # store = s_list._item_cls(self.__form.name, self.__form.connection, self.__form.active)
-            # s_list.store_add(store)
             store = self.model().item_cls(self.__form.name, self.__form.connection, self.__form.active)
             self.model().item_add(store)
             self.model().save()
@@ -77,25 +73,19 @@ class StoreListView(QtWidgets.QListView):
         if not (indexes := self.selectedIndexes()):
             return
         row = indexes[0].row()
-        # s_list: StoreList = self.model()._data
-        # store: Store = s_list.store(row)
         store = self.model().item_get(row)
         if self.__form.exec_edit(store):
-            # FIXME: use model method; update model row
             self.model().save()
 
     def storeDel(self):
         if not (indexes := self.selectedIndexes()):
             return
         row = indexes[0].row()
-        # s_list: StoreList = self.model()._data
-        # store: Store = s_list.store(row)
         store = self.model().item_get(row)
         if QtWidgets.QMessageBox.question(self, f"Deleting {self._title}",
                                           f"Are you sure to delete '{store.name}'")\
                 == QtWidgets.QMessageBox.StandardButton.Yes:
             # FIXME: use model method; update model
-            # s_list.store_del(row)
             self.model().item_del(row)
             self.model().save()
 

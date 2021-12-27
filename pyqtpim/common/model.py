@@ -52,14 +52,14 @@ class StoreModel(QtCore.QStringListModel):
 
     def data(self, index: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
         if role == QtCore.Qt.DisplayRole:
-            return self._data.store(index.row()).name
+            return self._data.store_get(index.row()).name
         elif role == QtCore.Qt.CheckStateRole:
-            return QtCore.Qt.Checked if self._data.store(index.row()).active else QtCore.Qt.Unchecked
+            return QtCore.Qt.Checked if self._data.store_get(index.row()).active else QtCore.Qt.Unchecked
 
     def setData(self, index: QtCore.QModelIndex, value: Any, role: int = QtCore.Qt.EditRole) -> bool:
         if role == QtCore.Qt.CheckStateRole:
             row = index.row()
-            self._data.store(row).active = (value == QtCore.Qt.Checked)
+            self._data.store_get(row).active = (value == QtCore.Qt.Checked)
             self.save()
             # TODO: refresh EntryList
             # self.dataChanged.emit(index, index, (role,))
@@ -69,7 +69,7 @@ class StoreModel(QtCore.QStringListModel):
 
     # Hand-made
     def item_get(self, i: int) -> Store:
-        return self._data.store(i)
+        return self._data.store_get(i)
 
     def item_add(self, item: Store):
         self.beginInsertRows(self.index(self._data.size(), 0), self._data.size(), self._data.size())
