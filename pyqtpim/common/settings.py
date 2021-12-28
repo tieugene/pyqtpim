@@ -4,6 +4,7 @@ from typing import Any, Union, Optional
 
 from PySide2.QtCore import QCoreApplication, QSettings
 from .enums import SetGroup
+# from todo import ColHeader  # circular import
 
 
 class MySettings:
@@ -34,7 +35,7 @@ class MySettings:
             if key == 'col2show':
                 retvalue = tuple(map(int, s.value('col2show', list(range(12)))))  # len(ColHeader)
             elif key == 'colorder':
-                retvalue = tuple(map(int, s.value('colorder', list(range(12)))))
+                retvalue = tuple(map(int, s.value('colorder', list(range(12)))))  # len(ColHeader)
             elif key == 'store':
                 retvalue = json.loads(s.value('store', '[]'))
             s.endGroup()

@@ -23,6 +23,16 @@ class EntryModel(QtCore.QAbstractTableModel):
     def item_get(self, i: int) -> Entry:
         return self._data.entry_get(i)
 
+    def item_upd(self, i: int) -> bool:
+        """Flush entry to source file.
+        :todo: resort/refilter/update line"""
+        return self._data.entry_get(i).save()
+
+    def item_del(self, i: int) -> bool:
+        """Remove entry from disk and list
+        :todo: line removing handle"""
+        return self._data.entry_del(i)
+
 
 class EntryProxyModel(QtCore.QSortFilterProxyModel):
     # _own_model = EntryModel

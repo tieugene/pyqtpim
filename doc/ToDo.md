@@ -22,18 +22,22 @@
   - [x] sort
   - [x] filter
   - [x] U
-  - [ ] D
+  - [x] D
   - [ ] C
   - [x] columns hide/show
   - [ ] columns order
   - [ ] decoration (color)
 - [ ] Teach @classmethod
-- [ ] delay/async load
 
 ### 0.2. Bugs
 - [ ] TodoView: Completed: tz
 - [ ] TodoStore.active changed => refilter TodoListView
-- [ ] Todo[List]View: update after entryEdit [+refilter]
+- [ ] TodoForm.exec_edit(): wrong Store
+- [ ] TodoListView: bad refilter after entryDel()
+- [ ] TodoListView: update/resort/refilter (?model) after:
+  - [ ] entryEdit: update line + resort/refilter
+  - [ ] entryDel: remove line
+  - [ ] entryAdd: add line?
 
 ### 0.3. Issues
 - [ ] TodoListView:
@@ -41,8 +45,7 @@
 - [ ] TodoView:
   - [ ] Status: str
   - [ ] Prio: orig
-- [ ] Check uid on Reload
-- [ ] Filter fault after add/del entry (id==None)
+- [ ] delay/async load
 
 ### 0.4. Features
 - [ ] 'Percent' => 'Progress'
@@ -81,6 +84,8 @@
   - [ ] filter
 
 ### SQL
+- [ ] Check uid on load()
+- [ ] Filter fault after add/del entry (id==None)
 - [ ] Start...stop sync msg
 - [ ] ~~TodoProxyModel~~
   - [ ] Sort

@@ -1,4 +1,4 @@
-"""GUI representation of ToDo things"""
+"""GUI representation of Tasks things"""
 # 1. std
 # 2. PySide
 from PySide2 import QtCore, QtWidgets, QtSql
@@ -89,9 +89,11 @@ class TodoListView(EntryListView):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        entry: TodoEntry = self.model().sourceModel().item_get(self.model().mapToSource(idx).row())
+        row = self.model().mapToSource(idx).row()
+        entry: TodoEntry = self.model().sourceModel().item_get(row)
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_edit(entry.vobj, entry.store):
+            # TODO: self.model().sourceModel().item_upd(row)
             if not entry.save():
                 print(f"Something bad with saving '{entry.vobj.get_Summary()}'")
             # self.requery()  # FIXME: update the record only
@@ -100,28 +102,15 @@ class TodoListView(EntryListView):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        src_row = self.model().mapToSource(idx).row()
+        row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
-        # TODO: by id
-        src_rec = realmodel.record(src_row)
-        entry_id = src_rec.value('id')
-        syn = src_rec.value('syn')
-        # if not realmodel.removeRow(src_row):
-        if QtWidgets.QMessageBox.question(self, f"Deleting {entry_id}",
-                                          f"Are you sure to delete '{entry_id}'") \
+        name = realmodel.item_get(row).vobj.get_Summary()
+        if QtWidgets.QMessageBox.question(self, f"Deleting ToDo",
+                                          f"Are you sure to delete '{name}'") \
                 == QtWidgets.QMessageBox.StandardButton.Yes:
-            # TODO: move to model
-            if syn == enums.ESyn.New.value:
-                if not (q := QtSql.QSqlQuery(query.entry_del % entry_id)).exec_():
-                    print(f"Something wrong with deleting {entry_id}: {q.lastError().text()}")
-                else:
-                    realmodel.delObj(entry_id)
-            elif syn == enums.ESyn.Synced.value:
-                if not (q := QtSql.QSqlQuery(query.entry_set_syn % (enums.ESyn.Del.value, entry_id))).exec_():
-                    print(f"Something wrong with mark deleted {entry_id}: {q.lastError().text()}")
-            else:
-                print(f"Entry already deleted: {entry_id}")
-            self.requery()
+            if not realmodel.item_del(row):
+                print(f"Something wrong with deleting '{name}'")
+            # self.requery()
 
     def entryCat(self):
         """Show raw Entry content"""

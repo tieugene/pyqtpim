@@ -125,13 +125,22 @@ class Entry(object):
     def vobj(self):
         return self._vobj
 
+    @property
+    def full_path(self):
+        return os.path.join(self._store.dpath, self._fname)
+
     def save(self) -> bool:
         """Save vobj back to disk"""
-        with open(os.path.join(self._store.dpath, self._fname), 'wt') as o_f:
+        with open(self.full_path, 'wt') as o_f:
             body = self._vobj.serialize()
             if o_f.write(body):
                 return True
         return False
+
+    def self_del(self) -> bool:
+        os.remove(self.full_path)  # TODO: handle exceptions
+        del self._vobj
+        return True
 
 
 # static class
@@ -148,7 +157,7 @@ class EntryList(object):
     def size(self) -> int:
         return len(self._list)
 
-    def entry_get(self, i: int) -> Entry:
+    def entry_get(self, i: int) -> Optional[Entry]:
         """Get list item"""
         if 0 <= i < self.size():
             return self._list[i]
@@ -158,7 +167,10 @@ class EntryList(object):
 
     def entry_del(self, i: int):
         if 0 <= i < self.size():
+            self._list[i].self_del()
             del self._list[i]
+            return True
+        return False
 
 
 class StoreList(object):
