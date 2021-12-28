@@ -3,8 +3,7 @@
 import inspect
 from PySide2 import QtCore, QtWidgets
 from .model import EntryModel
-from . import enums, form
-from .data import Store
+from . import form, data
 
 
 class EntryView(QtWidgets.QGroupBox):
@@ -23,7 +22,7 @@ class EntryView(QtWidgets.QGroupBox):
 
 
 class EntryListView(QtWidgets.QTableView):
-    _own_model = EntryModel
+    # _own_model = EntryModel
     _details: EntryView
 
     def __init__(self, parent, dependant: EntryView):
@@ -31,8 +30,7 @@ class EntryListView(QtWidgets.QTableView):
         self._details = dependant
         self.setSelectionBehavior(self.SelectRows)
         self.setSelectionMode(self.SingleSelection)
-        # self.setEditTriggers(self.NoEditTriggers)
-        # self.setSortingEnabled(True) # requires sorting itself
+        self.setEditTriggers(self.NoEditTriggers)
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().hide()
         self.setWordWrap(False)
@@ -92,7 +90,7 @@ class StoreListView(QtWidgets.QListView):
     def storeInfo(self):
         if not (indexes := self.selectedIndexes()):
             return
-        store: Store = self.model().item_get(indexes[0].row())
+        store: data.Store = self.model().item_get(indexes[0].row())
         QtWidgets.QMessageBox.information(self, f"{self._title} info",
                                           f"{self._title} info:\n"
                                           f"Name: {store.name}\n"

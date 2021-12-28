@@ -1,7 +1,7 @@
 """vCard/iCal models parents"""
 
 # 1. system
-from typing import Any
+from typing import Any, Callable
 # 2. PySide
 from PySide2 import QtCore
 # 3. local
@@ -25,11 +25,25 @@ class EntryModel(QtCore.QAbstractTableModel):
 
 
 class EntryProxyModel(QtCore.QSortFilterProxyModel):
-    _own_model = EntryModel
+    # _own_model = EntryModel
+    _currentSorter: Callable
+    _currentFilter: Callable
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # self.setSourceModel(self._own_model(self))
+        self._currentSorter = self._lessThen_None
+        self._currentFilter = self._accept_All
+
+    @staticmethod
+    def _lessThen_None(_: QtCore.QModelIndex, __: QtCore.QModelIndex) -> bool:
+        """Default sorter"""
+        return False
+
+    @staticmethod
+    def _accept_All(_: int) -> bool:
+        """Default filter (enable all)"""
+        return True
 
 
 class StoreModel(QtCore.QStringListModel):

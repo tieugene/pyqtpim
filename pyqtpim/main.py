@@ -4,7 +4,7 @@ from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt, QCoreApplication
 # 3. local
 from common import MySettings
-from todo import store_list
+# from todo import store_list
 from view import MainWindow
 from pyqtpim_rc import qInitResources
 

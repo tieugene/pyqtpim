@@ -1,16 +1,15 @@
 # 1. system
 # 2. PySide
 import datetime
-import os
-from typing import Any, Callable, Optional, Union
+from typing import Any, Optional, Union
 # 2. PySide2
 from PySide2 import QtCore, QtSql
 # 3. 3rd
 import vobject
 # 4. local
-from common import EntryModel, EntryProxyModel, StoreModel, exc, SetGroup
+from common import EntryModel, EntryProxyModel, StoreModel, SetGroup
 from .data import TodoVObj, TodoStore, store_list, entry_list
-from . import enums, query
+from . import enums
 
 
 class TodoModel(EntryModel):
@@ -100,9 +99,9 @@ class TodoModel(EntryModel):
         '''
 
     # Hand-made
-    def reload(self):
-        self.beginResetModel()
-        self.endResetModel()
+    # def reload(self):
+    #    self.beginResetModel()
+    #    self.endResetModel()
 
     def getObjByRow(self, row: int):
         """Get [cached] entry body.
@@ -121,24 +120,12 @@ class TodoModel(EntryModel):
         ...
         # self.reload()
 
-    def reloadAll(self, store_id: int, store_path: str):
-        self.beginResetModel()
-        if QtSql.QSqlQuery(query.entry_drop_all % store_id):  # FIXME: clean obj cache
-            load_store(self, store_id, store_path)
-        else:
-            print("Error clean store's entries")
-        self.endResetModel()
-
 
 class TodoProxyModel(EntryProxyModel):
-    _own_model = TodoModel
-    __currentSorter: Callable
-    __currentFilter: Callable
+    # _own_model = TodoModel
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__currentSorter = self.__lessThen_None
-        self.__currentFilter = self.__accept_All
         self.setDynamicSortFilter(True)
         # TODO: self.resizeColumntToContent(*)
         self.__today = datetime.date.today()
@@ -147,19 +134,18 @@ class TodoProxyModel(EntryProxyModel):
     # Inherit
     def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         """:todo: combine per-column built-in sort with complex one"""
-        print("lessThen")
-        return self.__currentSorter(source_left, source_right)
+        # print("lessThen")
+        return self._currentSorter(source_left, source_right)
 
     def filterAcceptsRow(self, source_row: int, source_parent: QtCore.QModelIndex) -> bool:
         """Default: all; Today: Due <= today [todo: and not completed]"""
-        return self.__currentFilter(source_row)
+        return self._currentFilter(source_row)
 
     # Hand-made
     def sortChanged(self, sort_id: enums.ESortBy):
         # self.beginResetModel()
-        print("Sorting changed to", sort_id)
-        self.__currentSorter = {
-            enums.ESortBy.AsIs: self.__lessThen_None,
+        self._currentSorter = {
+            enums.ESortBy.AsIs: self._lessThen_None,
             enums.ESortBy.Name: self.__lessThen_Name,
             enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
         }[sort_id]
@@ -168,8 +154,8 @@ class TodoProxyModel(EntryProxyModel):
         # self.parent().requery()
 
     def filtChanged(self, filt_id: enums.EFiltBy):
-        self.__currentFilter = {
-            enums.EFiltBy.All: self.__accept_All,
+        self._currentFilter = {
+            enums.EFiltBy.All: self._accept_All,
             enums.EFiltBy.Closed: self.__accept_Closed,
             enums.EFiltBy.Today: self.__accept_Today,
             enums.EFiltBy.Tomorrow: self.__accept_Tomorrow
@@ -178,12 +164,7 @@ class TodoProxyModel(EntryProxyModel):
         self.invalidateFilter()
         self.parent().requery()
 
-    def __lessThen_None(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
-        print("default sort")
-        return False
-
     def __lessThen_Name(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
-        print("name sort")
         realmodel = self.sourceModel()
         # data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.Summary.value))
         # data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.Summary.value))
@@ -193,7 +174,6 @@ class TodoProxyModel(EntryProxyModel):
 
     def __lessThen_PrioDueName(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         """Sorting Prio>Due>Summary"""
-
         def __get_prio(vobj: TodoVObj) -> int:
             if v := vobj.get_Priority():
                 return enums.Raw2Enum_Prio[v]
@@ -208,8 +188,8 @@ class TodoProxyModel(EntryProxyModel):
             return datetime.date(9999, 12, 31)
 
         realmodel = self.sourceModel()
-        obj_left: TodoVObj = realmodel.item_get(source_left.row())
-        obj_right: TodoVObj = realmodel.item_get(source_right.row())
+        obj_left: TodoVObj = realmodel.item_get(source_left.row()).vobj
+        obj_right: TodoVObj = realmodel.item_get(source_right.row()).vobj
         # 1. Prio
         prio_left = __get_prio(obj_left)
         prio_right = __get_prio(obj_right)
@@ -223,11 +203,6 @@ class TodoProxyModel(EntryProxyModel):
         # 3. Summary
         return obj_right.get_Summary().casefold() < obj_left.get_Summary().casefold()
 
-    @staticmethod
-    def __accept_All(_: int) -> bool:
-        """Enable all ToDos"""
-        return True
-
     def __accept_Closed(self, source_row: int) -> bool:
         """Show only Status=Complete[|Cancelled]"""
         return self.sourceModel().getObjByRow(source_row).get_Status() in {enums.EStatus.Completed,
@@ -236,17 +211,18 @@ class TodoProxyModel(EntryProxyModel):
     def __accept_Today(self, source_row: int) -> bool:
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
-
         vobj: TodoVObj = self.sourceModel().getObjByRow(source_row)
-        return (vobj.get_Status() not in closed) and (due := vobj.get_Due_as_date()) is not None and due <= self.__today
+        due = vobj.get_Due_as_date()
+        return (vobj.get_Status() not in closed) and due is not None and due <= self.__today
 
     def __accept_Tomorrow(self, source_row: int) -> bool:
         """Like today but tomorrow"""
         closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
         vobj: TodoVObj = self.sourceModel().getObjByRow(source_row)
+        due = vobj.get_Due_as_date()
         return \
             (vobj.get_Status() not in closed) \
-            and (due := vobj.get_Due_as_date()) is not None \
+            and due is not None \
             and due <= self.__tomorrow
 
 
@@ -257,30 +233,6 @@ class TodoStoreModel(StoreModel):
         super().__init__(entries, *args, **kwargs)
         self._set_group = SetGroup.ToDo
         self._data = store_list
-
-
-def load_store(model: TodoModel, store_id: int, path: str):
-    """Sync VTODO records with file dir
-    :todo: hide into model
-    """
-    with os.scandir(path) as itr:
-        for entry in itr:
-            if not entry.is_file():
-                continue
-            with open(entry.path, 'rt') as stream:
-                if ventry := vobject.readOne(stream):
-                    if ventry.name == 'VCALENDAR' and 'vtodo' in ventry.contents:
-                        obj = TodoVObj(ventry)
-                        q = obj2sql(query.entry_add, obj)
-                        q.bindValue(':store_id', store_id)
-                        q.bindValue(':syn', enums.ESyn.Synced.value)
-                        if not q.exec_():
-                            print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
-                        else:
-                            model.setObj(q.lastInsertId(), obj)
-                else:
-                    raise exc.EntryLoadError(f"Cannot load vobject: {entry.path}")
-    model.select()
 
 
 def obj2sql(q_str: str, vobj: TodoVObj) -> QtSql.QSqlQuery:

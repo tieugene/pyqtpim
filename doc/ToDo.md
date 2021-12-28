@@ -19,8 +19,7 @@
 - [~] TodoList:
   - [~] L
   - [~] R
-  - [ ] delay load ?
-  - [ ] sort
+  - [~] sort
   - [ ] filter
   - [ ] U
   - [ ] C
@@ -28,6 +27,7 @@
   - [ ] columns hide/show
   - [ ] columns order
   - [ ] decoration (color)
+  - [ ] delay/async load
 - [ ] Teach @classmethod
 
 ### 0.2. Bugs

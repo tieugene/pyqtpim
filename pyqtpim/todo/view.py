@@ -11,7 +11,7 @@ from . import enums
 
 
 class TodoListView(EntryListView):
-    _own_model = TodoProxyModel
+    # _own_model = TodoProxyModel
     """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
@@ -23,24 +23,21 @@ class TodoListView(EntryListView):
         self.loadCol2Show()
         self.loadColOrder()
         hh = self.horizontalHeader()
-        hh.sectionMoved.connect(self.sectionMoved)
         hh.setSectionsMovable(True)
         # vvv Works not right
-        # for c in (enums.EColNo.ID.value, enums.EColNo.Progress.value, enums.EColNo.Prio.value,
-        #           enums.EColNo.Status.value, enums.EColNo.Syn.value):
-        #     hh.setSectionResizeMode(
-        #         hh.visualIndex(c),
-        #         hh.ResizeMode.ResizeToContents
-        #     )
+        # for c in (enums.EColNo.Progress.value, enums.EColNo.Prio.value, enums.EColNo.Status.value):
+        #    hh.setSectionResizeMode(hh.visualIndex(c), hh.ResizeMode.ResizeToContents)
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
-        # # self.sortByColumn(enums.EColNo.ID.value)
         # self.resizeRowsToContents()
+        self.setSortingEnabled(True)  # deafult=False, requires sorting itself; must be NOT in parent
+        # self.sortByColumn(enums.EColNo.Summary.value)
         # signals
         # # self.activated.connect(self.rowChanged)
+        self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
         self.selectionModel().currentRowChanged.connect(self.rowChanged)
 
     def requery(self):
-        self.model().sourceModel().reload()
+        # self.model().sourceModel().reload()
         self.resizeRowsToContents()
 
     def rowChanged(self, idx):
@@ -205,7 +202,7 @@ class TodoStoreListView(StoreListView):
         """Reload Store from its connection"""
         # if not (indexes := self.selectedIndexes()):
         #    return
-        self.model().load_self()         # load stores
+        self.model().load_self()
         self.model().load_entries()
 
 
