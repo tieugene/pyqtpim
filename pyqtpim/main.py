@@ -15,7 +15,7 @@ def main():
     MySettings.setup()
     app = QApplication(sys.argv)
     mw = MainWindow()
-    store_list.load_entries()
+    # store_list.load_entries()
     mw.show()
     sys.exit(app.exec_())
 

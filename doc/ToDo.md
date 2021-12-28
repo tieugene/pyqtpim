@@ -16,13 +16,18 @@
   - [ ] link by object id (like `uniq_ptr`)
 
 ### 0.1. Now
-- [ ] TodoList:
-  - [ ] LCRUD
+- [~] TodoList:
+  - [~] L
+  - [~] R
+  - [ ] delay load ?
+  - [ ] sort
+  - [ ] filter
+  - [ ] U
+  - [ ] C
+  - [ ] D
   - [ ] columns hide/show
   - [ ] columns order
   - [ ] decoration (color)
-  - [ ] sort
-  - [ ] filter
 - [ ] Teach @classmethod
 
 ### 0.2. Bugs

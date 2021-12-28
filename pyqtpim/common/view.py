@@ -36,8 +36,8 @@ class EntryListView(QtWidgets.QTableView):
         self.horizontalHeader().setStretchLastSection(True)
         self.verticalHeader().hide()
         self.setWordWrap(False)
-        __model = self._own_model(self)
-        self.setModel(__model)
+        # __model = self._own_model(self)
+        # self.setModel(__model)
 
     def entryCat(self):
         print("Stub")
@@ -56,8 +56,8 @@ class StoreListView(QtWidgets.QListView):
         super().__init__(parent)
         self._list = dependant
         # self.setSelectionMode(self.SingleSelection)
-        self.setModel(self._model_cls())
-        self.setModelColumn(enums.EColNo.Name.value)
+        # self.setModel(self._model_cls())
+        # self.setModelColumn(enums.EColNo.Name.value)
         self.setEditTriggers(self.NoEditTriggers)
         self.__form = form.StoreForm(self._title)
 

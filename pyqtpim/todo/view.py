@@ -4,7 +4,7 @@
 from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
-from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql
+from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql, todo_model, store_model
 from .data import TodoVObj
 from .form import TodoForm
 from . import enums
@@ -15,6 +15,9 @@ class TodoListView(EntryListView):
     """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
+        proxy = TodoProxyModel(self)
+        proxy.setSourceModel(todo_model)
+        self.setModel(proxy)
         self._details.setModel(self.model().sourceModel())
         # addons
         self.loadCol2Show()
@@ -196,20 +199,14 @@ class TodoStoreListView(StoreListView):
 
     def __init__(self, parent, dependant: TodoListView):
         super().__init__(parent, dependant)
-        self.model().load()
-        # self.model().activeChanged.connect(self._list.model().updateFilterByStore)
+        self.setModel(store_model)
 
-    def storeReload(self):
+    def stores_reload(self):
         """Reload Store from its connection"""
-        if not (indexes := self.selectedIndexes()):
-            return
-        rec = self.model().record(indexes[0].row())
-        self._list.model().sourceModel().reloadAll(rec.value('id'), rec.value('connection'))
-
-    def storeSync(self, _: bool = True):
-        """Sync Store with its connection
-        """
-        ...
+        # if not (indexes := self.selectedIndexes()):
+        #    return
+        self.model().load_self()         # load stores
+        self.model().load_entries()
 
 
 class TodoView(EntryView):
@@ -308,7 +305,7 @@ class TodoView(EntryView):
 
 
 class TodoSortWidget(QtWidgets.QGroupBox):
-    by_id: QtWidgets.QRadioButton
+    by_asis: QtWidgets.QRadioButton
     by_name: QtWidgets.QRadioButton
     by_pdn: QtWidgets.QRadioButton
     bg: QtWidgets.QButtonGroup
@@ -317,23 +314,23 @@ class TodoSortWidget(QtWidgets.QGroupBox):
         super().__init__(parent)
         self.setTitle("Sort")
         # widgets
-        self.by_id = QtWidgets.QRadioButton("ID", self)
+        self.by_asis = QtWidgets.QRadioButton("As is", self)
         self.by_name = QtWidgets.QRadioButton("Name", self)
         self.by_pdn = QtWidgets.QRadioButton("!→Due→Name", self)
         # logic
         self.bg = QtWidgets.QButtonGroup(self)
-        self.bg.addButton(self.by_id, enums.ESortBy.ID)
+        self.bg.addButton(self.by_asis, enums.ESortBy.AsIs)
         self.bg.addButton(self.by_name, enums.ESortBy.Name)
         self.bg.addButton(self.by_pdn, enums.ESortBy.PrioDueName)
         # layout
         layout = QtWidgets.QVBoxLayout()
-        layout.addWidget(self.by_id)
+        layout.addWidget(self.by_asis)
         layout.addWidget(self.by_name)
         layout.addWidget(self.by_pdn)
         # layout.addStretch(1);
         self.setLayout(layout)
         # the end
-        self.by_id.setChecked(True)
+        self.by_asis.setChecked(True)
 
 
 class TodoFilterWidget(QtWidgets.QGroupBox):

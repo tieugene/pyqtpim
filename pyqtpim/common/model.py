@@ -29,17 +29,19 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setSourceModel(self._own_model(self))
+        # self.setSourceModel(self._own_model(self))
 
 
 class StoreModel(QtCore.QStringListModel):
     _set_group: enums.SetGroup
     item_cls: type
     _data: StoreList
+    _entry_model: EntryModel
     activeChanged: QtCore.Signal = QtCore.Signal()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, entries: EntryModel, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._entry_model = entries
 
     # Inherit
     def rowCount(self, parent: QtCore.QModelIndex = None) -> int:
@@ -84,9 +86,17 @@ class StoreModel(QtCore.QStringListModel):
         self._data.store_del(i)
         self.endRemoveRows()
 
-    def load(self):
+    def load_self(self):
         """Load _data from settings"""
+        self.beginResetModel()
         self._data.from_list(MySettings.get(self._set_group, 'store'))
+        self.endResetModel()
+
+    def load_entries(self):
+        """Load _data from settings"""
+        self._entry_model.beginResetModel()
+        self._data.load_entries()
+        self._entry_model.endResetModel()
 
     def save(self):
         """Save _data to settings"""

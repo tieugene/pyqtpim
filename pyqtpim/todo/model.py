@@ -15,7 +15,6 @@ from . import enums, query
 
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
-    __entry_cache: dict[int, TodoVObj]  # entry.id: VObj
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -119,7 +118,8 @@ class TodoModel(EntryModel):
 
     def updateFilterByStore(self):
         """"""
-        self.reload()
+        ...
+        # self.reload()
 
     def reloadAll(self, store_id: int, store_path: str):
         self.beginResetModel()
@@ -137,7 +137,7 @@ class TodoProxyModel(EntryProxyModel):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__currentSort = self.__lessThen_None
+        self.__currentSorter = self.__lessThen_None
         self.__currentFilter = self.__accept_All
         self.setDynamicSortFilter(True)
         # TODO: self.resizeColumntToContent(*)
@@ -147,7 +147,8 @@ class TodoProxyModel(EntryProxyModel):
     # Inherit
     def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         """:todo: combine per-column built-in sort with complex one"""
-        return self.__currentSort(source_left, source_right)
+        print("lessThen")
+        return self.__currentSorter(source_left, source_right)
 
     def filterAcceptsRow(self, source_row: int, source_parent: QtCore.QModelIndex) -> bool:
         """Default: all; Today: Due <= today [todo: and not completed]"""
@@ -155,14 +156,16 @@ class TodoProxyModel(EntryProxyModel):
 
     # Hand-made
     def sortChanged(self, sort_id: enums.ESortBy):
-        self.beginResetModel()
-        # self.__currentSort = {
-        #    enums.ESortBy.ID: self.__lessThen_ID,
-        #    enums.ESortBy.Name: self.__lessThen_Name,
-        #    enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
-        #}[sort_id]
-        self.endResetModel()
-        self.parent().requery()
+        # self.beginResetModel()
+        print("Sorting changed to", sort_id)
+        self.__currentSorter = {
+            enums.ESortBy.AsIs: self.__lessThen_None,
+            enums.ESortBy.Name: self.__lessThen_Name,
+            enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
+        }[sort_id]
+        # self.endResetModel()
+        self.invalidate()
+        # self.parent().requery()
 
     def filtChanged(self, filt_id: enums.EFiltBy):
         self.__currentFilter = {
@@ -173,24 +176,19 @@ class TodoProxyModel(EntryProxyModel):
         }[filt_id]
         # print("Filter changed:", filt_id)
         self.invalidateFilter()
-        # self.parent().requery()
+        self.parent().requery()
 
     def __lessThen_None(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
-        return True
-
-    def __lessThen_ID(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
-        realmodel = self.sourceModel()
-        data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.ID.value))
-        data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.ID.value))
-        if data_right and data_left:
-            return data_right < data_left
-        else:
-            return False
+        print("default sort")
+        return False
 
     def __lessThen_Name(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
+        print("name sort")
         realmodel = self.sourceModel()
-        data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.Summary.value))
-        data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.Summary.value))
+        # data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.Summary.value))
+        # data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.Summary.value))
+        data_left = realmodel.item_get(source_left.row()).vobj.get_Summary()
+        data_right = realmodel.item_get(source_right.row()).vobj.get_Summary()
         return data_right.casefold() < data_left.casefold()
 
     def __lessThen_PrioDueName(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
@@ -210,8 +208,8 @@ class TodoProxyModel(EntryProxyModel):
             return datetime.date(9999, 12, 31)
 
         realmodel = self.sourceModel()
-        obj_left: TodoVObj = realmodel.getObjByRow(source_left.row())
-        obj_right: TodoVObj = realmodel.getObjByRow(source_right.row())
+        obj_left: TodoVObj = realmodel.item_get(source_left.row())
+        obj_right: TodoVObj = realmodel.item_get(source_right.row())
         # 1. Prio
         prio_left = __get_prio(obj_left)
         prio_right = __get_prio(obj_right)
@@ -223,7 +221,7 @@ class TodoProxyModel(EntryProxyModel):
         if due_left != due_right:
             return due_left < due_right
         # 3. Summary
-        return obj_right.get_Summary() < obj_left.get_Summary()
+        return obj_right.get_Summary().casefold() < obj_left.get_Summary().casefold()
 
     @staticmethod
     def __accept_All(_: int) -> bool:
@@ -255,8 +253,8 @@ class TodoProxyModel(EntryProxyModel):
 class TodoStoreModel(StoreModel):
     item_cls = TodoStore
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, entries: TodoModel, *args, **kwargs):
+        super().__init__(entries, *args, **kwargs)
         self._set_group = SetGroup.ToDo
         self._data = store_list
 
@@ -309,3 +307,7 @@ def obj2sql(q_str: str, vobj: TodoVObj) -> QtSql.QSqlQuery:
     q.bindValue(':location', vobj.get_Location())
     q.bindValue(':body', vobj.serialize())
     return q
+
+
+todo_model = TodoModel()
+store_model = TodoStoreModel(todo_model)

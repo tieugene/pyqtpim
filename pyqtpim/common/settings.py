@@ -3,7 +3,6 @@ import json
 from typing import Any, Union, Optional
 
 from PySide2.QtCore import QCoreApplication, QSettings
-from .data import StoreList
 from .enums import SetGroup
 
 
@@ -35,7 +34,7 @@ class MySettings:
             if key == 'col2show':
                 retvalue = tuple(map(int, s.value('col2show', list(range(12)))))  # len(ColHeader)
             elif key == 'colorder':
-                retvalue = tuple(map(int, s.value('colorder', list(range(13)))))
+                retvalue = tuple(map(int, s.value('colorder', list(range(12)))))
             elif key == 'store':
                 retvalue = json.loads(s.value('store', '[]'))
             s.endGroup()

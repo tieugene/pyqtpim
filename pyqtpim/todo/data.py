@@ -338,15 +338,6 @@ class TodoStore(Store):
             entries.entry_add(TodoEntry(vobj, self, fname))
 
 
-class TodoStoreList(StoreList):
-    _item_cls = TodoStore
-
-    def __init__(self):
-        super().__init__()
-        # self._item_cls = TodoStore  # the same
-        self._entries = entry_list
-
-
 class TodoEntry(Entry):
     def __init__(self, data: TodoVObj, store: TodoStore, fname: str):
         super().__init__(data, store, fname)
@@ -357,6 +348,15 @@ class TodoEntryList(EntryList):
         super().__init__()
 
 
+class TodoStoreList(StoreList):
+    _item_cls = TodoStore
+
+    def __init__(self, entries: TodoEntryList):
+        super().__init__(entries)
+        # self._item_cls = TodoStore  # the same
+        # self._entries = entry_list
+
+
 # Warning: exactly in this order: entries > stores
 entry_list = TodoEntryList()
-store_list = TodoStoreList()
+store_list = TodoStoreList(entry_list)

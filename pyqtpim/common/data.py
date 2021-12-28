@@ -158,8 +158,9 @@ class StoreList(object):
     _entries: EntryList
     _list: list[Store]
 
-    def __init__(self):
+    def __init__(self, entries: EntryList):
         super().__init__()
+        self._entries = entries
         self._list = []
 
     def size(self) -> int:

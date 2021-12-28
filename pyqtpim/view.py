@@ -138,8 +138,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
         menu_file.addAction(self.actStoreReload)
-        menu_file.addAction(self.actStoreFakeSync)
-        menu_file.addAction(self.actStoreSync)
+        # menu_file.addAction(self.actStoreFakeSync)
+        # menu_file.addAction(self.actStoreSync)
         menu_file.addSeparator()
         menu_file.addAction(self.actSettings)
         menu_file.addAction(self.actExit)
@@ -189,13 +189,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.todo.stores.storeInfo()
 
     def storeReload(self):
-        self.todo.stores.storeReload()
+        self.todo.stores.stores_reload()
 
     def storeFakeSync(self):
-        self.todo.stores.storeSync(True)
+        ...
 
     def storeSync(self):
-        self.todo.stores.storeSync(False)
+        ...
 
     def entryCat(self):
         """Show file content"""

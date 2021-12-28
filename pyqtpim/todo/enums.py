@@ -59,7 +59,7 @@ class EDBFld(Enum):
 
 # --- Model
 @unique
-class EColNo(IntEnum): # was 0..14
+class EColNo(IntEnum):  # was 0..14
     Store = 0
     Created = 1
     DTStamp = 2
@@ -178,7 +178,7 @@ TColor_Prio = (
 @unique
 class ESortBy(IntEnum):
     """List sorting order"""
-    ID = auto()
+    AsIs = auto()
     Name = auto()
     PrioDueName = auto()
 
