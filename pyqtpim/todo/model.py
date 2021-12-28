@@ -157,6 +157,7 @@ class TodoProxyModel(EntryProxyModel):
         self._currentFilter = {
             enums.EFiltBy.All: self._accept_Default,
             enums.EFiltBy.Closed: self.__accept_Closed,
+            enums.EFiltBy.Opened: self.__accept_Opened,
             enums.EFiltBy.Today: self.__accept_Today,
             enums.EFiltBy.Tomorrow: self.__accept_Tomorrow
         }[filt_id]
@@ -205,6 +206,11 @@ class TodoProxyModel(EntryProxyModel):
         """Show only Status=Complete[|Cancelled]"""
         entry = self.sourceModel().item_get(source_row)
         return entry.store.active and entry.vobj.get_Status() in self.__e_closed
+
+    def __accept_Opened(self, source_row: int) -> bool:
+        """Show only Status!=Complete[|Cancelled]"""
+        entry = self.sourceModel().item_get(source_row)
+        return entry.store.active and entry.vobj.get_Status() not in self.__e_closed
 
     def __accept_Today(self, source_row: int) -> bool:
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""

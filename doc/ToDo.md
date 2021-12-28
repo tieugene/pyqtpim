@@ -22,18 +22,18 @@
   - [x] sort
   - [x] filter
   - [x] U
-  - [ ] C
   - [ ] D
-  - [ ] columns hide/show
+  - [ ] C
+  - [x] columns hide/show
   - [ ] columns order
   - [ ] decoration (color)
-  - [ ] delay/async load
 - [ ] Teach @classmethod
+- [ ] delay/async load
 
 ### 0.2. Bugs
 - [ ] TodoView: Completed: tz
-- [ ] StoreListView: 'active' changed => refresh TodoListView (proxy)
-- [ ] Todo[List]View: update after entry edited
+- [ ] TodoStore.active changed => refilter TodoListView
+- [ ] Todo[List]View: update after entryEdit [+refilter]
 
 ### 0.3. Issues
 - [ ] TodoListView:

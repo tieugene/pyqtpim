@@ -189,5 +189,6 @@ class EFiltBy(IntEnum):
     """List filter rules"""
     All = auto()
     Closed = auto()
+    Opened = auto()
     Today = auto()
     Tomorrow = auto()

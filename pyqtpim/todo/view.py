@@ -300,6 +300,7 @@ class TodoSortWidget(QtWidgets.QGroupBox):
 class TodoFilterWidget(QtWidgets.QGroupBox):
     f_All: QtWidgets.QRadioButton
     f_Closed: QtWidgets.QRadioButton
+    f_Opened: QtWidgets.QRadioButton
     f_Today: QtWidgets.QRadioButton
     f_Tomorrow: QtWidgets.QRadioButton
     bg: QtWidgets.QButtonGroup
@@ -310,18 +311,21 @@ class TodoFilterWidget(QtWidgets.QGroupBox):
         # widgets
         self.f_All = QtWidgets.QRadioButton("All", self)
         self.f_Closed = QtWidgets.QRadioButton("Closed", self)
+        self.f_Opened = QtWidgets.QRadioButton("Opened", self)
         self.f_Today = QtWidgets.QRadioButton("Today", self)
         self.f_Tomorrow = QtWidgets.QRadioButton("Tomorrow", self)
         # logic
         self.bg = QtWidgets.QButtonGroup(self)
         self.bg.addButton(self.f_All, enums.EFiltBy.All)
         self.bg.addButton(self.f_Closed, enums.EFiltBy.Closed)
+        self.bg.addButton(self.f_Opened, enums.EFiltBy.Opened)
         self.bg.addButton(self.f_Today, enums.EFiltBy.Today)
         self.bg.addButton(self.f_Tomorrow, enums.EFiltBy.Tomorrow)
         # layout
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.f_All)
         layout.addWidget(self.f_Closed)
+        layout.addWidget(self.f_Opened)
         layout.addWidget(self.f_Today)
         layout.addWidget(self.f_Tomorrow)
         # layout.addStretch(1);
