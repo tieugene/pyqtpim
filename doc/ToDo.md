@@ -16,11 +16,11 @@
   - [ ] link by object id (like `uniq_ptr`)
 
 ### 0.1. Now
-- [~] TodoList:
+- […] TodoList:
   - [x] L
   - [x] R
   - [x] sort
-  - [ ] filter
+  - [x] filter
   - [ ] U
   - [ ] C
   - [ ] D
@@ -31,8 +31,8 @@
 - [ ] Teach @classmethod
 
 ### 0.2. Bugs
-- [ ] chk TodoView:
-  - [ ] Completed: tz
+- [ ] TodoView: Completed: tz
+- [ ] StoreListView: 'active' changed => refresh TodoListView (proxy)
 
 ### 0.3. Issues
 - [ ] TodoListView:

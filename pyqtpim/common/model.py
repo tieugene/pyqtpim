@@ -33,17 +33,22 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
         super().__init__(*args, **kwargs)
         # self.setSourceModel(self._own_model(self))
         self._currentSorter = self._lessThen_None
-        self._currentFilter = self._accept_All
+        self._currentFilter = self._accept_Default
 
     @staticmethod
     def _lessThen_None(_: QtCore.QModelIndex, __: QtCore.QModelIndex) -> bool:
-        """Default sorter"""
+        """Default sorter (no sort)"""
         return False
 
     @staticmethod
     def _accept_All(_: int) -> bool:
-        """Default filter (enable all)"""
+        """Dummy filter (enable all)"""
         return True
+
+    def _accept_Default(self, source_row: int) -> bool:
+        """Default filter (enable all)"""
+        return self.sourceModel().item_get(source_row).store.active
+        # return True
 
 
 class StoreModel(QtCore.QStringListModel):
@@ -79,7 +84,7 @@ class StoreModel(QtCore.QStringListModel):
             self.save()
             # TODO: refresh EntryList
             # self.dataChanged.emit(index, index, (role,))
-            # self.activeChanged.emit()
+            self.activeChanged.emit()
             return True
         return False
 

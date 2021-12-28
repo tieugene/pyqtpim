@@ -123,6 +123,7 @@ class TodoModel(EntryModel):
 
 class TodoProxyModel(EntryProxyModel):
     # _own_model = TodoModel
+    __e_closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -134,7 +135,6 @@ class TodoProxyModel(EntryProxyModel):
     # Inherit
     def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         """:todo: combine per-column built-in sort with complex one"""
-        # print("lessThen")
         return self._currentSorter(source_left, source_right)
 
     def filterAcceptsRow(self, source_row: int, source_parent: QtCore.QModelIndex) -> bool:
@@ -155,19 +155,17 @@ class TodoProxyModel(EntryProxyModel):
 
     def filtChanged(self, filt_id: enums.EFiltBy):
         self._currentFilter = {
-            enums.EFiltBy.All: self._accept_All,
+            enums.EFiltBy.All: self._accept_Default,
             enums.EFiltBy.Closed: self.__accept_Closed,
             enums.EFiltBy.Today: self.__accept_Today,
             enums.EFiltBy.Tomorrow: self.__accept_Tomorrow
         }[filt_id]
         # print("Filter changed:", filt_id)
         self.invalidateFilter()
-        self.parent().requery()
+        # self.parent().requery()
 
     def __lessThen_Name(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()
-        # data_left = realmodel.data(realmodel.index(source_left.row(), enums.EColNo.Summary.value))
-        # data_right = realmodel.data(realmodel.index(source_right.row(), enums.EColNo.Summary.value))
         data_left = realmodel.item_get(source_left.row()).vobj.get_Summary()
         data_right = realmodel.item_get(source_right.row()).vobj.get_Summary()
         return data_right.casefold() < data_left.casefold()
@@ -205,25 +203,30 @@ class TodoProxyModel(EntryProxyModel):
 
     def __accept_Closed(self, source_row: int) -> bool:
         """Show only Status=Complete[|Cancelled]"""
-        return self.sourceModel().getObjByRow(source_row).get_Status() in {enums.EStatus.Completed,
-                                                                           enums.EStatus.Cancelled}
+        entry = self.sourceModel().item_get(source_row)
+        return entry.store.active and entry.vobj.get_Status() in self.__e_closed
 
     def __accept_Today(self, source_row: int) -> bool:
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""
-        closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
-        vobj: TodoVObj = self.sourceModel().getObjByRow(source_row)
+        entry = self.sourceModel().item_get(source_row)
+        vobj = entry.vobj
         due = vobj.get_Due_as_date()
-        return (vobj.get_Status() not in closed) and due is not None and due <= self.__today
+        return\
+            entry.store.active\
+            and (vobj.get_Status() not in self.__e_closed)\
+            and (due is not None)\
+            and (due <= self.__today)
 
     def __accept_Tomorrow(self, source_row: int) -> bool:
         """Like today but tomorrow"""
-        closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
-        vobj: TodoVObj = self.sourceModel().getObjByRow(source_row)
+        entry = self.sourceModel().item_get(source_row)
+        vobj = entry.vobj
         due = vobj.get_Due_as_date()
-        return \
-            (vobj.get_Status() not in closed) \
-            and due is not None \
-            and due <= self.__tomorrow
+        return\
+            entry.store.active\
+            and (vobj.get_Status() not in self.__e_closed)\
+            and (due is not None)\
+            and (due <= self.__tomorrow)
 
 
 class TodoStoreModel(StoreModel):

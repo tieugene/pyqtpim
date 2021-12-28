@@ -15,11 +15,12 @@ class TodoListView(EntryListView):
     """List of todos"""
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
+        # models
         proxy = TodoProxyModel(self)
         proxy.setSourceModel(todo_model)
         self.setModel(proxy)
         self._details.setModel(self.model().sourceModel())
-        # addons
+        # misc
         self.loadCol2Show()
         self.loadColOrder()
         hh = self.horizontalHeader()
