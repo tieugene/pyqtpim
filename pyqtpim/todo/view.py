@@ -5,7 +5,7 @@ from PySide2 import QtCore, QtWidgets, QtSql
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql, todo_model, store_model
-from .data import TodoVObj
+from .data import TodoVObj, TodoEntry
 from .form import TodoForm
 from . import enums
 
@@ -89,32 +89,12 @@ class TodoListView(EntryListView):
         idx = self.currentIndex()
         if not idx.isValid():
             return
-        realmodel: TodoModel = self.model().sourceModel()
-        row = self.model().mapToSource(idx).row()
-        rec = realmodel.record(row)
-        syn = rec.value('syn')
-        if syn == enums.ESyn.Del.value:
-            QtWidgets.QMessageBox.warning(self, "Edit deleted", "You cannot edit deleted entry")
-            return
-        entry_id = rec.value('id')
-        store_id = rec.value('store_id')  # ??? returns model.data()
-        # TODO: by id
-        obj: TodoVObj = realmodel.getObjByRow(row)
+        entry: TodoEntry = self.model().sourceModel().item_get(self.model().mapToSource(idx).row())
         f = TodoForm(self)  # TODO: cache creation
-        if pair := f.exec_edit(obj, store_id, can_move=(syn == enums.ESyn.New.value)):
-            # TODO: move to model
-            obj_chg, store_id_new = pair
-            if obj_chg:  # FIXME: obj chg AND moved
-                q = obj2sql(query.entry_upd, obj)
-                q.bindValue(':store_id', store_id_new)
-                q.bindValue(':id', entry_id)
-                if not q.exec_():
-                    print(f"Something bad with updating record '{obj.get_Summary()}': {q.lastError().text()}")
-            else:  # just move to other store
-                if not (q := QtSql.QSqlQuery(query.entry_mov % (store_id_new, entry_id))).exec_():
-                    print(f"Something wrong with moving {entry_id}: {q.lastError().text()}")
-            # realmodel.setObj(rec, obj)
-            self.requery()  # FIXME: update the record only
+        if f.exec_edit(entry.vobj, entry.store):
+            if not entry.save():
+                print(f"Something bad with saving '{entry.vobj.get_Summary()}'")
+            # self.requery()  # FIXME: update the record only
 
     def entryDel(self):
         idx = self.currentIndex()

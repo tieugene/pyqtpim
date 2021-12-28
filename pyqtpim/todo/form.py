@@ -3,14 +3,13 @@
 import datetime
 from typing import Optional, Union, Any
 # 2. PySide
-from PySide2 import QtWidgets, QtCore, QtSql
+from PySide2 import QtWidgets, QtCore
 # 3. 3rds
 import vobject
 import dateutil
 # 4. local
-from common import query as query_common
-from .data import TodoVObj
-from . import enums
+from .data import TodoVObj, TodoStore
+from . import enums, model
 
 
 def _tz_local():
@@ -25,16 +24,14 @@ def _tz_utc():
 class ListEdit(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent)
-        model = QtSql.QSqlQueryModel()
-        model.setQuery(query_common.store_ref)
-        self.setModel(model)
-        self.setModelColumn(1)
+        self.setModel(model.store_model)
+        # self.setModelColumn(1)
 
-    def setData(self, list_id: int):
+    def setData(self, store: TodoStore):
         """FIXME: dirty"""
         m = self.model()
         for i in range(m.rowCount()):
-            if m.data(m.index(i, 0)) == list_id:
+            if m.data(m.index(i, 0)) == store:
                 self.setCurrentIndex(i)
                 break
 
@@ -76,11 +73,11 @@ class CheckableDateTimeEdit(QtWidgets.QWidget):
         """
         self.f_datetime.setEnabled(bool(state))
 
-    def setData(self, data: Optional[datetime.datetime] = None):
-        if data:
+    def setData(self, v: Optional[datetime.datetime] = None):
+        if v:
             self.is_enabled.setChecked(True)
             self.f_datetime.setEnabled(True)
-            self.f_datetime.setDateTime(data)
+            self.f_datetime.setDateTime(v)
         else:
             self.__reset()
 
@@ -155,22 +152,22 @@ class CheckableDateAndTimeEdit(QtWidgets.QWidget):
         self.f_time.setEnabled(bool(state))
         self.is_tzed.setEnabled(bool(state))
 
-    def setData(self, data: Optional[Union[datetime.date, datetime.datetime]] = None):
-        if data:
+    def setData(self, v: Optional[Union[datetime.date, datetime.datetime]] = None):
+        if v:
             self.is_enabled.setChecked(True)
             self.f_date.setEnabled(True)
             self.is_timed.setEnabled(True)
-            if isinstance(data, datetime.datetime):
-                self.f_date.setDate(data.date())
+            if isinstance(v, datetime.datetime):
+                self.f_date.setDate(v.date())
                 self.is_timed.setChecked(True)
                 self.f_time.setEnabled(True)
-                self.f_time.setTime(data.time())
-                if data.tzinfo:
+                self.f_time.setTime(v.time())
+                if v.tzinfo:
                     self.is_tzed.setChecked(True)
-                    self.t_tz = data.tzinfo  # real/None (naive); type=dateutil.tz.tz._tzicalvtz
+                    self.t_tz = v.tzinfo  # real/None (naive); type=dateutil.tz.tz._tzicalvtz
                     self.l_tz.setText(self.t_tz._tzid)
             else:  # date
-                self.f_date.setDate(data)
+                self.f_date.setDate(v)
         else:
             self.__reset()
 
@@ -217,9 +214,9 @@ class SlidedSpinBox(QtWidgets.QWidget):
         self.f_slider.setEnabled(bool(state))
         self.f_spinbox.setEnabled(bool(state))
 
-    def setData(self, data: Optional[int] = None):
-        if data is not None:
-            self.f_spinbox.setValue(data)
+    def setData(self, v: Optional[int] = None):
+        if v is not None:
+            self.f_spinbox.setValue(v)
             self.is_enabled.setChecked(True)
             self.__chg_enabled(QtCore.Qt.CheckState.Checked)
         else:
@@ -237,10 +234,10 @@ class ProgressWidget(SlidedSpinBox):
         self.f_slider.valueChanged[int].connect(self.f_spinbox.setValue)
         self.f_spinbox.valueChanged[int].connect(self.f_slider.setValue)
 
-    def setData(self, data: Optional[int] = None):
-        super().setData(data)
-        if data is not None:
-            self.f_slider.setValue(data)
+    def setData(self, v: Optional[int] = None):
+        super().setData(v)
+        if v is not None:
+            self.f_slider.setValue(v)
 
 
 class PrioWidget(SlidedSpinBox):
@@ -255,13 +252,13 @@ class PrioWidget(SlidedSpinBox):
         self.f_slider.setTickInterval(1)
         self.f_slider.valueChanged[int].connect(self._chg_slider)
 
-    def _chg_slider(self, data: Optional[int] = None):
-        self.f_spinbox.setValue(self.__slide2spin[data])
+    def _chg_slider(self, v: Optional[int] = None):
+        self.f_spinbox.setValue(self.__slide2spin[v])
 
-    def setData(self, data: Optional[int] = None):
-        if data is not None:
-            self.f_slider.setValue(self.__spin2slide[data])
-        super().setData(data)  # avoid spinbox reset
+    def setData(self, v: Optional[int] = None):
+        if v is not None:
+            self.f_slider.setValue(self.__spin2slide[v])
+        super().setData(v)  # avoid spinbox reset
 
 
 class SpecialCombo(QtWidgets.QComboBox):
@@ -272,9 +269,9 @@ class SpecialCombo(QtWidgets.QComboBox):
         super().__init__(parent)
         self.addItems(items)
 
-    def setData(self, data=None):
-        if data is not None:
-            self.setCurrentIndex(self._data2idx[data])
+    def setData(self, v=None):
+        if v is not None:
+            self.setCurrentIndex(self._data2idx[v])
 
     def getData(self) -> Any:
         return self._idx2data[self.currentIndex()]
@@ -326,7 +323,7 @@ class TodoForm(QtWidgets.QDialog):
     :todo: select optional fields to show: class, ...
     :todo: set default values: priority, ...
     """
-    f_list: QtWidgets.QComboBox
+    f_store: QtWidgets.QComboBox
     f_category: QtWidgets.QLineEdit
     f_class: ClassCombo
     f_completed: CheckableDateTimeEdit
@@ -349,7 +346,7 @@ class TodoForm(QtWidgets.QDialog):
 
     def __createWidgets(self):
         # = Widgets: =
-        self.f_list = ListEdit(self)
+        self.f_store = ListEdit(self)
         # attach[]
         self.f_category = QtWidgets.QLineEdit(self)  # TODO: checkable combobox
         self.f_class = ClassCombo(self)  # TODO: radio/slider?
@@ -378,7 +375,7 @@ class TodoForm(QtWidgets.QDialog):
     def __setLayout(self):
         """Bests: Evolution, RTM"""
         layout = QtWidgets.QFormLayout(self)  # FIME: not h-stretchable
-        layout.addRow("List", self.f_list)
+        layout.addRow("Store", self.f_store)
         layout.addRow("Summary", self.f_summary)
         layout.addRow("Category", self.f_category)
         layout.addRow("Class", self.f_class)  # on demand
@@ -406,20 +403,18 @@ class TodoForm(QtWidgets.QDialog):
             _, store_id = self.to_obj(obj)
             return obj, store_id
 
-    def exec_edit(self, obj: TodoVObj, store_id: int, can_move: bool) -> Optional[tuple[bool, int]]:
+    def exec_edit(self, vobj: TodoVObj, store: TodoStore) -> bool:
         """Edit entry exists.
 
-        :param obj: obj to edit
-        :param store_id: source store
-        :param can_move: whether obj can be moved to other store
+        :param vobj: obj to edit
+        :param store: source store
         :return: object was changed flag and [new] store_id.
         """
-        store_id_old = store_id
-        self.from_obj(obj, store_id, can_move)
+        store_old = store
+        self.from_obj(vobj, store)
         if self.exec_():
-            obj_chg, store_id_new = self.to_obj(obj)
-            if obj_chg or (store_id_new != store_id_old):
-                return obj_chg, store_id_new
+            return self.to_obj(vobj)
+        return False
 
     def __reset(self):  # TODO: clear old values for newly creating entry
         self.f_class.setData()
@@ -434,51 +429,49 @@ class TodoForm(QtWidgets.QDialog):
         self.f_summary.clear()
         self.f_url.clear()
 
-    def from_obj(self, data: TodoVObj, store_id: int, can_move: bool):
+    def from_obj(self, vobj: TodoVObj, store: TodoStore):
         """Preload form with VTODO"""
-        self.f_list.setData(store_id)
-        if not can_move:
-            self.f_list.setEnabled(False)
-        if v := data.get_Categories():
+        self.f_store.setData(store)
+        self.f_store.setEnabled(False)
+        if v := vobj.get_Categories():
             self.f_category.setText(', '.join(v))
-        self.f_class.setData(data.get_Class())
-        self.f_completed.setData(v.astimezone() if (v := data.get_Completed()) else None)
-        self.f_description.setPlainText(data.get_Description())
-        self.f_dtstart.setData(data.get_DTStart())
-        self.f_due.setData(data.get_Due())
-        self.f_location.setText(data.get_Location())
-        self.f_progress.setData(data.get_Progress())
-        self.f_priority.setData(data.get_Priority())
-        self.f_status.setData(data.get_Status())
-        self.f_summary.setText(data.get_Summary())
-        self.f_url.setText(data.get_URL())
+        self.f_class.setData(vobj.get_Class())
+        self.f_completed.setData(v.astimezone() if (v := vobj.get_Completed()) else None)
+        self.f_description.setPlainText(vobj.get_Description())
+        self.f_dtstart.setData(vobj.get_DTStart())
+        self.f_due.setData(vobj.get_Due())
+        self.f_location.setText(vobj.get_Location())
+        self.f_progress.setData(vobj.get_Progress())
+        self.f_priority.setData(vobj.get_Priority())
+        self.f_status.setData(vobj.get_Status())
+        self.f_summary.setText(vobj.get_Summary())
+        self.f_url.setText(vobj.get_URL())
 
-    def to_obj(self, obj: TodoVObj) -> (bool, int):
-        """Create VTodoObj form TodoForm data.
-        Callers: TodoListView.entryAdd()
-        :param obj: VTodoObj to update
-        :return: newly created VTodoObject, source_id
+    def to_obj(self, vobj: TodoVObj) -> bool:
+        """Update VTodoObj from form.
+        :param vobj: VTodoObj to update
+        :return: True if vobj was changed
         """
-        obj_chgd = False
+        chgd = False
         # - cat
         if v_new := self.f_category.text():
             v_new = [s.strip() for s in v_new.split(',')]
             v_new.sort()
         else:  # empty list
             v_new = None
-        obj_chgd |= obj.set_Categories(v_new)
-        obj_chgd |= obj.set_Class(self.f_class.getData())
+        chgd |= vobj.set_Categories(v_new)
+        chgd |= vobj.set_Class(self.f_class.getData())
         if v_new := self.f_completed.getData():
-            obj_chgd |= obj.set_Completed(v_new.astimezone(_tz_utc()))
-        obj_chgd |= obj.set_Description(self.f_description.toPlainText() or None)
-        obj_chgd |= obj.set_DTStart(self.f_dtstart.getData())
-        obj_chgd |= obj.set_Due(self.f_due.getData())
-        obj_chgd |= obj.set_Location(self.f_location.text() or None)
-        obj_chgd |= obj.set_Progress(self.f_progress.getData())
-        obj_chgd |= obj.set_Priority(self.f_priority.getData())
-        obj_chgd |= obj.set_Status(self.f_status.getData())
-        obj_chgd |= obj.set_Summary(self.f_summary.text() or None)
-        obj_chgd |= obj.set_URL(self.f_url.text() or None)
-        if obj_chgd:
-            obj.updateStamps()
-        return obj_chgd, self.f_list.getData()
+            chgd |= vobj.set_Completed(v_new.astimezone(_tz_utc()))
+        chgd |= vobj.set_Description(self.f_description.toPlainText() or None)
+        chgd |= vobj.set_DTStart(self.f_dtstart.getData())
+        chgd |= vobj.set_Due(self.f_due.getData())
+        chgd |= vobj.set_Location(self.f_location.text() or None)
+        chgd |= vobj.set_Progress(self.f_progress.getData())
+        chgd |= vobj.set_Priority(self.f_priority.getData())
+        chgd |= vobj.set_Status(self.f_status.getData())
+        chgd |= vobj.set_Summary(self.f_summary.text() or None)
+        chgd |= vobj.set_URL(self.f_url.text() or None)
+        if chgd:
+            vobj.updateStamps()
+        return chgd

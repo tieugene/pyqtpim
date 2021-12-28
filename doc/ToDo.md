@@ -21,7 +21,7 @@
   - [x] R
   - [x] sort
   - [x] filter
-  - [ ] U
+  - [x] U
   - [ ] C
   - [ ] D
   - [ ] columns hide/show
@@ -33,6 +33,7 @@
 ### 0.2. Bugs
 - [ ] TodoView: Completed: tz
 - [ ] StoreListView: 'active' changed => refresh TodoListView (proxy)
+- [ ] Todo[List]View: update after entry edited
 
 ### 0.3. Issues
 - [ ] TodoListView:

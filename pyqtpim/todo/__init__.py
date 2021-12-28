@@ -1,3 +1,4 @@
-from .view import TodosWidget
 from .enums import ColHeader
-__all__ = ['TodosWidget', 'ColHeader']
+from .view import TodosWidget
+from .model import store_model
+__all__ = ['ColHeader', 'TodosWidget', 'store_model']

@@ -125,6 +125,14 @@ class Entry(object):
     def vobj(self):
         return self._vobj
 
+    def save(self) -> bool:
+        """Save vobj back to disk"""
+        with open(os.path.join(self._store.dpath, self._fname), 'wt') as o_f:
+            body = self._vobj.serialize()
+            if o_f.write(body):
+                return True
+        return False
+
 
 # static class
 class EntryList(object):
