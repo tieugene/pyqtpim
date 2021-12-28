@@ -22,7 +22,7 @@ class TodoListView(EntryListView):
         self._details.setModel(self.model().sourceModel())
         # misc
         self.loadCol2Show()
-        self.loadColOrder()
+        self.__loadColOrder()
         hh = self.horizontalHeader()
         hh.setSectionsMovable(True)
         # vvv Works not right
@@ -34,22 +34,29 @@ class TodoListView(EntryListView):
         # self.sortByColumn(enums.EColNo.Summary.value)
         # signals
         # # self.activated.connect(self.rowChanged)
-        self.horizontalHeader().sectionMoved.connect(self.sectionMoved)
-        self.selectionModel().currentRowChanged.connect(self.rowChanged)
+        self.horizontalHeader().sectionMoved.connect(self.__sectionMoved)
+        self.selectionModel().currentRowChanged.connect(self.__rowChanged)
 
     def requery(self):
         # self.model().sourceModel().reload()
         self.resizeRowsToContents()
 
-    def rowChanged(self, idx):
+    def __rowChanged(self, idx):
         """:todo: find sourceModel row"""
         self._details.mapper.setCurrentModelIndex(
             self._details.mapper.model().index(self.model().mapToSource(idx).row(), 0)
         )
 
-    def sectionMoved(self, _: int, __: int, ___: int):
+    def __sectionMoved(self, _: int, __: int, ___: int):
         """Section lidx moved from ovidx to nvidx"""
-        self.saveColOrder()
+        self.__saveColOrder()
+
+    def __saveColOrder(self):
+        """[Re]save columns order to settings"""
+        col_order = list()
+        for vi in range(self.horizontalHeader().count()):
+            col_order.append(self.horizontalHeader().logicalIndex(vi))  # colorder[vi] = li
+        MySettings.set(SetGroup.ToDo, 'colorder', col_order)
 
     def loadCol2Show(self):
         """[Re]load colums visibility from settings"""
@@ -57,19 +64,12 @@ class TodoListView(EntryListView):
         for i in range(self.model().columnCount()):
             self.setColumnHidden(i, not (i in col2show))
 
-    def loadColOrder(self):
+    def __loadColOrder(self):
         """[Re]load columns order from settings"""
         col_order = MySettings.get(SetGroup.ToDo, 'colorder')
         for vi, li in enumerate(col_order):
             if (cvi := self.horizontalHeader().visualIndex(li)) != vi:
                 self.horizontalHeader().moveSection(cvi, vi)
-
-    def saveColOrder(self):
-        """[Re]save columns order to settings"""
-        col_order = list()
-        for vi in range(self.horizontalHeader().count()):
-            col_order.append(self.horizontalHeader().logicalIndex(vi))  # colorder[vi] = li
-        MySettings.set(SetGroup.ToDo, 'colorder', col_order)
 
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
@@ -148,14 +148,10 @@ class TodoListView(EntryListView):
         idx = self.selectionModel().currentIndex()
         if not idx.isValid():
             return
-        realmodel = self.model().sourceModel()
-        # TODO: by id
         row = self.model().mapToSource(idx).row()
-        # TODO: move to model
-        rec = realmodel.record(row)
-        body = rec.value('body')
-        msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", rec.value('summary'))
-        msg.setDetailedText(body)
+        vobj = self.model().sourceModel().item_get(row).vobj
+        msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", vobj.get_Summary())
+        msg.setDetailedText(vobj.serialize())
         # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         msg.exec_()
 

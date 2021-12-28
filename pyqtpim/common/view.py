@@ -2,7 +2,6 @@
 
 import inspect
 from PySide2 import QtCore, QtWidgets
-from .model import EntryModel
 from . import form, data
 
 
@@ -36,12 +35,6 @@ class EntryListView(QtWidgets.QTableView):
         self.setWordWrap(False)
         # __model = self._own_model(self)
         # self.setModel(__model)
-
-    def entryCat(self):
-        print("Stub")
-
-    def entryInside(self):
-        print("Stub")
 
 
 class StoreListView(QtWidgets.QListView):
