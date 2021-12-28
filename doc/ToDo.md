@@ -17,9 +17,9 @@
 
 ### 0.1. Now
 - [~] TodoList:
-  - [~] L
-  - [~] R
-  - [~] sort
+  - [x] L
+  - [x] R
+  - [x] sort
   - [ ] filter
   - [ ] U
   - [ ] C
@@ -31,6 +31,8 @@
 - [ ] Teach @classmethod
 
 ### 0.2. Bugs
+- [ ] chk TodoView:
+  - [ ] Completed: tz
 
 ### 0.3. Issues
 - [ ] TodoListView:

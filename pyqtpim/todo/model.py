@@ -40,7 +40,7 @@ class TodoModel(EntryModel):
                 if isinstance(data, datetime.datetime):
                     return data.replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
                 else:  # date => no convert
-                    return data
+                    return data.isoformat()
 
         if not idx.isValid():
             return None
