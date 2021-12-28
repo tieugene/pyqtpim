@@ -148,8 +148,7 @@ class TodoListView(EntryListView):
         idx = self.selectionModel().currentIndex()
         if not idx.isValid():
             return
-        row = self.model().mapToSource(idx).row()
-        vobj = self.model().sourceModel().item_get(row).vobj
+        vobj = self.model().sourceModel().item_get(self.model().mapToSource(idx).row()).vobj
         msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.Information, "Entry content", vobj.get_Summary())
         msg.setDetailedText(vobj.serialize())
         # msg.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
@@ -158,25 +157,16 @@ class TodoListView(EntryListView):
     def entryInside(self):
         """Show clean entry content
         :todo: style it
-        Simple:
-        msg.setText(raw['summary'])
-        for ...
-          txt += f"{k}: {v}\n"
-        msg.setDetailedText(txt)
         """
         idx = self.selectionModel().currentIndex()
         if not idx.isValid():
             return
-        # TODO: by id
-        realmodel = self.model().sourceModel()
-        row = self.model().mapToSource(idx).row()
-        # TODO: move to model
-        raw = realmodel.getObjByRow(row).RawContent()
+        vobj = self.model().sourceModel().item_get(self.model().mapToSource(idx).row()).vobj
         # icon, title, text
-        msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", '')
+        msg = QtWidgets.QMessageBox(QtWidgets.QMessageBox.Icon.NoIcon, "Entry content", vobj.get_Summary())
         # richtext
         txt = "<html><body><table><tbody>"
-        for k, v in raw.items():
+        for k, v in vobj.RawContent().items():
             if k == 'description':
                 v = f"<pre>{v}</pre>"
             txt += f"<tr><th>{k}:</th><td>{v}</td></tr>"
