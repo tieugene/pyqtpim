@@ -1,11 +1,11 @@
 """GUI representation of Tasks things"""
 # 1. std
 # 2. PySide
-from PySide2 import QtCore, QtWidgets, QtSql
+from PySide2 import QtCore, QtWidgets
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql, todo_model, store_model
-from .data import TodoVObj, TodoEntry
+from .data import TodoVObj
 from .form import TodoForm
 from . import enums
 
@@ -90,13 +90,13 @@ class TodoListView(EntryListView):
         if not idx.isValid():
             return
         row = self.model().mapToSource(idx).row()
-        entry: TodoEntry = self.model().sourceModel().item_get(row)
+        realmodel: TodoModel = self.model().sourceModel()
+        entry = realmodel.item_get(row)
         f = TodoForm(self)  # TODO: cache creation
         if f.exec_edit(entry.vobj, entry.store):
-            # TODO: self.model().sourceModel().item_upd(row)
-            if not entry.save():
+            if not realmodel.item_upd(row):
                 print(f"Something bad with saving '{entry.vobj.get_Summary()}'")
-            # self.requery()  # FIXME: update the record only
+            # self.requery()
 
     def entryDel(self):
         idx = self.currentIndex()
