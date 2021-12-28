@@ -71,7 +71,7 @@ def set_X(name: str, getter: Callable, cvt=None):
 class TodoVObj(VObj):
     """In-memory one-file VTODO"""
 
-    def __init__(self, data: vobject.base.Component):
+    def __init__(self, data: Optional[vobject.base.Component] = None):
         if data is None:
             uid = uuid.uuid4()
             stamp = _utcnow()
@@ -81,7 +81,7 @@ class TodoVObj(VObj):
             data.vtodo.add('uid').value = str(uid)
             data.vtodo.add('created').value = stamp
         super().__init__(data)
-        self._name2func = {  # FIXME: static
+        self._name2func = {  # FIXME: x
             enums.EProp.Categories: self.get_Categories,
             enums.EProp.Class: self.get_Class,
             enums.EProp.Comment: self.get_Comment,

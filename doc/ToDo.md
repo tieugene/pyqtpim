@@ -3,29 +3,16 @@
 ## 0. Now
 
 ### 0.0. Idea
-- [ ] SQL and File as unified backend
 - [ ] Back to file-based:
-  - [ ] or QStandardItemModel>QStandardItem
-  - [ ] or QAbstractTableModel
-  - [ ] QSFPM
-  - [ ] All entries in one container:
-    - *list(Entry(body, store_id)*
-    - ~~list[store_id, Entry(body)]~~
-    - ~~list[Entry]+dict[entry:store_id]~~
-  - [ ] ? + in-mem SQLite &check;
+  - [x] QAbstractTableModel ~~QStandardItemModel~~
+  - [x] QSFPM
+  - [x] All entries in one container (ist(Entry(store/body))
+  - [ ] ? + in-mem SQLite
   - [ ] link by object id (like `uniq_ptr`)
+- [ ] SQL and File as unified backend
 
 ### 0.1. Now
-- […] TodoList:
-  - [x] L
-  - [x] R
-  - [x] sort
-  - [x] filter
-  - [x] U
-  - [x] D
-  - [ ] C
-  - [x] columns hide/show
-  - [ ] columns order
+- [ ] TodoList:
   - [ ] decoration (color)
 - [ ] Teach @classmethod
 
@@ -42,6 +29,7 @@
 ### 0.3. Issues
 - [ ] TodoListView:
   - [ ] Autowidth
+  - [ ] Autoheight
 - [ ] TodoView:
   - [ ] Status: str
   - [ ] Prio: orig
@@ -53,12 +41,13 @@
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
+  - [ ] column widths
 - [ ] Prio: x5
 - [ ] `import vobject` exact in `*/data.py`
 
 ### 0.5. UI/UX
 - [ ] TodoForm:
-  - [ ] Save previous selectd store for (exec_new())
+  - [ ] Save previous selected store for (exec_new())
   - [ ] Shrink widget groups
   - [ ] Categories: special combobox (as RTM/Evolution)
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):

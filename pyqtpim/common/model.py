@@ -20,15 +20,21 @@ class EntryModel(QtCore.QAbstractTableModel):
     def rowCount(self, parent: QtCore.QModelIndex = None) -> int:
         return self._data.size()
 
-    def item_get(self, i: int) -> Entry:
+    # Hand-made
+    def item_add(self, item: Entry) -> bool:  # C
+        """Add newly crated Entry.
+        :todo: resort/refilter/insert line"""
+        return self._data.entry_add(item, new=True)
+
+    def item_get(self, i: int) -> Entry:  # R
         return self._data.entry_get(i)
 
-    def item_upd(self, i: int) -> bool:
+    def item_upd(self, i: int) -> bool:  # U
         """Flush entry to source file.
         :todo: resort/refilter/update line"""
         return self._data.entry_get(i).save()
 
-    def item_del(self, i: int) -> bool:
+    def item_del(self, i: int) -> bool:  # D
         """Remove entry from disk and list
         :todo: line removing handle"""
         return self._data.entry_del(i)
@@ -99,13 +105,13 @@ class StoreModel(QtCore.QStringListModel):
         return False
 
     # Hand-made
-    def item_get(self, i: int) -> Store:
-        return self._data.store_get(i)
-
     def item_add(self, item: Store):
         self.beginInsertRows(self.index(self._data.size(), 0), self._data.size(), self._data.size())
         self._data.store_add(item)
         self.endInsertRows()
+
+    def item_get(self, i: int) -> Store:
+        return self._data.store_get(i)
 
     # def item_upd(self, i: int, item: Store):
     #    ...
@@ -114,6 +120,9 @@ class StoreModel(QtCore.QStringListModel):
         self.beginRemoveRows(self.index(i, 0), i, i)
         self._data.store_del(i)
         self.endRemoveRows()
+
+    def item_find(self, item: Store) -> int:
+        return self._data.store_find(item)
 
     def load_self(self):
         """Load _data from settings"""

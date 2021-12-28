@@ -27,7 +27,7 @@ class VObj(object):
         super().__init__()
         self._data = data
 
-    def getPropByName(self, fld_name: IntEnum) -> Any:
+    def getPropByName(self, fld_name: IntEnum) -> Any:  # FIXME: x
         if fld := self._name2func.get(fld_name):
             return fld()
 
@@ -54,6 +54,9 @@ class Store(object):
         self.__dpath = dpath
         self.__active = active
         # self.__ready = False
+
+    def __repr__(self) -> str:
+        return f"{self.__name} => {self.__dpath}"
 
     @property
     def name(self):
@@ -131,11 +134,10 @@ class Entry(object):
 
     def save(self) -> bool:
         """Save vobj back to disk"""
-        with open(self.full_path, 'wt') as o_f:
+        with open(self.full_path, 'wt') as o_f:  # TODO: handle exceptions
             body = self._vobj.serialize()
-            if o_f.write(body):
-                return True
-        return False
+            o_f.write(body)  # -> None
+            return True
 
     def self_del(self) -> bool:
         os.remove(self.full_path)  # TODO: handle exceptions
@@ -162,8 +164,13 @@ class EntryList(object):
         if 0 <= i < self.size():
             return self._list[i]
 
-    def entry_add(self, entry: Entry):
+    def entry_add(self, entry: Entry, new: bool = False) -> bool:
+        # if fname not exists - save, then...
+        if new:
+            if not entry.save():
+                return False
         self._list.append(entry)
+        return True
 
     def entry_del(self, i: int):
         if 0 <= i < self.size():
@@ -208,6 +215,9 @@ class StoreList(object):
             del self._list[i]
             return True
         return False
+
+    def store_find(self, store: Store) -> int:
+        return self._list.index(store)  # TODO: handle exception
 
     def store_findByName(self, name: str, i: int) -> bool:
         """Find existent CL by name excluding i-th entry

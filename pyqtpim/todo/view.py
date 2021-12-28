@@ -5,7 +5,7 @@ from PySide2 import QtCore, QtWidgets
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql, todo_model, store_model
-from .data import TodoVObj
+from .data import TodoVObj, TodoEntry
 from .form import TodoForm
 from . import enums
 
@@ -74,16 +74,11 @@ class TodoListView(EntryListView):
     def entryAdd(self):
         f = TodoForm(self)  # TODO: cache creation
         if pair := f.exec_new():
-            obj, store_id = pair
-            # TODO: move to model
-            q = obj2sql(query.entry_add, obj)
-            q.bindValue(':store_id', store_id)
-            q.bindValue(':syn', enums.ESyn.New.value)
-            if not q.exec_():
-                print(f"Something bad with adding record '{obj.get_Summary()}': {q.lastError().text()}")
-            else:
-                self.model().sourceModel().setObj(q.lastInsertId(), obj)
-                self.requery()
+            vobj, store = pair
+            fname = vobj.get_UID() + '.ics'
+            entry = TodoEntry(vobj, store, fname)
+            if not self.model().sourceModel().item_add(entry):
+                print(f"Something bad with adding '{vobj.get_Summary()}'")
 
     def entryEdit(self):
         idx = self.currentIndex()
@@ -96,7 +91,6 @@ class TodoListView(EntryListView):
         if f.exec_edit(entry.vobj, entry.store):
             if not realmodel.item_upd(row):
                 print(f"Something bad with saving '{entry.vobj.get_Summary()}'")
-            # self.requery()
 
     def entryDel(self):
         idx = self.currentIndex()
@@ -110,10 +104,10 @@ class TodoListView(EntryListView):
                 == QtWidgets.QMessageBox.StandardButton.Yes:
             if not realmodel.item_del(row):
                 print(f"Something wrong with deleting '{name}'")
-            # self.requery()
 
     def entryCat(self):
-        """Show raw Entry content"""
+        """Show raw Entry content
+        :todo: expandable text window"""
         idx = self.selectionModel().currentIndex()
         if not idx.isValid():
             return

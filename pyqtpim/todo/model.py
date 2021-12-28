@@ -103,7 +103,7 @@ class TodoModel(EntryModel):
     #    self.beginResetModel()
     #    self.endResetModel()
 
-    def getObjByRow(self, row: int):
+    def getObjByRow(self, row: int):  # FIXME: x
         """Get [cached] entry body.
         Callers: TodoListView.entryEdit(), .entryInside()
         """
@@ -244,7 +244,7 @@ class TodoStoreModel(StoreModel):
         self._data = store_list
 
 
-def obj2sql(q_str: str, vobj: TodoVObj) -> QtSql.QSqlQuery:
+def obj2sql(q_str: str, vobj: TodoVObj) -> QtSql.QSqlQuery:  # FIXME: x
     def __2Z(__v: Optional[datetime.datetime]) -> str:
         if __v:
             return __v.replace(tzinfo=datetime.timezone.utc).isoformat()

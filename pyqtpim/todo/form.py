@@ -21,23 +21,16 @@ def _tz_utc():
     return vobject.icalendar.utc
 
 
-class ListEdit(QtWidgets.QComboBox):
+class StoreWidget(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setModel(model.store_model)
-        # self.setModelColumn(1)
 
     def setData(self, store: TodoStore):
-        """FIXME: dirty"""
-        m = self.model()
-        for i in range(m.rowCount()):
-            if m.data(m.index(i, 0)) == store:
-                self.setCurrentIndex(i)
-                break
+        self.setCurrentIndex(self.model().item_find(store))
 
-    def getData(self) -> int:
-        """Return store_id selected"""
-        return self.model().data(self.model().index(self.currentIndex(), 0))
+    def getData(self) -> TodoStore:
+        return self.model().item_get(self.currentIndex())
 
 
 class CheckableDateTimeEdit(QtWidgets.QWidget):
@@ -346,7 +339,7 @@ class TodoForm(QtWidgets.QDialog):
 
     def __createWidgets(self):
         # = Widgets: =
-        self.f_store = ListEdit(self)
+        self.f_store = StoreWidget(self)
         # attach[]
         self.f_category = QtWidgets.QLineEdit(self)  # TODO: checkable combobox
         self.f_class = ClassCombo(self)  # TODO: radio/slider?
@@ -400,8 +393,9 @@ class TodoForm(QtWidgets.QDialog):
         self.__reset()
         if self.exec_():
             obj = TodoVObj()
-            _, store_id = self.to_obj(obj)
-            return obj, store_id
+            if self.to_obj(obj):
+                store = self.f_store.getData()
+                return obj, store
 
     def exec_edit(self, vobj: TodoVObj, store: TodoStore) -> bool:
         """Edit entry exists.
@@ -410,13 +404,13 @@ class TodoForm(QtWidgets.QDialog):
         :param store: source store
         :return: object was changed flag and [new] store_id.
         """
-        store_old = store
         self.from_obj(vobj, store)
         if self.exec_():
             return self.to_obj(vobj)
         return False
 
     def __reset(self):  # TODO: clear old values for newly creating entry
+        self.f_store.setEnabled(True)
         self.f_class.setData()
         self.f_completed.setData()
         self.f_description.clear()
