@@ -159,11 +159,7 @@ class EntryList(object):
         if 0 <= i < self.size():
             return self._list[i]
 
-    def entry_add(self, entry: Entry, new: bool = False) -> bool:
-        # if fname not exists - save, then...
-        if new:
-            if not entry.save():
-                return False
+    def entry_add(self, entry: Entry) -> bool:
         self._list.append(entry)
         return True
 

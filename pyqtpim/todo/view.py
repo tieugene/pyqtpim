@@ -77,8 +77,11 @@ class TodoListView(EntryListView):
             vobj, store = pair
             fname = vobj.get_UID() + '.ics'
             entry = TodoEntry(vobj, store, fname)
-            if not self.model().sourceModel().item_add(entry):
-                print(f"Something bad with adding '{vobj.get_Summary()}'")
+            if entry.save():
+                if not self.model().sourceModel().item_add(entry):
+                    print(f"Something bad with adding '{vobj.get_Summary()}'")
+            else:
+                print(f"Error saving '{vobj.get_Summary()}'")
 
     def entryEdit(self):
         idx = self.currentIndex()

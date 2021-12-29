@@ -24,7 +24,7 @@ class EntryModel(QtCore.QAbstractTableModel):
     def item_add(self, item: Entry) -> bool:  # C
         """Add newly crated Entry.
         :todo: resort/refilter/insert line"""
-        return self._data.entry_add(item, new=True)
+        return self._data.entry_add(item)
 
     def item_get(self, i: int) -> Entry:  # R
         return self._data.entry_get(i)

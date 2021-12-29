@@ -15,11 +15,7 @@
 
 ### 0.3. Issues
 - [ ] TodoListView:
-  - [ ] Autowidth
   - [ ] Autoheight
-- [ ] TodoView:
-  - [ ] Status: str
-  - [ ] Prio: orig
 
 ### 0.4. Features
 - [ ] 'Percent' => 'Progress'
@@ -29,6 +25,8 @@
   - [ ] column widths
 - [ ] Prio: x5
 - [ ] `import vobject` exact in `*/data.py`
+- [ ] Filter: f(unpacked vobj)
+- [ ] Sort: f(unpacked vobjs)
 
 ### 0.5. UI/UX
 - [ ] TodoForm:
@@ -40,7 +38,10 @@
   - [ ] compact
   - [ ] autowidth
   - [ ] [URL](URL)
+  - [ ] Status: str
+  - [ ] Prio: orig
 - [ ] TodoListView:
+  - [ ] Header tooltips
   - [ ] Show currently show tasks
   - [ ] Color `due today` (yellow) and `overdue` (red)
   - [ ] auto-h/w[^1]
