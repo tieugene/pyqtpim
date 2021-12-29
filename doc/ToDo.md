@@ -12,13 +12,16 @@
 ### 0.3. Issues
 - [ ] TodoListView:
   - [ ] handle TodoView after selection out (entryDel, filter)
+- [ ] Actions: Enable/Disable by context
 
 ### 0.4. Features
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
   - [ ] column widths
-- [ ] Prio: x5
+- [ ] TodoForm: interim logic:
+  - [ ] Summary != empty
+  - [ ] Status & Completed & Progress
 - [ ] `import vobject` exact in `*/data.py` (-forms (tzutc()))
 - [ ] Filter: f(unpacked vobj)
 - [ ] Sort: f(unpacked vobjs)
@@ -52,9 +55,6 @@
 - [ ] Categories
 - [ ] Move entries between stores
 - [x] LCRUD[^2]
-- [ ] TodoForm: interim logic:
-  - [ ] Summary != empty
-  - [ ] Status & Completed & Progress
 - [ ] Extend:
   - [ ] RRule
   - [ ] Alarm
@@ -62,6 +62,7 @@
      - [ ] attach: (url)
      - [ ] comment: (str)
      - [ ] contact: (email/msgr/uuid)
+- [ ] Prio: x5
 
 ### RTM
 - InstantAdd (+Inbox)
@@ -75,7 +76,6 @@
 ## 4. Next:
 - [ ] delay/async load
 - [ ] Instant settings
-- [ ] Actions: Enable/Disable by context
 - [ ] Deployment:
   - [ ] docstrings
   - [ ] pylint
