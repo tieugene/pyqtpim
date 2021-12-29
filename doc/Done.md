@@ -12,7 +12,69 @@
   - [x] ~~QDateTimeEdit: inherit + replace setDate/setTime/setDateTime~~ - no effect
 - [x] GroupDAV sync (ext)
 
-### Todo
+## ToDo (File-based)
+- [x] Test:
+  - [x] ~~Find: TB Ligtning extension for todo in localdir~~
+  - [x] ~~Lightning todo w/ local dir (`file:///`)~~
+  - [x] rsync
+- [x] Details.Percent: 99>100% max
+- [x] multivalues:
+  - [x] categories: list: csv, detail: multiline text
+- [x] Column: name:str => enum (ListModel._fld_names, data/Entry._name2func)
+- [x] ListView: hide extra columns (xListView.__init__(): .setColumnHidden(...))
+- [x] Expand fields:
+  - [x] Data
+  - [x] List
+  - [x] Details
+- [x] Details: RTF text
+- [x] multivalues: list: csv, details: UL
+- [x] Details: handle datetime/date (dtstart, due):
+- [x] CUD:
+  - [x] fields
+  - [x] load (U):
+     - [x] Categories: CSV
+     - [x] QDate[Time]Edit: checked pairs
+     - [x] prio,progress: slider+spinbox
+     - [x] class/status: w/ 'none'
+  - [x] cmp
+  - [x] store
+  - [x] save (+sequence, +lastmodified)
+  - [x] D[el]
+  - [x] C[reate]
+- [x] TodoForm.CheckedDateTimeEdit[]: TZ (datetime only)
+- [x] Todo.Details: extended (12 fields)
+- [x] Todo.Details: print `None`s
+- [x] Something wrong with cats
+- [x] LastModified: add 'Z'
+- ... (sql) ...
+- --- Switched back to file-based: ---
+  - [x] QAbstractTableModel ~~QStandardItemModel~~
+  - [x] QSFPM
+  - [x] All entries in one container (list[Entry(store, body)])
+- [x] xStore LCRUD
+- [x] TodoList: sort/filter
+- [x] TodoList: columns hide/show, order (not changed)
+- [x] TodoList: LCRUD
+- [x] TodoForm.exec_edit(): Store ok
+- [x] 2-way sync (=vdirsyncer)
+- [x] TodoStore.active changed => refilter TodoListView proxy
+
+## Contacts.File-based
+- [ ] CLM:
+  - [x] CRUD, Info
+  - [x] Hidden inner data
+- [ ] CL:
+  - [ ] CRUD:
+    - [ ] C
+    - [x] R
+    - [ ] U
+    - [ ] D
+  - [x] Load on demand
+  - [x] Hidden inner data
+- [ ] C:
+  - [x] Hidden inner data
+
+### Todo (SQL)
 - [x] 1-way sync:
   - [x] date[times]: str iso 8601 (date[time].isoformat()/fromisoformat(); 
   - [x] body: db
@@ -81,63 +143,4 @@
 - [x] TodoForm.reset()
 - [x] TodoList: QSqlQueryModel
 - [x] TodoList: disable wrap
-- [x] --- Switched back to file-based: ---
-  - [x] QAbstractTableModel ~~QStandardItemModel~~
-  - [x] QSFPM
-  - [x] All entries in one container (list[Entry(store, body)])
-- [x] xStore LCRUD
-- [x] TodoList: sort/filter
-- [x] TodoList: columns hide/show, order (not changed)
-- [x] TodoList: LCRUD
-- [x] TodoForm.exec_edit(): Store ok
-- [x] 2-way sync (=vdirsyncer)
-
-## Contacts.File-based
-- [ ] CLM:
-  - [x] CRUD, Info
-  - [x] Hidden inner data
-- [ ] CL:
-  - [ ] CRUD:
-    - [ ] C
-    - [x] R
-    - [ ] U
-    - [ ] D
-  - [x] Load on demand
-  - [x] Hidden inner data
-- [ ] C:
-  - [x] Hidden inner data
-
-## ToDo.File-based
-- [x] Test:
-  - [x] ~~Find: TB Ligtning extension for todo in localdir~~
-  - [x] ~~Lightning todo w/ local dir (`file:///`)~~
-  - [x] rsync
-- [x] Details.Percent: 99>100% max
-- [x] multivalues:
-  - [x] categories: list: csv, detail: multiline text
-- [x] Column: name:str => enum (ListModel._fld_names, data/Entry._name2func)
-- [x] ListView: hide extra columns (xListView.__init__(): .setColumnHidden(...))
-- [x] Expand fields:
-  - [x] Data
-  - [x] List
-  - [x] Details
-- [x] Details: RTF text
-- [x] multivalues: list: csv, details: UL
-- [x] Details: handle datetime/date (dtstart, due):
-- [x] CUD:
-  - [x] fields
-  - [x] load (U):
-     - [x] Categories: CSV
-     - [x] QDate[Time]Edit: checked pairs
-     - [x] prio,progress: slider+spinbox
-     - [x] class/status: w/ 'none'
-  - [x] cmp
-  - [x] store
-  - [x] save (+sequence, +lastmodified)
-  - [x] D[el]
-  - [x] C[reate]
-- [x] TodoForm.CheckedDateTimeEdit[]: TZ (datetime only)
-- [x] Todo.Details: extended (12 fields)
-- [x] Todo.Details: print `None`s
-- [x] Something wrong with cats
-- [x] LastModified: add 'Z'
+- [x] --- Switched back to file-based ---

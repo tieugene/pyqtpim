@@ -1,14 +1,13 @@
 # ToDo
 
 ## 0. Now
+- [ ] Learn @classmethod
 
 ### 0.1. Right now
 - [ ] TodoList: decoration (color)
-- [ ] Teach @classmethod
 
 ### 0.2. Bugs
 - [ ] TodoView: Completed: tz
-- [ ] TodoStore.active changed => refilter TodoListView
 - [ ] TodoListView: bad refilter after entryX()
 - [ ] TodoListView: update/resort/refilter (?model) after:
   - [ ] entryEdit: update line + resort/refilter
@@ -57,19 +56,18 @@
 
 ## 2. ToDo
 - [ ] Categories
-- [ ] E:
-  - [ ] Move entries between stores
-  - [x] LCRUD[^2]
-  - [ ] TodoForm: interim logic:
-     - [ ] Summary != empty
-     - [ ] Status & Completed & Progress
+- [ ] Move entries between stores
+- [x] LCRUD[^2]
+- [ ] TodoForm: interim logic:
+  - [ ] Summary != empty
+  - [ ] Status & Completed & Progress
+- [ ] Extend:
   - [ ] RRule
   - [ ] Alarm
-  - [ ] Extend:
-     - [ ] multivalues: ()
-         - [ ] attach: (url)
-         - [ ] comment: (str)
-         - [ ] contact: (email/msgr/uuid)
+  - [ ] multivalues[^4]:
+     - [ ] attach: (url)
+     - [ ] comment: (str)
+     - [ ] contact: (email/msgr/uuid)
 
 ### RTM
 - InstantAdd (+Inbox)

@@ -17,7 +17,6 @@ class TodoModel(EntryModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._data = entry_list
-        self.updateFilterByStore()
 
     # Inherit
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = QtCore.Qt.DisplayRole) -> Any:
@@ -102,11 +101,6 @@ class TodoModel(EntryModel):
     #    self.beginResetModel()
     #    self.endResetModel()
 
-    def updateFilterByStore(self):
-        """"""
-        ...
-        # self.reload()
-
 
 class TodoProxyModel(EntryProxyModel):
     # _own_model = TodoModel
@@ -130,15 +124,12 @@ class TodoProxyModel(EntryProxyModel):
 
     # Hand-made
     def sortChanged(self, sort_id: enums.ESortBy):
-        # self.beginResetModel()
         self._currentSorter = {
             enums.ESortBy.AsIs: self._lessThen_None,
             enums.ESortBy.Name: self.__lessThen_Name,
             enums.ESortBy.PrioDueName: self.__lessThen_PrioDueName
         }[sort_id]
-        # self.endResetModel()
         self.invalidate()
-        # self.parent().requery()
 
     def filtChanged(self, filt_id: enums.EFiltBy):
         self._currentFilter = {
@@ -148,9 +139,7 @@ class TodoProxyModel(EntryProxyModel):
             enums.EFiltBy.Today: self.__accept_Today,
             enums.EFiltBy.Tomorrow: self.__accept_Tomorrow
         }[filt_id]
-        # print("Filter changed:", filt_id)
         self.invalidateFilter()
-        # self.parent().requery()
 
     def __lessThen_Name(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         realmodel = self.sourceModel()

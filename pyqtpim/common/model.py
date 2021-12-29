@@ -51,10 +51,16 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
         self._currentSorter = self._lessThen_None
         self._currentFilter = self._accept_Default
 
+    def refilter(self):
+        self.invalidateFilter()
+
+    def resortfilter(self):
+        self.invalidate()
+
     @staticmethod
-    def _lessThen_None(_: QtCore.QModelIndex, __: QtCore.QModelIndex) -> bool:
+    def _lessThen_None(source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
         """Default sorter (no sort)"""
-        return False
+        return source_left.row() < source_right.row()
 
     @staticmethod
     def _accept_All(_: int) -> bool:

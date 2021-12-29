@@ -357,6 +357,7 @@ class TodosWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def __createConnections(self):
-        self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
+        # self.stores.model().activeChanged.connect(self.list.model().sourceModel().updateFilterByStore)
+        self.stores.model().activeChanged.connect(self.list.model().refilter)
         self.l_sort.bg.idClicked.connect(self.list.model().sortChanged)
         self.l_filt.bg.idClicked.connect(self.list.model().filtChanged)
