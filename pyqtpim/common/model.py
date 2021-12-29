@@ -35,7 +35,9 @@ class EntryModel(QtCore.QAbstractTableModel):
     def item_upd(self, i: int) -> bool:  # U
         """Flush entry to source file.
         :todo: resort/refilter/update line"""
-        return self._data.entry_get(i).save()
+        retvalue = self._data.entry_get(i).save()
+        # self.layoutChanged(self.index(i, 0), self.index(i, self.columnCount()-1))
+        return retvalue
 
     def item_del(self, i: int) -> bool:  # D
         """Remove entry from disk and list"""

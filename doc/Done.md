@@ -59,6 +59,7 @@
 - [x] 2-way sync (=vdirsyncer)
 - [x] TodoStore.active changed => refilter TodoListView proxy
 - [x] Todo[List]View: UTC=>Local (Created, DTStamp, Modified, Completed)
+- [x] TodoListView: entryX handle (resort/refilter/update view)
 
 ## Contacts.File-based
 - [ ] CLM:

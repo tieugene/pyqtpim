@@ -43,6 +43,9 @@ class TodoListView(EntryListView):
 
     def __rowChanged(self, idx):
         """:todo: find sourceModel row"""
+        if not idx.isValid():
+            # print("Change to none")
+            return
         self._details.mapper.setCurrentModelIndex(
             self._details.mapper.model().index(self.model().mapToSource(idx).row(), 0)
         )
@@ -94,6 +97,8 @@ class TodoListView(EntryListView):
         if f.exec_edit(entry.vobj, entry.store):
             if not realmodel.item_upd(row):
                 print(f"Something bad with saving '{entry.vobj.get_Summary()}'")
+            self.model().resortfilter()
+            self.__rowChanged(self.currentIndex())
 
     def entryDel(self):
         idx = self.currentIndex()

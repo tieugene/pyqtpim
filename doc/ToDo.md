@@ -7,15 +7,12 @@
 - [ ] TodoList: decoration (color)
 
 ### 0.2. Bugs
-- [ ] TodoListView: bad refilter after entryX()
-- [ ] TodoListView: update/resort/refilter (?model) after:
-  - [x] entryDel: remove line
-  - [x] entryAdd: add line?
-  - [ ] entryEdit: update line + resort/refilter
+*None*
 
 ### 0.3. Issues
 - [ ] TodoListView:
   - [ ] Autoheight (view.resizeRowsToContents())
+  - [ ] handle TodoView after selection out (entryDel, filter)
 
 ### 0.4. Features
 - [ ] 'Percent' => 'Progress'
