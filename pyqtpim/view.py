@@ -44,8 +44,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tabs = QtWidgets.QTabWidget()
         self.todo = TodosWidget()
         self.tabs.addTab(self.todo, "ToDo")
-        self.contacts = ContactsWidget()
-        self.tabs.addTab(self.contacts, "Contacts")
+        # self.contacts = ContactsWidget()
+        # self.tabs.addTab(self.contacts, "Contacts")
         # that's all
         self.setCentralWidget(self.tabs)
         # attributes
@@ -132,30 +132,28 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
                                              "&Del Entry", self,
+                                             shortcut="Ctrl+D",
                                              statusTip="Delete current Entry",
                                              triggered=self.entryDel)
 
     def createMenus(self):
         menu_file = self.menuBar().addMenu("&File")
-        menu_file.addAction(self.actStoreReload)
-        menu_file.addAction(self.actStoreFakeSync)
-        menu_file.addAction(self.actStoreSync)
-        menu_file.addSeparator()
         menu_file.addAction(self.actSettings)
         menu_file.addAction(self.actExit)
-        menu_edit = self.menuBar().addMenu("&Edit")
-        menu_edit.addAction(self.actStoreAdd)
-        menu_edit.addAction(self.actStoreEdit)
-        menu_edit.addAction(self.actStoreDel)
-        menu_edit.addSeparator()
-        menu_edit.addAction(self.actEntryAdd)
-        menu_edit.addAction(self.actEntryEdit)
-        menu_edit.addAction(self.actEntryDel)
-        menu_view = self.menuBar().addMenu("&View")
-        menu_view.addAction(self.actStoreInfo)
-        menu_view.addSeparator()
-        menu_view.addAction(self.actEntryCat)
-        menu_view.addAction(self.actEntryInside)
+        menu_store = self.menuBar().addMenu("&Store")
+        menu_store.addAction(self.actStoreAdd)
+        menu_store.addAction(self.actStoreEdit)
+        menu_store.addAction(self.actStoreDel)
+        menu_store.addSeparator()
+        menu_store.addAction(self.actStoreInfo)
+        menu_store.addAction(self.actStoreReload)
+        menu_entry = self.menuBar().addMenu("&Entry")
+        menu_entry.addAction(self.actEntryAdd)
+        menu_entry.addAction(self.actEntryEdit)
+        menu_entry.addAction(self.actEntryDel)
+        menu_entry.addSeparator()
+        menu_entry.addAction(self.actEntryCat)
+        menu_entry.addAction(self.actEntryInside)
         menu_help = self.menuBar().addMenu("&Help")
         menu_help.addAction(self.actAbout)
 
@@ -176,29 +174,30 @@ class MainWindow(QtWidgets.QMainWindow):
             self.todo.list.loadCol2Show()
 
     def storeAdd(self):
-        (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
+        # (self.todo.stores.storeAdd, self.contacts.sources.storeAdd)[self.tabs.currentIndex()]()
+        self.todo.stores.storeAdd()
 
     def storeEdit(self):
-        (self.todo.stores.storeEdit, self.contacts.sources.storeEdit)[self.tabs.currentIndex()]()
+        self.todo.stores.storeEdit()
 
     def storeDel(self):
-        (self.todo.stores.storeDel, self.contacts.sources.storeDel)[self.tabs.currentIndex()]()
+        self.todo.stores.storeDel()
 
     def storeInfo(self):
-        (self.todo.stores.storeInfo, self.contacts.sources.storeInfo)[self.tabs.currentIndex()]()
+        self.todo.stores.storeInfo()
 
     def storeReload(self):
-        self.todo.stores.storeReload()
+        self.todo.stores.stores_reload()
 
     def storeFakeSync(self):
-        self.todo.stores.storeSync(True)
+        ...
 
     def storeSync(self):
-        self.todo.stores.storeSync(False)
+        ...
 
     def entryCat(self):
         """Show file content"""
-        (self.todo.list.entryCat, self.contacts.list.entryCat)[self.tabs.currentIndex()]()
+        self.todo.list.entryCat()
 
     def entryInside(self):
         """Show entry structure"""

@@ -9,7 +9,7 @@ Most interesting (see contents:dict):
 # 2. 3rd
 import vobject
 # 3. local
-from common import exc, VObj, EntryList, EntryListManager
+from common import exc, VObj, EntryList, StoreList
 from . import enums
 
 
@@ -78,11 +78,11 @@ class Contact(VObj):
 class ContactList(EntryList):
     def _load_one(self, fpath: str, data: vobject.base.Component):
         if data.name == 'VCARD':
-            self._data.append(Contact(fpath, data))
+            self._list.append(Contact(fpath, data))
         else:
             raise exc.EntryLoadError(f"It is not VCARD: {fpath}")
 
 
-class ContactListManager(EntryListManager):
+class ContactStoreList(StoreList):
     def itemAdd(self, name: str, path: str):
         self.append(ContactList(name, path))

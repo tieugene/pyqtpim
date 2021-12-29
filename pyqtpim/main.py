@@ -4,8 +4,8 @@ from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt, QCoreApplication
 # 3. local
 from common import MySettings
+from todo import store_model
 from view import MainWindow
-from createdb import init_db
 from pyqtpim_rc import qInitResources
 
 
@@ -14,8 +14,9 @@ def main():
     qInitResources()
     MySettings.setup()
     app = QApplication(sys.argv)
-    init_db()
     mw = MainWindow()
+    store_model.load_self()
+    store_model.load_entries()
     mw.show()
     sys.exit(app.exec_())
 

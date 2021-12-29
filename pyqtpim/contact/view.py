@@ -2,11 +2,12 @@
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryView, EntryListView, StoreListView
+from common import EntryView, EntryListView, StoreListView, StoreModel
 from .model import ContactListManagerModel, ContactModel
 
 
 class ContactListManagerView(StoreListView):
+    _model_cls = StoreModel
     _title = 'Contact list'
 
     def _empty_model(self) -> ContactListManagerModel:
@@ -111,22 +112,22 @@ class ContactCUDialog(QtWidgets.QDialog):
     nickname: QtWidgets.QLineEdit
     # photo: QtWidgets.Q
     bday: QtWidgets.QDateEdit
-    dieday: QtWidgets.QDateEdit    # !new
+    dieday: QtWidgets.QDateEdit  # !new
     dielocation: QtWidgets.QLineEdit
     anniversary: QtWidgets.QDateEdit  # marriage (годовщина?)
-    sex: QtWidgets.QComboBox          # enum:5
+    sex: QtWidgets.QComboBox  # enum:5
     # 3. Delivery Addressing            # TODO: (?prio:bool, type:h/w/+, subj
-    adr_pobox: QtWidgets.QLineEdit      # Post Office Box; should be empty
-    adr_ext: QtWidgets.QLineEdit        # Extended address (appartment, suite); should be empty
-    adr_street: QtWidgets.QLineEdit     # incl. build
-    adr_locality: QtWidgets.QLineEdit   # e.g. city
-    adr_region: QtWidgets.QLineEdit     # e.g. state, province
-    adr_code: QtWidgets.QLineEdit       # postal code
+    adr_pobox: QtWidgets.QLineEdit  # Post Office Box; should be empty
+    adr_ext: QtWidgets.QLineEdit  # Extended address (appartment, suite); should be empty
+    adr_street: QtWidgets.QLineEdit  # incl. build
+    adr_locality: QtWidgets.QLineEdit  # e.g. city
+    adr_region: QtWidgets.QLineEdit  # e.g. state, province
+    adr_code: QtWidgets.QLineEdit  # postal code
     adr_country: QtWidgets.QComboBox
     # 4. Communication
-    tel: list[QtWidgets.QLineEdit]      # TODO: (?prio:bool, ?type:enum, tel:str)
-    email: list[QtWidgets.QLineEdit]    # TODO: (?prio:bool, ?type:w/h/o), email:str)
-    impp: list[QtWidgets.QLineEdit]     # TODO: (?prio:bool, type:skype/jabber/gtalk/qq, account:str)
+    tel: list[QtWidgets.QLineEdit]  # TODO: (?prio:bool, ?type:enum, tel:str)
+    email: list[QtWidgets.QLineEdit]  # TODO: (?prio:bool, ?type:w/h/o), email:str)
+    impp: list[QtWidgets.QLineEdit]  # TODO: (?prio:bool, type:skype/jabber/gtalk/qq, account:str)
     # lang: QtWidgets.QComboBox
     # 5. Geographical
     # tz
@@ -136,16 +137,16 @@ class ContactCUDialog(QtWidgets.QDialog):
     role: QtWidgets.QLineEdit
     # logo
     org: QtWidgets.QLineEdit
-    member: str         # for KIND=group only
+    member: str  # for KIND=group only
     # related
     # 7. Explanatory
-    categories: QtWidgets.QLineEdit     # csv
+    categories: QtWidgets.QLineEdit  # csv
     note: QtWidgets.QPlainTextEdit
     # prodid
     # rev
     # sound
     # uid
-    url: list[QtWidgets.QLineEdit]      # TODO: (?prio:bool, type:w/h/o, subj:str)
-    events: list[QtWidgets.QLineEdit]   # TODO: (?prio:bool, date:date, subj:str)
+    url: list[QtWidgets.QLineEdit]  # TODO: (?prio:bool, type:w/h/o, subj:str)
+    events: list[QtWidgets.QLineEdit]  # TODO: (?prio:bool, date:date, subj:str)
     prefered_mail: str  # plaintext/html/unknown
     pubkeys: list[QtWidgets.QLineEdit]  # TODO: add prio:bool; not works

@@ -10,7 +10,7 @@ from functools import wraps
 # 2. 3rd
 import vobject
 # 3. local
-from common import VObj
+from common import VObj, Entry, EntryList, Store, StoreList
 from . import enums
 
 
@@ -38,6 +38,7 @@ def set_X(name: str, getter: Callable, cvt=None):
     :param cvt: store new as str(new) (hack for `int` end `enums.Enum2Raw_*`)
     :return: True if value changed, False if not
     """
+
     def set_decorator(func: Callable):
         @wraps(func)
         def wrapper(self, new: Any):
@@ -67,9 +68,10 @@ def set_X(name: str, getter: Callable, cvt=None):
     return set_decorator
 
 
-class VObjTodo(VObj):
+class TodoVObj(VObj):
     """In-memory one-file VTODO"""
-    def __init__(self, data: vobject.base.Component = None):
+
+    def __init__(self, data: Optional[vobject.base.Component] = None):
         if data is None:
             uid = uuid.uuid4()
             stamp = _utcnow()
@@ -79,34 +81,12 @@ class VObjTodo(VObj):
             data.vtodo.add('uid').value = str(uid)
             data.vtodo.add('created').value = stamp
         super().__init__(data)
-        self._name2func = {  # FIXME: static
-            enums.EProp.Categories: self.get_Categories,
-            enums.EProp.Class: self.get_Class,
-            enums.EProp.Comment: self.get_Comment,
-            enums.EProp.Completed: self.get_Completed,
-            enums.EProp.Contact: self.get_Contact,
-            enums.EProp.Created: self.get_Created,
-            enums.EProp.Description: self.get_Description,
-            enums.EProp.DTStamp: self.get_DTStamp,
-            enums.EProp.DTStart: self.get_DTStart,
-            enums.EProp.Due: self.get_Due,
-            enums.EProp.LastModified: self.get_LastModified,
-            enums.EProp.Location: self.get_Location,
-            enums.EProp.Percent: self.get_Progress,
-            enums.EProp.Priority: self.get_Priority,
-            enums.EProp.RelatedTo: self.get_RelatedTo,
-            enums.EProp.RRule: self.get_RRule,
-            enums.EProp.Sequence: self.get_Sequence,
-            enums.EProp.Status: self.get_Status,
-            enums.EProp.Summary: self.get_Summary,
-            enums.EProp.UID: self.get_UID,
-            enums.EProp.URL: self.get_URL,
-        }
 
     def RawContent(self) -> Optional[OrderedDict]:
         """Return inner item content as structure.
         :todo: generator
         """
+
         def __getFldByName(fld: str) -> Any:
             """Get field value by its name."""
             if v_list := self._data.vtodo.contents.get(fld):
@@ -121,7 +101,7 @@ class VObjTodo(VObj):
         keys = list(cnt.keys())
         keys.sort()
         for k in keys:  # v: list allways
-            if k == 'valarm':   # hack
+            if k == 'valarm':  # hack
                 continue
             if v := __getFldByName(k):
                 retvalue[k] = v
@@ -130,7 +110,7 @@ class VObjTodo(VObj):
     # getters
     @get_X('attach')
     def get_Attach(self) -> list[str]:
-        return self._data.vtodo.attach.value   # attach_list?
+        return self._data.vtodo.attach.value  # attach_list?
 
     @get_X('categories')
     def get_Categories(self) -> list[str]:
@@ -150,11 +130,11 @@ class VObjTodo(VObj):
 
     @get_X('class')
     def get_Class(self) -> enums.EClass:
-        return enums.Raw2Enum_Class.get(self._data.vtodo.contents['class'][0].value)    # FIXME:
+        return enums.Raw2Enum_Class.get(self._data.vtodo.contents['class'][0].value)  # FIXME:
 
     @get_X('comment')
     def get_Comment(self) -> list[str]:
-        return self._data.vtodo.comment.value   # comment_list?
+        return self._data.vtodo.comment.value  # comment_list?
 
     @get_X('completed')
     def get_Completed(self) -> datetime.datetime:
@@ -162,7 +142,7 @@ class VObjTodo(VObj):
 
     @get_X('contact')
     def get_Contact(self) -> list[str]:
-        return self._data.vtodo.contact.value   # contact_list?
+        return self._data.vtodo.contact.value  # contact_list?
 
     @get_X('created')
     def get_Created(self) -> datetime.datetime:
@@ -322,3 +302,38 @@ class VObjTodo(VObj):
         self.__set_Sequence(0 if (seq := self.get_Sequence()) is None else seq + 1)
         self.__set_DTStamp(now)
         self.__set_LastModified(now)
+
+
+class TodoStore(Store):
+    def __init__(self, name: str, path: str, active: bool):
+        super().__init__(name, path, active)
+        # self.__type = EVObjType.VTodo
+
+    def _load_one(self, entries, vobj_src: vobject.base.Component, fname: str):
+        if vobj_src.name == 'VCALENDAR' and 'vtodo' in vobj_src.contents:
+            vobj = TodoVObj(vobj_src)
+            entries.entry_add(TodoEntry(vobj, self, fname))
+
+
+class TodoEntry(Entry):
+    def __init__(self, data: TodoVObj, store: TodoStore, fname: str):
+        super().__init__(data, store, fname)
+
+
+class TodoEntryList(EntryList):
+    def __init__(self):
+        super().__init__()
+
+
+class TodoStoreList(StoreList):
+    _item_cls = TodoStore
+
+    def __init__(self, entries: TodoEntryList):
+        super().__init__(entries)
+        # self._item_cls = TodoStore  # the same
+        # self._entries = entry_list
+
+
+# Warning: exactly in this order: entries > stores
+entry_list = TodoEntryList()
+store_list = TodoStoreList(entry_list)

@@ -2,19 +2,7 @@
 
 ## 0. Now
 
-### 0.0. Idea
-- [ ] SQL and File as unified backend
-- [ ] Back to file-based:
-  - [ ] or QStandardItemModel>QStandardItem
-  - [ ] or QAbstractTableModel
-  - [ ] QSFPM
-  - [ ] All entries in one container:
-    - *list(Entry(body, store_id)*
-    - ~~list[store_id, Entry(body)]~~
-    - ~~list[Entry]+dict[entry:store_id]~~
-  - [ ] ? + in-mem SQLite &check;
-
-### 0.1. Now
+### 0.1. Hot
 *None*
 
 ### 0.2. Bugs
@@ -22,36 +10,51 @@
 
 ### 0.3. Issues
 - [ ] TodoListView:
-  - [ ] Autowidth
-- [ ] TodoView:
-  - [ ] Status: str
-  - [ ] Prio: orig
-- [ ] Check uid on Reload
-- [ ] Filter fault after add/del entry (id==None)
+  - [ ] handle TodoView after selection out (entryDel, filter)
+- [ ] Actions: Enable/Disable by context
 
 ### 0.4. Features
-- [ ] 'Percent' => 'Progress'
-- [ ] Instant settings
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
-- [ ] Prio: x5
-- [ ] `import vobject` exact in `*/data.py`
+  - [ ] column widths
+- [ ] TodoForm: interim logic:
+  - [ ] Summary != empty
+  - [ ] Status & Completed & Progress
+- [ ] `import vobject` exact in `*/data.py` (-forms (tzutc()))
+- [ ] Filter: f(unpacked vobj)
+- [ ] Sort: f(unpacked vobjs)
+- [ ] Use @classmethod
 
 ### 0.5. UI/UX
 - [ ] TodoForm:
-  - [ ] Save previous selectd store for (exec_new())
+  - [ ] Save previous selected store for .exec_new()
   - [ ] Shrink widget groups
   - [ ] Categories: special combobox (as RTM/Evolution)
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
 - [ ] TodoView:
+  - [ ] ru date[time]s (dd.mm.yyyy[ hh:mm])
   - [ ] compact
   - [ ] autowidth
-  - [ ] URL as URL
+  - [ ] [URL](URL)
+  - [ ] Status: str
+  - [ ] Prio: orig+color
 - [ ] TodoListView:
-  - [ ] Show currently show tasks
+  - [ ] Color Due (red>orange>white|yellow>green>blue)
+  - [ ] Shorter dates: dd.mm[ hh:mm]
+  - [ ] decorate Due: dd.mm>yest>today>tomorrow>dd.mm
+  - [ ] Hot buttons:
+    - [ ] chg Prio
+    - [ ] chg Due
+    - [ ] Move to Store
+    - [ ] Tags
+  - [ ] Selection after:
+    - entryAdd: to added entry if || prev
+    - entryDel: &hellip;
+    - entryEdit: to edited entry || &hellip;
+  - [ ] Header tooltips
+  - [ ] Show currently shown tasks count
   - [ ] Color `due today` (yellow) and `overdue` (red)
-  - [ ] auto-h/w[^1]
   - [ ] Expandable 'View File' messagebox
 - [ ] StoreListView: auto-h/w
 
@@ -60,36 +63,19 @@
   - [ ] docstrings
   - [ ] component diagram (UML)
   - [ ] compare PIMs
-- [ ] 2-way sync
-- [ ] EL: View:
-  - [ ] sort
-  - [ ] filter
-
-### SQL
-- [ ] Start...stop sync msg
-- [ ] ~~TodoProxyModel~~
-  - [ ] Sort
-  - [ ] Filters
-- [ ] Strict SQLite tables
-- [ ] SQLite indexes
 
 ## 2. ToDo
-
-- [ ] Idea: VTodoObjExt[ended]: w/ store_id [and syn]
 - [ ] Categories
-- [ ] E:
-  - [ ] Move synced between stores
-  - […] Extend
-  - […] CRUD[^2]
-  - [ ] TodoForm: interim logic:
-    - [ ] Summary != empty
-    - [ ] Status & Completed & Progress
+- [ ] Move entries between stores
+- [x] LCRUD[^2]
+- [ ] Extend:
   - [ ] RRule
   - [ ] Alarm
-  - [ ] multivalues: (QLineEdit[]/QListView/QPlainTextEdit)
+  - [ ] multivalues[^4]:
      - [ ] attach: (url)
      - [ ] comment: (str)
      - [ ] contact: (email/msgr/uuid)
+- [ ] Prio: x5
 
 ### RTM
 - InstantAdd (+Inbox)
@@ -99,30 +85,21 @@
 - Add properties on demand
 
 ## 3. Contacts
-- [ ] E:
-  - [ ] Extend
-  - [ ] CRUD[^3]
 
 ## 4. Next:
-- [ ] db Entry repr class (`Entry.fld` against `record(i).value('fld')`)
-- [ ] DB:
-  - [ ] QSqlTableModel => QSqlQueryModel
-  - [ ] insert/update/delete using sql
-- [ ] map models and mappers using str
-- [ ] Find: how to control widgets after/with mapper? (QTextEdit resize, QDateTimeEdit time hide):
-  - [ ] QDataWidgetMapper.currentIndexChanged(idx:int)+mappedWidgetAt()
-  - [ ] QItemDelegate.paint(low-level paint)/.sizeHint(on resize only)
-- [ ] Actions: Enable/Disable by context
-- [ ] E:
-  - [ ] description/notes format as markdown:
-     - X-ALT-DESC;FMTTYPE=text/html:
-     - DESCRIPTION;ALTREP=text/html:
+- [ ] delay/async load
+- [ ] Instant settings
 - [ ] Deployment:
   - [ ] docstrings
   - [ ] pylint
   - [ ] tox.ini
   - [ ] setup.py
   - [ ] \*.spec
+- [ ] E: description/notes format as markdown:
+  - X-ALT-DESC;FMTTYPE=text/html:
+  - DESCRIPTION;ALTREP=text/html:
+- [ ] In-mem SQLite [link by object id]
+- [ ] SQL and File as unified backend
 
 ## x. misc
 
@@ -132,7 +109,16 @@
 - [icalendar](https://github.com/collective/icalendar/)
 - [Xandicos](https://github.com/jelmer/xandikos) (server)
 
-[^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
+### x.2. SQL
+- [ ] Check uid on load()
+- [ ] Filter fault after add/del entry (id==None)
+- [ ] Start...stop sync msg
+- [ ] ~~TodoProxyModel~~
+  - [ ] Sort
+  - [ ] Filters
+- [ ] Strict SQLite tables
+- [ ] SQLite indexes
+
 [^2]: Lightning/radicale compatible; not drop data exist
 [^3]: CardBook/radicale compatible; not drop data exist
-
+[^4]: QLineEdit[]/QListView/QPlainTextEdit

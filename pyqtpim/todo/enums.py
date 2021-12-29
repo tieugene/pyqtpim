@@ -5,7 +5,7 @@ from PySide2 import QtGui
 
 # local constants
 ColorRed = QtGui.QColorConstants.Red  # QtGui.QColorConstants.Svg.red
-# ColorOrange = QtGui.QColorConstants.Svg.orange
+ColorOrange = QtGui.QColorConstants.Svg.orange
 ColorYellow = QtGui.QColorConstants.Yellow
 ColorGreen = QtGui.QColorConstants.Svg.lime
 # ColorGreen = QtGui.QColorConstants.Green
@@ -35,7 +35,7 @@ class EProp(IntEnum):
     LastModified = auto()  # ? auto, datetime.utc
     Location = auto()  # ?
     # Organizer             # ?
-    Percent = auto()  # ? ==  PERCENT-COMPLETE
+    Progress = auto()  # ? ==  PERCENT-COMPLETE
     Priority = auto()  # ?
     # RDate                 # *
     # RECURRENCE-ID         # ?
@@ -59,26 +59,22 @@ class EDBFld(Enum):
 
 # --- Model
 @unique
-class EColNo(IntEnum):
-    ID = 0
-    Store = 1
-    Created = 2
-    DTStamp = 3
-    Modified = 4
-    DTStart = 5
-    Due = 6
-    Completed = 7
-    Progress = 8
-    Prio = 9
-    Status = 10
-    Summary = 11
-    Location = 12
-    Syn = 13
-    Body = 14
+class EColNo(IntEnum):  # was 0..14
+    Store = 0
+    Created = 1
+    DTStamp = 2
+    Modified = 3
+    DTStart = 4
+    Due = 5
+    Completed = 6
+    Progress = 7
+    Prio = 8
+    Status = 9
+    Summary = 10
+    Location = 11
 
 
 ColHeader = (  # Header
-    "ID",
     "Store",
     "Created",
     "DTStamp",
@@ -91,8 +87,6 @@ ColHeader = (  # Header
     "Status",
     "Summary",
     "Location",
-    "Syn",
-    "Body"
 )
 
 
@@ -172,28 +166,17 @@ Raw2Enum_Prio: tuple = (
     EPrio.Low.value
 )
 
-TDecor_Prio = '↓-!'
+TDecor_Prio = '!!!!~↓↓↓↓'  # -1
 TColor_Prio = (
+    ColorRed,
+    ColorOrange,
+    ColorOrange,
+    ColorOrange,
+    ColorGreen,
     ColorLightBlue,
-    ColorGreen,
-    ColorRed
-)
-
-
-# --- Syn
-@unique
-class ESyn(IntEnum):
-    """SYN property values"""
-    New = auto()
-    Synced = auto()
-    Del = auto()
-
-
-TDecor_Syn = '*✓✗'
-TColor_Syn = (
-    ColorYellow,
-    ColorGreen,
-    ColorRed
+    ColorLightBlue,
+    ColorLightBlue,
+    ColorBlue,
 )
 
 
@@ -201,7 +184,7 @@ TColor_Syn = (
 @unique
 class ESortBy(IntEnum):
     """List sorting order"""
-    ID = auto()
+    AsIs = auto()
     Name = auto()
     PrioDueName = auto()
 
@@ -212,5 +195,6 @@ class EFiltBy(IntEnum):
     """List filter rules"""
     All = auto()
     Closed = auto()
+    Opened = auto()
     Today = auto()
     Tomorrow = auto()

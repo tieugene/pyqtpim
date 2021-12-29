@@ -1,6 +1,6 @@
 import sys
 
-from todo import VObjTodo, TodoList, TodoListManager
+from todo import TodoVObj, TodoList, TodoListManager
 
 
 def test_elm():
@@ -100,7 +100,7 @@ def test_e():
         if 'x-moz-generation' in item.contents:
             print(f"x-moz-generation: {item.x_moz_generation.value}")
 
-    def __print4(entry: VObjTodo):
+    def __print4(entry: TodoVObj):
         """All using on-board method"""
         for k, v in entry.RawContent().items():
             print(f"{k}: {v}")
@@ -109,7 +109,7 @@ def test_e():
     for i in range(208, 210):  # el.size
         e = el.item(i)
         print(f"==== {i}: {e._fpath}: ====")
-        __print1(e._data)
+        __print1(e._list)
         # __print4(e)
         print()
     # TODO: print all keys found

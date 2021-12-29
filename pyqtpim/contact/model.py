@@ -4,7 +4,7 @@
 # 2. PySide
 # 3. local
 from common import SetGroup, EntryModel, StoreModel
-from .data import ContactList, ContactListManager
+from .data import ContactList, ContactStoreList
 from . import enums
 
 
@@ -28,5 +28,5 @@ class ContactListManagerModel(StoreModel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._set_group = SetGroup.Contacts
-        self._data = ContactListManager()
+        self._data = ContactStoreList()
         # self._init_data()
