@@ -62,6 +62,7 @@
 - [x] TodoListView: entryX handle (resort/refilter/update view)
 - [x] 'Percent' => 'Progress'
 - [x] TodoListView: autoheight
+- [x] TodoListView: Prio, Status colored
 
 ## Contacts.File-based
 - [ ] CLM:

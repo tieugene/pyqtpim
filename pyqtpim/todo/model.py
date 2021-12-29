@@ -72,6 +72,14 @@ class TodoModel(EntryModel):
                 return vobj.get_Summary()
             elif col == enums.EColNo.Location.value:
                 return vobj.get_Location()
+        elif role == QtCore.Qt.ForegroundRole:
+            # v = super().data(idx, QtCore.Qt.DisplayRole)
+            if col == enums.EColNo.Prio.value:
+                if v := vobj.get_Priority():
+                    return enums.TColor_Prio[v - 1]
+            if col == enums.EColNo.Status.value:
+                if v := vobj.get_Status():
+                    return enums.TColor_Status[v - 1]
         '''
         elif role == QtCore.Qt.EditRole:
             col = idx.column()
@@ -79,27 +87,7 @@ class TodoModel(EntryModel):
                 return self.data(idx, QtCore.Qt.DisplayRole)
             else:
                 return super().data(idx, role)
-        elif role == QtCore.Qt.ForegroundRole:
-            # v = super().data(idx, QtCore.Qt.DisplayRole)
-            col = idx.column()
-            if col == enums.EColNo.Prio.value:
-                if v:
-                    return enums.TColor_Prio[v - 1]
-            if col == enums.EColNo.Status.value:
-                if v:
-                    return enums.TColor_Status[v - 1]
-            if col == enums.EColNo.Syn.value:
-                if v:
-                    return enums.TColor_Syn[v - 1]
-            # return super().data(idx, role)
-        # else:
-            # return super().data(idx, role)
         '''
-
-    # Hand-made
-    # def reload(self):
-    #    self.beginResetModel()
-    #    self.endResetModel()
 
 
 class TodoProxyModel(EntryProxyModel):

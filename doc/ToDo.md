@@ -4,7 +4,7 @@
 - [ ] Learn @classmethod
 
 ### 0.1. Hot
-- [ ] TodoList: decoration (color)
+*None*
 
 ### 0.2. Bugs
 *None*

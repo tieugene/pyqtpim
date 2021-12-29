@@ -5,7 +5,7 @@ from PySide2 import QtGui
 
 # local constants
 ColorRed = QtGui.QColorConstants.Red  # QtGui.QColorConstants.Svg.red
-# ColorOrange = QtGui.QColorConstants.Svg.orange
+ColorOrange = QtGui.QColorConstants.Svg.orange
 ColorYellow = QtGui.QColorConstants.Yellow
 ColorGreen = QtGui.QColorConstants.Svg.lime
 # ColorGreen = QtGui.QColorConstants.Green
@@ -169,8 +169,14 @@ Raw2Enum_Prio: tuple = (
 TDecor_Prio = '!!!!~↓↓↓↓'  # -1
 TColor_Prio = (
     ColorRed,
-    ColorLightBlue,
+    ColorOrange,
+    ColorOrange,
+    ColorOrange,
     ColorGreen,
+    ColorLightBlue,
+    ColorLightBlue,
+    ColorLightBlue,
+    ColorBlue,
 )
 
 
