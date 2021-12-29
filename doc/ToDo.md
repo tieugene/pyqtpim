@@ -10,8 +10,8 @@
 - [ ] TodoListView: bad refilter after entryX()
 - [ ] TodoListView: update/resort/refilter (?model) after:
   - [x] entryDel: remove line
+  - [x] entryAdd: add line?
   - [ ] entryEdit: update line + resort/refilter
-  - [ ] entryAdd: add line?
 
 ### 0.3. Issues
 - [ ] TodoListView:
