@@ -132,6 +132,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # noinspection PyArgumentList
         self.actEntryDel = QtWidgets.QAction(QtGui.QIcon(':/icons/trash.svg'),
                                              "&Del Entry", self,
+                                             shortcut="Ctrl+D",
                                              statusTip="Delete current Entry",
                                              triggered=self.entryDel)
 

@@ -196,7 +196,7 @@ class TodoProxyModel(EntryProxyModel):
             entry.store.active\
             and (vobj.get_Status() not in self.__e_closed)\
             and (due is not None)\
-            and (due <= self.__tomorrow)
+            and (due == self.__tomorrow)
 
 
 class TodoStoreModel(StoreModel):

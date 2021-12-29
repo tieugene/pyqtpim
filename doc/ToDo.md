@@ -7,7 +7,7 @@
 *None*
 
 ### 0.2. Bugs
-*None*
+- [ ] Filter 'tomorrow': Due == Tomorrow only
 
 ### 0.3. Issues
 - [ ] TodoListView:
@@ -39,8 +39,17 @@
   - [ ] Status: str
   - [ ] Prio: orig
 - [ ] TodoListView:
+  - [ ] Hot buttons:
+    - [ ] chg Prio
+    - [ ] chg Due
+    - [ ] Move to Store
+    - [ ] Tags
+  - [ ] Selection after:
+    - entryAdd: to added entry if || prev
+    - entryDel: &hellip;
+    - entryEdit: to edited entry || &hellip;
   - [ ] Header tooltips
-  - [ ] Show currently show tasks
+  - [ ] Show currently shown tasks count
   - [ ] Color `due today` (yellow) and `overdue` (red)
   - [ ] Expandable 'View File' messagebox
 - [ ] StoreListView: auto-h/w
