@@ -4,7 +4,7 @@
 from PySide2 import QtCore, QtWidgets
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
-from .model import TodoStoreModel, TodoModel, TodoProxyModel, obj2sql, todo_model, store_model
+from .model import TodoStoreModel, TodoModel, TodoProxyModel, todo_model, store_model
 from .data import TodoVObj, TodoEntry
 from .form import TodoForm
 from . import enums

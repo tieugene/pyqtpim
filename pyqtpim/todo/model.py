@@ -3,9 +3,8 @@
 import datetime
 from typing import Any, Optional, Union
 # 2. PySide2
-from PySide2 import QtCore, QtSql
+from PySide2 import QtCore
 # 3. 3rd
-import vobject
 # 4. local
 from common import EntryModel, EntryProxyModel, StoreModel, SetGroup
 from .data import TodoVObj, TodoStore, store_list, entry_list
@@ -102,18 +101,6 @@ class TodoModel(EntryModel):
     # def reload(self):
     #    self.beginResetModel()
     #    self.endResetModel()
-
-    def getObjByRow(self, row: int):  # FIXME: x
-        """Get [cached] entry body.
-        Callers: TodoListView.entryEdit(), .entryInside()
-        """
-        entry_id = self.data(self.index(row, enums.EColNo.ID))
-        if rec := self.record(row):
-            _id = rec.value('id')
-            if (v := self.__entry_cache.get(entry_id)) is None:
-                v = TodoVObj(vobject.readOne(self.data(self.index(row, enums.EColNo.Body))))
-                self.__entry_cache[entry_id] = v
-            return v
 
     def updateFilterByStore(self):
         """"""
@@ -242,32 +229,6 @@ class TodoStoreModel(StoreModel):
         super().__init__(entries, *args, **kwargs)
         self._set_group = SetGroup.ToDo
         self._data = store_list
-
-
-def obj2sql(q_str: str, vobj: TodoVObj) -> QtSql.QSqlQuery:  # FIXME: x
-    def __2Z(__v: Optional[datetime.datetime]) -> str:
-        if __v:
-            return __v.replace(tzinfo=datetime.timezone.utc).isoformat()
-
-    def __2iso(__v: Optional[Union[datetime.date, datetime.datetime]]) -> str:
-        if __v:
-            return __v.isoformat()
-
-    q = QtSql.QSqlQuery()
-    q.prepare(q_str)
-    q.bindValue(':created', __2Z(vobj.get_Created()))
-    q.bindValue(':dtstamp', __2Z(vobj.get_DTStamp()))
-    q.bindValue(':modified', __2Z(vobj.get_LastModified()))
-    q.bindValue(':dtstart', __2iso(vobj.get_DTStart()))
-    q.bindValue(':due', __2iso(vobj.get_Due()))
-    q.bindValue(':completed', __2iso(vobj.get_Completed()))  # ?
-    q.bindValue(':progress', vobj.get_Progress())
-    q.bindValue(':priority', enums.Raw2Enum_Prio[v] if (v := vobj.get_Priority()) else None)
-    q.bindValue(':status', v.value if (v := vobj.get_Status()) else None)
-    q.bindValue(':summary', vobj.get_Summary())
-    q.bindValue(':location', vobj.get_Location())
-    q.bindValue(':body', vobj.serialize())
-    return q
 
 
 todo_model = TodoModel()

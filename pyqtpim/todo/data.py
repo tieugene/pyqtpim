@@ -81,29 +81,6 @@ class TodoVObj(VObj):
             data.vtodo.add('uid').value = str(uid)
             data.vtodo.add('created').value = stamp
         super().__init__(data)
-        self._name2func = {  # FIXME: x
-            enums.EProp.Categories: self.get_Categories,
-            enums.EProp.Class: self.get_Class,
-            enums.EProp.Comment: self.get_Comment,
-            enums.EProp.Completed: self.get_Completed,
-            enums.EProp.Contact: self.get_Contact,
-            enums.EProp.Created: self.get_Created,
-            enums.EProp.Description: self.get_Description,
-            enums.EProp.DTStamp: self.get_DTStamp,
-            enums.EProp.DTStart: self.get_DTStart,
-            enums.EProp.Due: self.get_Due,
-            enums.EProp.LastModified: self.get_LastModified,
-            enums.EProp.Location: self.get_Location,
-            enums.EProp.Percent: self.get_Progress,
-            enums.EProp.Priority: self.get_Priority,
-            enums.EProp.RelatedTo: self.get_RelatedTo,
-            enums.EProp.RRule: self.get_RRule,
-            enums.EProp.Sequence: self.get_Sequence,
-            enums.EProp.Status: self.get_Status,
-            enums.EProp.Summary: self.get_Summary,
-            enums.EProp.UID: self.get_UID,
-            enums.EProp.URL: self.get_URL,
-        }
 
     def RawContent(self) -> Optional[OrderedDict]:
         """Return inner item content as structure.

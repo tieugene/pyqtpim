@@ -81,11 +81,16 @@
 - [x] TodoForm.reset()
 - [x] TodoList: QSqlQueryModel
 - [x] TodoList: disable wrap
-- [x] --- Switched back to file-based ---
+- [x] --- Switched back to file-based: ---
+  - [x] QAbstractTableModel ~~QStandardItemModel~~
+  - [x] QSFPM
+  - [x] All entries in one container (list[Entry(store, body)])
 - [x] xStore LCRUD
 - [x] TodoList: sort/filter
 - [x] TodoList: columns hide/show, order (not changed)
 - [x] TodoList: LCRUD
+- [x] TodoForm.exec_edit(): Store ok
+- [x] 2-way sync (=vdirsyncer)
 
 ## Contacts.File-based
 - [ ] CLM:

@@ -6,7 +6,7 @@ import inspect
 import os
 from _collections import OrderedDict
 from enum import IntEnum, auto
-from typing import Any, Optional
+from typing import Optional
 # 2. 3rd
 import vobject
 # 3. local
@@ -21,15 +21,10 @@ class VObj(object):
     """In-memory vobject object"""
     _data: vobject.base.Component   # loaded vobject
     # _type: EVObjType
-    _name2func: dict[IntEnum, Any]  # mapping model column name to getter
 
     def __init__(self, data: vobject.base.Component):
         super().__init__()
         self._data = data
-
-    def getPropByName(self, fld_name: IntEnum) -> Any:  # FIXME: x
-        if fld := self._name2func.get(fld_name):
-            return fld()
 
     def RawContent(self) -> Optional[OrderedDict]:
         """Get entry inside as structure"""
