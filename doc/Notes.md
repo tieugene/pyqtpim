@@ -40,6 +40,7 @@
   - sql/books/ (list/Details)
 
 ## misc
+- classmethod: usual for cls.from_something(&hellip;) (alternate constructor | 'factory') for subclassing
 - ListView ask model w/ DisplayRole; DetailsView - w/ EditRole
 - Update VTODO:
   - componet.serialize() works fine - does not touch any exc. changed

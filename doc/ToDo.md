@@ -1,13 +1,12 @@
 # ToDo
 
 ## 0. Now
-- [ ] Learn @classmethod
 
 ### 0.1. Hot
 *None*
 
 ### 0.2. Bugs
-- [ ] Filter 'tomorrow': Due == Tomorrow only
+*None*
 
 ### 0.3. Issues
 - [ ] TodoListView:
@@ -25,6 +24,7 @@
 - [ ] `import vobject` exact in `*/data.py` (-forms (tzutc()))
 - [ ] Filter: f(unpacked vobj)
 - [ ] Sort: f(unpacked vobjs)
+- [ ] Use @classmethod
 
 ### 0.5. UI/UX
 - [ ] TodoForm:
@@ -33,12 +33,16 @@
   - [ ] Categories: special combobox (as RTM/Evolution)
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
 - [ ] TodoView:
+  - [ ] ru date[time]s (dd.mm.yyyy[ hh:mm])
   - [ ] compact
   - [ ] autowidth
   - [ ] [URL](URL)
   - [ ] Status: str
-  - [ ] Prio: orig
+  - [ ] Prio: orig+color
 - [ ] TodoListView:
+  - [ ] Color Due (red>orange>white|yellow>green>blue)
+  - [ ] Shorter dates: dd.mm[ hh:mm]
+  - [ ] decorate Due: dd.mm>yest>today>tomorrow>dd.mm
   - [ ] Hot buttons:
     - [ ] chg Prio
     - [ ] chg Due

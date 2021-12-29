@@ -63,6 +63,7 @@
 - [x] 'Percent' => 'Progress'
 - [x] TodoListView: autoheight
 - [x] TodoListView: Prio, Status colored
+- [x] Filter 'tomorrow': Due == Tomorrow only
 
 ## Contacts.File-based
 - [ ] CLM:
