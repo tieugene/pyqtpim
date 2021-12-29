@@ -35,7 +35,7 @@ class EProp(IntEnum):
     LastModified = auto()  # ? auto, datetime.utc
     Location = auto()  # ?
     # Organizer             # ?
-    Percent = auto()  # ? ==  PERCENT-COMPLETE
+    Progress = auto()  # ? ==  PERCENT-COMPLETE
     Priority = auto()  # ?
     # RDate                 # *
     # RECURRENCE-ID         # ?

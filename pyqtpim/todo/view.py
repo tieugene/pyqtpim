@@ -32,6 +32,7 @@ class TodoListView(EntryListView):
         # self.resizeRowsToContents()
         self.setSortingEnabled(True)  # deafult=False, requires sorting itself; must be NOT in parent
         # self.sortByColumn(enums.EColNo.Summary.value)
+        self.verticalHeader().setSectionResizeMode(self.verticalHeader().ResizeMode.ResizeToContents)
         # signals
         # # self.activated.connect(self.rowChanged)
         self.horizontalHeader().sectionMoved.connect(self.__sectionMoved)

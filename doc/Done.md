@@ -60,6 +60,8 @@
 - [x] TodoStore.active changed => refilter TodoListView proxy
 - [x] Todo[List]View: UTC=>Local (Created, DTStamp, Modified, Completed)
 - [x] TodoListView: entryX handle (resort/refilter/update view)
+- [x] 'Percent' => 'Progress'
+- [x] TodoListView: autoheight
 
 ## Contacts.File-based
 - [ ] CLM:

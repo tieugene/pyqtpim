@@ -3,7 +3,7 @@
 ## 0. Now
 - [ ] Learn @classmethod
 
-### 0.1. Right now
+### 0.1. Hot
 - [ ] TodoList: decoration (color)
 
 ### 0.2. Bugs
@@ -11,17 +11,15 @@
 
 ### 0.3. Issues
 - [ ] TodoListView:
-  - [ ] Autoheight (view.resizeRowsToContents())
   - [ ] handle TodoView after selection out (entryDel, filter)
 
 ### 0.4. Features
-- [ ] 'Percent' => 'Progress'
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
   - [ ] column widths
 - [ ] Prio: x5
-- [ ] `import vobject` exact in `*/data.py`
+- [ ] `import vobject` exact in `*/data.py` (-forms (tzutc()))
 - [ ] Filter: f(unpacked vobj)
 - [ ] Sort: f(unpacked vobjs)
 
@@ -41,7 +39,6 @@
   - [ ] Header tooltips
   - [ ] Show currently show tasks
   - [ ] Color `due today` (yellow) and `overdue` (red)
-  - [ ] auto-h/w[^1]
   - [ ] Expandable 'View File' messagebox
 - [ ] StoreListView: auto-h/w
 
@@ -109,7 +106,6 @@
 - [ ] Strict SQLite tables
 - [ ] SQLite indexes
 
-[^1]: self.horizontalHeader().setSectionResizeMode(model.fieldIndex("<fldName"), QHeaderView.ResizeToContents)
 [^2]: Lightning/radicale compatible; not drop data exist
 [^3]: CardBook/radicale compatible; not drop data exist
 [^4]: QLineEdit[]/QListView/QPlainTextEdit
