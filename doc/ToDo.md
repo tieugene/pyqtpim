@@ -7,7 +7,6 @@
 - [ ] TodoList: decoration (color)
 
 ### 0.2. Bugs
-- [ ] TodoView: Completed: tz
 - [ ] TodoListView: bad refilter after entryX()
 - [ ] TodoListView: update/resort/refilter (?model) after:
   - [ ] entryEdit: update line + resort/refilter

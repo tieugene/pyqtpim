@@ -30,7 +30,7 @@ class TodoModel(EntryModel):
         def __utc2disp(data: Optional[datetime.datetime]) -> str:
             """Convert UTC datetime into viewable localtime"""
             if data:
-                return data.replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
+                return data.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
 
         def __vardatime2disp(data: Optional[Union[datetime.datetime, datetime.date]]) -> str:
             """Convert datetime (naive/tzed) into viewable localtime"""
