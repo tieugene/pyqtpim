@@ -21,13 +21,13 @@ class EntryModel(QtCore.QAbstractTableModel):
         return self._data.size()
 
     # Hand-made
+    def item_get(self, i: int) -> Entry:  # R
+        return self._data.entry_get(i)
+
     def item_add(self, item: Entry) -> bool:  # C
         """Add newly crated Entry.
         :todo: resort/refilter/insert line"""
         return self._data.entry_add(item)
-
-    def item_get(self, i: int) -> Entry:  # R
-        return self._data.entry_get(i)
 
     def item_upd(self, i: int) -> bool:  # U
         """Flush entry to source file.
@@ -37,7 +37,10 @@ class EntryModel(QtCore.QAbstractTableModel):
     def item_del(self, i: int) -> bool:  # D
         """Remove entry from disk and list
         :todo: line removing handle"""
-        return self._data.entry_del(i)
+        self.beginRemoveRows(self.index(i, 0), i, i)
+        retvalue = self._data.entry_del(i)
+        self.endRemoveRows()
+        return retvalue
 
 
 class EntryProxyModel(QtCore.QSortFilterProxyModel):

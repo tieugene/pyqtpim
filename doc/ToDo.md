@@ -9,13 +9,13 @@
 ### 0.2. Bugs
 - [ ] TodoListView: bad refilter after entryX()
 - [ ] TodoListView: update/resort/refilter (?model) after:
+  - [x] entryDel: remove line
   - [ ] entryEdit: update line + resort/refilter
-  - [ ] entryDel: remove line
   - [ ] entryAdd: add line?
 
 ### 0.3. Issues
 - [ ] TodoListView:
-  - [ ] Autoheight
+  - [ ] Autoheight (view.resizeRowsToContents())
 
 ### 0.4. Features
 - [ ] 'Percent' => 'Progress'

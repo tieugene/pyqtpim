@@ -107,6 +107,7 @@ class TodoListView(EntryListView):
                 == QtWidgets.QMessageBox.StandardButton.Yes:
             if not realmodel.item_del(row):
                 print(f"Something wrong with deleting '{name}'")
+            self.model().resortfilter()
 
     def entryCat(self):
         """Show raw Entry content
