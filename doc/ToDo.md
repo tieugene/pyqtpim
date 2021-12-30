@@ -9,11 +9,7 @@
 *None*
 
 ### 0.3. Issues
-- [ ] TodoListView:
-  - [ ] selection on/off => TodoView.clear(), actions on/off
-     *(QItemSelectionModel.selectionChanged())*
-- [ ] StoreListView:
-  - [ ] selection on/off => actions on/off
+*None*
 
 ### 0.4. Features
 - [ ] Settings save/restore:

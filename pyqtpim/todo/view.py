@@ -42,6 +42,7 @@ class TodoListView(EntryListView):
         if not dst.isValid():
             if src.isValid():
                 self._details.clear()
+                self.actionsChange.emit(False)
                 # TODO: switch actions off
         else:
             self._details.mapper.setCurrentModelIndex(
@@ -49,7 +50,7 @@ class TodoListView(EntryListView):
             )
             if not src.isValid():
                 # TODO: switch actions on
-                ...
+                self.actionsChange.emit(True)
 
     def __sectionMoved(self, _: int, __: int, ___: int):
         """Section lidx moved from ovidx to nvidx"""
@@ -163,12 +164,12 @@ class TodoStoreListView(StoreListView):
     def __rowChanged(self, dst: QtCore.QModelIndex, src: QtCore.QModelIndex):
         dst_ok = dst.isValid()
         src_ok = src.isValid()
-        if dst_ok and not src_ok:
-            # TODO: switch action on
-            ...
-        elif not dst_ok and src_ok:
+        if not dst_ok and src_ok:
             # TODO: switch action off
-            ...
+            self.actionsChange.emit(False)
+        elif dst_ok and not src_ok:
+            # TODO: switch action on
+            self.actionsChange.emit(True)
 
     def stores_reload(self):
         """Reload Store from its connection"""

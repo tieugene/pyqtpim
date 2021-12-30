@@ -64,6 +64,9 @@
 - [x] TodoListView: autoheight
 - [x] TodoListView: Prio, Status colored
 - [x] Filter 'tomorrow': Due == Tomorrow only
+- [x] TodoListView: clear TodoView on not selected Todo
+- [x] TodoListView: handle actions on/off
+- [x] StoreListView: handle actions on/off
 
 ## Contacts.File-based
 - [ ] CLM:

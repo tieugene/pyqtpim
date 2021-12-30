@@ -38,6 +38,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createStatusBar()
         self.setWindowTitle("PyQtPIM")
         self.settings_view = SettingsView()
+        # actions handling
+        self.updateActionsStore(False)
+        self.updateActionsEntry(False)
+        self.todo.stores.actionsChange.connect(self.updateActionsStore)
+        self.todo.list.actionsChange.connect(self.updateActionsEntry)
 
     def createWidgets(self):
         # order
@@ -212,11 +217,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def entryDel(self):
         self.todo.list.entryDel()
 
-    def updateActions(self, selected: QtCore.QItemSelection, deselected: QtCore.QItemSelection):
-        indexes = selected.indexes()
-        if len(indexes) > 0:
-            self.removeAction.setEnabled(True)
-            self.editAction.setEnabled(True)
-        else:
-            self.removeAction.setEnabled(False)
-            self.editAction.setEnabled(False)
+    def updateActionsStore(self, state: bool):
+        self.actStoreEdit.setEnabled(state)
+        self.actStoreDel.setEnabled(state)
+        self.actStoreInfo.setEnabled(state)
+
+    def updateActionsEntry(self, state: bool):
+        self.actEntryEdit.setEnabled(state)
+        self.actEntryDel.setEnabled(state)
+        self.actEntryCat.setEnabled(state)
+        self.actEntryInside.setEnabled(state)
