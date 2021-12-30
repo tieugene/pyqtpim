@@ -166,7 +166,7 @@ Raw2Enum_Prio: tuple = (
     EPrio.Low.value
 )
 
-TDecor_Prio = '↑↑↑↑~↓↓↓↓'  # -1
+TDecor_Prio = '!!!!~↓↓↓↓'  # -1
 TColor_Prio = (
     ColorRed,
     ColorOrange,

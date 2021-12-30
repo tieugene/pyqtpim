@@ -5,7 +5,6 @@
 ### 0.1. Hot
 - [ ] TodoListView:
   - [ ] Due Color: red→orange→white|yellow→green→blue
-  - [ ] Due Decorate: dd.mm→yest→2day→tomor→dd.mm
   - [ ] Autowidth: all excl. Summary/Location
 - [ ] TodoView:
   - [ ] Autowidth

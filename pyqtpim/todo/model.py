@@ -10,6 +10,15 @@ from common import EntryModel, EntryProxyModel, StoreModel, SetGroup
 from .data import TodoVObj, TodoStore, store_list, entry_list
 from . import enums
 
+_today = datetime.date.today()
+_yesterday = _today - datetime.timedelta(days=1)
+_tomorrow = _today + datetime.timedelta(days=1)
+_day_name = {
+    _yesterday: "yest.",
+    _today: "today",
+    _tomorrow: "tomorw",
+}
+
 
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
@@ -79,6 +88,9 @@ class TodoModel(EntryModel):
         elif col == enums.EColNo.DTStart.value:
             return self.__vardatime2disp(vobj.get_DTStart(), long=(role == QtCore.Qt.EditRole))
         elif col == enums.EColNo.Due.value:
+            if role == QtCore.Qt.DisplayRole:
+                if day_name := _day_name.get(vobj.get_Due_as_date()):
+                    return day_name
             return self.__vardatime2disp(vobj.get_Due(), long=(role == QtCore.Qt.EditRole))
         elif col == enums.EColNo.Completed.value:
             return self.__utc2disp(vobj.get_Completed())
@@ -99,7 +111,8 @@ class TodoModel(EntryModel):
     def __data_edit(self, col: int, vobj: TodoVObj) -> str:
         ...
 
-    def __data_foreground(self, col: int, vobj: TodoVObj) -> Any:
+    @staticmethod
+    def __data_foreground(col: int, vobj: TodoVObj) -> Any:
         if col == enums.EColNo.Prio.value:
             if v := vobj.get_Priority():
                 return enums.TColor_Prio[v - 1]
@@ -116,8 +129,6 @@ class TodoProxyModel(EntryProxyModel):
         super().__init__(*args, **kwargs)
         self.setDynamicSortFilter(True)
         # TODO: self.resizeColumntToContent(*)
-        self.__today = datetime.date.today()
-        self.__tomorrow = self.__today + datetime.timedelta(days=1)
 
     # Inherit
     def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
@@ -203,7 +214,7 @@ class TodoProxyModel(EntryProxyModel):
             entry.store.active\
             and (vobj.get_Status() not in self.__e_closed)\
             and (due is not None)\
-            and (due <= self.__today)
+            and (due <= _today)
 
     def __accept_Tomorrow(self, source_row: int) -> bool:
         """Like today but tomorrow"""
@@ -214,7 +225,7 @@ class TodoProxyModel(EntryProxyModel):
             entry.store.active\
             and (vobj.get_Status() not in self.__e_closed)\
             and (due is not None)\
-            and (due == self.__tomorrow)
+            and (due == _tomorrow)
 
 
 class TodoStoreModel(StoreModel):
