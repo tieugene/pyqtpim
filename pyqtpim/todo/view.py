@@ -27,12 +27,11 @@ class TodoListView(EntryListView):
         hh = self.horizontalHeader()
         hh.setSectionsMovable(True)
         # vvv Works not right
-        # for c in (enums.EColNo.Progress.value, enums.EColNo.Prio.value, enums.EColNo.Status.value):
-        #    hh.setSectionResizeMode(hh.visualIndex(c), hh.ResizeMode.ResizeToContents)
+        for c in (enums.EColNo.Prio.value, enums.EColNo.Status.value, enums.EColNo.Progress.value, enums.EColNo.Due.value):
+            hh.setSectionResizeMode(c, hh.ResizeMode.ResizeToContents)
+            # hh.setSectionResizeMode(hh.visualIndex(c), hh.ResizeMode.ResizeToContents)
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
-        # self.resizeRowsToContents()
         self.setSortingEnabled(True)  # deafult=False, requires sorting itself; must be NOT in parent
-        # self.sortByColumn(enums.EColNo.Summary.value)
         self.verticalHeader().setSectionResizeMode(self.verticalHeader().ResizeMode.ResizeToContents)
         self.__form = TodoForm(self)
         # signals

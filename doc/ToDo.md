@@ -3,18 +3,11 @@
 ## 0. Now
 
 ### 0.1. Hot
-- [ ] TodoListView:
-  - [ ] Autowidth (all excl. Summary/Location)
-- [ ] TodoView:
-  - [ ] Autowidth
-  - [ ] Compact
-- [ ] TodoForm:
-  - [ ] Shrink widget groups
-- [ ] TodoStoreListView:
-  - [ ] Auto-h/w
+- [ ] TodoStoreListView: Auto-h/w
+- [ ] TodoView: Autowidth
+- [ ] TodoForm: Compact
 - [ ] Settings save/restore:
-  - […] sort
-  - […] filter
+  - [ ] MainWindow size
   - [ ] column widths (?)
 
 ### 0.2. Bugs
@@ -22,8 +15,7 @@
 
 ### 0.3. Issues
 - [ ] TodoListView.proxy: statusbar counter lies
-   *(? QtCore.Qt.StatusTipRole)*
-- [ ] QLable(URL): not goto, not `^C`
+- [ ] QLable(URL): not works `goto`, `^C`
 
 ### 0.4. Features
 - [ ] Filter: f(unpacked vobj)
@@ -56,6 +48,9 @@
      - entryDel: &hellip;
      - entryEdit: to edited entry || &hellip;
   - [ ] Expandable 'View File' messagebox
+- [ ] Settings save/restore:
+  - [ ] sort
+  - [ ] filter
 
 ## 1. Common
 - [ ] Docs:
@@ -66,11 +61,11 @@
 ## 2. ToDo
 - [ ] Categories
 - [ ] Move entries between stores
-- [x] LCRUD[^2]
+- [x] LCRUD[^1]
 - [ ] Extend:
   - [ ] RRule
   - [ ] Alarm
-  - [ ] multivalues[^4]:
+  - [ ] multivalues[^3]:
      - [ ] attach: (url)
      - [ ] comment: (str)
      - [ ] contact: (email/msgr/uuid)
@@ -84,7 +79,7 @@
 - Add properties on demand
 
 ## 3. Contacts
-- [ ] LCRUD[^3]
+- [ ] LCRUD[^2]
 
 ## 4. Next:
 - [ ] delay/async load
@@ -119,6 +114,6 @@
 - [ ] Strict SQLite tables
 - [ ] SQLite indexes
 
-[^2]: Lightning/radicale compatible; not drop data exist
-[^3]: CardBook/radicale compatible; not drop data exist
-[^4]: QLineEdit[]/QListView/QPlainTextEdit
+[^1]: Lightning/radicale compatible; not drop data exist
+[^2]: CardBook/radicale compatible; not drop data exist
+[^3]: QLineEdit[]/QListView/QPlainTextEdit
