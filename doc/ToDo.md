@@ -3,7 +3,27 @@
 ## 0. Now
 
 ### 0.1. Hot
-*None*
+- [ ] TodoListView:
+  - [ ] Header tooltips
+  - [ ] Show currently shown tasks count (proxy.rowCount())
+  - [ ] Color Due (red>orange>white|yellow>green>blue)
+  - [ ] Shorter dates: dd.mm[ hh:mm]
+  - [ ] decorate Due: dd.mm>yest>today>tomorrow>dd.mm
+- [ ] TodoView:
+  - [ ] ru date[time]s (dd.mm.yyyy[ hh:mm])
+  - [ ] compact
+  - [ ] autowidth
+  - [ ] [URL](URL)
+  - [ ] Status: str
+  - [ ] Prio: orig+color
+- [ ] TodoForm:
+  - [ ] Save previous selected store for .exec_new()
+  - [ ] Shrink widget groups
+- [ ] TodoStoreListView: auto-h/w
+- [ ] Settings save/restore:
+  - [ ] sort
+  - [ ] filter
+  - [ ] column widths
 
 ### 0.2. Bugs
 *None*
@@ -12,50 +32,30 @@
 *None*
 
 ### 0.4. Features
-- [ ] Settings save/restore:
-  - [ ] sort
-  - [ ] filter
-  - [ ] column widths
+- [ ] Filter: f(unpacked vobj)
+- [ ] Sort: f(unpacked vobjs)
 - [ ] TodoForm: interim logic:
   - [ ] Summary != empty
   - [ ] Status & Completed & Progress
 - [ ] `import vobject` exact in `*/data.py` (-forms (tzutc()))
-- [ ] Filter: f(unpacked vobj)
-- [ ] Sort: f(unpacked vobjs)
 - [ ] Use @classmethod
 - [ ] Description;AltRep="data:text/html,...":...
 
 ### 0.5. UI/UX
 - [ ] TodoForm:
-  - [ ] Save previous selected store for .exec_new()
-  - [ ] Shrink widget groups
-  - [ ] Categories: special combobox (as RTM/Evolution)
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
-- [ ] TodoView:
-  - [ ] ru date[time]s (dd.mm.yyyy[ hh:mm])
-  - [ ] compact
-  - [ ] autowidth
-  - [ ] [URL](URL)
-  - [ ] Status: str
-  - [ ] Prio: orig+color
+  - [ ] Categories: special combobox (as RTM/Evolution)
 - [ ] TodoListView:
-  - [ ] Show currently shown tasks count (proxy.rowCount())
-  - [ ] Color Due (red>orange>white|yellow>green>blue)
-  - [ ] Shorter dates: dd.mm[ hh:mm]
-  - [ ] decorate Due: dd.mm>yest>today>tomorrow>dd.mm
-  - [ ] Hot buttons:
-    - [ ] chg Prio
-    - [ ] chg Due
-    - [ ] Move to Store
-    - [ ] Tags
+  - [ ] Hot buttons: chg:
+     - [ ] Prio
+     - [ ] Due
+     - [ ] Store
+     - [ ] Tags
   - [ ] Selection after:
-    - entryAdd: to added entry if || prev
-    - entryDel: &hellip;
-    - entryEdit: to edited entry || &hellip;
-  - [ ] Header tooltips
-  - [ ] Color `due today` (yellow) and `overdue` (red)
+     - entryAdd: to added entry if || prev
+     - entryDel: &hellip;
+     - entryEdit: to edited entry || &hellip;
   - [ ] Expandable 'View File' messagebox
-- [ ] StoreListView: auto-h/w
 
 ## 1. Common
 - [ ] Docs:

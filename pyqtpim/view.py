@@ -1,6 +1,6 @@
 """Main GUI"""
 
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtGui
 from contact import ContactsWidget
 from todo import TodosWidget
 from form import SettingsView
@@ -101,10 +101,10 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 triggered=self.storeReload)
         # noinspection PyArgumentList
         self.actStoreFakeSync = QtWidgets.QAction(QtGui.QIcon(':/icons/transfer.svg'),
-                                              "&Sync Store (fake)", self,
-                                              shortcut="Ctrl+S",
-                                              statusTip="Sync current Store (dry run)",
-                                              triggered=self.storeFakeSync)
+                                                  "&Sync Store (fake)", self,
+                                                  shortcut="Ctrl+S",
+                                                  statusTip="Sync current Store (dry run)",
+                                                  triggered=self.storeFakeSync)
         # noinspection PyArgumentList
         self.actStoreSync = QtWidgets.QAction(QtGui.QIcon(':/icons/transfer.svg'),
                                               "Sync Store", self,
