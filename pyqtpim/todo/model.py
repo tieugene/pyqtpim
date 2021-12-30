@@ -18,12 +18,13 @@ _day_name = {
     _today: "today",
     _tomorrow: "tomorw",
 }
+_datime_fmt = ('%d.%m %H:%M', '%d.%m.%y %H:%M')  # short, long
+_date_fmt = ('%d.%m', '%d.%m.%y')  # short, long
+_e_closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
 
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
-    __datime_fmt = ('%d.%m %H:%M', '%d.%m.%y %H:%M')  # short, long
-    __date_fmt = ('%d.%m', '%d.%m.%y')  # short, long
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -64,7 +65,7 @@ class TodoModel(EntryModel):
     def __utc2disp(data: Optional[datetime.datetime]) -> Optional[str]:
         """Convert UTC datetime into viewable localtime"""
         if data:
-            return data.astimezone().replace(tzinfo=None).strftime(TodoModel.__datime_fmt[1])
+            return data.astimezone().replace(tzinfo=None).strftime(_datime_fmt[1])
             # or .isoformat(sep=' ', timespec='minutes')
 
     @staticmethod
@@ -72,10 +73,10 @@ class TodoModel(EntryModel):
         """Convert datetime (naive/tzed) into viewable localtime"""
         if data:
             if isinstance(data, datetime.datetime):
-                return data.replace(tzinfo=None).strftime(TodoModel.__datime_fmt[int(long)])
+                return data.replace(tzinfo=None).strftime(_datime_fmt[int(long)])
                 # or .isoformat(sep=' ', timespec='minutes')
             else:  # date
-                return data.strftime(TodoModel.__date_fmt[int(long)])
+                return data.strftime(_date_fmt[int(long)])
                 # or .isoformat()
 
     def __data_display(self, col: int, vobj: TodoVObj, role: int) -> Optional[str]:
@@ -116,14 +117,23 @@ class TodoModel(EntryModel):
         if col == enums.EColNo.Prio.value:
             if v := vobj.get_Priority():
                 return enums.TColor_Prio[v - 1]
-        if col == enums.EColNo.Status.value:
+        elif col == enums.EColNo.Status.value:
             if v := vobj.get_Status():
                 return enums.TColor_Status[v - 1]
+        elif col == enums.EColNo.Due.value:
+            if vobj.get_Status() not in _e_closed:
+                if v := vobj.get_Due_as_date():
+                    if v < _yesterday:
+                        idx = -2
+                    elif v > _tomorrow:
+                        idx = 2
+                    else:
+                        idx = (v - _today).days
+                    return enums.TColor_Due[idx + 2]
 
 
 class TodoProxyModel(EntryProxyModel):
     # _own_model = TodoModel
-    __e_closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -198,12 +208,12 @@ class TodoProxyModel(EntryProxyModel):
     def __accept_Closed(self, source_row: int) -> bool:
         """Show only Status=Complete[|Cancelled]"""
         entry = self.sourceModel().item_get(source_row)
-        return entry.store.active and entry.vobj.get_Status() in self.__e_closed
+        return entry.store.active and entry.vobj.get_Status() in _e_closed
 
     def __accept_Opened(self, source_row: int) -> bool:
         """Show only Status!=Complete[|Cancelled]"""
         entry = self.sourceModel().item_get(source_row)
-        return entry.store.active and entry.vobj.get_Status() not in self.__e_closed
+        return entry.store.active and entry.vobj.get_Status() not in _e_closed
 
     def __accept_Today(self, source_row: int) -> bool:
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""
@@ -212,7 +222,7 @@ class TodoProxyModel(EntryProxyModel):
         due = vobj.get_Due_as_date()
         return\
             entry.store.active\
-            and (vobj.get_Status() not in self.__e_closed)\
+            and (vobj.get_Status() not in _e_closed)\
             and (due is not None)\
             and (due <= _today)
 
@@ -223,7 +233,7 @@ class TodoProxyModel(EntryProxyModel):
         due = vobj.get_Due_as_date()
         return\
             entry.store.active\
-            and (vobj.get_Status() not in self.__e_closed)\
+            and (vobj.get_Status() not in _e_closed)\
             and (due is not None)\
             and (due == _tomorrow)
 

@@ -4,20 +4,19 @@
 
 ### 0.1. Hot
 - [ ] TodoListView:
-  - [ ] Due Color: red→orange→white|yellow→green→blue
-  - [ ] Autowidth: all excl. Summary/Location
+  - [ ] Autowidth (all excl. Summary/Location)
 - [ ] TodoView:
   - [ ] Autowidth
   - [ ] Compact
 - [ ] TodoForm:
-  - [ ] Save previous selected store for .exec_new()
+  - […] Save previous selected store for .exec_new()
   - [ ] Shrink widget groups
 - [ ] TodoStoreListView:
-  - [ ] auto-h/w
+  - [ ] Auto-h/w
 - [ ] Settings save/restore:
-  - [ ] sort
-  - [ ] filter
-  - [ ] column widths
+  - […] sort
+  - […] filter
+  - [ ] column widths (?)
 
 ### 0.2. Bugs
 *None*

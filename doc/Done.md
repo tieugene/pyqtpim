@@ -71,7 +71,8 @@
 - [x] TodoListView: status bar counter
 - [x] TodoListView: Shorter date[time]s: dd.mm[.yy][ hh:mm]
 - [x] TodoListView: align: `!`/`S`: &harr;, `%`: &rarrb;
-- [x] TodoListView: Due Decorate: dd.mm→yest→2day→2mor→dd.mm
+- [x] TodoListView: Due Decorate (5 lvls)
+- [x] TodoListView: Due Colored (5 lvls)
 
 ## Contacts.File-based
 - [ ] CLM:

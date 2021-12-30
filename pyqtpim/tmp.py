@@ -115,4 +115,9 @@ def test_e():
     # TODO: print all keys found
 
 
-test_e()
+# test_e()
+
+def cut_to_2(n: int):
+    """Cut n to -2..2"""
+    sign = n//abs(n)  # -1/1
+    n = sign(n) * (bool(abs(n)))
