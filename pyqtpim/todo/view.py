@@ -34,6 +34,7 @@ class TodoListView(EntryListView):
         self.setSortingEnabled(True)  # deafult=False, requires sorting itself; must be NOT in parent
         # self.sortByColumn(enums.EColNo.Summary.value)
         self.verticalHeader().setSectionResizeMode(self.verticalHeader().ResizeMode.ResizeToContents)
+        self.__form = TodoForm(self)
         # signals
         self.horizontalHeader().sectionMoved.connect(self.__sectionMoved)
         self.selectionModel().currentRowChanged.connect(self.__rowChanged)
@@ -77,8 +78,7 @@ class TodoListView(EntryListView):
                 self.horizontalHeader().moveSection(cvi, vi)
 
     def entryAdd(self):
-        f = TodoForm(self)  # TODO: cache creation
-        if pair := f.exec_new():
+        if pair := self.__form.exec_new():
             vobj, store = pair
             fname = vobj.get_UID() + '.ics'
             entry = TodoEntry(vobj, store, fname)
@@ -95,8 +95,7 @@ class TodoListView(EntryListView):
         row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
         entry = realmodel.item_get(row)
-        f = TodoForm(self)  # TODO: cache creation
-        if f.exec_edit(entry.vobj, entry.store):
+        if self.__form.exec_edit(entry.vobj, entry.store):
             if not realmodel.item_upd(row):
                 print(f"Something bad with saving '{entry.vobj.get_Summary()}'")
             self.model().resortfilter()

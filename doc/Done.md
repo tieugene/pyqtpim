@@ -73,6 +73,7 @@
 - [x] TodoListView: align: `!`/`S`: &harr;, `%`: &rarrb;
 - [x] TodoListView: Due Decorate (5 lvls)
 - [x] TodoListView: Due Colored (5 lvls)
+- [x] TodoForm: remember last selected store
 
 ## Contacts.File-based
 - [ ] CLM:

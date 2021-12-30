@@ -9,7 +9,6 @@
   - [ ] Autowidth
   - [ ] Compact
 - [ ] TodoForm:
-  - […] Save previous selected store for .exec_new()
   - [ ] Shrink widget groups
 - [ ] TodoStoreListView:
   - [ ] Auto-h/w
