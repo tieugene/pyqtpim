@@ -8,7 +8,6 @@
   - [ ] Due Decorate: dd.mm→yest→2day→tomor→dd.mm
   - [ ] Autowidth: all excl. Summary/Location
 - [ ] TodoView:
-  - [ ] [URL](URL)
   - [ ] Autowidth
   - [ ] Compact
 - [ ] TodoForm:
@@ -27,6 +26,7 @@
 ### 0.3. Issues
 - [ ] TodoListView.proxy: statusbar counter lies
    *(? QtCore.Qt.StatusTipRole)*
+- [ ] QLable(URL): not goto, not `^C`
 
 ### 0.4. Features
 - [ ] Filter: f(unpacked vobj)
@@ -47,6 +47,7 @@
   - [ ] ? Desc in tab
   - [ ] Status: str or w/ tooltip/statustip
   - [ ] Prio: +original value
+  - [ ] [URL](URL)
 - [ ] TodoListView:
   - [ ] Hot buttons: chg:
      - [ ] Prio

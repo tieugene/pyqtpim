@@ -189,10 +189,11 @@ class TodoView(EntryView):
     status: QtWidgets.QLineEdit
     progress: QtWidgets.QLineEdit
     completed: QtWidgets.QLineEdit
-    url: QtWidgets.QLineEdit
     location: QtWidgets.QLineEdit
     class_: QtWidgets.QLineEdit
     modified: QtWidgets.QLineEdit
+    url: QtWidgets.QLineEdit
+    # url: QtWidgets.QLabel
     description: QtWidgets.QTextEdit
 
     def __init__(self, parent):
@@ -210,15 +211,18 @@ class TodoView(EntryView):
         self.status = QtWidgets.QLineEdit(self)
         self.progress = QtWidgets.QLineEdit(self)
         self.completed = QtWidgets.QLineEdit(self)
-        self.url = QtWidgets.QLineEdit(self)
         self.location = QtWidgets.QLineEdit(self)
         self.class_ = QtWidgets.QLineEdit(self)
         self.modified = QtWidgets.QLineEdit(self)
+        self.url = QtWidgets.QLineEdit(self)
+        # self.url = QtWidgets.QLabel(self)
         self.description = QtWidgets.QTextEdit(self)
         # attributes
         for i in (self.store, self.summary, self.category, self.priority, self.dtstart, self.due, self.status,
-                  self.progress, self.completed, self.url, self.location, self.class_, self.modified, self.description):
+                  self.progress, self.completed, self.location, self.class_, self.modified, self.url, self.description):
             i.setReadOnly(True)
+        # self.url.setTextFormat(QtCore.Qt.RichText)
+        # self.url.setWordWrap(True)
         # layout
         layout = QtWidgets.QFormLayout()
         layout.addRow("Store", self.store)
@@ -230,10 +234,10 @@ class TodoView(EntryView):
         layout.addRow("Status:", self.status)
         layout.addRow("Progress:", self.progress)
         layout.addRow("Completed:", self.completed)
-        layout.addRow("URL:", self.url)
         layout.addRow("Location:", self.location)
         layout.addRow("Class:", self.class_)
         layout.addRow("Modified:", self.modified)
+        layout.addRow("URL:", self.url)
         layout.addRow(self.description)
         layout.setVerticalSpacing(0)  # default=-1
         self.setLayout(layout)
@@ -243,11 +247,14 @@ class TodoView(EntryView):
     def __idxChgd(self, row: int):
         """Only for selection; not calling on deselection"""
         # FIXME: clean prio, progress, completed
-        entry = self.mapper.model().item_get(row)
-        data: TodoVObj = entry.vobj
+        data: TodoVObj = self.mapper.model().item_get(row).vobj
         self.category.setText(', '.join(v) if (v := data.get_Categories()) else None)
-        self.url.setText(data.get_URL())
         self.class_.setText(enums.Enum2Raw_Class.get(data.get_Class()))
+        self.url.setText(data.get_URL())
+        # if v := data.get_URL():
+        #    self.url.setText(f"<a href=\"v\">{v}</a>")
+        # else:
+        #    self.url.clear()
         self.description.setText(data.get_Description())
 
     def setModel(self, model: TodoModel):

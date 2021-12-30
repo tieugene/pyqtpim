@@ -49,14 +49,7 @@ class TodoModel(EntryModel):
                 return QtCore.Qt.AlignCenter
             elif col == enums.EColNo.Progress:
                 return QtCore.Qt.AlignRight
-        '''
-        elif role == QtCore.Qt.EditRole:
-            col = idx.column()
-            if col == enums.EColNo.Completed.value:
-                return self.data(idx, QtCore.Qt.DisplayRole)
-            else:
-                return super().data(idx, role)
-        '''
+
     # Hand-made
     @staticmethod
     def __utc2disp(data: Optional[datetime.datetime]) -> Optional[str]:
