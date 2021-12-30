@@ -7,11 +7,10 @@
   - [ ] Due Color: red→orange→white|yellow→green→blue
   - [ ] Due Decorate: dd.mm→yest→2day→tomor→dd.mm
   - [ ] Autowidth: all excl. Summary/Location
-  - [ ] Datetime fields - monofont
+  - [ ] TextAlignmentRole: `!`/`S`: &harr;, `%`: &rarrb;
 - [ ] TodoView:
-  - [ ] ru date[time]s: dd.mm.yy[ hh:mm]
   - [ ] Status: str
-  - [ ] Prio: orig[+color]
+  - [ ] Prio: +orig
   - [ ] [URL](URL)
   - [ ] autowidth
   - [ ] compact
@@ -35,14 +34,15 @@
 ### 0.4. Features
 - [ ] Filter: f(unpacked vobj)
 - [ ] Sort: f(unpacked vobjs)
-- [ ] TodoForm: interim logic:
-  - [ ] Summary != empty
-  - [ ] Status & Completed & Progress
+- [ ] TodoForm:
+  - [ ] On-the-fly logic (Status & Completed & Progress)
+  - [ ] Validator (Summary != empty etc)
 - [ ] `import vobject` exact in `*/data.py` (-forms (tzutc()))
 - [ ] Use @classmethod
 - [ ] Description;AltRep="data:text/html,...":...
 
 ### 0.5. UI/UX
+- [ ] Datetime fields: monofont (FontRole)
 - [ ] TodoForm:
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
   - [ ] Categories: special combobox (as RTM/Evolution)

@@ -7,12 +7,14 @@ from PySide2 import QtCore
 # 3. 3rd
 # 4. local
 from common import EntryModel, EntryProxyModel, StoreModel, SetGroup
-from .data import TodoVObj, TodoStore, store_list, entry_list, TodoEntry
+from .data import TodoVObj, TodoStore, store_list, entry_list
 from . import enums
 
 
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
+    __datime_fmt = ('%d.%m %H:%M', '%d.%m.%y %H:%M')  # short, long
+    __date_fmt = ('%d.%m', '%d.%m.%y')  # short, long
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,7 +41,7 @@ class TodoModel(EntryModel):
             if col == enums.EColNo.Store.value:
                 return entry.store.name
             else:
-                return self.__data_display(col, entry.vobj)
+                return self.__data_display(col, entry.vobj, role)
         elif role == QtCore.Qt.ForegroundRole:  # == DislayRole | ForegroundRole
             return self.__data_foreground(col, entry.vobj)
         '''
@@ -55,19 +57,21 @@ class TodoModel(EntryModel):
     def __utc2disp(data: Optional[datetime.datetime]) -> Optional[str]:
         """Convert UTC datetime into viewable localtime"""
         if data:
-            return data.astimezone().replace(tzinfo=None).strftime('%d.%m.%y %H:%M')
+            return data.astimezone().replace(tzinfo=None).strftime(TodoModel.__datime_fmt[1])
             # or .isoformat(sep=' ', timespec='minutes')
 
     @staticmethod
-    def __vardatime2disp(data: Optional[Union[datetime.datetime, datetime.date]]) -> str:
+    def __vardatime2disp(data: Union[datetime.datetime, datetime.date], long: bool = False) -> str:
         """Convert datetime (naive/tzed) into viewable localtime"""
         if data:
             if isinstance(data, datetime.datetime):
-                return data.replace(tzinfo=None).strftime('%d.%m %H:%M')  # .isoformat(sep=' ', timespec='minutes')
+                return data.replace(tzinfo=None).strftime(TodoModel.__datime_fmt[int(long)])
+                # or .isoformat(sep=' ', timespec='minutes')
             else:  # date
-                return data.strftime('%d.%m')  # .isoformat()
+                return data.strftime(TodoModel.__date_fmt[int(long)])
+                # or .isoformat()
 
-    def __data_display(self, col: int, vobj: TodoVObj) -> Optional[str]:
+    def __data_display(self, col: int, vobj: TodoVObj, role: int) -> Optional[str]:
         if col == enums.EColNo.Created.value:
             return self.__utc2disp(vobj.get_Created())
         elif col == enums.EColNo.DTStamp.value:
@@ -75,9 +79,9 @@ class TodoModel(EntryModel):
         elif col == enums.EColNo.Modified.value:
             return self.__utc2disp(vobj.get_LastModified())
         elif col == enums.EColNo.DTStart.value:
-            return self.__vardatime2disp(vobj.get_DTStart())
+            return self.__vardatime2disp(vobj.get_DTStart(), long=(role == QtCore.Qt.EditRole))
         elif col == enums.EColNo.Due.value:
-            return self.__vardatime2disp(vobj.get_Due())
+            return self.__vardatime2disp(vobj.get_Due(), long=(role == QtCore.Qt.EditRole))
         elif col == enums.EColNo.Completed.value:
             return self.__utc2disp(vobj.get_Completed())
         elif col == enums.EColNo.Progress.value:
