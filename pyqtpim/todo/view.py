@@ -13,6 +13,7 @@ from . import enums
 class TodoListView(EntryListView):
     # _own_model = TodoProxyModel
     """List of todos"""
+
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent, dependant)
         # models
@@ -34,22 +35,21 @@ class TodoListView(EntryListView):
         # self.sortByColumn(enums.EColNo.Summary.value)
         self.verticalHeader().setSectionResizeMode(self.verticalHeader().ResizeMode.ResizeToContents)
         # signals
-        # # self.activated.connect(self.rowChanged)
         self.horizontalHeader().sectionMoved.connect(self.__sectionMoved)
         self.selectionModel().currentRowChanged.connect(self.__rowChanged)
 
-    def requery(self):
-        # self.model().sourceModel().reload()
-        self.resizeRowsToContents()
-
-    def __rowChanged(self, idx):
-        """:todo: find sourceModel row"""
-        if not idx.isValid():
-            # print("Change to none")
-            return
-        self._details.mapper.setCurrentModelIndex(
-            self._details.mapper.model().index(self.model().mapToSource(idx).row(), 0)
-        )
+    def __rowChanged(self, dst: QtCore.QModelIndex, src: QtCore.QModelIndex):
+        if not dst.isValid():
+            if src.isValid():
+                self._details.clear()
+                # TODO: switch actions off
+        else:
+            self._details.mapper.setCurrentModelIndex(
+                self._details.mapper.model().index(self.model().mapToSource(dst).row(), 0)
+            )
+            if not src.isValid():
+                # TODO: switch actions on
+                ...
 
     def __sectionMoved(self, _: int, __: int, ___: int):
         """Section lidx moved from ovidx to nvidx"""
@@ -99,7 +99,7 @@ class TodoListView(EntryListView):
             if not realmodel.item_upd(row):
                 print(f"Something bad with saving '{entry.vobj.get_Summary()}'")
             self.model().resortfilter()
-            self.__rowChanged(self.currentIndex())
+            self.__rowChanged(self.currentIndex(), self.currentIndex())
 
     def entryDel(self):
         idx = self.currentIndex()
@@ -157,6 +157,18 @@ class TodoStoreListView(StoreListView):
     def __init__(self, parent, dependant: TodoListView):
         super().__init__(parent, dependant)
         self.setModel(store_model)
+        # after setModel() only
+        self.selectionModel().currentRowChanged.connect(self.__rowChanged)
+
+    def __rowChanged(self, dst: QtCore.QModelIndex, src: QtCore.QModelIndex):
+        dst_ok = dst.isValid()
+        src_ok = src.isValid()
+        if dst_ok and not src_ok:
+            # TODO: switch action on
+            ...
+        elif not dst_ok and src_ok:
+            # TODO: switch action off
+            ...
 
     def stores_reload(self):
         """Reload Store from its connection"""
@@ -179,7 +191,7 @@ class TodoView(EntryView):
     url: QtWidgets.QLineEdit
     location: QtWidgets.QLineEdit
     class_: QtWidgets.QLineEdit
-    modified: QtWidgets.QDateTimeEdit
+    modified: QtWidgets.QLineEdit
     description: QtWidgets.QTextEdit
 
     def __init__(self, parent):
@@ -200,14 +212,12 @@ class TodoView(EntryView):
         self.url = QtWidgets.QLineEdit(self)
         self.location = QtWidgets.QLineEdit(self)
         self.class_ = QtWidgets.QLineEdit(self)
-        self.modified = QtWidgets.QDateTimeEdit(self)
+        self.modified = QtWidgets.QLineEdit(self)
         self.description = QtWidgets.QTextEdit(self)
         # attributes
         for i in (self.store, self.summary, self.category, self.priority, self.dtstart, self.due, self.status,
                   self.progress, self.completed, self.url, self.location, self.class_, self.modified, self.description):
             i.setReadOnly(True)
-        for i in (self.modified,):
-            i.setButtonSymbols(QtWidgets.QAbstractSpinBox.ButtonSymbols.NoButtons)
         # layout
         layout = QtWidgets.QFormLayout()
         layout.addRow("Store", self.store)
@@ -224,7 +234,7 @@ class TodoView(EntryView):
         layout.addRow("Class:", self.class_)
         layout.addRow("Modified:", self.modified)
         layout.addRow(self.description)
-        layout.setVerticalSpacing(0)    # default=-1
+        layout.setVerticalSpacing(0)  # default=-1
         self.setLayout(layout)
         # print("vSpace:", layout.verticalSpacing())
         # print("hSpace:", layout.horizontalSpacing())
@@ -259,6 +269,13 @@ class TodoView(EntryView):
         self.mapper.addMapping(self.modified, enums.EColNo.Modified.value)
         # description
         self.mapper.currentIndexChanged.connect(self.__idxChgd)
+
+    def clear(self):
+        for f in (
+                self.store, self.summary, self.category, self.priority, self.dtstart, self.due, self.status,
+                self.progress, self.completed, self.url, self.location, self.class_, self.modified, self.description
+        ):
+            f.clear()
 
 
 class TodoSortWidget(QtWidgets.QGroupBox):

@@ -1,6 +1,6 @@
 """Main GUI"""
 
-from PySide2 import QtWidgets, QtGui
+from PySide2 import QtWidgets, QtGui, QtCore
 from contact import ContactsWidget
 from todo import TodosWidget
 from form import SettingsView
@@ -211,3 +211,12 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def entryDel(self):
         self.todo.list.entryDel()
+
+    def updateActions(self, selected: QtCore.QItemSelection, deselected: QtCore.QItemSelection):
+        indexes = selected.indexes()
+        if len(indexes) > 0:
+            self.removeAction.setEnabled(True)
+            self.editAction.setEnabled(True)
+        else:
+            self.removeAction.setEnabled(False)
+            self.editAction.setEnabled(False)

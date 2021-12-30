@@ -10,8 +10,10 @@
 
 ### 0.3. Issues
 - [ ] TodoListView:
-  - [ ] handle TodoView after selection out (entryDel, filter)
-- [ ] Actions: Enable/Disable by context
+  - [ ] selection on/off => TodoView.clear(), actions on/off
+     *(QItemSelectionModel.selectionChanged())*
+- [ ] StoreListView:
+  - [ ] selection on/off => actions on/off
 
 ### 0.4. Features
 - [ ] Settings save/restore:
@@ -25,6 +27,7 @@
 - [ ] Filter: f(unpacked vobj)
 - [ ] Sort: f(unpacked vobjs)
 - [ ] Use @classmethod
+- [ ] Description;AltRep="data:text/html,...":...
 
 ### 0.5. UI/UX
 - [ ] TodoForm:
@@ -40,6 +43,7 @@
   - [ ] Status: str
   - [ ] Prio: orig+color
 - [ ] TodoListView:
+  - [ ] Show currently shown tasks count (proxy.rowCount())
   - [ ] Color Due (red>orange>white|yellow>green>blue)
   - [ ] Shorter dates: dd.mm[ hh:mm]
   - [ ] decorate Due: dd.mm>yest>today>tomorrow>dd.mm
@@ -53,7 +57,6 @@
     - entryDel: &hellip;
     - entryEdit: to edited entry || &hellip;
   - [ ] Header tooltips
-  - [ ] Show currently shown tasks count
   - [ ] Color `due today` (yellow) and `overdue` (red)
   - [ ] Expandable 'View File' messagebox
 - [ ] StoreListView: auto-h/w
