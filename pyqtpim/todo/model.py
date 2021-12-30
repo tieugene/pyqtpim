@@ -7,7 +7,7 @@ from PySide2 import QtCore
 # 3. 3rd
 # 4. local
 from common import EntryModel, EntryProxyModel, StoreModel, SetGroup
-from .data import TodoVObj, TodoStore, store_list, entry_list
+from .data import TodoVObj, TodoStore, store_list, entry_list, TodoEntry
 from . import enums
 
 
@@ -30,8 +30,8 @@ class TodoModel(EntryModel):
     def columnCount(self, parent: QtCore.QModelIndex = None) -> int:
         return len(enums.ColHeader)
 
-    def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
-        def __utc2disp(data: Optional[datetime.datetime]) -> str:
+    def __data_display(self, col: int, vobj: TodoVObj) -> Optional[str]:
+        def __utc2disp(data: Optional[datetime.datetime]) -> Optional[str]:
             """Convert UTC datetime into viewable localtime"""
             if data:
                 return data.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
@@ -44,46 +44,54 @@ class TodoModel(EntryModel):
                 else:  # date => no convert
                     return data.isoformat()
 
+        if col == enums.EColNo.Created.value:
+            return __utc2disp(vobj.get_Created())
+        elif col == enums.EColNo.DTStamp.value:
+            return __utc2disp(vobj.get_DTStamp())
+        elif col == enums.EColNo.Modified.value:
+            return __utc2disp(vobj.get_LastModified())
+        elif col == enums.EColNo.DTStart.value:
+            return __vardatime2disp(vobj.get_DTStart())
+        elif col == enums.EColNo.Due.value:
+            return __vardatime2disp(vobj.get_Due())
+        elif col == enums.EColNo.Completed.value:
+            return __utc2disp(vobj.get_Completed())
+        elif col == enums.EColNo.Progress.value:
+            return str(vobj.get_Progress())
+        elif col == enums.EColNo.Prio.value:
+            if v := vobj.get_Priority():
+                return enums.TDecor_Prio[v - 1]
+        elif col == enums.EColNo.Status.value:
+            if v := vobj.get_Status():
+                return enums.TDecor_Status[v - 1]
+        elif col == enums.EColNo.Summary.value:
+            return vobj.get_Summary()
+        elif col == enums.EColNo.Location.value:
+            return vobj.get_Location()
+
+    def __data_edit(self, col: int, vobj: TodoVObj) -> str:
+        ...
+
+    def __data_foreground(self, col: int, vobj: TodoVObj) -> Any:
+        if col == enums.EColNo.Prio.value:
+            if v := vobj.get_Priority():
+                return enums.TColor_Prio[v - 1]
+        if col == enums.EColNo.Status.value:
+            if v := vobj.get_Status():
+                return enums.TColor_Status[v - 1]
+
+    def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
         if not idx.isValid():
             return None
         entry = self._data.entry_get(idx.row())
-        vobj: TodoVObj = entry.vobj
         col = idx.column()
         if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:
             if col == enums.EColNo.Store.value:
                 return entry.store.name
-            if col == enums.EColNo.Created.value:
-                return __utc2disp(vobj.get_Created())
-            elif col == enums.EColNo.DTStamp.value:
-                return __utc2disp(vobj.get_DTStamp())
-            elif col == enums.EColNo.Modified.value:
-                return __utc2disp(vobj.get_LastModified())
-            elif col == enums.EColNo.DTStart.value:
-                return __vardatime2disp(vobj.get_DTStart())
-            elif col == enums.EColNo.Due.value:
-                return __vardatime2disp(vobj.get_Due())
-            elif col == enums.EColNo.Completed.value:
-                return __utc2disp(vobj.get_Completed())
-            elif col == enums.EColNo.Progress.value:
-                return vobj.get_Progress()
-            elif col == enums.EColNo.Prio.value:
-                if v := vobj.get_Priority():
-                    return enums.TDecor_Prio[v - 1]
-            elif col == enums.EColNo.Status.value:
-                if v := vobj.get_Status():
-                    return enums.TDecor_Status[v - 1]
-            elif col == enums.EColNo.Summary.value:
-                return vobj.get_Summary()
-            elif col == enums.EColNo.Location.value:
-                return vobj.get_Location()
-        elif role == QtCore.Qt.ForegroundRole:
-            # v = super().data(idx, QtCore.Qt.DisplayRole)
-            if col == enums.EColNo.Prio.value:
-                if v := vobj.get_Priority():
-                    return enums.TColor_Prio[v - 1]
-            if col == enums.EColNo.Status.value:
-                if v := vobj.get_Status():
-                    return enums.TColor_Status[v - 1]
+            else:
+                return self.__data_display(col, entry.vobj)
+        elif role == QtCore.Qt.ForegroundRole:  # == DislayRole | ForegroundRole
+            return self.__data_foreground(col, entry.vobj)
         '''
         elif role == QtCore.Qt.EditRole:
             col = idx.column()

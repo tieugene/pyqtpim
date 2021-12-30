@@ -30,6 +30,7 @@
 
 ### 0.3. Issues
 - [ ] TodoListView.proxy: statusbar counter lies
+   *(? QtCore.Qt.StatusTipRole)*
 
 ### 0.4. Features
 - [ ] Filter: f(unpacked vobj)
