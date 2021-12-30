@@ -9,11 +9,9 @@
   - [ ] Autowidth: all excl. Summary/Location
   - [ ] TextAlignmentRole: `!`/`S`: &harr;, `%`: &rarrb;
 - [ ] TodoView:
-  - [ ] Status: str
-  - [ ] Prio: +orig
   - [ ] [URL](URL)
-  - [ ] autowidth
-  - [ ] compact
+  - [ ] Autowidth
+  - [ ] Compact
 - [ ] TodoForm:
   - [ ] Save previous selected store for .exec_new()
   - [ ] Shrink widget groups
@@ -48,6 +46,8 @@
   - [ ] Categories: special combobox (as RTM/Evolution)
 - [ ] TodoView:
   - [ ] ? Desc in tab
+  - [ ] Status: str or w/ tooltip/statustip
+  - [ ] Prio: +original value
 - [ ] TodoListView:
   - [ ] Hot buttons: chg:
      - [ ] Prio
