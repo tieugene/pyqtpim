@@ -30,34 +30,59 @@ class TodoModel(EntryModel):
     def columnCount(self, parent: QtCore.QModelIndex = None) -> int:
         return len(enums.ColHeader)
 
+    def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
+        if not idx.isValid():
+            return None
+        entry = self._data.entry_get(idx.row())
+        col = idx.column()
+        if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:
+            if col == enums.EColNo.Store.value:
+                return entry.store.name
+            else:
+                return self.__data_display(col, entry.vobj)
+        elif role == QtCore.Qt.ForegroundRole:  # == DislayRole | ForegroundRole
+            return self.__data_foreground(col, entry.vobj)
+        '''
+        elif role == QtCore.Qt.EditRole:
+            col = idx.column()
+            if col == enums.EColNo.Completed.value:
+                return self.data(idx, QtCore.Qt.DisplayRole)
+            else:
+                return super().data(idx, role)
+        '''
+    # Hand-made
+    @staticmethod
+    def __utc2disp(data: Optional[datetime.datetime]) -> Optional[str]:
+        """Convert UTC datetime into viewable localtime"""
+        if data:
+            return data.astimezone().replace(tzinfo=None).strftime('%d.%m.%y %H:%M')
+            # or .isoformat(sep=' ', timespec='minutes')
+
+    @staticmethod
+    def __vardatime2disp(data: Optional[Union[datetime.datetime, datetime.date]]) -> str:
+        """Convert datetime (naive/tzed) into viewable localtime"""
+        if data:
+            if isinstance(data, datetime.datetime):
+                return data.replace(tzinfo=None).strftime('%d.%m %H:%M')  # .isoformat(sep=' ', timespec='minutes')
+            else:  # date
+                return data.strftime('%d.%m')  # .isoformat()
+
     def __data_display(self, col: int, vobj: TodoVObj) -> Optional[str]:
-        def __utc2disp(data: Optional[datetime.datetime]) -> Optional[str]:
-            """Convert UTC datetime into viewable localtime"""
-            if data:
-                return data.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
-
-        def __vardatime2disp(data: Optional[Union[datetime.datetime, datetime.date]]) -> str:
-            """Convert datetime (naive/tzed) into viewable localtime"""
-            if data:
-                if isinstance(data, datetime.datetime):
-                    return data.replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
-                else:  # date => no convert
-                    return data.isoformat()
-
         if col == enums.EColNo.Created.value:
-            return __utc2disp(vobj.get_Created())
+            return self.__utc2disp(vobj.get_Created())
         elif col == enums.EColNo.DTStamp.value:
-            return __utc2disp(vobj.get_DTStamp())
+            return self.__utc2disp(vobj.get_DTStamp())
         elif col == enums.EColNo.Modified.value:
-            return __utc2disp(vobj.get_LastModified())
+            return self.__utc2disp(vobj.get_LastModified())
         elif col == enums.EColNo.DTStart.value:
-            return __vardatime2disp(vobj.get_DTStart())
+            return self.__vardatime2disp(vobj.get_DTStart())
         elif col == enums.EColNo.Due.value:
-            return __vardatime2disp(vobj.get_Due())
+            return self.__vardatime2disp(vobj.get_Due())
         elif col == enums.EColNo.Completed.value:
-            return __utc2disp(vobj.get_Completed())
+            return self.__utc2disp(vobj.get_Completed())
         elif col == enums.EColNo.Progress.value:
-            return str(vobj.get_Progress())
+            if (v := vobj.get_Progress()) is not None:
+                return str(v)
         elif col == enums.EColNo.Prio.value:
             if v := vobj.get_Priority():
                 return enums.TDecor_Prio[v - 1]
@@ -79,27 +104,6 @@ class TodoModel(EntryModel):
         if col == enums.EColNo.Status.value:
             if v := vobj.get_Status():
                 return enums.TColor_Status[v - 1]
-
-    def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
-        if not idx.isValid():
-            return None
-        entry = self._data.entry_get(idx.row())
-        col = idx.column()
-        if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:
-            if col == enums.EColNo.Store.value:
-                return entry.store.name
-            else:
-                return self.__data_display(col, entry.vobj)
-        elif role == QtCore.Qt.ForegroundRole:  # == DislayRole | ForegroundRole
-            return self.__data_foreground(col, entry.vobj)
-        '''
-        elif role == QtCore.Qt.EditRole:
-            col = idx.column()
-            if col == enums.EColNo.Completed.value:
-                return self.data(idx, QtCore.Qt.DisplayRole)
-            else:
-                return super().data(idx, role)
-        '''
 
 
 class TodoProxyModel(EntryProxyModel):

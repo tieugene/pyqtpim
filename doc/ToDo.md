@@ -4,10 +4,10 @@
 
 ### 0.1. Hot
 - [ ] TodoListView:
-  - [ ] Shorter dates: dd.mm[.yy][ hh:mm]
   - [ ] Due Color: red→orange→white|yellow→green→blue
   - [ ] Due Decorate: dd.mm→yest→2day→tomor→dd.mm
   - [ ] Autowidth: all excl. Summary/Location
+  - [ ] Datetime fields - monofont
 - [ ] TodoView:
   - [ ] ru date[time]s: dd.mm.yy[ hh:mm]
   - [ ] Status: str

@@ -69,6 +69,7 @@
 - [x] StoreListView: handle actions on/off
 - [x] TodoListView: Header tooltips
 - [x] TodoListView: status bar counter
+- [x] TodoListView: Shorter date[time]s: dd.mm[.yy][ hh:mm]
 
 ## Contacts.File-based
 - [ ] CLM:
