@@ -68,6 +68,7 @@
 - [x] TodoListView: handle actions on/off
 - [x] StoreListView: handle actions on/off
 - [x] TodoListView: Header tooltips
+- [x] TodoListView: status bar counter
 
 ## Contacts.File-based
 - [ ] CLM:

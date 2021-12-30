@@ -51,6 +51,7 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
     # _own_model = EntryModel
     _currentSorter: Callable
     _currentFilter: Callable
+    counter = QtCore.Signal(int)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,6 +59,12 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
         self._currentSorter = self._lessThen_None
         self._currentFilter = self._accept_Default
 
+    # Inherit
+    def rowCount(self, _: QtCore.QModelIndex) -> int:
+        self.counter.emit(rows := super().rowCount())
+        return rows
+
+    # Hand-made
     def refilter(self):
         self.invalidateFilter()
 

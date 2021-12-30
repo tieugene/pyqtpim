@@ -4,10 +4,10 @@
 
 ### 0.1. Hot
 - [ ] TodoListView:
-  - [ ] Show currently shown tasks count (proxy.rowCount())
   - [ ] Shorter dates: dd.mm[.yy][ hh:mm]
   - [ ] Due Color: red→orange→white|yellow→green→blue
   - [ ] Due Decorate: dd.mm→yest→2day→tomor→dd.mm
+  - [ ] Autowidth: all excl. Summary/Location
 - [ ] TodoView:
   - [ ] ru date[time]s: dd.mm.yy[ hh:mm]
   - [ ] Status: str
@@ -29,7 +29,7 @@
 *None*
 
 ### 0.3. Issues
-*None*
+- [ ] TodoListView.proxy: statusbar counter lies
 
 ### 0.4. Features
 - [ ] Filter: f(unpacked vobj)
@@ -86,6 +86,7 @@
 - Add properties on demand
 
 ## 3. Contacts
+- [ ] LCRUD[^3]
 
 ## 4. Next:
 - [ ] delay/async load
