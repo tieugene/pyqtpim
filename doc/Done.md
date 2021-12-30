@@ -67,6 +67,7 @@
 - [x] TodoListView: clear TodoView on not selected Todo
 - [x] TodoListView: handle actions on/off
 - [x] StoreListView: handle actions on/off
+- [x] TodoListView: Header tooltips
 
 ## Contacts.File-based
 - [ ] CLM:

@@ -20,8 +20,12 @@ class TodoModel(EntryModel):
 
     # Inherit
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = QtCore.Qt.DisplayRole) -> Any:
-        if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
-            return enums.ColHeader[section]
+        if orientation == QtCore.Qt.Orientation.Horizontal:
+            if role == QtCore.Qt.DisplayRole:
+                return enums.ColHeader[section][0]
+            elif role == QtCore.Qt.ToolTipRole:
+                if tip := enums.ColHeader[section][1]:
+                    return tip
 
     def columnCount(self, parent: QtCore.QModelIndex = None) -> int:
         return len(enums.ColHeader)

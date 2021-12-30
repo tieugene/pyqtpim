@@ -4,7 +4,6 @@
 
 ### 0.1. Hot
 - [ ] TodoListView:
-  - [ ] Header tooltips
   - [ ] Show currently shown tasks count (proxy.rowCount())
   - [ ] Color Due (red>orange>white|yellow>green>blue)
   - [ ] Shorter dates: dd.mm[ hh:mm]
