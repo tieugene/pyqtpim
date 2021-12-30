@@ -70,6 +70,7 @@
 - [x] TodoListView: Header tooltips
 - [x] TodoListView: status bar counter
 - [x] TodoListView: Shorter date[time]s: dd.mm[.yy][ hh:mm]
+- [x] TodoListView: align: `!`/`S`: &harr;, `%`: &rarrb;
 
 ## Contacts.File-based
 - [ ] CLM:

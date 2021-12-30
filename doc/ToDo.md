@@ -7,7 +7,6 @@
   - [ ] Due Color: red→orange→white|yellow→green→blue
   - [ ] Due Decorate: dd.mm→yest→2day→tomor→dd.mm
   - [ ] Autowidth: all excl. Summary/Location
-  - [ ] TextAlignmentRole: `!`/`S`: &harr;, `%`: &rarrb;
 - [ ] TodoView:
   - [ ] [URL](URL)
   - [ ] Autowidth

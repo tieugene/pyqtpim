@@ -44,6 +44,11 @@ class TodoModel(EntryModel):
                 return self.__data_display(col, entry.vobj, role)
         elif role == QtCore.Qt.ForegroundRole:  # == DislayRole | ForegroundRole
             return self.__data_foreground(col, entry.vobj)
+        elif role == QtCore.Qt.TextAlignmentRole:
+            if col in {enums.EColNo.Prio, enums.EColNo.Status}:
+                return QtCore.Qt.AlignCenter
+            elif col == enums.EColNo.Progress:
+                return QtCore.Qt.AlignRight
         '''
         elif role == QtCore.Qt.EditRole:
             col = idx.column()
