@@ -5,20 +5,21 @@
 ### 0.1. Hot
 - [ ] TodoListView:
   - [ ] Show currently shown tasks count (proxy.rowCount())
-  - [ ] Color Due (red>orange>white|yellow>green>blue)
-  - [ ] Shorter dates: dd.mm[ hh:mm]
-  - [ ] decorate Due: dd.mm>yest>today>tomorrow>dd.mm
+  - [ ] Shorter dates: dd.mm[.yy][ hh:mm]
+  - [ ] Due Color: red→orange→white|yellow→green→blue
+  - [ ] Due Decorate: dd.mm→yest→2day→tomor→dd.mm
 - [ ] TodoView:
-  - [ ] ru date[time]s (dd.mm.yyyy[ hh:mm])
-  - [ ] compact
-  - [ ] autowidth
-  - [ ] [URL](URL)
+  - [ ] ru date[time]s: dd.mm.yy[ hh:mm]
   - [ ] Status: str
-  - [ ] Prio: orig+color
+  - [ ] Prio: orig[+color]
+  - [ ] [URL](URL)
+  - [ ] autowidth
+  - [ ] compact
 - [ ] TodoForm:
   - [ ] Save previous selected store for .exec_new()
   - [ ] Shrink widget groups
-- [ ] TodoStoreListView: auto-h/w
+- [ ] TodoStoreListView:
+  - [ ] auto-h/w
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
@@ -44,6 +45,8 @@
 - [ ] TodoForm:
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
   - [ ] Categories: special combobox (as RTM/Evolution)
+- [ ] TodoView:
+  - [ ] ? Desc in tab
 - [ ] TodoListView:
   - [ ] Hot buttons: chg:
      - [ ] Prio
