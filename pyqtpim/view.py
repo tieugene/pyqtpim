@@ -43,7 +43,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.updateActionsEntry(False)
         self.todo.stores.actionsChange.connect(self.updateActionsStore)
         self.todo.list.actionsChange.connect(self.updateActionsEntry)
-        self.todo.list.model().counter.connect(self.updateStatus)
+        self.todo.list.model().updateStatusBar.connect(self.updateStatusBar)
 
     def createWidgets(self):
         # order
@@ -229,5 +229,5 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actEntryCat.setEnabled(state)
         self.actEntryInside.setEnabled(state)
 
-    def updateStatus(self, v: int):
-        self.statusBar().showMessage(f"Count: {v}")
+    def updateStatusBar(self, s: str):
+        self.statusBar().showMessage(s)

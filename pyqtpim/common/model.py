@@ -51,7 +51,7 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
     # _own_model = EntryModel
     _currentSorter: Callable
     _currentFilter: Callable
-    counter = QtCore.Signal(int)
+    updateStatusBar = QtCore.Signal(int)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,7 +61,8 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
 
     # Inherit
     def rowCount(self, _: QtCore.QModelIndex) -> int:
-        self.counter.emit(rows := super().rowCount())
+        rows = super().rowCount()
+        # self.updateStatusBar.emit(f"Count: {rows}") - bad idea
         return rows
 
     # Hand-made
