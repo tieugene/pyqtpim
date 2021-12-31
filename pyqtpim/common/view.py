@@ -23,6 +23,7 @@ class EntryView(QtWidgets.QGroupBox):
 class EntryListView(QtWidgets.QTableView):
     # _own_model = EntryModel
     _details: EntryView
+    actionsChange = QtCore.Signal(bool)
 
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent)
@@ -42,13 +43,14 @@ class StoreListView(QtWidgets.QListView):
     __form: form.StoreForm
     _list: EntryListView
     _title: str
+    actionsChange = QtCore.Signal(bool)
 
     def __init__(self, parent, dependant: EntryListView):
         super().__init__(parent)
         self._list = dependant
+        # self.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.MinimumExpanding) - not works
+        # self.setMinimumSize(0, 0) - not works
         # self.setSelectionMode(self.SingleSelection)
-        # self.setModel(self._model_cls())
-        # self.setModelColumn(enums.EColNo.Name.value)
         self.setEditTriggers(self.NoEditTriggers)
         self.__form = form.StoreForm(self._title)
 

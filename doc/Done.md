@@ -64,6 +64,17 @@
 - [x] TodoListView: autoheight
 - [x] TodoListView: Prio, Status colored
 - [x] Filter 'tomorrow': Due == Tomorrow only
+- [x] TodoListView: clear TodoView on not selected Todo
+- [x] TodoListView: handle actions on/off
+- [x] StoreListView: handle actions on/off
+- [x] TodoListView: Header tooltips
+- [x] TodoListView: status bar counter
+- [x] TodoListView: Shorter date[time]s: dd.mm[.yy][ hh:mm]
+- [x] TodoListView: align: `!`/`S`: &harr;, `%`: &rarrb;
+- [x] TodoListView: Due Decorate (5 lvls)
+- [x] TodoListView: Due Colored (5 lvls)
+- [x] TodoForm: remember last selected store
+- [x] TodoListView: Autowidth (4x)
 
 ## Contacts.File-based
 - [ ] CLM:

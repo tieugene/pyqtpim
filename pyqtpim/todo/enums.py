@@ -11,6 +11,9 @@ ColorGreen = QtGui.QColorConstants.Svg.lime
 # ColorGreen = QtGui.QColorConstants.Green
 ColorBlue = QtGui.QColorConstants.Blue
 ColorLightBlue = QtGui.QColorConstants.Svg.dodgerblue
+ColorLightGrey = QtGui.QColorConstants.LightGray
+ColorGrey = QtGui.QColorConstants.Gray
+ColorDarkGrey = QtGui.QColorConstants.DarkGray
 
 
 @unique
@@ -75,18 +78,18 @@ class EColNo(IntEnum):  # was 0..14
 
 
 ColHeader = (  # Header
-    "Store",
-    "Created",
-    "DTStamp",
-    "Modified",
-    "DTStart",
-    "Due",
-    "Completed",
-    '%',
-    '!',
-    "Status",
-    "Summary",
-    "Location",
+    ("Store", None),
+    ("Created", None),
+    ("DTStamp", None),
+    ("Modified", None),
+    ("DTStart", None),
+    ("Due", None),
+    ("Completed", None),
+    ('%', "Percent complete"),
+    ('!', "Priority"),
+    ("S", "Status"),
+    ("Summary", None),
+    ("Location", None),
 )
 
 
@@ -177,6 +180,14 @@ TColor_Prio = (
     ColorLightBlue,
     ColorLightBlue,
     ColorBlue,
+)
+
+TColor_Due = (
+    ColorRed,
+    ColorOrange,
+    None,
+    ColorLightGrey,
+    ColorDarkGrey
 )
 
 

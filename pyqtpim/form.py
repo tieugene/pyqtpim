@@ -16,7 +16,7 @@ class SettingsView(QtWidgets.QDialog):
 
     def __createWidgets(self):
         self.f_todo_col2show = QtWidgets.QListWidget()
-        self.f_todo_col2show.addItems(ColHeader)
+        self.f_todo_col2show.addItems([c[0] for c in ColHeader])
         for i in range(self.f_todo_col2show.count()):
             item = self.f_todo_col2show.item(i)
             item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)  # FIXME: |

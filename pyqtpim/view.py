@@ -38,6 +38,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.createStatusBar()
         self.setWindowTitle("PyQtPIM")
         self.settings_view = SettingsView()
+        # actions handling
+        self.updateActionsStore(False)
+        self.updateActionsEntry(False)
+        self.todo.stores.actionsChange.connect(self.updateActionsStore)
+        self.todo.list.actionsChange.connect(self.updateActionsEntry)
+        self.todo.list.model().updateStatusBar.connect(self.updateStatusBar)
 
     def createWidgets(self):
         # order
@@ -96,10 +102,10 @@ class MainWindow(QtWidgets.QMainWindow):
                                                 triggered=self.storeReload)
         # noinspection PyArgumentList
         self.actStoreFakeSync = QtWidgets.QAction(QtGui.QIcon(':/icons/transfer.svg'),
-                                              "&Sync Store (fake)", self,
-                                              shortcut="Ctrl+S",
-                                              statusTip="Sync current Store (dry run)",
-                                              triggered=self.storeFakeSync)
+                                                  "&Sync Store (fake)", self,
+                                                  shortcut="Ctrl+S",
+                                                  statusTip="Sync current Store (dry run)",
+                                                  triggered=self.storeFakeSync)
         # noinspection PyArgumentList
         self.actStoreSync = QtWidgets.QAction(QtGui.QIcon(':/icons/transfer.svg'),
                                               "Sync Store", self,
@@ -211,3 +217,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def entryDel(self):
         self.todo.list.entryDel()
+
+    def updateActionsStore(self, state: bool):
+        self.actStoreEdit.setEnabled(state)
+        self.actStoreDel.setEnabled(state)
+        self.actStoreInfo.setEnabled(state)
+
+    def updateActionsEntry(self, state: bool):
+        self.actEntryEdit.setEnabled(state)
+        self.actEntryDel.setEnabled(state)
+        self.actEntryCat.setEnabled(state)
+        self.actEntryInside.setEnabled(state)
+
+    def updateStatusBar(self, s: str):
+        self.statusBar().showMessage(s)

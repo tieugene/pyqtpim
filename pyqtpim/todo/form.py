@@ -409,8 +409,9 @@ class TodoForm(QtWidgets.QDialog):
             return self.to_obj(vobj)
         return False
 
-    def __reset(self):  # TODO: clear old values for newly creating entry
+    def __reset(self):
         self.f_store.setEnabled(True)
+        self.f_category.clear()
         self.f_class.setData()
         self.f_completed.setData()
         self.f_description.clear()

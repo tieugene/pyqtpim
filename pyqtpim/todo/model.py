@@ -10,6 +10,18 @@ from common import EntryModel, EntryProxyModel, StoreModel, SetGroup
 from .data import TodoVObj, TodoStore, store_list, entry_list
 from . import enums
 
+_today = datetime.date.today()
+_yesterday = _today - datetime.timedelta(days=1)
+_tomorrow = _today + datetime.timedelta(days=1)
+_day_name = {
+    _yesterday: "yest.",
+    _today: "today",
+    _tomorrow: "tomorw",
+}
+_datime_fmt = ('%d.%m %H:%M', '%d.%m.%y %H:%M')  # short, long
+_date_fmt = ('%d.%m', '%d.%m.%y')  # short, long
+_e_closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
+
 
 class TodoModel(EntryModel):
     """todo: collect categories/locations on load"""
@@ -20,86 +32,113 @@ class TodoModel(EntryModel):
 
     # Inherit
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = QtCore.Qt.DisplayRole) -> Any:
-        if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.DisplayRole:
-            return enums.ColHeader[section]
+        if orientation == QtCore.Qt.Orientation.Horizontal:
+            if role == QtCore.Qt.DisplayRole:
+                return enums.ColHeader[section][0]
+            elif role == QtCore.Qt.ToolTipRole:
+                if tip := enums.ColHeader[section][1]:
+                    return tip
 
     def columnCount(self, parent: QtCore.QModelIndex = None) -> int:
         return len(enums.ColHeader)
 
     def data(self, idx: QtCore.QModelIndex, role: int = QtCore.Qt.DisplayRole) -> Any:
-        def __utc2disp(data: Optional[datetime.datetime]) -> str:
-            """Convert UTC datetime into viewable localtime"""
-            if data:
-                return data.astimezone().replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
-
-        def __vardatime2disp(data: Optional[Union[datetime.datetime, datetime.date]]) -> str:
-            """Convert datetime (naive/tzed) into viewable localtime"""
-            if data:
-                if isinstance(data, datetime.datetime):
-                    return data.replace(tzinfo=None).isoformat(sep=' ', timespec='minutes')
-                else:  # date => no convert
-                    return data.isoformat()
-
         if not idx.isValid():
             return None
         entry = self._data.entry_get(idx.row())
-        vobj: TodoVObj = entry.vobj
         col = idx.column()
         if role in {QtCore.Qt.DisplayRole, QtCore.Qt.EditRole}:
             if col == enums.EColNo.Store.value:
                 return entry.store.name
-            if col == enums.EColNo.Created.value:
-                return __utc2disp(vobj.get_Created())
-            elif col == enums.EColNo.DTStamp.value:
-                return __utc2disp(vobj.get_DTStamp())
-            elif col == enums.EColNo.Modified.value:
-                return __utc2disp(vobj.get_LastModified())
-            elif col == enums.EColNo.DTStart.value:
-                return __vardatime2disp(vobj.get_DTStart())
-            elif col == enums.EColNo.Due.value:
-                return __vardatime2disp(vobj.get_Due())
-            elif col == enums.EColNo.Completed.value:
-                return __utc2disp(vobj.get_Completed())
-            elif col == enums.EColNo.Progress.value:
-                return vobj.get_Progress()
-            elif col == enums.EColNo.Prio.value:
-                if v := vobj.get_Priority():
-                    return enums.TDecor_Prio[v - 1]
-            elif col == enums.EColNo.Status.value:
-                if v := vobj.get_Status():
-                    return enums.TDecor_Status[v - 1]
-            elif col == enums.EColNo.Summary.value:
-                return vobj.get_Summary()
-            elif col == enums.EColNo.Location.value:
-                return vobj.get_Location()
-        elif role == QtCore.Qt.ForegroundRole:
-            # v = super().data(idx, QtCore.Qt.DisplayRole)
-            if col == enums.EColNo.Prio.value:
-                if v := vobj.get_Priority():
-                    return enums.TColor_Prio[v - 1]
-            if col == enums.EColNo.Status.value:
-                if v := vobj.get_Status():
-                    return enums.TColor_Status[v - 1]
-        '''
-        elif role == QtCore.Qt.EditRole:
-            col = idx.column()
-            if col == enums.EColNo.Completed.value:
-                return self.data(idx, QtCore.Qt.DisplayRole)
             else:
-                return super().data(idx, role)
-        '''
+                return self.__data_display(col, entry.vobj, role)
+        elif role == QtCore.Qt.ForegroundRole:  # == DislayRole | ForegroundRole
+            return self.__data_foreground(col, entry.vobj)
+        elif role == QtCore.Qt.TextAlignmentRole:
+            if col in {enums.EColNo.Prio, enums.EColNo.Status}:
+                return QtCore.Qt.AlignCenter
+            elif col == enums.EColNo.Progress:
+                return QtCore.Qt.AlignRight
+
+    # Hand-made
+    @staticmethod
+    def __utc2disp(data: Optional[datetime.datetime]) -> Optional[str]:
+        """Convert UTC datetime into viewable localtime"""
+        if data:
+            return data.astimezone().replace(tzinfo=None).strftime(_datime_fmt[1])
+            # or .isoformat(sep=' ', timespec='minutes')
+
+    @staticmethod
+    def __vardatime2disp(data: Union[datetime.datetime, datetime.date], long: bool = False) -> str:
+        """Convert datetime (naive/tzed) into viewable localtime"""
+        if data:
+            if isinstance(data, datetime.datetime):
+                return data.replace(tzinfo=None).strftime(_datime_fmt[int(long)])
+                # or .isoformat(sep=' ', timespec='minutes')
+            else:  # date
+                return data.strftime(_date_fmt[int(long)])
+                # or .isoformat()
+
+    def __data_display(self, col: int, vobj: TodoVObj, role: int) -> Optional[str]:
+        if col == enums.EColNo.Created.value:
+            return self.__utc2disp(vobj.get_Created())
+        elif col == enums.EColNo.DTStamp.value:
+            return self.__utc2disp(vobj.get_DTStamp())
+        elif col == enums.EColNo.Modified.value:
+            return self.__utc2disp(vobj.get_LastModified())
+        elif col == enums.EColNo.DTStart.value:
+            return self.__vardatime2disp(vobj.get_DTStart(), long=(role == QtCore.Qt.EditRole))
+        elif col == enums.EColNo.Due.value:
+            if role == QtCore.Qt.DisplayRole:
+                if day_name := _day_name.get(vobj.get_Due_as_date()):
+                    return day_name
+            return self.__vardatime2disp(vobj.get_Due(), long=(role == QtCore.Qt.EditRole))
+        elif col == enums.EColNo.Completed.value:
+            return self.__utc2disp(vobj.get_Completed())
+        elif col == enums.EColNo.Progress.value:
+            if (v := vobj.get_Progress()) is not None:
+                return str(v)
+        elif col == enums.EColNo.Prio.value:
+            if v := vobj.get_Priority():
+                return enums.TDecor_Prio[v - 1]
+        elif col == enums.EColNo.Status.value:
+            if v := vobj.get_Status():
+                return enums.TDecor_Status[v - 1]
+        elif col == enums.EColNo.Summary.value:
+            return vobj.get_Summary()
+        elif col == enums.EColNo.Location.value:
+            return vobj.get_Location()
+
+    def __data_edit(self, col: int, vobj: TodoVObj) -> str:
+        ...
+
+    @staticmethod
+    def __data_foreground(col: int, vobj: TodoVObj) -> Any:
+        if col == enums.EColNo.Prio.value:
+            if v := vobj.get_Priority():
+                return enums.TColor_Prio[v - 1]
+        elif col == enums.EColNo.Status.value:
+            if v := vobj.get_Status():
+                return enums.TColor_Status[v - 1]
+        elif col == enums.EColNo.Due.value:
+            if vobj.get_Status() not in _e_closed:
+                if v := vobj.get_Due_as_date():
+                    if v < _yesterday:
+                        idx = -2
+                    elif v > _tomorrow:
+                        idx = 2
+                    else:
+                        idx = (v - _today).days
+                    return enums.TColor_Due[idx + 2]
 
 
 class TodoProxyModel(EntryProxyModel):
     # _own_model = TodoModel
-    __e_closed = {enums.EStatus.Completed, enums.EStatus.Cancelled}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setDynamicSortFilter(True)
         # TODO: self.resizeColumntToContent(*)
-        self.__today = datetime.date.today()
-        self.__tomorrow = self.__today + datetime.timedelta(days=1)
 
     # Inherit
     def lessThan(self, source_left: QtCore.QModelIndex, source_right: QtCore.QModelIndex) -> bool:
@@ -169,12 +208,12 @@ class TodoProxyModel(EntryProxyModel):
     def __accept_Closed(self, source_row: int) -> bool:
         """Show only Status=Complete[|Cancelled]"""
         entry = self.sourceModel().item_get(source_row)
-        return entry.store.active and entry.vobj.get_Status() in self.__e_closed
+        return entry.store.active and entry.vobj.get_Status() in _e_closed
 
     def __accept_Opened(self, source_row: int) -> bool:
         """Show only Status!=Complete[|Cancelled]"""
         entry = self.sourceModel().item_get(source_row)
-        return entry.store.active and entry.vobj.get_Status() not in self.__e_closed
+        return entry.store.active and entry.vobj.get_Status() not in _e_closed
 
     def __accept_Today(self, source_row: int) -> bool:
         """Show only ~(Complete|Cancelled) & Due & Due <= today"""
@@ -183,9 +222,9 @@ class TodoProxyModel(EntryProxyModel):
         due = vobj.get_Due_as_date()
         return\
             entry.store.active\
-            and (vobj.get_Status() not in self.__e_closed)\
+            and (vobj.get_Status() not in _e_closed)\
             and (due is not None)\
-            and (due <= self.__today)
+            and (due <= _today)
 
     def __accept_Tomorrow(self, source_row: int) -> bool:
         """Like today but tomorrow"""
@@ -194,9 +233,9 @@ class TodoProxyModel(EntryProxyModel):
         due = vobj.get_Due_as_date()
         return\
             entry.store.active\
-            and (vobj.get_Status() not in self.__e_closed)\
+            and (vobj.get_Status() not in _e_closed)\
             and (due is not None)\
-            and (due == self.__tomorrow)
+            and (due == _tomorrow)
 
 
 class TodoStoreModel(StoreModel):
