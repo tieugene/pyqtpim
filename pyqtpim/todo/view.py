@@ -372,10 +372,12 @@ class TodosWidget(QtWidgets.QWidget):
         self.stores = TodoStoreListView(left_panel, self.list)
         self.l_sort = TodoSortWidget(left_panel)
         self.l_filt = TodoFilterWidget(left_panel)
+        # left_panel.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         left_layout = QtWidgets.QVBoxLayout(left_panel)
         left_layout.addWidget(self.stores)
         left_layout.addWidget(self.l_sort)
         left_layout.addWidget(self.l_filt)
+        # left_layout.addStretch(1)
         left_panel.setLayout(left_layout)
         # layout
         splitter.addWidget(left_panel)

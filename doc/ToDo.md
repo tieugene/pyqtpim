@@ -2,41 +2,41 @@
 
 ## 0. Now
 
-### 0.1. Hot
-- [ ] TodoStoreListView: Auto-h/w
+### 0.1. Hot (&rArr; release)
+- [ ] TodoStoreListView: Auto-h/w  
+   *(?QSplitter.setStretchFactor)*
 - [ ] TodoView: Autowidth
 - [ ] TodoForm: Compact
 - [ ] Settings save/restore:
   - [ ] MainWindow size
   - [ ] column widths (?)
+- [ ] TodoForm:
+  - [ ] On-the-fly logic (Status & Completed & Progress)
+  - [ ] Validator (Summary != empty etc)
 
 ### 0.2. Bugs
 *None*
 
 ### 0.3. Issues
-- [ ] TodoListView.proxy: statusbar counter lies
+- [ ] TodoListView.proxy: rowCount() lies
 - [ ] QLable(URL): not works `goto`, `^C`
 
 ### 0.4. Features
-- [ ] Filter: f(unpacked vobj)
-- [ ] Sort: f(unpacked vobjs)
-- [ ] TodoForm:
-  - [ ] On-the-fly logic (Status & Completed & Progress)
-  - [ ] Validator (Summary != empty etc)
-- [ ] `import vobject` exact in `*/data.py` (-forms (tzutc()))
-- [ ] Use @classmethod
 - [ ] Description;AltRep="data:text/html,...":...
 
 ### 0.5. UI/UX
+- [ ] Filter: +Upcoming
 - [ ] Datetime fields: monofont (FontRole)
 - [ ] TodoForm:
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
   - [ ] Categories: special combobox (as RTM/Evolution)
 - [ ] TodoView:
-  - [ ] ? Desc in tab
+  - [ ] Tabs:
+     1. [ ] Desc
+     1. [ ] Created/DTStamp/Modified/DTStart/?Completed/Class/Location
   - [ ] Status: str or w/ tooltip/statustip
   - [ ] Prio: +original value
-  - [ ] [URL](URL)
+  - [ ] URL as [URL](URL)
 - [ ] TodoListView:
   - [ ] Hot buttons: chg:
      - [ ] Prio
@@ -51,6 +51,13 @@
 - [ ] Settings save/restore:
   - [ ] sort
   - [ ] filter
+
+### 0.6. Inside
+- [ ] Remove columns: Created/DTStamp/Modified/
+- [ ] Filter: f(unpacked vobj)
+- [ ] Sort: f(unpacked vobjs)
+- [ ] `import vobject` exact in `*/data.py` (-forms (tzutc()))
+- [ ] Use @classmethod
 
 ## 1. Common
 - [ ] Docs:
@@ -82,6 +89,7 @@
 - [ ] LCRUD[^2]
 
 ## 4. Next:
+- [ ] i18n &rArr; l10n
 - [ ] delay/async load
 - [ ] Instant settings
 - [ ] Deployment:

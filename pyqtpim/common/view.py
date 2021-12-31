@@ -48,9 +48,9 @@ class StoreListView(QtWidgets.QListView):
     def __init__(self, parent, dependant: EntryListView):
         super().__init__(parent)
         self._list = dependant
+        # self.setSizePolicy(QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.MinimumExpanding) - not works
+        # self.setMinimumSize(0, 0) - not works
         # self.setSelectionMode(self.SingleSelection)
-        # self.setModel(self._model_cls())
-        # self.setModelColumn(enums.EColNo.Name.value)
         self.setEditTriggers(self.NoEditTriggers)
         self.__form = form.StoreForm(self._title)
 
