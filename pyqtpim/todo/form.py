@@ -430,6 +430,8 @@ class TodoForm(QtWidgets.QDialog):
         self.f_store.setEnabled(False)
         if v := vobj.get_Categories():
             self.f_category.setText(', '.join(v))
+        else:
+            self.f_category.clear()
         self.f_class.setData(vobj.get_Class())
         self.f_completed.setData(v.astimezone() if (v := vobj.get_Completed()) else None)
         self.f_description.setPlainText(vobj.get_Description())
