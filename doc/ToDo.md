@@ -6,11 +6,11 @@
 - [ ] TodoStoreListView: Auto-h/w  
    *(?QSplitter.setStretchFactor)*
 - [ ] TodoView: Autowidth
-- [ ] TodoForm: Compact
 - [ ] Settings save/restore:
   - [ ] MainWindow size
   - [ ] column widths (?)
 - [ ] TodoForm:
+  - [ ] Compact
   - [ ] On-the-fly logic (Status & Completed & Progress)
   - [ ] Validator (Summary != empty etc)
 
@@ -31,9 +31,6 @@
   - [ ] Hide/Show optional fields (e.g. '>-- dtstart --'):
   - [ ] Categories: special combobox (as RTM/Evolution)
 - [ ] TodoView:
-  - [ ] Tabs:
-     1. [ ] Desc
-     1. [ ] Created/DTStamp/Modified/DTStart/?Completed/Class/Location
   - [ ] Status: str or w/ tooltip/statustip
   - [ ] Prio: +original value
   - [ ] URL as [URL](URL)
@@ -70,7 +67,10 @@
 - [ ] Move entries between stores
 - [x] LCRUD[^1]
 - [ ] Extend:
-  - [ ] RRule
+  - [ ] RRule:
+     - PIM generates virtual tasks from last 'Complete' up to tomorrow
+     - Checking them adds 'Completed' tasks into this *.ics
+     - Deleting completed tasks adds 'EXDATE:&lt;due&gt;' for completed and deleted tasks
   - [ ] Alarm
   - [ ] multivalues[^3]:
      - [ ] attach: (url)
@@ -85,10 +85,14 @@
   - category ('tags')
 - Add properties on demand
 
-## 3. Contacts
+## 3. Journal
+
+## 4. Calendar
+
+## 5. Contacts
 - [ ] LCRUD[^2]
 
-## 4. Next:
+## 6. Next
 - [ ] i18n &rArr; l10n
 - [ ] delay/async load
 - [ ] Instant settings
@@ -107,9 +111,9 @@
 ## x. misc
 
 ### x.1. Try
-- [python-vdir](https://github.com/pimutils/python-vdir)
-- [ics-py](https://github.com/ics-py/ics-py/)
-- [icalendar](https://github.com/collective/icalendar/)
+- [python-vdir](https://github.com/pimutils/python-vdir) - Tools to read and write from/to
+- [ics-py](https://github.com/ics-py/ics-py/) - iCalendar library
+- [icalendar](https://github.com/collective/icalendar/) -  parser/generator for iCalendar files
 - [Xandicos](https://github.com/jelmer/xandikos) (server)
 
 ### x.2. SQL

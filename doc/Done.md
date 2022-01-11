@@ -75,6 +75,7 @@
 - [x] TodoListView: Due Colored (5 lvls)
 - [x] TodoForm: remember last selected store
 - [x] TodoListView: Autowidth (4x)
+- [x] TodoView: tabs
 
 ## Contacts.File-based
 - [ ] CLM:

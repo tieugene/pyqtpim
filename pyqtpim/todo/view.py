@@ -27,8 +27,8 @@ class TodoListView(EntryListView):
         hh = self.horizontalHeader()
         hh.setSectionsMovable(True)
         # vvv Works not right
-        for c in (enums.EColNo.Prio.value, enums.EColNo.Status.value, enums.EColNo.Progress.value, enums.EColNo.Due.value):
-            hh.setSectionResizeMode(c, hh.ResizeMode.ResizeToContents)
+        for c in (enums.EColNo.Prio, enums.EColNo.Status, enums.EColNo.Progress, enums.EColNo.Due):
+            hh.setSectionResizeMode(c.value, hh.ResizeMode.ResizeToContents)
             # hh.setSectionResizeMode(hh.visualIndex(c), hh.ResizeMode.ResizeToContents)
         # hh.setSectionResizeMode(hh.ResizeMode.ResizeToContents) - total
         self.setSortingEnabled(True)  # deafult=False, requires sorting itself; must be NOT in parent
@@ -107,7 +107,7 @@ class TodoListView(EntryListView):
         row = self.model().mapToSource(idx).row()
         realmodel: TodoModel = self.model().sourceModel()
         name = realmodel.item_get(row).vobj.get_Summary()
-        if QtWidgets.QMessageBox.question(self, f"Deleting ToDo",
+        if QtWidgets.QMessageBox.question(self, "Deleting ToDo",
                                           f"Are you sure to delete '{name}'") \
                 == QtWidgets.QMessageBox.StandardButton.Yes:
             if not realmodel.item_del(row):
@@ -189,10 +189,17 @@ class TodoView(EntryView):
     completed: QtWidgets.QLineEdit
     location: QtWidgets.QLineEdit
     class_: QtWidgets.QLineEdit
-    modified: QtWidgets.QLineEdit
     url: QtWidgets.QLineEdit
     # url: QtWidgets.QLabel
     description: QtWidgets.QTextEdit
+    created: QtWidgets.QLineEdit
+    dtstamp: QtWidgets.QLineEdit
+    modified: QtWidgets.QLineEdit
+    # misc
+    tabs: QtWidgets.QTabWidget
+    tab_main: QtWidgets.QWidget
+    tab_desc: QtWidgets.QWidget
+    tab_misc: QtWidgets.QWidget
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -211,34 +218,56 @@ class TodoView(EntryView):
         self.completed = QtWidgets.QLineEdit(self)
         self.location = QtWidgets.QLineEdit(self)
         self.class_ = QtWidgets.QLineEdit(self)
-        self.modified = QtWidgets.QLineEdit(self)
         self.url = QtWidgets.QLineEdit(self)
         # self.url = QtWidgets.QLabel(self)
         self.description = QtWidgets.QTextEdit(self)
+        self.created = QtWidgets.QLineEdit(self)
+        self.dtstamp = QtWidgets.QLineEdit(self)
+        self.modified = QtWidgets.QLineEdit(self)
+        # tabs
+        self.tabs = QtWidgets.QTabWidget(self)
+        self.tab_main = QtWidgets.QWidget(self)
+        self.tabs.addTab(self.tab_main, "Main")
+        self.tab_desc = QtWidgets.QWidget(self)
+        self.tabs.addTab(self.tab_desc, "Desc")
+        self.tab_misc = QtWidgets.QWidget(self)
+        self.tabs.addTab(self.tab_misc, "Misc")
         # attributes
         for i in (self.store, self.summary, self.category, self.priority, self.dtstart, self.due, self.status,
-                  self.progress, self.completed, self.location, self.class_, self.modified, self.url, self.description):
+                  self.progress, self.completed, self.location, self.class_, self.url, self.description,
+                  self.created, self.dtstamp, self.modified):
             i.setReadOnly(True)
         # self.url.setTextFormat(QtCore.Qt.RichText)
         # self.url.setWordWrap(True)
-        # layout
-        layout = QtWidgets.QFormLayout()
-        layout.addRow("Store", self.store)
-        layout.addRow("Summary:", self.summary)
-        layout.addRow("Category:", self.category)
-        layout.addRow("Priority:", self.priority)
-        layout.addRow("DTStart:", self.dtstart)
-        layout.addRow("Due:", self.due)
-        layout.addRow("Status:", self.status)
-        layout.addRow("Progress:", self.progress)
-        layout.addRow("Completed:", self.completed)
-        layout.addRow("Location:", self.location)
-        layout.addRow("Class:", self.class_)
-        layout.addRow("Modified:", self.modified)
-        layout.addRow("URL:", self.url)
-        layout.addRow(self.description)
-        layout.setVerticalSpacing(0)  # default=-1
-        self.setLayout(layout)
+        # layouts
+        # - 1
+        layout_main = QtWidgets.QFormLayout()
+        layout_main.addRow("Store", self.store)
+        layout_main.addRow("Summary:", self.summary)
+        layout_main.addRow("Category:", self.category)
+        layout_main.addRow("Priority:", self.priority)
+        layout_main.addRow("DTStart:", self.dtstart)
+        layout_main.addRow("Due:", self.due)
+        layout_main.addRow("Status:", self.status)
+        layout_main.addRow("Progress:", self.progress)
+        layout_main.addRow("Completed:", self.completed)
+        layout_main.addRow("Location:", self.location)
+        layout_main.addRow("Class:", self.class_)
+        layout_main.addRow("URL:", self.url)
+        # layout.addRow(self.description)
+        layout_main.setVerticalSpacing(0)  # default=-1
+        self.tab_main.setLayout(layout_main)
+        # - 2
+        layout_desc = QtWidgets.QVBoxLayout()
+        layout_desc.addWidget(self.description)
+        self.tab_desc.setLayout(layout_desc)
+        # - 3
+        layout_misc = QtWidgets.QFormLayout()
+        layout_misc.addRow("Created:", self.created)
+        layout_misc.addRow("DTStamp:", self.dtstamp)
+        layout_misc.addRow("Modified:", self.modified)
+        layout_misc.setVerticalSpacing(0)  # default=-1
+        self.tab_misc.setLayout(layout_misc)
         # print("vSpace:", layout.verticalSpacing())
         # print("hSpace:", layout.horizontalSpacing())
 
@@ -272,6 +301,8 @@ class TodoView(EntryView):
         # URL
         self.mapper.addMapping(self.location, enums.EColNo.Location.value)
         # class
+        self.mapper.addMapping(self.created, enums.EColNo.Created.value)
+        self.mapper.addMapping(self.dtstamp, enums.EColNo.DTStamp.value)
         self.mapper.addMapping(self.modified, enums.EColNo.Modified.value)
         # description
         self.mapper.currentIndexChanged.connect(self.__idxChgd)
@@ -279,7 +310,8 @@ class TodoView(EntryView):
     def clear(self):
         for f in (
                 self.store, self.summary, self.category, self.priority, self.dtstart, self.due, self.status,
-                self.progress, self.completed, self.url, self.location, self.class_, self.modified, self.description
+                self.progress, self.completed, self.url, self.location, self.class_, self.description,
+                self.created, self.dtstamp, self.modified
         ):
             f.clear()
 
