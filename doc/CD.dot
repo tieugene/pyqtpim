@@ -1,0 +1,35 @@
+digraph CD {
+    subgraph cluster_0 {
+        VObj;
+        Entry;
+        Store;
+        EntryList;
+        StoreList;
+    }
+
+    subgraph cluster_1 {
+        TodoVObj;
+        TodoEntry;
+        TodoStore;
+        TodoEntryList;
+        TodoStoreList;
+    }
+
+    VObj -> Entry [arrowhead=ediamond];
+    Entry -> Store [arrowhead=diamond, headlabel="*", taillabel="1"];
+    Entry -> EntryList [arrowhead=ediamond, headlabel="*", taillabel="1"];
+    EntryList -> StoreList;
+    Store -> StoreList [arrowhead=ediamond, headlabel="*", taillabel="1"];
+
+    TodoVObj -> VObj [arrowhead=empty];
+    TodoEntry -> Entry [arrowhead=empty];
+    TodoEntryList -> EntryList [arrowhead=empty];
+    TodoStore -> Store [arrowhead=empty];
+    TodoStoreList -> StoreList [arrowhead=empty];
+
+    TodoVObj -> TodoEntry [arrowhead=ediamond];
+    TodoEntry -> TodoStore [arrowhead=diamond, headlabel="*", taillabel="1"];
+    TodoEntry -> TodoEntryList [arrowhead=ediamond, headlabel="*", taillabel="1"];
+    TodoEntryList -> TodoStoreList;
+    TodoStore -> TodoStoreList [arrowhead=ediamond, headlabel="*", taillabel="1"];
+}

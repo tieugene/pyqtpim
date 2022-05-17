@@ -1,5 +1,4 @@
 # 1. system
-# 2. PySide
 import datetime
 from typing import Any, Optional, Union
 # 2. PySide2

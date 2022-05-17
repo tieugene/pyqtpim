@@ -2,6 +2,10 @@
 
 ## 0. Now
 
+- Split into parts:
+  - UI-independent (but vcalendar)
+  - UI-specific (Qt, Web)
+
 ### 0.1. Hot (&rArr; release)
 - [ ] TodoStoreListView: Auto-h/w  
    *(?QSplitter.setStretchFactor)*

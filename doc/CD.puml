@@ -1,0 +1,54 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+'Extension (наследование): parent <|-- child
+'Aggregation (включение): container o-- entry
+'Composition (хез): "1" *-- "many"
+
+'!theme plain
+'top to bottom direction
+'skinparam linetype ortho
+
+'common.data
+abstract class VObj as "common.data.VObj" {
+  In-memory vobject agent
+}
+abstract class Store as "common.data.Store" {
+  vcard/ical files
+  collection (dir)
+}
+abstract class Entry as "common.data.Entry" {
+  vcard/ical file agent
+}
+abstract class EntryList as "common.data.EntryList" {
+  List of Entries,
+  common for all Stores
+}
+abstract class StoreList as "common.data.StoreList"
+
+'todo.data
+class TodoEntry
+class TodoEntryList
+class TodoStore
+class TodoStoreList
+class TodoVObj
+
+Entry o- VObj
+Store "!" *- "*" Entry
+EntryList o- Entry
+StoreList -- EntryList
+StoreList o- Store
+
+VObj <|- TodoVObj
+Entry <|- TodoEntry
+EntryList <|- TodoEntryList
+Store <|- TodoStore
+StoreList <|- TodoStoreList
+
+TodoEntry o- TodoVObj
+TodoStore "!" *- "*" TodoEntry
+TodoEntryList o- TodoEntry
+TodoStoreList -- TodoEntryList
+TodoStoreList o- TodoStore
+
+@enduml
