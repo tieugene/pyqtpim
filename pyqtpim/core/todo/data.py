@@ -10,7 +10,7 @@ from functools import wraps
 # 2. 3rd
 import vobject
 # 3. local
-from common import VObj, Entry, EntryList, Store, StoreList
+from core.base.data import VObj, Entry, EntryList, Store, StoreList
 from . import enums
 
 
@@ -35,7 +35,7 @@ def set_X(name: str, getter: Callable, cvt=None):
     """Decorate setter
     :param name: Attribute name in vobject
     :param getter: get_X name to get old value
-    :param cvt: store new as str(new) (hack for `int` end `enums.Enum2Raw_*`)
+    :param cvt: store new as str(new) (hack for `int` end `base.Enum2Raw_*`)
     :return: True if value changed, False if not
     """
 

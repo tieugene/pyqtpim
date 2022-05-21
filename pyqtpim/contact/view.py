@@ -2,7 +2,7 @@
 
 from PySide2 import QtCore, QtWidgets
 # 3. local
-from common import EntryView, EntryListView, StoreListView, StoreModel
+from base import EntryView, EntryListView, StoreListView, StoreModel
 from .model import ContactListManagerModel, ContactModel
 
 

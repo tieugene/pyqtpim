@@ -3,9 +3,9 @@
 # 1. system
 # 2. PySide
 # 3. local
-from common import SetGroup, EntryModel, StoreModel
-from .data import ContactList, ContactStoreList
-from . import enums
+from base import SetGroup, EntryModel, StoreModel
+from core.contact.data import ContactList, ContactStoreList
+from core.contact import enums
 
 
 class ContactModel(EntryModel):

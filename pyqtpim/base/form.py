@@ -1,5 +1,5 @@
 from PySide2 import QtWidgets, QtCore
-from . import data
+from core.base import data
 
 
 class StoreForm(QtWidgets.QDialog):

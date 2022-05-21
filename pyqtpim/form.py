@@ -1,7 +1,7 @@
 from PySide2 import QtWidgets, QtCore
 
 from todo import ColHeader
-from common import MySettings, SetGroup
+from base import MySettings, SetGroup
 
 
 class SettingsView(QtWidgets.QDialog):

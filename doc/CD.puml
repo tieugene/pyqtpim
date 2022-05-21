@@ -9,7 +9,7 @@
 'top to bottom direction
 'skinparam linetype ortho
 
-'common.data
+'base.data
 abstract class VObj as "common.data.VObj" {
   In-memory vobject agent
 }

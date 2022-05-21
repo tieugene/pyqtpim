@@ -8,8 +8,9 @@ from PySide2 import QtWidgets, QtCore
 import vobject
 import dateutil
 # 4. local
-from .data import TodoVObj, TodoStore
-from . import enums, model
+import core.todo.enums
+from core.todo.data import TodoVObj, TodoStore
+from . import model, enums
 
 
 def _tz_local():
@@ -271,17 +272,17 @@ class SpecialCombo(QtWidgets.QComboBox):
 
 
 class ClassCombo(SpecialCombo):
-    _data2idx: dict[enums.EClass, int] = {
+    _data2idx: dict[core.todo.enums.EClass, int] = {
         None: 0,
-        enums.EClass.Public: 1,
-        enums.EClass.Private: 2,
-        enums.EClass.Confidential: 3,
+        core.todo.enums.EClass.Public: 1,
+        core.todo.enums.EClass.Private: 2,
+        core.todo.enums.EClass.Confidential: 3,
     }
     _idx2data = (
         None,
-        enums.EClass.Public,
-        enums.EClass.Private,
-        enums.EClass.Confidential,
+        core.todo.enums.EClass.Public,
+        core.todo.enums.EClass.Private,
+        core.todo.enums.EClass.Confidential,
     )
 
     def __init__(self, parent=None):
@@ -289,19 +290,19 @@ class ClassCombo(SpecialCombo):
 
 
 class StatusCombo(SpecialCombo):
-    _data2idx: dict[enums.EStatus, int] = {
+    _data2idx: dict[core.todo.enums.EStatus, int] = {
         None: 0,
-        enums.EStatus.NeedsAction: 1,
-        enums.EStatus.InProcess: 2,
-        enums.EStatus.Completed: 3,
-        enums.EStatus.Cancelled: 4
+        core.todo.enums.EStatus.NeedsAction: 1,
+        core.todo.enums.EStatus.InProcess: 2,
+        core.todo.enums.EStatus.Completed: 3,
+        core.todo.enums.EStatus.Cancelled: 4
     }
     _idx2data = (
         None,
-        enums.EStatus.NeedsAction,
-        enums.EStatus.InProcess,
-        enums.EStatus.Completed,
-        enums.EStatus.Cancelled
+        core.todo.enums.EStatus.NeedsAction,
+        core.todo.enums.EStatus.InProcess,
+        core.todo.enums.EStatus.Completed,
+        core.todo.enums.EStatus.Cancelled
     )
 
     def __init__(self, parent=None):
