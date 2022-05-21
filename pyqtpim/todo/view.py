@@ -3,10 +3,10 @@
 # 2. PySide
 from PySide2 import QtCore, QtWidgets
 # 3. local
-import core.todo.enums
+from pym_core.todo.data import TodoVObj, TodoEntry
+from pym_core.todo import enums as core_enums
 from base import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, todo_model, store_model
-from core.todo.data import TodoVObj, TodoEntry
 from .form import TodoForm
 from . import enums
 
@@ -277,7 +277,7 @@ class TodoView(EntryView):
         # FIXME: clean prio, progress, completed
         data: TodoVObj = self.mapper.model().item_get(row).vobj
         self.category.setText(', '.join(v) if (v := data.get_Categories()) else None)
-        self.class_.setText(core.todo.enums.Enum2Raw_Class.get(data.get_Class()))
+        self.class_.setText(core_enums.Enum2Raw_Class.get(data.get_Class()))
         self.url.setText(data.get_URL())
         # if v := data.get_URL():
         #    self.url.setText(f"<a href=\"v\">{v}</a>")

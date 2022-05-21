@@ -4,8 +4,8 @@
 # 2. PySide
 # 3. local
 from base import SetGroup, EntryModel, StoreModel
-from core.contact.data import ContactList, ContactStoreList
-from core.contact import enums
+from pym_core.contact.data import ContactList, ContactStoreList
+from pym_core.contact import enums as core_enums
 
 
 class ContactModel(EntryModel):
@@ -13,11 +13,11 @@ class ContactModel(EntryModel):
         super().__init__(*args, **kwargs)
         self._data = ContactList()
         self._fld_names = (
-            (enums.EProp.FN, "FN"),
-            (enums.EProp.Family, "Last name"),
-            (enums.EProp.Name, "First name"),
-            (enums.EProp.Email, "Email"),
-            (enums.EProp.Phone, "Tel.")
+            (core_enums.EProp.FN, "FN"),
+            (core_enums.EProp.Family, "Last name"),
+            (core_enums.EProp.Name, "First name"),
+            (core_enums.EProp.Email, "Email"),
+            (core_enums.EProp.Phone, "Tel.")
         )
 
     def _empty_item(self) -> ContactList:

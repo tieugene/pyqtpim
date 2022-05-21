@@ -5,10 +5,10 @@ from typing import Any, Optional, Union
 from PySide2 import QtCore
 # 3. 3rd
 # 4. local
-import core.todo.enums
+from pym_core.todo.data import TodoVObj, TodoStore, store_list, entry_list
+from pym_core.todo import enums as core_enums
 from base import EntryModel, EntryProxyModel, StoreModel, SetGroup
-from core.todo.data import TodoVObj, TodoStore, store_list, entry_list
-from todo import enums
+from . import enums
 
 _today = datetime.date.today()
 _yesterday = _today - datetime.timedelta(days=1)
@@ -20,7 +20,7 @@ _day_name = {
 }
 _datime_fmt = ('%d.%m %H:%M', '%d.%m.%y %H:%M')  # short, long
 _date_fmt = ('%d.%m', '%d.%m.%y')  # short, long
-_e_closed = {core.todo.enums.EStatus.Completed, core.todo.enums.EStatus.Cancelled}
+_e_closed = {core_enums.EStatus.Completed, core_enums.EStatus.Cancelled}
 
 
 class TodoModel(EntryModel):
@@ -178,7 +178,7 @@ class TodoProxyModel(EntryProxyModel):
         """Sorting Prio>Due>Summary"""
         def __get_prio(vobj: TodoVObj) -> int:
             if v := vobj.get_Priority():
-                return core.todo.enums.Raw2Enum_Prio[v]
+                return core_enums.Raw2Enum_Prio[v]
             else:
                 return 0
 

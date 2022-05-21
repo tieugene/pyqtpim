@@ -3,7 +3,7 @@
 import inspect
 from PySide2 import QtCore, QtWidgets
 from . import form
-from core.base import data
+from pym_core.base import data
 
 
 class EntryView(QtWidgets.QGroupBox):

@@ -10,7 +10,7 @@ from typing import Optional
 # 2. 3rd
 import vobject
 # 3. local
-from core import exc
+from pym_core import exc
 
 
 class EVObjType(IntEnum):

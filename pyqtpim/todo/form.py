@@ -8,9 +8,9 @@ from PySide2 import QtWidgets, QtCore
 import vobject
 import dateutil
 # 4. local
-import core.todo.enums
-from core.todo.data import TodoVObj, TodoStore
-from . import model, enums
+from pym_core.todo.data import TodoVObj, TodoStore
+from pym_core.todo import enums as core_enums
+from . import model
 
 
 def _tz_local():
@@ -272,17 +272,17 @@ class SpecialCombo(QtWidgets.QComboBox):
 
 
 class ClassCombo(SpecialCombo):
-    _data2idx: dict[core.todo.enums.EClass, int] = {
+    _data2idx: dict[core_enums.EClass, int] = {
         None: 0,
-        core.todo.enums.EClass.Public: 1,
-        core.todo.enums.EClass.Private: 2,
-        core.todo.enums.EClass.Confidential: 3,
+        core_enums.EClass.Public: 1,
+        core_enums.EClass.Private: 2,
+        core_enums.EClass.Confidential: 3,
     }
     _idx2data = (
         None,
-        core.todo.enums.EClass.Public,
-        core.todo.enums.EClass.Private,
-        core.todo.enums.EClass.Confidential,
+        core_enums.EClass.Public,
+        core_enums.EClass.Private,
+        core_enums.EClass.Confidential,
     )
 
     def __init__(self, parent=None):
@@ -290,19 +290,19 @@ class ClassCombo(SpecialCombo):
 
 
 class StatusCombo(SpecialCombo):
-    _data2idx: dict[core.todo.enums.EStatus, int] = {
+    _data2idx: dict[core_enums.EStatus, int] = {
         None: 0,
-        core.todo.enums.EStatus.NeedsAction: 1,
-        core.todo.enums.EStatus.InProcess: 2,
-        core.todo.enums.EStatus.Completed: 3,
-        core.todo.enums.EStatus.Cancelled: 4
+        core_enums.EStatus.NeedsAction: 1,
+        core_enums.EStatus.InProcess: 2,
+        core_enums.EStatus.Completed: 3,
+        core_enums.EStatus.Cancelled: 4
     }
     _idx2data = (
         None,
-        core.todo.enums.EStatus.NeedsAction,
-        core.todo.enums.EStatus.InProcess,
-        core.todo.enums.EStatus.Completed,
-        core.todo.enums.EStatus.Cancelled
+        core_enums.EStatus.NeedsAction,
+        core_enums.EStatus.InProcess,
+        core_enums.EStatus.Completed,
+        core_enums.EStatus.Cancelled
     )
 
     def __init__(self, parent=None):

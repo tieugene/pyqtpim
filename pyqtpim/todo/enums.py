@@ -57,12 +57,6 @@ ColHeader = (  # Header
 )
 
 
-# --- Class
-
-
-# --- Status
-
-
 TDecor_Status = '?…✓✗'
 TColor_Status = (
     ColorBlue,
@@ -73,8 +67,6 @@ TColor_Status = (
 
 
 # --- Priority
-
-
 TDecor_Prio = '!!!!~↓↓↓↓'  # -1
 TColor_Prio = (
     ColorRed,

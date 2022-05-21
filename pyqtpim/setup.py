@@ -2,8 +2,8 @@ from setuptools import setup
 
 setup(
     name='pyqtpim',
-    version='0.0.3',
-    packages=['todo', 'common', 'contact'],
+    version='0.0.4',
+    packages=['pym_core', 'base', 'todo', 'contact'],
     package_dir={'': 'pyqtpim'},
     url='https://github.com/tieugene/pyqtpim',
     license='GPLv3',

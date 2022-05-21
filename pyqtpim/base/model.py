@@ -6,7 +6,7 @@ from typing import Any, Callable
 from PySide2 import QtCore
 # 3. local
 from . import enums
-from core.base.data import Store, StoreList, Entry, EntryList
+from pym_core.base.data import Store, StoreList, Entry, EntryList
 from .settings import MySettings
 
 

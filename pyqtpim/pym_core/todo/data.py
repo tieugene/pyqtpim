@@ -10,7 +10,7 @@ from functools import wraps
 # 2. 3rd
 import vobject
 # 3. local
-from core.base.data import VObj, Entry, EntryList, Store, StoreList
+from pym_core.base.data import VObj, Entry, EntryList, Store, StoreList
 from . import enums
 
 
