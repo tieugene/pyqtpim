@@ -76,7 +76,7 @@ class TodoVObj(VObj):
             uid = uuid.uuid4()
             stamp = _utcnow()
             data = vobject.iCalendar()
-            data.add('prodid').value = '+//IDN eap.su//NONSGML pyqtpim//EN'
+            data.add('prodid').value = '+//IDN eap.su//NONSGML pym_gui//EN'
             data.add('vtodo')
             data.vtodo.add('uid').value = str(uid)
             data.vtodo.add('created').value = stamp

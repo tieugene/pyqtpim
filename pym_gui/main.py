@@ -7,7 +7,7 @@ from PySide2.QtCore import Qt, QCoreApplication
 from base import MySettings
 from todo import store_model
 from view import MainWindow
-from pyqtpim_rc import qInitResources
+from pym_gui_rc import qInitResources
 
 
 def main():

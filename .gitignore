@@ -130,7 +130,7 @@ dmypy.json
 
 # local
 /.idea/
-/pyqtpim/pyqtpim.pyproject.user
+/pyqtpim/pym_gui.pyproject.user
 /_*/
 /*.sh
 *.sqlite3
