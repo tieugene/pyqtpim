@@ -1,0 +1,3 @@
+[submodule "pym_gui/pym_core"]
+	path = pym_gui/pym_core
+	url = git@github.com:tieugene/pym-core.git
