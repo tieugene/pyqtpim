@@ -25,7 +25,7 @@ class EntryModel(QtCore.QAbstractTableModel):
         return self._data.entry_get(i)
 
     def item_add(self, item: Entry) -> bool:  # C
-        """Add newly crated Entry"""
+        """Add newly created Entry"""
         size = self.rowCount()
         self.beginInsertRows(self.index(size, 0), size, size)
         retvalue = self._data.entry_add(item)
