@@ -1,8 +1,8 @@
 # 1. system
 import datetime
 from typing import Any, Optional, Union
-# 2. PySide2
-from PySide2 import QtCore
+# 2. PyQt5
+from PyQt5 import QtCore
 # 3. 3rd
 # 4. local
 from common import EntryModel, EntryProxyModel, StoreModel, SetGroup

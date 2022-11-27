@@ -2,7 +2,7 @@
 import json
 from typing import Any, Union, Optional
 
-from PySide2.QtCore import QCoreApplication, QSettings
+from PyQt5.QtCore import QCoreApplication, QSettings
 from .enums import SetGroup
 # from todo import ColHeader  # circular import
 

@@ -1,7 +1,7 @@
 """Misc VTODO utility enums and mappings.
 :todo: add vobjects field names"""
 from enum import IntEnum, unique, auto, Enum
-from PySide2 import QtGui
+from PyQt5 import QtGui
 
 # local constants
 ColorRed = QtGui.QColorConstants.Red  # QtGui.QColorConstants.Svg.red

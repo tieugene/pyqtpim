@@ -3,7 +3,7 @@
 # 1. system
 from typing import Any, Callable
 # 2. PySide
-from PySide2 import QtCore
+from PyQt5 import QtCore
 # 3. local
 from . import enums
 from .data import Store, StoreList, Entry, EntryList
@@ -51,7 +51,7 @@ class EntryProxyModel(QtCore.QSortFilterProxyModel):
     # _own_model = EntryModel
     _currentSorter: Callable
     _currentFilter: Callable
-    updateStatusBar = QtCore.Signal(int)
+    updateStatusBar = QtCore.pyqtSignal(int)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -93,7 +93,7 @@ class StoreModel(QtCore.QStringListModel):
     item_cls: type
     _data: StoreList
     _entry_model: EntryModel
-    activeChanged: QtCore.Signal = QtCore.Signal()
+    activeChanged: QtCore.pyqtSignal = QtCore.pyqtSignal()
 
     def __init__(self, entries: EntryModel, *args, **kwargs):
         super().__init__(*args, **kwargs)

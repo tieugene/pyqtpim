@@ -3,7 +3,7 @@
 import datetime
 from typing import Optional, Union, Any
 # 2. PySide
-from PySide2 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore
 # 3. 3rds
 import vobject
 import dateutil

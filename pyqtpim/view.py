@@ -1,6 +1,6 @@
 """Main GUI"""
 
-from PySide2 import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui
 from contact import ContactsWidget
 from todo import TodosWidget
 from form import SettingsView
@@ -172,7 +172,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # actions
     def about(self):
-        QtWidgets.QMessageBox.about(self, "About PyQtPIM", "PySide2 powered Personal Information Manager.")
+        QtWidgets.QMessageBox.about(self, "About PyQtPIM", "PyQt5 powered Personal Information Manager.")
 
     def settings(self):
         self.settings_view.load()

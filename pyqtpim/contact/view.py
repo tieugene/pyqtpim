@@ -1,6 +1,6 @@
 """GUI representation of Contact things"""
 
-from PySide2 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 # 3. local
 from common import EntryView, EntryListView, StoreListView, StoreModel
 from .model import ContactListManagerModel, ContactModel

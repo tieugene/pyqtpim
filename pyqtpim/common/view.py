@@ -1,7 +1,7 @@
 """vCard/iCal views parents"""
 
 import inspect
-from PySide2 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from . import form, data
 
 
@@ -23,7 +23,7 @@ class EntryView(QtWidgets.QGroupBox):
 class EntryListView(QtWidgets.QTableView):
     # _own_model = EntryModel
     _details: EntryView
-    actionsChange = QtCore.Signal(bool)
+    actionsChange = QtCore.pyqtSignal(bool)
 
     def __init__(self, parent, dependant: EntryView):
         super().__init__(parent)
@@ -43,7 +43,7 @@ class StoreListView(QtWidgets.QListView):
     __form: form.StoreForm
     _list: EntryListView
     _title: str
-    actionsChange = QtCore.Signal(bool)
+    actionsChange = QtCore.pyqtSignal(bool)
 
     def __init__(self, parent, dependant: EntryListView):
         super().__init__(parent)

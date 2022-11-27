@@ -1,7 +1,7 @@
 """GUI representation of Tasks things"""
 # 1. std
 # 2. PySide
-from PySide2 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 # 3. local
 from common import EntryView, EntryListView, StoreListView, MySettings, SetGroup
 from .model import TodoStoreModel, TodoModel, TodoProxyModel, todo_model, store_model

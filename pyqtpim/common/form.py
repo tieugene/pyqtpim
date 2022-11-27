@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore
 from . import data
 
 
